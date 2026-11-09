@@ -1,0 +1,574 @@
+﻿FICFORGE
+Founder & Platform Overview
+Vision • Product • Current Build • Market • Business Model • Launch Expectations
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Prepared for the FicForge Founder
+Current project position: September 2026
+Purpose of this document
+This document consolidates what FicForge is intended to become, what has already been designed or built, the audience and market it targets, the monetization model, the major risks and launch requirements, and the practical responsibilities you should expect as the platform’s founder. It is written as a strategic operating document rather than marketing copy.
+
+
+Executive Summary
+FicForge is being built as a story-first publishing platform for fanfiction and original serialized fiction. Its core proposition is to combine the freedom and fandom depth of a fanwork archive with the creator tools, social reading experience, and monetization mechanics of a modern webnovel platform—without turning the reading experience into a maze of intrusive advertising or forcing fanfiction behind paywalls.
+The platform is not intended to compete by being “everything for everyone.” Its clearest opportunity is a focused niche: readers who consume long-form fandom and serialized stories, and writers who want better publishing tools, stronger creator identity, audience growth, and—where legally appropriate—direct financial support. The product therefore sits at the intersection of fanfiction, webnovels, digital publishing, and the creator economy.
+As of September 2026, FicForge has moved beyond the idea stage. The brand and infrastructure have been established; the site is being built in WordPress/Elementor on Hostinger; core public pages and major homepage elements have been designed; creator publishing flows have been prototyped with WP User Frontend; account, story creation, bulk-import concepts, membership pages, Spark packages, checkout flows, and creator analytics have all been worked on; and extensive foundational, moderation, monetization, and launch documents exist. The remaining work is less about inventing the platform and more about hardening the product: payments, publishing reliability, story/reader UX, mobile QA, permissions, analytics, policies, security, and launch content.
+Founder-level interpretation
+FicForge’s strongest strategic asset is not a single feature. It is the combination of fanfiction + original serial fiction + creator economics + a clean reading experience. The main challenge is execution: building enough trustworthy content and creator activity that the site feels alive from day one.
+
+1. What FicForge Is
+1.1 Platform Definition
+FicForge is a digital publishing and reading platform where fanfiction writers and original authors can publish serialized stories, build audiences, interact with readers, and access creator-support tools. Readers can discover stories by fandom and genre, follow creators, save stories, comment on chapters, and support creators through platform-wide systems.
+The product philosophy is deliberately story-first. Community features are meant to form around stories rather than overshadow them. FicForge is therefore closer to a reading platform with strong community mechanics than a forum that happens to contain fiction.
+1.2 Mission
+To provide writers and readers with a dedicated storytelling platform that prioritizes creativity, creator ownership, community engagement, discovery, and sustainable growth while keeping the reading experience clean and accessible.
+1.3 Core Principles
+Stories first: the chapter-reading experience should remain the center of the product.
+Creators matter: creators should have clear ownership rules, publishing tools, audience data, and sustainable support mechanisms.
+Fanfiction stays accessible: direct chapter paywalls on transformative fanfiction should not be part of the model.
+Original fiction can monetize more deeply: original works can support Fast Pass/early access and other creator-controlled monetization.
+Community should be contextual: comments, follows, profiles, and updates should deepen engagement with stories rather than become a separate social network.
+Build a product, not just a website: every feature should improve discovery, reading, publishing, retention, trust, or monetization.
+1.4 The Problem FicForge Is Trying to Solve
+Existing platforms tend to specialize. Fanfiction archives are excellent for preservation and fandom taxonomy but are generally non-commercial. Social-reading platforms can offer enormous reach but may not be optimized for fandom-specific organization, creator control, or transparent economics. Commercial webnovel platforms often focus heavily on monetized original fiction and chapter gating. FicForge is designed around the gap between those models.
+The intended result is a platform where a writer can start with fanfiction, build a readership, create a recognizable profile, later publish original serial fiction, and use the same audience relationship across both forms of work.
+
+2. Target Market and Audience
+2.1 Primary User Segments
+Segment
+Who they are
+What FicForge must deliver
+Fanfiction readers
+Readers who follow fandoms, pairings, alternate universes, crossovers, fix-it stories, self-inserts, and long serialized fanworks.
+Deep catalog discovery, tags, clean reading, updates, comments, saves.
+Fanfiction writers
+Writers publishing transformative fiction who want better presentation, discoverability, audience identity, and voluntary support.
+Publishing tools, creator profile, reader feedback, follows, tipping/support without chapter paywalls.
+Original webnovel authors
+Independent serial-fiction authors in fantasy, sci-fi, romance, LitRPG, progression fantasy, dark fiction, and related genres.
+Audience growth, chapter tools, analytics, Fast Pass/early access, creator support.
+Serialized-fiction readers
+Mobile-first readers who consume episodic fiction frequently and return for updates.
+Fast discovery, comfortable mobile reader, libraries, notifications, predictable releases.
+Emerging creators
+Writers who are not yet professionally published but want a platform to build reputation and recurring readership.
+Low barrier to entry, audience feedback, analytics, identity, monetization path.
+
+2.2 Demographic Direction
+The strongest adjacent-market evidence points toward a young, mobile-first audience. WEBTOON Entertainment states that its primary user base is Gen Z and millennials, and describes those users as highly engaged with serialized digital storytelling. FicForge should therefore be designed mobile-first even if the founder builds and administers it primarily from desktop.
+The platform should not exclude older readers; fanfiction and serialized fiction have multi-generational audiences. The operational design target, however, should assume users expect fast mobile pages, readable typography, frictionless sign-up, strong search/discovery, short navigation paths, and continuous content updates.
+2.3 Geographic Market
+The practical first market is global English-language fandom and serialized fiction. That keeps the initial taxonomy, moderation, support, and publishing stack manageable while still addressing a very large online audience. Localization can be a later growth layer once core product-market fit and moderation capacity are proven.
+2.4 Genre and Content Focus
+Fanfiction across major film, television, anime, manga, game, book, comic, and crossover fandoms.
+Original fantasy and science fiction, including progression fantasy, LitRPG, alternate history, military fiction, dark fiction, and kingdom-building.
+Romance and character-driven serials where appropriate to the platform’s content policies.
+Long-form serialized stories that benefit from recurring chapter releases and reader retention loops.
+3. Market Statistics and Industry Signals
+The following statistics are benchmarks from adjacent platforms and publishing markets. They are not FicForge forecasts. Their purpose is to show that the behavior FicForge is targeting—reading user-generated fiction, following creators, returning for serialized releases, and paying for digital content—already exists at very large scale.
+Benchmark
+Statistic
+Period
+Why it matters for FicForge
+AO3
+11 million registered users
+June 19, 2026
+Demonstrates the scale of dedicated fanfiction participation.
+AO3
+18 million+ fanworks
+July 26, 2026
+Shows enormous creator output and depth of transformative-fiction demand.
+WEBTOON Entertainment ecosystem
+156.9 million MAU
+Q2 2026
+Shows global scale for serialized digital storytelling platforms.
+WEBTOON Entertainment ecosystem
+7.5 million monthly paying users
+Q2 2026
+Demonstrates meaningful paid conversion within story ecosystems.
+WEBTOON Entertainment ecosystem
+4.8% paying ratio
+Q2 2026
+Useful benchmark: paid conversion is valuable even when it is a low-single-digit share of MAU.
+WEBTOON Entertainment
+27 million+ creators
+2026 investor profile
+Signals the size of the global creator supply pool.
+WEBTOON Entertainment
+Approx. $1.4B 2025 revenue
+2025 fiscal year
+Shows that digital storytelling can support a large commercial ecosystem.
+Global creator economy
+$480B potential by 2027
+Goldman Sachs forecast
+Places creator monetization tools in a much broader economic trend.
+Global books market
+$156.6B estimated in 2025
+Grand View Research
+Provides broad publishing-market context; online distribution is a major channel.
+
+Important caution on market-size reports
+Commercial market-research firms use different definitions for “e-books,” “online book services,” and “digital publishing,” producing materially different market-size estimates. FicForge should use platform behavior metrics (active readers, creator supply, retention, paid conversion, ARPPU) as its primary operating benchmarks rather than relying on a single headline TAM figure.
+
+3.1 What the Numbers Mean Strategically
+Fanfiction is not a tiny side market: AO3’s growth proves there is a large, active, creator-driven audience for transformative fiction.
+Serialized storytelling supports habitual use: major story platforms are designed around regular releases, follows, recommendations, and returning users.
+Paid conversion does not need to include most users: WEBTOON’s 4.8% paying ratio shows that a relatively small paying minority can support a large content ecosystem.
+Creator supply is as important as reader acquisition: users return because there is fresh content. FicForge needs a creator-acquisition strategy, not just advertising to readers.
+Mobile experience is critical: the adjacent market is dominated by mobile-first Gen Z and millennial behavior.
+4. The FicForge Product Experience
+4.1 Reader Journey
+1.  Land on a clear homepage that immediately explains the platform.
+2.  Browse by fandom, genre, tags, rankings, featured stories, or search.
+3.  Open a story page with synopsis, metadata, author, status, rating, and chapter list.
+4.  Read in a clean chapter view without mid-chapter advertising interruptions.
+5.  Save/bookmark stories to a personal library and follow creators.
+6.  Comment at the end of chapters and participate in story-centered discussion.
+7.  Choose whether to support the platform through membership and/or support creators with Sparks.
+8.  For eligible original fiction, optionally spend Sparks to access Fast Pass chapters before their free-release date.
+4.2 Creator Journey
+1.  Create an account and creator profile.
+2.  Start a new story and classify it as fanfiction or original fiction.
+3.  Enter title, synopsis, cover, genre/fandom, tags, rating, warnings, status, and related metadata.
+4.  Create or import chapters, including bulk-import workflows where supported.
+5.  Publish on a schedule, edit existing work, and communicate through notes/profile updates.
+6.  Review basic analytics such as views, readers, follows, chapter performance, and engagement as the analytics layer matures.
+7.  Receive creator support where eligible and manage earnings/payout processes once those systems are fully launched.
+4.3 The “Chapter Sanctuary” Principle
+FicForge’s planned UX avoids advertisements inside the actual body of a chapter. Advertising, if introduced, should be limited to surrounding discovery or page-level surfaces—never inserted between paragraphs of a story. This gives FicForge a clear reader-experience standard and an easy-to-communicate trust promise.
+
+5. Business Model and Monetization
+FicForge is intended to operate with multiple complementary revenue streams rather than depending on a single source. The principle is to monetize convenience, support, platform value, and original-content access without turning transformative fanfiction chapters into paid products.
+5.1 Platform Memberships
+Site-wide memberships are the most predictable recurring-revenue layer. Membership can provide benefits such as an ad-free experience, enhanced reading tools, offline-related features where technically feasible, premium profile treatment, early access to platform features, and other non-story-paywall benefits. Membership should feel like supporting and upgrading the platform rather than purchasing fanfiction.
+5.2 Sparks
+Sparks are FicForge’s planned virtual currency. They provide one wallet that can support voluntary creator appreciation and eligible original-fiction Fast Pass access. The latest pricing work moved away from selling cosmetics and concentrates paid offerings on memberships and Sparks.
+Item
+Current working position
+Note
+Baseline pricing anchor
+Approximately $0.99 per 100 Sparks
+Current pricing philosophy; final checkout audit required.
+5,000-Spark package
+5,600 total Sparks for $49.99
+Includes a confirmed 600-Spark bonus.
+Top package
+15,000 Sparks for $124.99
+Current top package on the Premium page.
+Cosmetics
+Not part of the current paid model
+Earlier badge/cosmetic monetization ideas were dropped.
+
+5.3 Fast Pass for Original Fiction
+Fast Pass is designed for original fiction: readers can use Sparks to access selected upcoming chapters early, while those chapters later become available according to the author’s normal free-release schedule. This preserves a free-reading path while giving highly engaged readers a way to pay for immediacy.
+5.4 Fanfiction Monetization Boundary
+The working model keeps fanfiction chapters free and separates transformative works from direct chapter sales. Voluntary creator support can be structured at the creator/profile level, but the legal and payment-policy framework should be reviewed before launch. “Safe harbor” or fair-use protection is not automatic, and FicForge should never describe its structure as guaranteeing legal immunity.
+5.5 Revenue Share: Decision That Must Be Standardized
+Open launch decision
+FicForge planning has used two different creator/platform splits: an earlier founder target of 85/15 (15% platform share for original fiction) and later framework drafts using 82/18. Before creators are onboarded, the public Terms, creator dashboard, payout math, FAQs, and payment logic must all use one final split. This document does not silently choose between them because consistency is more important than preserving an outdated draft.
+
+5.6 Illustrative Monetization Math
+The following is scenario math, not a forecast. It shows why retention and paid conversion matter more than vanity traffic. The examples use an $8–$10 monthly spend per paying user and a 15%–18% platform share on creator-linked transactions; platform memberships would be additional revenue.
+Monthly active users
+Paid conversion
+Paying users
+Avg. monthly spend
+Gross paid volume
+Platform share*
+10,000 MAU
+2.0%
+200
+$8
+$1,600
+$240–$288
+100,000 MAU
+2.5%
+2,500
+$8
+$20,000
+$3,000–$3,600
+1,000,000 MAU
+3.0%
+30,000
+$10
+$300,000
+$45,000–$54,000
+
+*Illustrative platform share only; excludes processing fees, taxes, refunds, memberships, ads, and operating expenses.
+6. What Has Been Created So Far
+FicForge is currently a pre-launch product with a substantial amount of design, implementation, and operational groundwork already completed. “Created” below means built, configured, prototyped, or documented; it does not mean every item has passed launch-grade QA.
+Area
+Status
+Current position
+Brand & positioning
+Built
+FicForge name, story-first positioning, platform purpose, creator/readers value proposition.
+Hosting & CMS foundation
+Built
+Hostinger + WordPress foundation; domain acquired through Porkbun; administrative email infrastructure established.
+Frontend builder
+Built
+Elementor-based page construction and global visual design work.
+Homepage
+Substantially built
+Hero and major homepage structure designed; featured stories, fandom/genre browsing, value proposition, membership CTA, footer/header work planned or partially implemented.
+Core public pages
+Built / in progress
+About, Support, Terms/Policies, Membership/Premium, Creator Docs, Contact, FAQ and related pages have been planned or created.
+Create Story workflow
+Built / prototyped
+Frontend publishing page created using WP User Frontend; story details, cover/image upload concepts, chapter editor and bulk/multiple chapter upload workflows have been worked on.
+My Stories / creator flow
+Built / in progress
+Creator-facing story management path exists and has been iterated.
+Creator analytics
+In progress
+Analytics entry point/page has been created conceptually and within the creator flow; advanced analytics remains a later layer.
+Account experience
+In progress
+Account-side navigation and creator/reader entry points have been designed and refined.
+Membership checkout
+In progress
+Membership CTA and checkout path are being tested; payment method presentation and final gateway behavior still need launch QA.
+Sparks storefront
+In progress
+Premium-page Spark packages and current price strategy established; checkout/payment integration still requires final validation.
+Policies & operating documents
+Strong foundation
+Master platform blueprint, launch strategy, monetization rules, moderation guidance, reader/creator concepts, FAQs and other operational documents exist.
+Mobile / responsive QA
+Not finished
+Requires systematic end-to-end testing across homepage, story pages, reader, publishing, account and checkout.
+Production payments & payouts
+Not finished
+Must be fully verified before accepting real creator earnings or recurring membership revenue.
+Seed content & creator cohort
+Not finished
+Launch needs enough real stories and creators to prevent an empty-platform experience.
+
+6.1 Technical Foundation
+WordPress as the core CMS and account/content framework.
+Elementor for the frontend design and page-building layer.
+Hostinger for hosting infrastructure.
+Porkbun for the domain registration layer.
+Microsoft-admin email setup for business communications.
+WP User Frontend used to create the current frontend story-submission experience.
+WooCommerce-style checkout and payment flows being used/configured for memberships and Sparks.
+Additional plugins and custom HTML/CSS used as necessary to bridge account, story, analytics, and publishing experiences.
+6.2 Foundational Documents Already Developed
+Master platform blueprint and product philosophy.
+Launch strategy and phased feature prioritization.
+Monetization framework for memberships, Sparks, original fiction, and fanfiction boundaries.
+Creator and reader FAQs/concepts.
+Moderation and content-rating framework.
+Story publishing fields and workflow specifications.
+Site-page architecture and homepage roadmap.
+Creator analytics and account-navigation concepts.
+Legal/policy page planning, including Terms, support, creator documentation, and content rules.
+7. Competitive Positioning
+Reference platform
+Core strength
+FicForge differentiation opportunity
+AO3
+Transformative fanworks, deep tagging, non-commercial archive
+FicForge can borrow the expectation of fandom depth while offering creator profiles, original fiction, platform memberships and support tools.
+Wattpad
+Large social reading / webnovel ecosystem
+FicForge can differentiate through clearer fandom architecture, cleaner story-first reading, and more explicit separation of fanfiction vs. original monetization.
+Webnovel-style platforms
+Commercial serialized fiction and paid chapter access
+FicForge can offer a less aggressively gated model, keeping a free path and using Fast Pass mainly for early access to original fiction.
+Royal Road-type platforms
+Strong progression-fantasy / LitRPG communities and creator discovery
+FicForge can broaden beyond one genre cluster and combine fandom publishing with creator-support economics.
+General social media
+Audience reach and creator promotion
+FicForge should use social platforms for acquisition, but own the long-form reading experience, data, discovery, and reader relationship.
+
+7.1 The Position FicForge Should Own
+Positioning statement
+FicForge should become the platform where fandom writers can grow into original creators without abandoning the audience, identity, and community they built along the way.
+
+That position is more defensible than trying to be “the next Wattpad” or “a better AO3.” It defines a specific bridge between two creator stages and gives FicForge a reason to exist even alongside much larger incumbents.
+8. What to Expect as FicForge’s Founder
+The first stage of FicForge will be founder-intensive. The job is not only web design. Until the platform has enough users, staff, and automated workflows, the founder effectively owns product management, content supply, creator recruitment, support, moderation escalation, payments, growth, and quality control.
+8.1 Your Main Roles at Launch
+Founder role
+What it means in practice
+Product owner
+Decide what ships, what waits, and what directly improves the reader/creator experience.
+Quality controller
+Test signup, publishing, reading, payments, mobile behavior, emails, and permissions end to end.
+Creator recruiter
+Convince the first writers to publish and keep publishing.
+Content seeder
+Use your own stories and invited creators to prevent the site from launching empty.
+Community operator
+Set tone, respond to early users, solve onboarding friction, and establish trust.
+Policy owner
+Maintain Terms, content rules, takedown procedures, privacy, age-rating, and appeals processes.
+Growth lead
+Drive SEO, social promotion, creator referrals, launch campaigns, partnerships, and retention experiments.
+Finance/operator
+Track hosting, software, processing fees, refunds, payouts, tax/reporting needs, and unit economics.
+
+8.2 What Early Growth Will Probably Feel Like
+Early platform growth is usually uneven. You may have days with strong traffic but few signups, writers who register but never publish, or stories that get clicks without generating return visits. That is normal product data, not automatically a failure. The first objective is to learn which actions create repeat readers and repeat creators.
+The supply side is likely to be the hardest problem: a reading platform without enough good stories feels empty, while creators do not want to publish on an empty platform. FicForge must break that cold-start loop intentionally by seeding content, recruiting creators, featuring strong stories, and giving early creators unusually high visibility.
+8.3 What Not to Expect
+Do not expect a polished site alone to generate a community automatically.
+Do not expect paid memberships to become meaningful before there is repeat reader value.
+Do not expect all creators to monetize; most users on story platforms remain free users.
+Do not expect every planned feature to be needed for launch. Overbuilding can delay the only test that matters: real reader behavior.
+Do not expect moderation, payment support, and creator disputes to stay rare forever; processes must exist before scale arrives.
+9. Metrics FicForge Should Track
+FicForge should measure product health through a small set of repeatable metrics. These are more useful than raw pageviews because they show whether people actually return, read, publish, and pay.
+Metric
+Simple definition
+Why it matters
+Monthly Active Users (MAU)
+Unique users active in a month
+Overall active audience scale.
+DAU/MAU
+Daily active users ÷ monthly active users
+Habit and frequency.
+Signup conversion
+New accounts ÷ qualified visitors
+Whether the site convinces visitors to join.
+Reader activation
+New users who read X chapters / save / follow within first session
+Whether onboarding leads to meaningful use.
+Creator activation
+New creators who publish at least one chapter
+Whether creator onboarding works.
+7-day / 30-day retention
+Users who return after first use
+Core product-market fit signal.
+Chapter completion
+Readers reaching the end of a chapter
+Reading quality and content fit.
+Story follow/save rate
+Follows or library saves per story view
+Intent to return.
+Paid conversion
+Paying users ÷ MAU
+Monetization effectiveness.
+ARPPU
+Paid revenue ÷ paying users
+Value of monetized users.
+Membership churn
+Canceled memberships ÷ active memberships
+Recurring-revenue health.
+Creator earnings concentration
+Share of creator payouts going to top creators
+Marketplace balance and sustainability.
+Support / moderation response time
+Median time to resolve tickets/reports
+Trust and operational quality.
+Page performance
+Core Web Vitals / load time
+Critical for mobile retention and SEO.
+
+First analytics rule
+Do not set ambitious growth targets before collecting a reliable 30–60 day baseline. The first launch period should establish real conversion, retention, publishing, and payment behavior. Targets become meaningful after FicForge has its own data.
+
+10. What Still Needs to Be Completed Before Launch
+Workstream
+Priority
+Launch requirement
+Payments
+Critical
+Finalize card/debit and PayPal behavior where supported; test successful, failed, canceled and refunded transactions; verify membership renewals and Spark fulfillment.
+Membership CTA
+Critical
+Confirm Start Membership buttons appear correctly outside the editor and route to the intended product/checkout flow.
+Reader stack
+Critical
+Story page, chapter page, previous/next navigation, typography, comments, saving/following and mobile reading must be reliable.
+Publishing stack
+Critical
+Test create/edit story, chapter creation/import, cover upload, validation, permissions, drafts and publishing from a normal creator account.
+Roles & permissions
+Critical
+Prevent creators from seeing admin-only functions and prevent readers from accessing creator/admin controls.
+Mobile responsiveness
+Critical
+Test common phone widths across homepage, account, story pages, reader, publish flow and checkout.
+Policies
+Critical
+Finalize Terms, Privacy, DMCA/takedown process, content rules, age ratings, creator terms, refund rules and monetization language.
+Analytics
+High
+Install/verify analytics and event tracking before public traffic arrives so launch data is not lost.
+Security & backups
+High
+Backups, plugin updates, anti-spam, rate limits/login protection, database recovery, and staging discipline.
+Seed library
+High
+Launch with enough complete-looking story inventory and regular update schedules to demonstrate the experience.
+Support workflow
+High
+Create contact/support categories and a simple ticket-handling routine for payments, accounts, content reports, and creator questions.
+SEO & discovery
+Medium
+Titles, metadata, sitemaps, taxonomy, canonical URLs and fandom/genre landing pages.
+Advanced features
+Post-launch
+Achievements, leaderboards, complex dashboards, events, contests, deep forums, and other non-core systems can wait.
+
+11. Launch and Growth Strategy
+11.1 The First Content Flywheel
+FicForge needs a deliberate loop: recruit creators → publish good stories → attract readers → generate follows/comments/support → give creators a reason to keep publishing → use growing content volume to attract more readers. Every launch decision should strengthen this loop.
+11.2 Practical Early Growth Channels
+Use your own existing story audience as the first bridge to FicForge.
+Recruit a small group of founding creators and give them visible placement and direct founder support.
+Create fandom and genre landing pages designed for search discovery.
+Use creator referral incentives that reward bringing quality writers or engaged readers—not raw spam signups.
+Cross-promote on communities where serial-fiction readers already exist, while respecting each community’s promotion rules.
+Build launch content around “founding member” identity and early-adopter perks that do not create permanent operational liabilities.
+Feature strong stories aggressively so the site looks curated rather than empty.
+Collect reader emails/notifications carefully so new chapter releases bring people back.
+11.3 Recommended Launch Philosophy
+Launch v1, not the final FicForge
+A credible v1 needs to explain itself, let users register, let readers discover and read stories, let creators publish reliably, and let approved payment flows work. It does not need every long-term feature. A smaller stable platform with real readers is more valuable than a feature-rich site with no active community.
+
+12. Major Risks and How to Manage Them
+Risk
+Why it matters
+Mitigation
+Cold-start problem
+Empty catalog discourages readers; low traffic discourages creators.
+Seed stories, founding creators, scheduled releases, editorial featuring.
+Copyright / transformative works
+Fanfiction raises rights-holder and takedown risk.
+Keep direct fanfiction chapter sales disabled; maintain takedown workflow; obtain legal review for monetization language.
+Payment processor policy
+Adult content, chargebacks, virtual currency, and creator payouts can trigger restrictions.
+Review processor terms; separate restricted content from monetization; maintain clear refund and identity processes.
+Technical fragility
+Plugin conflicts or updates can break account/publishing flows.
+Staging, backups, limited plugin stack, version control for custom code, regression tests.
+Moderation burden
+Growth increases reports, harassment, spam, plagiarism, and disputes.
+Clear rules, logging, escalation, repeat-offender handling, and moderator tooling.
+Creator trust
+Confusing splits, delayed payouts, or changing rules can damage adoption.
+Publish one final revenue split, transparent statements, predictable payout rules, clear support.
+Overbuilding
+Time spent on low-value features delays launch.
+Prioritize reading, publishing, discovery, account, payments, analytics, mobile.
+Retention weakness
+Traffic arrives but users do not return.
+Better content recommendations, follow/save loops, release notifications, onboarding and chapter UX.
+
+13. Practical 12-Month Operating Roadmap
+Phase
+Timing
+Primary objective
+Phase 0 — Launch readiness
+Now → launch
+Finish payments, core reader/publishing flows, policies, mobile QA, analytics, backups, seed catalog.
+Phase 1 — Prove usage
+First 30–60 days
+Measure signup, reading, publishing, retention, support volume, and payment reliability. Fix friction quickly.
+Phase 2 — Creator growth
+Months 2–4
+Recruit more creators, strengthen discovery, improve profiles/analytics, establish release cadence and featuring.
+Phase 3 — Monetization refinement
+Months 3–6
+Use real conversion data to tune memberships, Spark packages, Fast Pass, creator economics, and checkout.
+Phase 4 — Retention systems
+Months 5–9
+Recommendations, notifications, better libraries, reading history, creator updates, smarter search and discovery.
+Phase 5 — Scale selectively
+Months 9–12
+Add only features supported by usage data: advanced analytics, creator tools, moderation tooling, partnerships, or new monetization layers.
+
+13.1 Decision Gates
+Do users return after they read once?
+Do creators publish a second and third chapter after onboarding?
+Which acquisition sources produce retained readers rather than one-time clicks?
+Do memberships convert because users value the platform itself?
+Do Sparks function more strongly as creator support, Fast Pass currency, or both?
+Which fandoms/genres generate the highest retention and creator activity?
+Can support, moderation, and payment operations handle growth without overwhelming the founder?
+14. Strategic Conclusion
+FicForge is no longer merely a concept for “a fanfiction website.” It has developed into a defined platform strategy with a brand, technical stack, publishing workflow, monetization system, creator proposition, reader proposition, and launch plan. The opportunity is credible because the adjacent markets are already massive: fanfiction platforms serve millions of registered users and tens of millions of works, while commercial serialized-story ecosystems operate at well over one hundred million monthly active users and millions of paying users.
+FicForge does not need to reach incumbent scale to become meaningful. A focused platform can become viable by serving a specific creator-reader relationship extremely well: stories that update regularly, readers who return, creators who feel visible and supported, and monetization that does not destroy the free-reading foundation.
+The next stage is execution discipline. The founder’s job is to stop expanding the idea long enough to finish the core product, validate it with real users, measure what they actually do, and let those measurements determine the next feature set. The launch objective should be a trustworthy v1 with enough content and creator activity to feel alive—not a theoretical “complete” platform.
+FicForge in one sentence
+A story-first platform where fanfiction communities and original webnovel creators can publish, grow audiences, and build sustainable reader relationships in one ecosystem.
+
+Appendix A — Current Feature Inventory
+Feature / area
+Status
+Notes
+Homepage / brand
+Live build work
+Core message, CTA, visual identity, featured/discovery roadmap.
+Browse by fandom / genre
+Planned / partial
+Key discovery layer for launch.
+Story pages
+Core launch requirement
+Synopsis, metadata, cover, author, chapters.
+Chapter reader
+Core launch requirement
+Clean reading, navigation, comments.
+User accounts
+In progress
+Reader and creator account areas.
+Create Story
+Built / iterating
+WP User Frontend-based submission flow.
+Bulk chapter import
+Designed / iterating
+Needed for creators migrating existing libraries.
+My Stories
+Built / iterating
+Creator story management.
+Creator analytics
+Basic / in progress
+Advanced analytics intentionally later.
+Memberships
+In progress
+Premium page, CTA and checkout flow.
+Sparks
+Pricing/configuration in progress
+No cosmetics in current paid strategy.
+Fast Pass
+Post-core / planned
+Original fiction only.
+Comments
+Planned / plugin-supported
+Story-centered discussion.
+Library / follows
+Core launch requirement
+Retention loop.
+Search / tags
+Core launch requirement
+Discovery and fandom taxonomy.
+Moderation tools
+Framework documented
+Operational implementation must match launch policies.
+Legal/policy pages
+Substantial groundwork
+Final legal review/consistency still required.
+Mobile QA
+Pending
+Mandatory before public launch.
+
+Appendix B — External Sources Used for Market Statistics
+Organization for Transformative Works / AO3 milestones: AO3 reached 11 million registered users in June 2026 and 18 million fanworks in July 2026. Source
+WEBTOON Entertainment Investor Relations: Current creator/MAU overview and 2025 revenue context. Source
+WEBTOON Entertainment Q2 2026 filing: 156.9 million MAU, 7.5 million MPU and 4.8% paying ratio for Q2 2026. Source
+WEBTOON Entertainment 2025 Annual Report: Primary user base described as Gen Z and millennials; ecosystem operating metrics. Source
+Goldman Sachs Research: Creator economy forecast approaching $480 billion by 2027 from roughly $250 billion at the time of the 2023 report. Source
+Grand View Research: Global books market estimated at about $156.6 billion in 2025; online was the largest distribution channel. Source
+Appendix C — Internal Project Sources
+FicForge Foundational Framework / Master Platform Blueprint (working versions).
+FicForge v1.0 Launch Strategy.
+FicForge Foundation Documents.
+Current FicForge website build notes and decisions through September 2026, including the latest Spark pricing changes, removal of cosmetics from the paid model, checkout work, Create Story workflow, account/analytics work, and homepage/site architecture.
+Document control note
+This is a founder working document, not legal advice, an investor prospectus, or a guarantee of future results. Market statistics are third-party benchmarks and should be refreshed before external fundraising, public financial claims, or formal business-plan distribution.
+

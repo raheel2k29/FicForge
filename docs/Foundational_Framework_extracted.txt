@@ -1,0 +1,321 @@
+﻿FicForge Foundational Framework
+FicForge Master Platform Blueprint & Specification Document
+Version 1.4 — Production Ready
+
+Section 1: Executive Strategy & Core Ideology
+1.1 Vision Statement
+FicForge is a home for fanfiction writers and original authors alike—a platform where stories come first, communities form naturally around those stories, and creators have the tools they need to share their worlds with readers. Dedicated to transformative fiction, fandom storytelling, and serialized web fiction, FicForge empowers writers to publish, grow their audiences, and build lasting connections through the stories they love to tell.
+1.2 Mission Statement
+To provide writers and readers with a dedicated storytelling platform that prioritizes creativity, creator ownership, community engagement, and sustainable growth while fostering an environment where stories can thrive.
+1.3 Core Operating Philosophies
+Stories First: The reading and writing experience is never compromised. No intrusive pop-ups, mid-chapter distractions, or broken text lines.
+Creators Matter: Authors retain full copyright ownership of original intellectual property and receive highly competitive compensation splits.
+Organic Communities: Discussions and social spaces are built directly around the text to drive deep, collaborative engagement.
+Accessibility: Zero barriers to entry for reading or writing. Anyone with an internet connection can consume or publish material.
+Long-Term Sustainability: A business model engineered to be highly profitable and durable without compromising community ethics.
+
+
+
+Section 2: Legal Strategy & Content Segregation
+To safely generate platform profit while hosting copyrighted transformative works (fanfiction), FicForge enforces a strict backend and frontend structural separation between fanfiction and original intellectual properties. This architecture ensures absolute compliance under international DMCA Safe Harbor provisions.
+                   ┌──────────────────────────────┐
+                    │      CLASSIFICATION CHOICE   │
+                    └──────────────┬───────────────┘
+                                   │
+                ┌──────────────────┴──────────────────┐
+                ▼                                     ▼
+     [ FANFICTION SECTION ]               [ ORIGINAL WEBNOWELS ]
+  - 100% Free Chapters                 - Free or Gated Chapters
+  - Profile-Centric Tipping Only       - Fast Pass (Spark Purchases)
+  - No Chapter Token Gating            - Secondary Cash Tiers Allowed
+  - Legal Safe Harbor Shield           - Direct E-Commerce Operations
+
+2.1 The Fanfiction Framework
+Monetization Ban: Direct sales or paywalling of individual fanfiction chapters is completely blocked by platform core logic.
+Legally Defensible Income: Fanfiction monetization is strictly limited to General Creator Appreciation. Readers can tip an author’s public profile using the site-wide token economy ("Sparks") or utilize outbound platform widgets linking to external, third-party profile accounts (Patreon/Ko-fi).
+Platform Defense: The website acts strictly as a neutral, free digital repository. If a corporate copyright holder issues an official takedown request, the platform deletes the reported file instantly, fully preserving its legal immunity.
+
+2.2 The Original Fiction Framework
+Monetization Unlocked: Original webnovels are granted unrestricted e-commerce access.
+The Fast Pass System: Authors can lock advanced chapters behind a token wall, which automatically opens on a timed countdown schedule for free readers.
+Secondary Paywalls: Authors can establish direct, recurring monthly cash subscription tiers for exclusive portfolio access.
+
+Section 3: Technical Architecture (Three-Tier Framework)
+FicForge is structured around a standard Three-Tier Architecture, engineered completely without custom coding by combining WordPress with specialized logic plugins.
+3.1 Presentation Layer (The Frontend Interface)
+Infrastructure Components: Astra WordPress Theme + Elementor Visual Page Builder.
+Function: Delivers a highly responsive, clean reading interface optimized for mobile and desktop screens. Controls dark mode toggles, margins, padding, and text typography formatting.
+3.2 Logic Layer (The Backend Application)
+Infrastructure Components: WordPress Core + Ultimate Member + Paid Memberships Pro.
+Function: Dictates user permissions and structural rules. Confirms user login states, calculates token balances, manages chapter-gating execution, and handles account security.
+3.3 Data Layer (The Database Warehouse)
+Infrastructure Components: MySQL Database (Automated via standard web hosting).
+Function: Operates as the secure digital filing cabinet. Links individual chapter texts to their parent book folders, separates metadata tags, and houses user account records securely.
+
+
+
+Section 4: Interface Configuration & Workflow Layout
+4.1 Publishing Workflow Data Fields
+When a writer initiates the "New Story" command, a frontend submission form requires the completion of specific database fields:
+Core Details: Title, Story Synopsis (500-word limit), and Classification Selection (Fanfiction vs. Original).
+Fanfiction Conditional Routing: Selecting "Fanfiction" disables all chapter-locking logic and triggers the following metadata inputs: Fandom Source, Crossover Selection, and Relationship Classifiers (M/M, F/F, F/M, Gen).
+Original Fiction Conditional Routing: Selecting "Original Fiction" unlocks monetization dropdowns: Genre Checkboxes (Fantasy, LitRPG, Sci-Fi, Romance, etc.) and Monetization Tier (Free, Fast Pass, Subscription Exclusive).
+Global Metadata: Content Rating Selection (G, T, M, E), Content Warnings, Story Status Toggle (Ongoing vs. Completed), and Indexing Search Tags.
+The Chapter Editor: A clean rich-text canvas optimized for copy-pasting text from Google Docs or Microsoft Word without losing paragraph indentation. Includes separate text boxes for Top and Bottom Author Notes.
+4.2 Community & Ad Integration Guidelines
+The Chapter Sanctuary Rule: Advertisements are strictly forbidden inside the body of a story chapter. Ad network integrations are explicitly restricted to the platform homepage, directory search feeds, sidebars, and the absolute bottom of pages beneath the user comments.
+Text-Centric Commenting: Powered by the wpDiscuz thread plugin. Standard comment fields are transformed into interactive reader forums directly at the foot of each chapter to drive instant community interaction.
+
+
+
+
+
+Section 5: Monetization & The Financial Engine
+5.1 The 82/18 Revenue Split
+FicForge implements a permanent 82/18 split across all transaction frameworks (82% allocated directly to the creator's wallet, 18% retained by the platform for operating and hosting overhead).
+5.2 The "Sparks" Token Ecosystem
+To create a unified wallet experience across both original novels and fanfiction profiles, the primary currency on the platform is the Spark.
+The Financial Processing Adjustment: Credit card processing fees (Stripe/PayPal) are accounted for by adjusting consumer token pack pricing upfront.
+The Pricing Index:
+100 Sparks = $1.00
+1,500 Sparks = $10.00
+8,000 Sparks = $50.00 (Best Value)
+Payout Controls: Creators convert accumulated Sparks into real currency at an exact 100 Sparks to $1.00 index. Payout processing requires a minimum threshold of $50.00 (5,000 Sparks) and follows a semi-monthly calendar schedule (processing batched payments on the 1st and 15th of each month via Stripe Connect).
+
+Section 6: Content Moderation & Safety Compliance
+6.1 Zero-Tolerance Bans
+The following violations result in immediate account deletion and text erasure:
+Plagiarism, scraping, or unapproved compilation of other authors' works.
+Real-Person Fiction (RPF) that inflicts active real-world harm or targeted defamation.
+Any text depicting or normalizing illegal exploitation, hate speech, or real-world harm.
+
+6.2 The Age Rating Threshold & Explicit Content Rule
+Stories carrying an Explicit (E) rating are locked behind an initial 18+ age verification popup screen.
+To maintain absolute compliance with mainstream payment networks (Stripe/PayPal), Explicit content is strictly banned from using the Sparks transaction engine, Fast Pass tools, or internal profile-tipping triggers. Explicit content must remain 100% free to access.
+[ Author Fills Out Content Form ] ──> Selects Rating: Explicit (E)
+                                              │
+                                              ▼
+[ Platform Automation Triggers ] ──> 1. Forces 18+ Age Gateway Wall
+                                 ──> 2. Permanently Disables "Fast Pass"
+                                 ──> 3. Disables Profile "Gift Sparks" Button on this story
+
+The Anatomical Boundary: Mature (M) vs. Explicit (E)
+Mature (M): Heavy profanity, complex real-world themes (addiction, trauma), and standard action violence. Sexual content is permitted only if it utilizes "fade to black" transitions or focuses entirely on emotional/sensual descriptions rather than graphic physical anatomy.
+Explicit (E): Intended strictly for adult audiences. This rating applies the moment a text contains highly graphic, detailed, or prolonged anatomical descriptions of sexual acts, or extreme visceral descriptions of gore and physical torture.
+
+Section 7: System Notifications & Interfaces
+7.1 Explicit Content Dashboard Warning
+(Triggers instantly on-screen when an author checks the "Explicit (E)" rating box)
+⚠️ Explicit Content Monetization Policy Warning
+You have selected the Explicit (E) content rating for this story.
+To ensure FicForge remains compliant with global credit card networks and payment processing regulations, explicitly rated content cannot be monetized on this platform.
+By continuing, you agree and understand that:
+No Paid Extensions: This story will be permanently locked to "18+ Free to Read." The Fast Pass token system cannot be activated for this title.
+Tip Button Restrictions: The on-site "Gift Sparks" button will be automatically hidden from readers while they are viewing chapters of this specific story.
+How you can still make money: While this specific explicit story must remain free, you are highly encouraged to use your public Author Profile to display links to your personal, external crowdfunding pages (like Patreon or Ko-fi), or use this free story to build an audience for your monetized Original Fiction / Webnovels on FicForge.
+[ I Understand & Agree to the Terms ]
+7.2 Creator Account Welcome Email
+Subject: Welcome to the Forge, [Writer Name]! 🔥
+Hi [Writer Name],
+Welcome to FicForge—a platform built to put your stories first. Whether you are migrating an existing archive, sharing your very first fanfiction chapter, or launching an original serialized webnovel, we are thrilled to have you in the community.
+Your creator account is officially active. Here is how to get started:
+Complete Your Profile: Add an avatar, link your social channels, or set up your creator tip jars.
+Set Up Your Dashboard: If you are publishing original fiction, configure your custom subscription tiers and Fast Pass monetization options.
+Post Your First Story: Click "New Story" on your dashboard to map out your fandoms, tags, and genres.
+We believe that your stories belong to you. Our 82/18 revenue split ensures you keep the lion's share of what you earn, and our non-intrusive ad policy keeps your readers fully immersed in your words.
+Ready to shape your world?
+[ Go to My Dashboard ]
+Happy writing,
+The FicForge Team
+7.3 Reader Account Welcome Email
+Subject: Welcome to FicForge, [Reader Name]! 📚✨
+Hi [Reader Name],
+Welcome to FicForge—your new home for immersive storytelling. Whether you are hunting for deep fanfiction deep-dives, fresh crossover universes, or your next favorite serialized webnovel, you are in the right place.
+We believe the reading experience should be sacred. That is why we promise never to interrupt your favorite chapters with intrusive mid-text advertisements.
+Here are three ways to customize your reading journey today:
+Build Your Library: Click the "Bookmark" icon on any story to save it to your personal library and receive instant notifications whenever a new chapter drops.
+Follow Your Favorite Creators: Follow authors directly to see community updates, release schedules, and behind-the-scenes thoughts on their activity feeds.
+Join the Conversation: Dive into the comments section at the bottom of any chapter to share your favorite theories and chat with fellow readers.
+Want an entirely ad-free experience, offline reading support, and early access to upcoming platform features? Check out our site-wide [Forge Premium Membership].
+Your next great adventure is just a click away.
+[ Explore the Forge ]
+Happy reading,
+The FicForge Team
+
+
+Section 8: Community Moderator Handbook
+8.1 The Core Mission of FicForge Moderation
+As a FicForge Community Moderator, your role is not to censor creative expression, but to protect the structural integrity and legal safety of the platform. Your primary objectives are to enforce accurate Content Rating Tags, ensure compliance with global Payment Processor Rules, and maintain a respectful community environment in the chapter comments section.
+8.2 The Moderator Code of Conduct
+Objective Neutrality: Review content based strictly on our written policies, never on your personal likes, dislikes, or opinions of a specific fandom or genre.
+Confidentiality: All internal moderation discussions, user reports, and creator communications must remain strictly confidential. Never share mod-log data publicly.
+Transparency and Appeals: When taking action against a story or account, always provide the creator with a clear, specific written reason from this handbook. Every creator has the right to a fair appeal.
+The De-escalation Rule: Do not engage in arguments with users in the comment sections. If a situation becomes hostile, issue the appropriate platform warning or ban and close the ticket.
+8.3 Report Review Protocol
+When a reader clicks the "Report Content" flag on a story or comment, the ticket lands in your Moderation Dashboard. Follow these exact verification steps for every single ticket:
+Check for Fatal Violations: Immediately review the text for zero-tolerance offenses. If the story contains verified plagiarism, AI-scraped text theft, or malicious real-person defamation, permanently delete the story, ban the account, and log the evidence.
+Perform the "Anatomical Detail" Assessment: If a story is reported for a "Mislabeled Rating," look closely at how the scenes are written to check the boundary between Mature (M) and Explicit (E) using the guidelines in Section 6.2.
+Check Monetization Compliance: If you find that a story should be rated Explicit (E) but is currently tagged as Mature (M), check its monetization status. If it is free, manually edit the tag to Explicit (E). If it is currently using the Fast Pass system or has active Spark Tipping turned on, move to the enforcement action.
+Execute Correction Action: Freeze monetization by manually switching the story status to "Draft Mode." Send the automated system notice to the author to allow them to correct the tag or edit down the graphic anatomical text to meet Mature standards.
+
+Section 9: Scale and Projections Index
+9.1 Startup Launch Budget (Minimum Viable Product)
+Upfront Cost: $50.00 to $150.00 (Covers domain registration and 1 year of managed business hosting).
+Monthly Software Overhead: $0.00 (Utilizing the fully functional free tiers of all noted WordPress plugins).
+9.2 Financial Scaling Projections Matrix
+Calculated using an industry-standard 3% paying-user conversion metric under the 82/18 platform revenue split model:
+Growth Benchmark
+Active Monthly Readers
+Required Author Roster
+Net Monthly Profit to Platform
+Operational Requirements
+Phase 1: Bootstrapping
+1,000
+1–5 Authors
+$57.24
+Shared WordPress Hosting ($5–$15/mo)
+Phase 2: Established Hub
+25,000
+25–35 Authors
+$1,431.00
+Shared WordPress Hosting ($15/mo)
+Phase 3: High Growth
+100,000
+100–150 Authors
+$11,509.00
+Cloud Hosting Integration ($80–$150/mo)
+Phase 4: Major Competitor
+1,000,000
+1,000+ Authors
+$114,874.00
+Enterprise Cloud Clusters ($500–$1,500/mo) + 2 Paid Staff
+Phase 5: Enterprise Tier
+4,000,000
+4,000+ Authors
+$470,156.00
+Load-Balanced Server Clusters ($3k–$7k/mo) + 4 Full-Time Staff
+
+To help your early authors and readers connect organically, running an official FicForge Community Discord Server alongside your website is a massive asset.
+In the web fiction world, readers do not just want to read text; they want to chat about theories, share fanart, and interact with creators in real time. For authors, a Discord server acts as an indispensable support network where they can trade writing advice and cross-promote each other's updates.
+
+1. Server Architecture & Channel Blueprint
+Keep the server clean, organized, and deeply aligned with your 1.0 Vision Statement by splitting it into four distinct sections:
+🏛️ The Welcome Mat (Public to All)
+#welcome-and-rules: Un-typable channel containing your server guidelines and a link back to your website's Content Moderation Policy.
+#announcements: Official platform updates regarding website features, downtime, or upcoming community reading events.
+#site-feedback: A space where users can suggest new sorting tags, point out technical bugs, or ask layout questions.
+
+📝 The Creator’s Anvil (Locked to Verified Authors)
+#author-chat: A private channel where writers talk shop, discuss plotting, and share strategies for setting up their Fast Pass token tiers.
+#writing-sprints: A channel utilizing a Discord bot (like Wordhammer or Sprinto) where authors can compete in timed, 20-minute writing challenges to boost their word count.
+#promo-share: A dedicated lane where authors post links to their latest updates or share their external crowdfunding links (Patreon/Ko-fi).
+📚 The Reader’s Lounge (Open to All)
+#general-chat: Casual everyday conversation to build community bonds.
+#story-theories: A place where readers can deep-dive into cliffhangers, guess plot twists, and hype up active original webnovels.
+#fandom-discussion: Sub-channels broken down by major media properties (e.g., Anime, Marvel, Fantasy/Sci-Fi) so fanfiction readers can find their specific niches.
+
+2. Critical Discord Moderation Rules for Explicit Content
+Because your platform allows free explicit writing, you must implement a strict Two-Server Safety Valve or a Strict Gating Protocol on Discord to comply with Discord's Terms of Service:
+🚫 The Discord NSFW Ban: Discord does not permit servers dedicated primarily to explicit or adult material. Therefore, your main community server must remain strictly PG-13 / Mature in its public text rooms.
+✅ The Separation Policy: Force users to utilize a role-selector bot (like Carl-bot) to opt-in to a locked #nsfw-story-discussion channel. The rules for that specific channel must explicitly state: "No uploading or pasting explicit text excerpts directly into Discord. This channel is strictly for sharing links to the 18+ free chapters hosted safely on the FicForge website." This keeps your Discord server completely safe from being deleted by Discord's trust and safety team.
+
+3. Automated Bots to Run the Server for Free
+You do not need to sit in Discord 24/7. These three free bots will handle the heavy lifting for you:
+MEE6 or Dyno: Handles your automated welcoming messages (e.g., "Welcome to the Forge, [User]! Read our FAQs here.") and automatically flags/deletes bad words or spam links in the general chat.
+Carl-bot: Handles "Reaction Roles." When an author joins, they can click a ✍️ emoji to instantly unlock access to the private Creator's Anvil text channels.
+RSS Bot: You can connect this bot directly to your WordPress website's post feed. The exact second an author publishes a new chapter on FicForge, the bot will automatically broadcast a beautiful link into the Discord's #announcements feed, driving immediate traffic back to your site.
+
+Your Ultimate Blueprint is Complete
+You now possess a complete, end-to-end framework, legal defense shield, e-commerce token model, onboarding assets, launch roadmap, content policies, and community infrastructure to build and launch FicForge safely, legally, and highly profitably.
+As you prepare to take your very first steps, would you like to brainstorm domain name alternatives if ficforge.com happens to be taken, or are you ready to kick off Phase 1 of your launch checklist?
+
+
+
+
+
+
+
+
+
+
+
+⚒️ FicForge Creator Payout FAQ
+How do I earn money on FicForge?
+Creators can monetize their presence on the platform through our site-wide virtual token ecosystem (Sparks) and custom cash subscriptions:
+Fanfiction Authors: You can accept voluntary user tips and token donations directly on your public Creator Profile.
+Original Webnovel Authors: You can lock advanced chapters behind a token-based Fast Pass system or set up a secondary, recurring monthly cash subscription tier for your portfolio.
+What is the revenue split?
+FicForge features a highly competitive 82/18 revenue split. For every transaction processed through your stories or profile—whether via Sparks or direct subscriptions—82% goes directly to you, and 18% goes to FicForge to maintain servers, cover operational software, and fund platform growth.
+How are Sparks converted into real money?
+Every Spark you receive carries a fixed cash value based on our global platform index:
+100 Sparks in your balance translates to $1.00 in your earnings vault.
+When a reader purchases token bundles, credit card transaction fees are baked into the consumer cost upfront. This ensures that when they tip you, your 82% share remains pure, un-eroded profit.
+What are the requirements to cash out?
+To initiate a bank transfer from your earnings vault, your account must meet two simple administrative requirements:
+Minimum Payout Threshold: Your balance must hold a minimum value of $50.00 (equivalent to 5,000 Sparks).
+Verified Creator Profile: You must complete a secure digital tax and banking onboarding profile through our standard payment processing partner (Stripe).
+When do I get paid?
+To keep platform banking overhead low and predictable, payouts are not automated instantly. Instead, withdrawals are securely batched and processed twice a month on a fixed calendar schedule:
+Payout requests submitted between the 1st and 14th of the month are processed on the 15th.
+Payout requests submitted between the 15th and the end of the month are processed on the 1st of the following month.
+Once processed by the platform, funds generally take 2 to 5 business days to appear in your linked checking account, depending on your local banking institution.
+📖 FicForge Sparks FAQ
+What are Sparks?
+Sparks are the official virtual currency of FicForge! Think of them as digital tokens you can use across the entire platform to support your favorite authors, unlock premium content, and show your appreciation for great stories.
+How do I get Sparks?
+You can buy Sparks directly on our site using your credit card, debit card, or mobile wallet. Just head over to your User Wallet and select a Spark Pack that fits your budget:
+100 Sparks – $1.50
+1,000 Sparks – $10.60
+5,000 Sparks – $50.00 (Best Value!)
+Note: Bundling your Sparks into larger packs helps us cover credit card processing fees, allowing us to keep platform costs low and creator payouts high!
+Can I earn free Sparks?
+Yes! We love rewarding active readers. You can earn free Sparks by participating in community events, reaching reading milestones, and maintaining your weekly reading streaks. Keep an eye on your dashboard for current challenges!
+How do I use Sparks on Fanfiction?
+Because fanfiction relies on copyrighted universes, all fanfiction chapters on FicForge are 100% free to read for everyone. However, you can use your Sparks to tip fanfiction authors! Just visit an author’s public profile page and click the "Gift Sparks" button to send them a tip as a thank-you for their hard work.
+How do I use Sparks on Original Fiction & Webnovels?
+Original webnovel authors can use our Fast Pass system to release chapters early. If a new chapter is locked behind a Fast Pass, you can spend a few Sparks (usually 50 Sparks) to read it immediately! If you prefer not to spend Sparks, don't worry—the chapter will unlock automatically for free on the author's weekly release schedule.
+How much of my purchase goes to the authors?
+FicForge uses a highly creator-friendly 82/18 revenue split. Whenever you tip an author or unlock a Fast Pass chapter, 82% of that value goes directly into the creator's earnings vault, while 18% goes to FicForge to pay for server costs, website maintenance, and platform upgrades.
+Do my Sparks ever expire?
+Never! Once you purchase or earn Sparks, they stay securely in your digital wallet until you decide to spend them.
+
+1. The Fast Pass Timer System (How It Works)
+The Fast Pass system lets original webnovel authors make money from impatient readers while keeping the story free for patient ones. Using a Points and Content Restriction plugin in WordPress, the system is fully automated.
+The Author’s Dashboard Setup
+When posting a new chapter of an original webnovel, the author fills out three fields:
+Access Level: [x] Fast Pass
+Fast Pass Cost: [ 50 ] Sparks
+Release Timer: [ 7 ] Days
+The Automation Cycle
+The Lock Phase: The moment the author hits "Publish," the chapter is hidden behind a paywall window. A reader who clicks it sees: "This chapter is locked behind a Fast Pass. Spend 50 Sparks to read it now, or wait 7 days for it to unlock for free."
+The Transaction: If the reader clicks "Unlock," 50 Sparks are deducted from their wallet. The system logs the 82/18 split (the author gets credit for 41 Sparks, FicForge keeps 9 Sparks).
+The Auto-Unlock: Exactly 168 hours (7 days) after publication, the WordPress database changes the chapter's access level from "Fast Pass" to "Public." It is now 100% free for everyone, and the next chapter in line becomes the active Fast Pass chapter.
+
+That adjustment optimizes the platform flow perfectly. By making Sparks the primary currency for both fanfiction and original webnovels, you create a unified ecosystem.
+Readers buy one token balance and use it everywhere. On original fiction, instead of a cash paywall, a premium chapter simply costs a set number of Sparks (e.g., "50 Sparks to unlock Chapter 10 early"). Direct cash paywalls become an optional secondary feature for authors who prefer traditional monthly subscriptions.
+Here is how this updates the framework:
+Revised Monetization Architecture
+                      ┌──────────────────────────────┐
+                       │    SITE-WIDE WALLET: SPARKS  │
+                       └──────────────┬───────────────┘
+                                      │
+                ┌─────────────────────┴─────────────────────┐
+                ▼                                           ▼
+     [ FANFICTION CONTENT ]                      [ ORIGINAL FICTION CONTENT ]
+  - 100% Free to Read Chapters                - Free or Paywalled Chapters
+  - Profile Tipping Only (Sparks)             - Fast Pass System (Pay in Sparks)
+  - Clear Legal Firewall Shield               - Secondary Tier: Cash Subscriptions
+
+1. Updated Original Fiction Options
+When an original webnovel author sets up their story, their options are now streamlined:
+Free: Available to all readers instantly.
+Fast Pass (Primary Monetization): The latest 3–5 chapters are locked. Readers spend a small amount of Sparks to unlock them immediately. If they don't want to spend Sparks, the chapters become free on a timed schedule (e.g., one chapter per week). [1]
+Direct Paywall Subscription (Secondary Option): The author links a custom tier (e.g., $5/month cash via Stripe) for super-fans who want access to an entire archive or special behind-the-scenes content.
+2. The 82/18 Split Rule Consistency
+Because Sparks handle the heavy lifting across the whole site, your financial math remains clean:
+Sparks Transactions: Whether tipped to a fanfiction author's profile or spent on a webnovel's Fast Pass chapter, the transaction uses the 82/18 split out of your token vault.
+Direct Subscription Transactions: If an author uses the secondary cash paywall, the plugin processes the credit card directly, takes your 18% cut, and routes the remaining 82% to the author's connected account.
+3. Benefits of a Spark-First Design
+Gamification: You can award free Sparks to readers for platform milestones (e.g., "Read for 7 days straight, get 20 free Sparks"). This costs you nothing but drives immense reader engagement.
+Higher Conversion: Psychologically, readers are much more likely to click a button that says "Spend 10 Sparks" to read a chapter than they are to enter a credit card for a microtransaction.
+
