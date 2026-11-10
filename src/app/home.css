@@ -1,26 +1,32 @@
-/* FicForge Elementor Hero Layout Container */
+/* ===== FicForge Hero Container (Holds Widget 1 & Widget 2) ===== */
 .ficforge-hero-section {
-  width: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 70px 24px 60px;
+  background: radial-gradient(circle at 50% 0%, rgba(109, 93, 251, 0.15), transparent 60%);
+}
+
+.ficforge-hero-wrapper {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 60px 20px;
-}
-.ficforge-hero-wrapper {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 40px;
-  flex-wrap: wrap;
 }
-@media (max-width: 1024px) {
+
+@media (max-width: 991px) {
+  .ficforge-hero-section {
+    padding: 40px 16px 30px;
+  }
   .ficforge-hero-wrapper {
     flex-direction: column;
-    align-items: center;
-  }
-  .ficforge-hero-visual {
-    margin: 0 auto !important;
+    text-align: center;
+    gap: 30px;
   }
 }
+
+/* -------------------------------------------------- */
 
 .ficforge-hero-copy {
   max-width: 560px;
@@ -105,6 +111,8 @@
     font-size: 17px;
   }
 }
+
+/* -------------------------------------------------- */
 
 .ficforge-hero-visual {
   position: relative;
@@ -256,6 +264,8 @@
   }
 }
 
+/* -------------------------------------------------- */
+
 .ff-home-empty-stories {
       width: 100%;
       max-width: 1180px;
@@ -353,6 +363,8 @@
         width: 100%;
       }
     }
+
+/* -------------------------------------------------- */
 
 .ficforge-fandom-section {
   width: 100%;
@@ -460,6 +472,8 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* -------------------------------------------------- */
 
 .ficforge-genre-strip {
   width: 100%;
@@ -639,6 +653,8 @@
   }
 }
 
+/* -------------------------------------------------- */
+
 .ficforge-why-strip {
   width: 100%;
   max-width: 1180px;
@@ -791,6 +807,8 @@
   }
 }
 
+/* -------------------------------------------------- */
+
 .ficforge-features-strip {
   width: 100%;
   max-width: 1180px;
@@ -928,6 +946,8 @@
     border-bottom: none;
   }
 }
+
+/* -------------------------------------------------- */
 
 .ff-home-memberships {
       width: 100%;
@@ -1070,7 +1090,7 @@
     }
 
     .ff-home-tier li:before {
-      content: "âœ“";
+      content: "✓";
       position: absolute;
       left: 0;
       top: 0;
@@ -1132,6 +1152,8 @@
         grid-template-columns: 1fr;
       }
     }
+
+/* -------------------------------------------------- */
 
 .ficforge-final-cta {
   width: 100%;
@@ -1274,87 +1296,5 @@
 
   .ficforge-final-buttons a {
     width: 100%;
-  }
-}
-
-/* ===== Widget 10 : Footer Styles ===== */
-.ff-home-footer {
-  width: 100%;
-  max-width: 1180px;
-  margin: 40px auto 0 auto;
-  padding: 60px 20px 40px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  color: #94A3B8;
-}
-
-.ff-home-footer-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 40px;
-  flex-wrap: wrap;
-  margin-bottom: 40px;
-}
-
-.ff-home-footer-brand h2 {
-  color: #FFFFFF;
-  font-size: 26px;
-  font-weight: 900;
-  margin: 0 0 10px 0;
-  letter-spacing: -0.02em;
-}
-
-.ff-home-footer-brand p {
-  color: #94A3B8;
-  font-size: 14px;
-  max-width: 320px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.ff-home-footer-links {
-  display: flex;
-  gap: 48px;
-  flex-wrap: wrap;
-}
-
-.ff-home-footer-links h4 {
-  color: #FFFFFF;
-  font-size: 13px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 0 0 16px 0;
-}
-
-.ff-home-footer-links a {
-  display: block;
-  color: #CBD5E1;
-  text-decoration: none !important;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  transition: color 0.2s ease;
-}
-
-.ff-home-footer-links a:hover {
-  color: #F97316 !important;
-}
-
-.ff-home-footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  padding-top: 24px;
-  font-size: 13px;
-  color: #64748B;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-@media (max-width: 767px) {
-  .ff-home-footer-links {
-    gap: 32px;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
   }
 }

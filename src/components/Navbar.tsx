@@ -2,145 +2,116 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Search, Menu, X, BookOpen, PenTool, Sparkles, Shield, Bookmark, User } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#050B16]/85 backdrop-blur-md">
-      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#050B16]/90 backdrop-blur-md">
+      <div className="mx-auto flex h-20 max-w-[1180px] items-center justify-between px-4 sm:px-6">
         
         {/* Logo */}
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2 group">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#F97316] to-[#EA580C] text-xl shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
-              🔥
-            </span>
-            <span className="text-2xl font-black tracking-tight text-white">
-              Fic<span className="text-[#F97316]">Forge</span>
-            </span>
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-tr from-[#6D5DFB] via-[#9333EA] to-[#F97316] text-2xl shadow-lg shadow-purple-900/30 group-hover:scale-105 transition-transform">
+            🔥
+          </div>
+          <span className="text-2xl font-black tracking-tight text-white">
+            Fic<span className="text-[#F97316]">Forge</span>
+          </span>
+        </Link>
+
+        {/* Desktop Navigation Links */}
+        <nav className="hidden md:flex items-center gap-8 text-[15px] font-semibold text-slate-300">
+          <Link href="/" className="text-white hover:text-white transition-colors">
+            Home
           </Link>
+          <Link href="/browse" className="hover:text-white transition-colors">
+            Browse
+          </Link>
+          <Link href="/write" className="hover:text-white transition-colors">
+            Write
+          </Link>
+          <Link href="/community" className="hover:text-white transition-colors">
+            Community
+          </Link>
+          <Link href="/premium" className="hover:text-[#F97316] transition-colors">
+            Premium
+          </Link>
+        </nav>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-bold text-slate-300">
-            <Link href="/browse" className="hover:text-white transition-colors">
-              Browse
-            </Link>
-            <Link href="/premium" className="flex items-center gap-1.5 hover:text-[#F97316] transition-colors">
-              <Sparkles className="h-4 w-4 text-[#F97316]" />
-              Premium
-            </Link>
-            <Link href="/community" className="hover:text-white transition-colors">
-              Community
-            </Link>
-            <Link href="/write" className="flex items-center gap-1.5 hover:text-white transition-colors">
-              <PenTool className="h-4 w-4 text-[#A78BFA]" />
-              Write
-            </Link>
-            <Link href="/library" className="hover:text-white transition-colors">
-              My Library
-            </Link>
-          </nav>
-        </div>
-
-        {/* Right Action Buttons */}
+        {/* Right Action: Log In */}
         <div className="hidden md:flex items-center gap-4">
           <Link
-            href="/browse"
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-slate-900/60 text-slate-300 hover:text-white hover:border-white/25 transition-all"
-            title="Search Stories"
-          >
-            <Search className="h-4 w-4" />
-          </Link>
-
-          <Link
             href="/login"
-            className="rounded-lg px-4 py-2 text-sm font-bold text-slate-300 hover:text-white transition-colors"
+            className="rounded-lg bg-[#6D5DFB] hover:bg-[#5B4BE0] px-6 py-2.5 text-[15px] font-bold text-white shadow-md shadow-indigo-600/30 transition-all active:scale-95"
           >
-            Sign In
-          </Link>
-
-          <Link
-            href="/write"
-            className="rounded-lg bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-2.5 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/25 hover:from-[#5B4BE0] hover:to-[#6D5DFB] hover:shadow-indigo-600/40 transition-all active:scale-95"
-          >
-            Start Writing
+            Log In
           </Link>
         </div>
 
-        {/* Mobile menu trigger */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="flex md:hidden h-10 w-10 items-center justify-center rounded-lg border border-white/10 text-slate-300 hover:text-white"
-          aria-label="Toggle Navigation"
-        >
-          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        {/* Mobile Hamburger Toggle */}
+        <div className="flex md:hidden">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white focus:outline-none"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="border-b border-white/10 bg-[#0B1220] px-4 py-6 md:hidden">
-          <nav className="flex flex-col gap-4 text-base font-bold text-slate-200">
+        <div className="border-b border-white/10 bg-[#070E1E] px-4 pt-3 pb-6 md:hidden">
+          <div className="flex flex-col space-y-3">
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="rounded-lg px-3 py-2 text-base font-semibold text-white hover:bg-slate-800"
+            >
+              Home
+            </Link>
             <Link
               href="/browse"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5"
+              className="rounded-lg px-3 py-2 text-base font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"
             >
-              <BookOpen className="h-5 w-5 text-[#F97316]" />
-              Browse Stories
-            </Link>
-            <Link
-              href="/premium"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5"
-            >
-              <Sparkles className="h-5 w-5 text-[#F97316]" />
-              Premium & Sparks
-            </Link>
-            <Link
-              href="/community"
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5"
-            >
-              <Shield className="h-5 w-5 text-[#34D399]" />
-              Community Hub
+              Browse
             </Link>
             <Link
               href="/write"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5"
+              className="rounded-lg px-3 py-2 text-base font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"
             >
-              <PenTool className="h-5 w-5 text-[#A78BFA]" />
-              Writer Portal
+              Write
             </Link>
             <Link
-              href="/library"
+              href="/community"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5"
+              className="rounded-lg px-3 py-2 text-base font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"
             >
-              <Bookmark className="h-5 w-5 text-[#60A5FA]" />
-              My Saved Library
+              Community
             </Link>
-
-            <div className="my-2 border-t border-white/10 pt-4 flex flex-col gap-3">
+            <Link
+              href="/premium"
+              onClick={() => setMobileMenuOpen(false)}
+              className="rounded-lg px-3 py-2 text-base font-semibold text-[#F97316] hover:bg-slate-800"
+            >
+              Premium
+            </Link>
+            <div className="pt-2">
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center rounded-lg border border-white/15 px-4 py-2.5 text-center font-bold text-white hover:bg-white/5"
+                className="block w-full text-center rounded-lg bg-[#6D5DFB] py-3 text-base font-bold text-white shadow-md shadow-indigo-600/30"
               >
-                Sign In
-              </Link>
-              <Link
-                href="/write"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-4 py-2.5 text-center font-extrabold text-white shadow-md shadow-indigo-600/30"
-              >
-                Start Writing
+                Log In
               </Link>
             </div>
-          </nav>
+          </div>
         </div>
       )}
     </header>
