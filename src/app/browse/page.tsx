@@ -1,12 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Search, Compass, BookOpen, Sparkles, Filter } from "lucide-react";
+import { useState, useMemo } from "react";
+import { mockStories, StoryData } from "@/data/mockStories";
+import {
+  Search,
+  Filter,
+  Heart,
+  Bookmark,
+  BookOpen,
+  Sparkles,
+  Zap,
+  Eye,
+  Check,
+  CheckCircle2,
+} from "lucide-react";
 
 export default function BrowsePage() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [likedStories, setLikedStories] = useState<Record<string, boolean>>({});
+  const [savedStories, setSavedStories] = useState<Record<string, boolean>>({});
+  const [notification, setNotification] = useState<string | null>(null);
 
   const filters = [
     "All",
@@ -14,21 +29,89 @@ export default function BrowsePage() {
     "Original Fiction",
     "Fantasy",
     "Sci-Fi",
-    "Romance",
     "Action",
     "Adventure",
-    "Horror",
-    "Mystery",
+    "Cyberpunk",
+    "Romance",
   ];
+
+  const storiesList = useMemo(() => {
+    return Object.values(mockStories);
+  }, []);
+
+  const filteredStories = useMemo(() => {
+    return storiesList.filter((story) => {
+      // Filter match
+      let matchesFilter = true;
+      if (activeFilter === "Fanfiction") {
+        matchesFilter = story.classification === "FANFICTION";
+      } else if (activeFilter === "Original Fiction") {
+        matchesFilter = story.classification === "ORIGINAL";
+      } else if (activeFilter !== "All") {
+        matchesFilter = story.genres.includes(activeFilter);
+      }
+
+      // Search match
+      const query = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        query === "" ||
+        story.title.toLowerCase().includes(query) ||
+        story.author.name.toLowerCase().includes(query) ||
+        story.genres.some((g) => g.toLowerCase().includes(query)) ||
+        (story.fandom && story.fandom.toLowerCase().includes(query)) ||
+        story.tags.general.some((t) => t.toLowerCase().includes(query));
+
+      return matchesFilter && matchesSearch;
+    });
+  }, [storiesList, activeFilter, searchQuery]);
+
+  const toggleLike = (storyId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setLikedStories((prev) => {
+      const isLiked = !prev[storyId];
+      showToast(isLiked ? "Added to your Liked Stories ❤️" : "Removed like");
+      return { ...prev, [storyId]: isLiked };
+    });
+  };
+
+  const toggleSave = (storyId: string, title: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSavedStories((prev) => {
+      const isSaved = !prev[storyId];
+      showToast(
+        isSaved
+          ? `Saved "${title}" to your Library 📚`
+          : `Removed "${title}" from your Library`
+      );
+      return { ...prev, [storyId]: isSaved };
+    });
+  };
+
+  const showToast = (msg: string) => {
+    setNotification(msg);
+    setTimeout(() => {
+      setNotification((curr) => (curr === msg ? null : curr));
+    }, 2800);
+  };
 
   return (
     <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1180px] mx-auto">
+      {/* Toast Notification */}
+      {notification && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl border border-[#6D5DFB]/40 bg-[#070E1E]/95 px-5 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur-md flex items-center gap-2.5 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+          <span>{notification}</span>
+        </div>
+      )}
+
+      <div className="max-w-[1240px] mx-auto">
         
         {/* Hero Header */}
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-[#F97316] bg-orange-500/10 border border-orange-500/30 rounded-full px-3.5 py-1.5 mb-4">
-            EXPLORE THE FORGE
+            DISCOVER STORIES
           </span>
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
             Browse Stories
@@ -67,7 +150,7 @@ export default function BrowsePage() {
           {/* Filter Pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-2 flex items-center gap-1 shrink-0">
-              <Filter className="h-3.5 w-3.5" /> Genres:
+              <Filter className="h-3.5 w-3.5" /> Filter:
             </span>
             {filters.map((filter) => {
               const isActive = activeFilter === filter;
@@ -107,41 +190,178 @@ export default function BrowsePage() {
           </Link>
         </div>
 
-        {/* Main Content Area (Ready for dynamic Story Cards) */}
-        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-[#070E1E] p-10 sm:p-14 text-center shadow-2xl">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#6D5DFB]/20 to-[#F97316]/20 border border-white/10 text-3xl mb-5 shadow-lg">
-            📖
+        {/* Story Grid */}
+        {filteredStories.length === 0 ? (
+          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-12 text-center">
+            <p className="text-slate-400">No stories match your search criteria.</p>
+            <button
+              onClick={() => {
+                setActiveFilter("All");
+                setSearchQuery("");
+              }}
+              className="mt-4 text-xs font-bold text-[#F97316] hover:underline"
+            >
+              Reset Filters
+            </button>
           </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredStories.map((story) => {
+              const isLiked = likedStories[story.id];
+              const isSaved = savedStories[story.id];
+              const likeCount = story.stats.likes + (isLiked ? 1 : 0);
 
-          <h3 className="text-2xl sm:text-3xl font-black text-white">
-            The FicForge Story Library is Opening Soon
-          </h3>
+              return (
+                <div
+                  key={story.id}
+                  className="group relative flex flex-col rounded-2xl border border-white/10 bg-gradient-to-b from-slate-900/90 to-[#070E1E] overflow-hidden shadow-xl hover:border-[#6D5DFB]/50 hover:shadow-2xl hover:shadow-indigo-950/40 transition-all duration-300"
+                >
+                  {/* Card Cover & Header */}
+                  <div className="relative h-56 w-full overflow-hidden bg-slate-950">
+                    <img
+                      src={story.coverImageUrl}
+                      alt={story.title}
+                      className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#070E1E] via-transparent to-black/60" />
 
-          <p className="mt-3 max-w-xl mx-auto text-sm sm:text-base text-slate-300 leading-relaxed">
-            We are preparing the first wave of fanfiction and original webnovels. Authors can start publishing chapters now, and standout stories will appear right here with interactive library and reader tools.
-          </p>
+                    {/* Top Badges */}
+                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
+                      {story.classification === "FANFICTION" ? (
+                        <span className="rounded-full bg-emerald-500/90 backdrop-blur-md px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-950 shadow-md">
+                          100% Free Fanfiction
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-950 shadow-md">
+                          Original Webnovel
+                        </span>
+                      )}
 
-          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/write"
-              className="rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all"
-            >
-              Start Writing a Story
-            </Link>
-            <Link
-              href="/library"
-              className="rounded-xl border border-white/20 bg-slate-900/80 px-6 py-3 text-sm font-extrabold text-white hover:border-[#F97316] hover:text-[#F97316] transition-all"
-            >
-              My Saved Library
-            </Link>
-            <Link
-              href="/community"
-              className="rounded-xl border border-white/20 bg-slate-900/80 px-6 py-3 text-sm font-extrabold text-white hover:border-[#F97316] hover:text-[#F97316] transition-all"
-            >
-              Join Community
-            </Link>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider backdrop-blur-md ${
+                          story.rating === "EXPLICIT"
+                            ? "bg-red-500/80 text-white"
+                            : story.rating === "MATURE"
+                            ? "bg-amber-500/80 text-slate-950"
+                            : "bg-white/20 text-white"
+                        }`}
+                      >
+                        {story.rating}
+                      </span>
+                    </div>
+
+                    {/* Fandom / Genres Pill on bottom cover */}
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-slate-300 pointer-events-none">
+                      <span className="font-extrabold text-[#F97316] drop-shadow-sm">
+                        {story.fandom ? `⚔️ ${story.fandom}` : `✨ ${story.genres[0]}`}
+                      </span>
+                      <span className="text-[11px] text-slate-300 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md">
+                        {story.chapters.length} Chapters
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Card Body */}
+                  <div className="flex flex-col flex-1 p-5">
+                    {/* Title */}
+                    <Link
+                      href={`/story/${story.slug}`}
+                      className="group-hover:text-[#F97316] transition-colors"
+                    >
+                      <h3 className="text-lg font-black text-white leading-snug line-clamp-1">
+                        {story.title}
+                      </h3>
+                    </Link>
+
+                    {/* Author */}
+                    <div className="mt-1 flex items-center gap-2">
+                      <img
+                        src={story.author.avatarUrl}
+                        alt={story.author.name}
+                        className="h-5 w-5 rounded-full object-cover"
+                      />
+                      <span className="text-xs font-semibold text-slate-300">
+                        {story.author.name}
+                      </span>
+                      {story.author.isVerified && (
+                        <span className="text-blue-400 text-xs" title="Verified Creator">
+                          ✓
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Synopsis snippet */}
+                    <p className="mt-2.5 text-xs text-slate-400 leading-relaxed line-clamp-2">
+                      {story.synopsis}
+                    </p>
+
+                    {/* Genre Tags */}
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {story.genres.slice(0, 3).map((g) => (
+                        <span
+                          key={g}
+                          className="rounded-md border border-white/5 bg-white/5 px-2 py-0.5 text-[10px] font-bold text-slate-300"
+                        >
+                          {g}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Card Actions Footer: Like & Add to Library */}
+                    <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between gap-2">
+                      {/* Left: Like heart toggle */}
+                      <button
+                        type="button"
+                        onClick={(e) => toggleLike(story.id, e)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                          isLiked
+                            ? "border-rose-500/50 bg-rose-500/15 text-rose-400 shadow-sm shadow-rose-500/20"
+                            : "border-white/10 bg-slate-800/60 text-slate-400 hover:text-white hover:border-white/20"
+                        }`}
+                        title={isLiked ? "Unlike" : "Like story"}
+                      >
+                        <Heart
+                          className={`h-3.5 w-3.5 ${
+                            isLiked ? "fill-rose-500 text-rose-500" : ""
+                          }`}
+                        />
+                        <span>{likeCount.toLocaleString()}</span>
+                      </button>
+
+                      {/* Middle: Save to Library toggle */}
+                      <button
+                        type="button"
+                        onClick={(e) => toggleSave(story.id, story.title, e)}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                          isSaved
+                            ? "border-[#6D5DFB]/50 bg-[#6D5DFB]/20 text-[#A594FD]"
+                            : "border-white/10 bg-slate-800/60 text-slate-400 hover:text-white hover:border-white/20"
+                        }`}
+                        title={isSaved ? "Saved to Library" : "Save to Library"}
+                      >
+                        <Bookmark
+                          className={`h-3.5 w-3.5 ${
+                            isSaved ? "fill-[#6D5DFB] text-[#6D5DFB]" : ""
+                          }`}
+                        />
+                        <span>{isSaved ? "Saved" : "Save"}</span>
+                      </button>
+
+                      {/* Right: Read Button */}
+                      <Link
+                        href={`/story/${story.slug}`}
+                        className="rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-3.5 py-1.5 text-xs font-extrabold text-white shadow-md shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all"
+                      >
+                        Read →
+                      </Link>
+                    </div>
+
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </div>
+        )}
 
       </div>
     </div>
