@@ -1,19 +1,427 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Premium Memberships — FicForge",
-  description: "Premium Memberships on FicForge — Where Stories Are Forged",
+  title: "Premium Memberships & Creator Tools — FicForge",
+  description: "FicForge Premium Memberships — Ad-free reading, monthly Sparks, and exclusive tools and plugins for creators.",
 };
 
-const rawHtml = "<section class=\"ff-premium-page\">\n  <style>\n    .ff-premium-page {\n      width: 100%;\n      max-width: 1180px;\n      margin: 0 auto;\n      color: #FFFFFF;\n    }\n\n    .ff-premium-page .label {\n      display: inline-flex;\n      color: #F97316;\n      background: rgba(249, 115, 22, 0.12);\n      border: 1px solid rgba(249, 115, 22, 0.28);\n      border-radius: 999px;\n      padding: 8px 14px;\n      margin-bottom: 16px;\n      font-size: 13px;\n      font-weight: 900;\n      letter-spacing: 0.08em;\n      text-transform: uppercase;\n    }\n\n    .ff-premium-hero {\n      max-width: 960px;\n      margin-bottom: 30px;\n    }\n\n    .ff-premium-hero h1 {\n      color: #FFFFFF;\n      font-size: 56px;\n      line-height: 1.05;\n      margin: 0 0 14px 0;\n      font-weight: 900;\n      letter-spacing: -0.04em;\n    }\n\n    .ff-premium-hero p {\n      color: #CBD5E1;\n      font-size: 18px;\n      line-height: 1.65;\n      margin: 0;\n    }\n\n    .ff-premium-actions {\n      display: flex;\n      gap: 12px;\n      flex-wrap: wrap;\n      margin-top: 22px;\n    }\n\n    .ff-premium-actions a {\n      color: #FFFFFF !important;\n      text-decoration: none !important;\n      background: rgba(15, 23, 42, 0.86);\n      border: 1px solid rgba(255, 255, 255, 0.14);\n      border-radius: 10px;\n      padding: 13px 18px;\n      font-size: 14px;\n      font-weight: 900;\n    }\n\n    .ff-premium-actions a.primary {\n      background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n      border-color: rgba(109, 93, 251, 0.72);\n    }\n\n    .ff-premium-note,\n    .ff-premium-tier,\n    .ff-spark-pack,\n    .ff-premium-panel,\n    .ff-premium-bottom {\n      background: rgba(15, 23, 42, 0.78);\n      border: 1px solid rgba(255, 255, 255, 0.11);\n      border-radius: 18px;\n      padding: 22px;\n    }\n\n    .ff-premium-note {\n      margin-bottom: 22px;\n      border-color: rgba(249, 115, 22, 0.28);\n      background: rgba(249, 115, 22, 0.08);\n    }\n\n    .ff-premium-note strong {\n      display: block;\n      color: #FFFFFF;\n      font-size: 17px;\n      margin-bottom: 8px;\n      font-weight: 900;\n    }\n\n    .ff-premium-note p,\n    .ff-premium-tier p,\n    .ff-spark-pack p,\n    .ff-premium-panel p,\n    .ff-premium-bottom p {\n      color: #94A3B8;\n      font-size: 14px;\n      line-height: 1.7;\n      margin: 0;\n    }\n\n    .ff-section-head {\n      margin: 34px 0 18px 0;\n      max-width: 900px;\n    }\n\n    .ff-section-head h2 {\n      color: #FFFFFF;\n      font-size: 36px;\n      margin: 0 0 10px 0;\n      font-weight: 900;\n      letter-spacing: -0.03em;\n    }\n\n    .ff-section-head p {\n      color: #94A3B8;\n      font-size: 15px;\n      line-height: 1.7;\n      margin: 0;\n    }\n\n    .ff-premium-grid {\n      display: grid;\n      grid-template-columns: repeat(4, 1fr);\n      gap: 14px;\n      margin-bottom: 22px;\n    }\n\n    .ff-premium-tier {\n      position: relative;\n      overflow: hidden;\n      display: flex;\n      flex-direction: column;\n      min-height: 100%;\n    }\n\n    .ff-premium-tier.featured {\n      border-color: rgba(249, 115, 22, 0.42);\n      background: rgba(249, 115, 22, 0.10);\n    }\n\n    .ff-premium-tier .tier-tag,\n    .ff-spark-pack .pack-tag {\n      display: inline-flex;\n      width: fit-content;\n      color: #FFFFFF;\n      background: rgba(109, 93, 251, 0.28);\n      border: 1px solid rgba(109, 93, 251, 0.48);\n      border-radius: 999px;\n      padding: 6px 10px;\n      font-size: 11px;\n      font-weight: 900;\n      margin-bottom: 12px;\n      text-transform: uppercase;\n      letter-spacing: 0.06em;\n    }\n\n    .ff-premium-tier.featured .tier-tag,\n    .ff-spark-pack.best .pack-tag {\n      background: rgba(249, 115, 22, 0.24);\n      border-color: rgba(249, 115, 22, 0.50);\n    }\n\n    .ff-premium-tier h2,\n    .ff-spark-pack h3 {\n      color: #FFFFFF;\n      font-size: 26px;\n      margin: 0 0 8px 0;\n      font-weight: 900;\n      letter-spacing: -0.03em;\n    }\n\n    .ff-premium-price,\n    .ff-spark-price {\n      color: #FFFFFF;\n      font-size: 36px;\n      font-weight: 900;\n      letter-spacing: -0.04em;\n      margin: 4px 0 6px 0;\n    }\n\n    .ff-premium-price span,\n    .ff-spark-price span {\n      color: #94A3B8;\n      font-size: 14px;\n      font-weight: 800;\n      letter-spacing: 0;\n    }\n\n    .ff-premium-sparks,\n    .ff-spark-total {\n      color: #F97316;\n      font-size: 15px;\n      font-weight: 900;\n      margin: 10px 0 8px 0;\n    }\n\n    .ff-premium-bonus {\n      color: #A78BFA;\n      font-size: 13px;\n      font-weight: 900;\n      margin-bottom: 16px;\n    }\n\n    .ff-premium-tier ul {\n      list-style: none;\n      padding: 0;\n      margin: 18px 0 22px 0;\n      display: grid;\n      gap: 10px;\n    }\n\n    .ff-premium-tier li {\n      color: #CBD5E1;\n      font-size: 13.5px;\n      line-height: 1.55;\n      padding-left: 22px;\n      position: relative;\n    }\n\n    .ff-premium-tier li:before {\n      content: \"✓\";\n      position: absolute;\n      left: 0;\n      top: 0;\n      color: #F97316;\n      font-weight: 900;\n    }\n\n    .ff-premium-tier a,\n    .ff-spark-pack a {\n      margin-top: auto;\n      color: #FFFFFF !important;\n      text-decoration: none !important;\n      text-align: center;\n      background: rgba(2, 6, 23, 0.55);\n      border: 1px solid rgba(255, 255, 255, 0.12);\n      border-radius: 12px;\n      padding: 13px 16px;\n      font-size: 14px;\n      font-weight: 900;\n      display: block;\n    }\n\n    .ff-premium-tier.featured a,\n    .ff-spark-pack.best a {\n      background: linear-gradient(135deg, #F97316, #EA580C);\n      border-color: rgba(249, 115, 22, 0.72);\n    }\n\n    .ff-sparks-store {\n      display: grid;\n      grid-template-columns: repeat(5, 1fr);\n      gap: 14px;\n      margin-bottom: 22px;\n    }\n\n    .ff-spark-pack {\n      display: flex;\n      flex-direction: column;\n      min-height: 100%;\n    }\n\n    .ff-spark-pack.best {\n      border-color: rgba(249, 115, 22, 0.42);\n      background: rgba(249, 115, 22, 0.10);\n    }\n\n    .ff-spark-bonus {\n      color: #F97316;\n      font-size: 13px;\n      font-weight: 900;\n      margin-top: 8px;\n      margin-bottom: 18px;\n    }\n\n    .ff-spark-pack p {\n      margin-bottom: 18px;\n    }\n\n    .ff-premium-panel {\n      margin-bottom: 18px;\n    }\n\n    .ff-premium-panel h2,\n    .ff-premium-bottom h2 {\n      color: #FFFFFF;\n      font-size: 30px;\n      margin: 0 0 10px 0;\n      font-weight: 900;\n      letter-spacing: -0.02em;\n    }\n\n    .ff-premium-two {\n      display: grid;\n      grid-template-columns: repeat(2, 1fr);\n      gap: 14px;\n      margin-top: 18px;\n    }\n\n    .ff-premium-box {\n      background: rgba(2, 6, 23, 0.45);\n      border: 1px solid rgba(255, 255, 255, 0.08);\n      border-radius: 14px;\n      padding: 16px;\n    }\n\n    .ff-premium-box strong {\n      display: block;\n      color: #FFFFFF;\n      font-size: 15px;\n      font-weight: 900;\n      margin-bottom: 6px;\n    }\n\n    .ff-premium-box p {\n      color: #94A3B8;\n      font-size: 13.5px;\n      line-height: 1.65;\n      margin: 0;\n    }\n\n    .ff-premium-links {\n      display: flex;\n      flex-wrap: wrap;\n      gap: 10px;\n      margin-top: 18px;\n    }\n\n    .ff-premium-links a {\n      color: #FFFFFF !important;\n      text-decoration: none !important;\n      background: rgba(2, 6, 23, 0.45);\n      border: 1px solid rgba(255, 255, 255, 0.10);\n      border-radius: 10px;\n      padding: 11px 14px;\n      font-size: 13px;\n      font-weight: 900;\n    }\n\n    .ff-premium-bottom {\n      margin-top: 24px;\n    }\n\n    @media (max-width: 1150px) {\n      .ff-premium-grid,\n      .ff-sparks-store {\n        grid-template-columns: repeat(2, 1fr);\n      }\n    }\n\n    @media (max-width: 900px) {\n      .ff-premium-two {\n        grid-template-columns: 1fr;\n      }\n    }\n\n    @media (max-width: 767px) {\n      .ff-premium-hero h1 {\n        font-size: 40px;\n      }\n\n      .ff-premium-grid,\n      .ff-sparks-store {\n        grid-template-columns: 1fr;\n      }\n\n      .ff-premium-actions a,\n      .ff-premium-links a {\n        width: 100%;\n        text-align: center;\n      }\n    }\n  </style>\n\n  <div class=\"ff-premium-hero\">\n    <span class=\"label\">FicForge Premium</span>\n    <h1>Memberships, Sparks, and stronger reader perks.</h1>\n    <p>\n      Upgrade your FicForge experience with monthly Sparks, ad-free reading, priority support, and access to the platform benefits we are building for readers and creators.\n    </p>\n\n    <div class=\"ff-premium-actions\">\n      <a href=\"/support/\">← Return to Support</a>\n      <a class=\"primary\" href=\"#sparks-store\">Buy Sparks</a>\n    </div>\n  </div>\n\n  <div class=\"ff-section-head\">\n    <span class=\"label\">Memberships</span>\n    <h2>Choose your Premium tier</h2>\n    <p>\n      Premium members receive monthly Sparks plus bonus monthly Sparks, ad-free reading, badges, profile benefits, reading tools, priority support, member updates, polls, and early access to new FicForge features.\n    </p>\n  </div>\n\n  <div class=\"ff-premium-grid\">\n    <div class=\"ff-premium-tier\">\n      <span class=\"tier-tag\">Reader</span>\n      <h2>Reader</h2>\n      <div class=\"ff-premium-price\">$4.99 <span>/ month</span></div>\n      <div class=\"ff-premium-sparks\">500 monthly Sparks</div>\n      <div class=\"ff-premium-bonus\">+200 bonus Sparks monthly · 700 total</div>\n      <p>For readers who want to support FicForge and receive basic Premium perks.</p>\n\n      <ul>\n        <li>Ad-free experience</li>\n        <li>Reader Supporter badge</li>\n        <li>Basic profile supporter status</li>\n        <li>Save and organize reading lists</li>\n        <li>Member-only platform updates</li>\n        <li>Early access to selected new features</li>\n      </ul>\n\n      <a href=\"https://ficforge.org/product/reader-membership/\">Join Reader</a>\n    </div>\n\n    <div class=\"ff-premium-tier\">\n      <span class=\"tier-tag\">Supporter</span>\n      <h2>Supporter</h2>\n      <div class=\"ff-premium-price\">$9.99 <span>/ month</span></div>\n      <div class=\"ff-premium-sparks\">1,000 monthly Sparks</div>\n      <div class=\"ff-premium-bonus\">+200 bonus Sparks monthly · 1,200 total</div>\n      <p>For active readers who want stronger supporter perks and more monthly Sparks.</p>\n\n      <ul>\n        <li>Ad-free experience</li>\n        <li>Supporter badge upgrade</li>\n        <li>Early access to selected new features</li>\n        \n        <li>Priority support over free users</li>\n        <li>Member-only polls</li>\n        <li>Expanded reading list tools</li>\n        <li>Supporter recognition</li>\n      </ul>\n\n      <a href=\"/contact/\">Join Supporter</a>\n    </div>\n\n    <div class=\"ff-premium-tier featured\">\n      <span class=\"tier-tag\">Best Balance</span>\n      <h2>Forge Plus</h2>\n      <div class=\"ff-premium-price\">$14.99 <span>/ month</span></div>\n      <div class=\"ff-premium-sparks\">1,500 monthly Sparks</div>\n      <div class=\"ff-premium-bonus\">+300 bonus Sparks monthly · 1,800 total</div>\n      <p>For committed readers and creators who want stronger platform benefits.</p>\n\n      <ul>\n        <li>Ad-free experience</li>\n        <li>Forge Plus badge</li>\n\n        <li>Priority support</li>\n        <li>Member-only roadmap updates</li>\n        <li>Creator discovery voting</li>\n        <li>Expanded reading library tools</li>\n        <li>Early access to new  creator tools</li>\n        <li>Beta access to new FicForge features</li>\n      </ul>\n\n      <a href=\"/contact/\">Join Forge Plus</a>\n    </div>\n\n    <div class=\"ff-premium-tier\">\n      <span class=\"tier-tag\">Elite</span>\n      <h2>Forge Elite</h2>\n      <div class=\"ff-premium-price\">$20.99 <span>/ month</span></div>\n      <div class=\"ff-premium-sparks\">2,100 monthly Sparks</div>\n      <div class=\"ff-premium-bonus\">+500 bonus Sparks monthly · 2,600 total</div>\n      <p>For dedicated supporters who want the highest Premium status and strongest perks.</p>\n\n      <ul>\n        <li>Ad-free experience</li>\n        <li>Forge Elite badge</li>\n        <li>Premium profile styling</li>\n        <li>Highest priority support</li>\n        <li>Member-only roadmap previews</li>\n        <li>Monthly creator spotlight voting</li>\n        <li>Elite supporter recognition</li>\n        <li>Extra platform-support status</li>\n        <li>Early access to major feature rollouts</li>\n      </ul>\n\n      <a href=\"/contact/\">Join Forge Elite</a>\n    </div>\n  </div>\n\n  <div id=\"sparks-store\" class=\"ff-section-head\">\n    <span class=\"label\">Spark Store</span>\n    <h2>Buy Sparks separately</h2>\n    <p>\n      Readers can use Sparks through approved FicForge features, including general creator support and future platform tools.\n    </p>\n  </div>\n\n  <div class=\"ff-sparks-store\">\n    <div class=\"ff-spark-pack\">\n      <span class=\"pack-tag\">Starter</span>\n      <h3>100 Sparks</h3>\n      <div class=\"ff-spark-price\">$0.99</div>\n      <div class=\"ff-spark-total\">100 total Sparks</div>\n      <p>A small pack for testing Sparks or giving light support.</p>\n      <a href=\"/contact/\">Buy Starter</a>\n    </div>\n\n    <div class=\"ff-spark-pack\">\n      <span class=\"pack-tag\">Standard</span>\n      <h3>1,000 Sparks</h3>\n      <div class=\"ff-spark-price\">$9.99</div>\n      <div class=\"ff-spark-total\">1,000 total Sparks</div>\n      <p>A simple everyday pack for casual readers and regular supporters.</p>\n      <a href=\"/contact/\">Buy Standard</a>\n    </div>\n\n    <div class=\"ff-spark-pack\">\n      <span class=\"pack-tag\">Supporter</span>\n      <h3>5,000 Sparks</h3>\n      <div class=\"ff-spark-price\">$49.99</div>\n      <div class=\"ff-spark-total\">5,600 total Sparks</div>\n      <p>For active readers who support creators more often.</p>\n      <div class=\"ff-spark-bonus\">+600 bonus Sparks</div>\n      <a href=\"/contact/\">Buy Supporter</a>\n    </div>\n\n    <div class=\"ff-spark-pack\">\n      <span class=\"pack-tag\">Power Reader</span>\n      <h3>8,000 Sparks</h3>\n      <div class=\"ff-spark-price\">$79.99</div>\n      <div class=\"ff-spark-total\">9,200 total Sparks</div>\n      <p>For frequent readers who want a larger Spark balance.</p>\n      <div class=\"ff-spark-bonus\">+1,200 bonus Sparks</div>\n      <a href=\"/contact/\">Buy Power Reader</a>\n    </div>\n\n    <div class=\"ff-spark-pack best\">\n      <span class=\"pack-tag\">Best Value</span>\n      <h3>15,000 Sparks</h3>\n      <div class=\"ff-spark-price\">$124.99</div>\n      <div class=\"ff-spark-total\">17,800 total Sparks</div>\n      <p>The premium Spark package for heavy supporters and active readers.</p>\n      <div class=\"ff-spark-bonus\">+2,800 bonus Sparks</div>\n      <a href=\"/contact/\">Buy Patron Pack</a>\n    </div>\n  </div>\n\n  <div class=\"ff-premium-panel\">\n    <span class=\"label\">What Premium Supports</span>\n    <h2>Premium helps FicForge grow</h2>\n    <p>\n      Premium memberships help support hosting, moderation, creator tools, reader features, support systems, platform development, and the long-term growth of FicForge.\n    </p>\n\n    <div class=\"ff-premium-two\">\n      <div class=\"ff-premium-box\">\n        <strong>For readers</strong>\n        <p>\n          Premium gives readers monthly Sparks, bonus monthly Sparks, ad-free reading, library tools, profile perks, supporter status, and early access to new FicForge features.\n        </p>\n      </div>\n\n      <div class=\"ff-premium-box\">\n        <strong>For creators</strong>\n        <p>\n          Premium helps fund the tools creators need, including publishing improvements, profile features, discovery systems, support workflows, and future creator dashboards.\n        </p>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"ff-premium-panel\">\n    <span class=\"label\">Spark Rules</span>\n    <h2>Sparks have platform rules</h2>\n    <p>\n      Sparks may only be used through approved FicForge features. Bonus Sparks, promotional Sparks, membership Sparks, and purchased Sparks may be subject to different refund, review, payout, or eligibility rules.\n    </p>\n\n    <div class=\"ff-premium-two\">\n      <div class=\"ff-premium-box\">\n        <strong>Reader purchase value</strong>\n        <p>\n          Spark packs are purchased from FicForge. Purchase prices help cover platform operations, payment processing, fraud prevention, refunds, taxes, and service costs.\n        </p>\n      </div>\n\n      <div class=\"ff-premium-box\">\n        <strong>Creator-side conversion</strong>\n        <p>\n          For eligible creator support, 100 eligible Sparks equals $1.00 before FicForge’s 9% platform fee and before any payment-provider, refund, tax, or account-review issues.\n        </p>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"ff-premium-panel\">\n    <span class=\"label\">Important Boundaries</span>\n    <h2>Premium and Sparks do not unlock fanfiction</h2>\n    <p>\n      Premium is a platform membership, and Sparks are platform currency. Neither should be used to sell restricted content or bypass FicForge rules.\n    </p>\n\n    <div class=\"ff-premium-two\">\n      <div class=\"ff-premium-box\">\n        <strong>Fanfiction remains free</strong>\n        <p>\n          Fanfiction chapters cannot be sold, locked behind Premium, offered as paid early access, placed behind Fast Pass, or used as paid rewards.\n        </p>\n      </div>\n\n      <div class=\"ff-premium-box\">\n        <strong>General creator support only</strong>\n        <p>\n          Support connected to fanfiction creators must remain general profile support, not payment for a specific fanfiction story, chapter, fandom, update, continuation, bonus scene, or reward.\n        </p>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"ff-premium-panel\">\n    <span class=\"label\">Future Feature</span>\n    <h2>Fast Pass is set aside for later</h2>\n    <p>\n      Fast Pass is planned as a future feature for eligible original webnovels only. It is not currently a Premium benefit, and it will not apply to fanfiction chapters.\n    </p>\n  </div>\n\n  <div class=\"ff-premium-panel\">\n    <span class=\"label\">Related Pages</span>\n    <h2>Learn more</h2>\n    <p>\n      Use these pages for deeper details about Sparks, creator payouts, content rules, and creator rights.\n    </p>\n\n    <div class=\"ff-premium-links\">\n      <a href=\"/sparks-faq/\">Sparks FAQ</a>\n      <a href=\"/creator-payout-faq/\">Creator Payout FAQ</a>\n      <a href=\"/protection-rights/\">Protection & Rights</a>\n      <a href=\"/content-policy/\">Content Policy</a>\n      <a href=\"/support/\">Support Hub</a>\n      <a href=\"/contact/\">Contact Support</a>\n    </div>\n  </div>\n\n  <div class=\"ff-premium-bottom\">\n    <h2>Ready to support FicForge?</h2>\n    <p>\n      Choose a Premium membership for monthly Sparks and platform perks, or buy Sparks separately to support creators through approved FicForge features.\n    </p>\n\n    <div class=\"ff-premium-actions\">\n      <a class=\"primary\" href=\"#sparks-store\">View Spark Packs</a>\n      <a href=\"/contact/\">Contact Support</a>\n    </div>\n  </div>\n</section>\n";
-
-export default function Page() {
+export default function PremiumPage() {
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
-      <div
-        className="max-w-[1180px] mx-auto"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
+    <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1180px] mx-auto">
+        
+        {/* Hero Section */}
+        <div className="max-w-3xl mb-12">
+          <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-[#F97316] bg-orange-500/10 border border-orange-500/30 rounded-full px-3.5 py-1.5 mb-5">
+            FicForge Memberships
+          </span>
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+            Built for Readers. Powered for Creators.
+          </h1>
+          <p className="mt-4 text-lg text-slate-300 leading-relaxed">
+            Upgrade your FicForge experience with monthly Sparks, an ad-free reading experience, exclusive creator studio tools, formatting plugins, deep analytics, and early access to new platform features.
+          </p>
+
+          <div className="mt-6 flex flex-wrap gap-4">
+            <a
+              href="#membership-tiers"
+              className="rounded-lg bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all"
+            >
+              View Membership Tiers
+            </a>
+            <a
+              href="#sparks-store"
+              className="rounded-lg border border-white/20 bg-slate-900/80 px-6 py-3 text-sm font-extrabold text-white hover:border-[#F97316] hover:text-[#F97316] transition-all"
+            >
+              Buy Sparks Separately
+            </a>
+          </div>
+        </div>
+
+        {/* Creator Tools & Plugins Spotlight Banner */}
+        <div className="mb-14 rounded-2xl border border-purple-500/30 bg-gradient-to-r from-purple-950/40 via-slate-900/60 to-orange-950/30 p-8 shadow-2xl">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div>
+              <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-[#A78BFA]">
+                ✦ Creator Advantage
+              </span>
+              <h3 className="mt-2 text-2xl font-black text-white">
+                Looking to publish on FicForge?
+              </h3>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">
+                Premium memberships are not just for readers — they unlock our **Creator Suite & Plugins**: the Smart Bulk Importer, deep Readership Analytics, custom story styling, and priority discovery algorithms that free accounts cannot access.
+              </p>
+            </div>
+            <a
+              href="#membership-tiers"
+              className="shrink-0 rounded-xl bg-white px-5 py-2.5 text-sm font-black text-slate-950 shadow-md hover:bg-slate-200 transition-all"
+            >
+              Explore Creator Perks ↓
+            </a>
+          </div>
+        </div>
+
+        {/* 4 Membership Tiers Grid */}
+        <div id="membership-tiers" className="mb-20">
+          <div className="mb-8">
+            <span className="text-xs font-black uppercase tracking-wider text-[#F97316]">
+              Choose Your Tier
+            </span>
+            <h2 className="mt-2 text-3xl font-black text-white">
+              Platform Membership Plans
+            </h2>
+            <p className="mt-2 text-sm text-slate-400">
+              Memberships renew monthly via secure PayPal Subscriptions. Cancel anytime with one click.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            
+            {/* Tier 1: Reader */}
+            <div className="relative flex flex-col rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl transition-transform hover:-translate-y-1">
+              <span className="inline-flex w-fit rounded-full border border-purple-500/40 bg-purple-500/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider text-purple-200">
+                Reader & Starter
+              </span>
+              <h3 className="mt-3 text-2xl font-black text-white">Reader</h3>
+              <div className="mt-3 text-4xl font-black text-white">
+                $4.99 <span className="text-xs font-bold text-slate-400">/ month</span>
+              </div>
+              <div className="mt-2 text-sm font-black text-[#F97316]">
+                400 monthly Sparks
+              </div>
+              <div className="text-xs font-bold text-[#A78BFA]">
+                +200 bonus monthly · 600 total
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-400">
+                For readers who want basic supporter perks and a recurring Spark stipend.
+              </p>
+
+              <div className="my-5 h-px bg-white/10" />
+
+              <ul className="space-y-2.5 text-xs text-slate-300">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>100% Ad-Free reading experience</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Reader Supporter badge & profile flair</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Unlimited custom reading lists</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Basic Creator Studio (up to 3 drafts)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Member-only platform update polls</span>
+                </li>
+              </ul>
+
+              <a
+                href="/write"
+                className="mt-auto block w-full rounded-xl border border-white/10 bg-slate-800/80 py-3 text-center text-xs font-black text-white hover:bg-slate-700 transition-all"
+              >
+                Join Reader
+              </a>
+            </div>
+
+            {/* Tier 2: Supporter */}
+            <div className="relative flex flex-col rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl transition-transform hover:-translate-y-1">
+              <span className="inline-flex w-fit rounded-full border border-purple-500/40 bg-purple-500/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider text-purple-200">
+                Supporter & Writer
+              </span>
+              <h3 className="mt-3 text-2xl font-black text-white">Supporter</h3>
+              <div className="mt-3 text-4xl font-black text-white">
+                $9.99 <span className="text-xs font-bold text-slate-400">/ month</span>
+              </div>
+              <div className="mt-2 text-sm font-black text-[#F97316]">
+                800 monthly Sparks
+              </div>
+              <div className="text-xs font-bold text-[#A78BFA]">
+                +200 bonus monthly · 1,000 total
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-400">
+                For active readers and developing authors publishing regular stories.
+              </p>
+
+              <div className="my-5 h-px bg-white/10" />
+
+              <ul className="space-y-2.5 text-xs text-slate-300">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>100% Ad-Free reading experience</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Supporter badge upgrade & custom border</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Unlimited story drafts & scheduled releases</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Scene break divider formatting tools</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Priority customer & creator support</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Creator discovery & spotlight voting</span>
+                </li>
+              </ul>
+
+              <a
+                href="/write"
+                className="mt-auto block w-full rounded-xl border border-white/10 bg-slate-800/80 py-3 text-center text-xs font-black text-white hover:bg-slate-700 transition-all"
+              >
+                Join Supporter
+              </a>
+            </div>
+
+            {/* Tier 3: Forge Plus (FEATURED) */}
+            <div className="relative flex flex-col rounded-2xl border-2 border-[#F97316] bg-gradient-to-b from-orange-950/20 via-slate-900/90 to-slate-900 p-6 shadow-2xl shadow-orange-500/10 transition-transform hover:-translate-y-1">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="rounded-full bg-gradient-to-r from-[#F97316] to-[#EA580C] px-3.5 py-1 text-[10px] font-black uppercase tracking-wider text-white shadow-md">
+                  Most Popular · Creator Pick
+                </span>
+              </div>
+
+              <span className="mt-2 inline-flex w-fit rounded-full border border-orange-500/40 bg-orange-500/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider text-orange-200">
+                Pro Creator & Super Reader
+              </span>
+              <h3 className="mt-3 text-2xl font-black text-white">Forge Plus</h3>
+              <div className="mt-3 text-4xl font-black text-white">
+                $14.99 <span className="text-xs font-bold text-slate-400">/ month</span>
+              </div>
+              <div className="mt-2 text-sm font-black text-[#F97316]">
+                1,300 monthly Sparks
+              </div>
+              <div className="text-xs font-bold text-[#A78BFA]">
+                +200 bonus monthly · 1,500 total
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-400">
+                Unlocks professional creator tools, bulk chapter publishing, and reader analytics.
+              </p>
+
+              <div className="my-5 h-px bg-white/10" />
+
+              <ul className="space-y-2.5 text-xs text-slate-200">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>100% Ad-Free reading experience</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Forge Plus badge & animated banner</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">★</span>
+                  <span className="font-bold text-white">Smart Bulk Chapter Importer (.docx / .txt)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">★</span>
+                  <span className="font-bold text-white">Readership Analytics Plugin (retention/drop-off)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">★</span>
+                  <span className="font-bold text-white">Custom Story Styling Plugin (decor & drop-caps)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Boosted discovery in trending algorithm</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Beta access to all new creator plugins</span>
+                </li>
+              </ul>
+
+              <a
+                href="/write"
+                className="mt-auto block w-full rounded-xl bg-gradient-to-r from-[#F97316] to-[#EA580C] py-3 text-center text-xs font-black text-white shadow-lg shadow-orange-600/30 hover:from-[#EA580C] hover:to-[#C2410C] transition-all"
+              >
+                Join Forge Plus
+              </a>
+            </div>
+
+            {/* Tier 4: Forge Elite */}
+            <div className="relative flex flex-col rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl transition-transform hover:-translate-y-1">
+              <span className="inline-flex w-fit rounded-full border border-amber-500/40 bg-amber-500/20 px-2.5 py-1 text-[11px] font-black uppercase tracking-wider text-amber-200">
+                VIP Creator & Patron
+              </span>
+              <h3 className="mt-3 text-2xl font-black text-white">Forge Elite</h3>
+              <div className="mt-3 text-4xl font-black text-white">
+                $20.99 <span className="text-xs font-bold text-slate-400">/ month</span>
+              </div>
+              <div className="mt-2 text-sm font-black text-[#F97316]">
+                1,900 monthly Sparks
+              </div>
+              <div className="text-xs font-bold text-[#A78BFA]">
+                +400 bonus monthly · 2,300 total
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-400">
+                For top-tier serialized creators and elite patrons commanding the platform.
+              </p>
+
+              <div className="my-5 h-px bg-white/10" />
+
+              <ul className="space-y-2.5 text-xs text-slate-300">
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>100% Ad-Free VIP experience</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Prestigious Forge Elite Gold badge & frame</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">★</span>
+                  <span className="font-bold text-white">Full Creator Plugin Ecosystem Access</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">★</span>
+                  <span className="font-bold text-white">Advanced Auto-Splitter & Batch Publish Pro</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">★</span>
+                  <span className="font-bold text-white">Fast Pass Monetization & Revenue Forecasts</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>Homepage Carousel & Spotlight Eligibility</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">✓</span>
+                  <span>VIP 1-on-1 fast-track creator support</span>
+                </li>
+              </ul>
+
+              <a
+                href="/write"
+                className="mt-auto block w-full rounded-xl border border-white/10 bg-slate-800/80 py-3 text-center text-xs font-black text-white hover:bg-slate-700 transition-all"
+              >
+                Join Forge Elite
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Sparks Storefront Packages */}
+        <div id="sparks-store" className="mb-20">
+          <div className="mb-8">
+            <span className="text-xs font-black uppercase tracking-wider text-[#F97316]">
+              Sparks Storefront
+            </span>
+            <h2 className="mt-2 text-3xl font-black text-white">
+              Buy Sparks Packages
+            </h2>
+            <p className="mt-2 text-sm text-slate-400">
+              Sparks can be used for tipping creators on their profiles and unlocking Fast Pass chapters on eligible original webnovels.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 lg:grid-cols-5">
+            
+            {/* Starter: 100 Sparks */}
+            <div className="flex flex-col rounded-2xl border border-white/10 bg-slate-900/60 p-5 shadow-lg">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
+                Starter Pack
+              </span>
+              <h4 className="mt-2 text-xl font-black text-white">100 Sparks</h4>
+              <div className="mt-2 text-3xl font-black text-white">$0.99</div>
+              <p className="mt-2 text-xs text-slate-400">Baseline testing pack.</p>
+              <button
+                type="button"
+                className="mt-auto block w-full rounded-xl bg-slate-800 py-2.5 text-center text-xs font-black text-white hover:bg-slate-700 transition-all"
+              >
+                Buy for $0.99
+              </button>
+            </div>
+
+            {/* Standard: 1,000 Sparks */}
+            <div className="flex flex-col rounded-2xl border border-white/10 bg-slate-900/60 p-5 shadow-lg">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
+                Casual
+              </span>
+              <h4 className="mt-2 text-xl font-black text-white">1,000 Sparks</h4>
+              <div className="mt-2 text-3xl font-black text-white">$9.99</div>
+              <p className="mt-2 text-xs text-slate-400">Everyday reading & tips.</p>
+              <button
+                type="button"
+                className="mt-auto block w-full rounded-xl bg-slate-800 py-2.5 text-center text-xs font-black text-white hover:bg-slate-700 transition-all"
+              >
+                Buy for $9.99
+              </button>
+            </div>
+
+            {/* Supporter: 5,000 (+600 bonus = 5,600) */}
+            <div className="flex flex-col rounded-2xl border-2 border-orange-500/60 bg-gradient-to-b from-orange-950/30 to-slate-900 p-5 shadow-xl">
+              <span className="text-[11px] font-black uppercase tracking-wider text-[#F97316]">
+                Popular Value
+              </span>
+              <h4 className="mt-2 text-xl font-black text-white">5,000 Sparks</h4>
+              <div className="mt-2 text-3xl font-black text-white">$49.99</div>
+              <div className="mt-1 text-xs font-black text-[#A78BFA]">+600 Bonus Sparks (5,600 total)</div>
+              <button
+                type="button"
+                className="mt-auto block w-full rounded-xl bg-gradient-to-r from-[#F97316] to-[#EA580C] py-2.5 text-center text-xs font-black text-white shadow-md hover:from-[#EA580C] hover:to-[#C2410C] transition-all"
+              >
+                Buy for $49.99
+              </button>
+            </div>
+
+            {/* Power: 8,000 (+1,200 bonus = 9,200) */}
+            <div className="flex flex-col rounded-2xl border border-white/10 bg-slate-900/60 p-5 shadow-lg">
+              <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">
+                Power Reader
+              </span>
+              <h4 className="mt-2 text-xl font-black text-white">8,000 Sparks</h4>
+              <div className="mt-2 text-3xl font-black text-white">$79.99</div>
+              <div className="mt-1 text-xs font-bold text-[#A78BFA]">+1,200 Bonus (9,200 total)</div>
+              <button
+                type="button"
+                className="mt-auto block w-full rounded-xl bg-slate-800 py-2.5 text-center text-xs font-black text-white hover:bg-slate-700 transition-all"
+              >
+                Buy for $79.99
+              </button>
+            </div>
+
+            {/* Elite Patron: 15,000 (+2,800 bonus = 17,800) */}
+            <div className="flex flex-col rounded-2xl border border-purple-500/40 bg-slate-900/80 p-5 shadow-lg">
+              <span className="text-[11px] font-black uppercase tracking-wider text-[#A78BFA]">
+                Patron Pack
+              </span>
+              <h4 className="mt-2 text-xl font-black text-white">15,000 Sparks</h4>
+              <div className="mt-2 text-3xl font-black text-white">$124.99</div>
+              <div className="mt-1 text-xs font-black text-purple-300">+2,800 Bonus (17,800 total)</div>
+              <button
+                type="button"
+                className="mt-auto block w-full rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] py-2.5 text-center text-xs font-black text-white hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all"
+              >
+                Buy for $124.99
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Compliance Guarantee */}
+        <div className="rounded-2xl border border-white/10 bg-slate-950/60 p-8 text-center text-sm text-slate-400">
+          <strong className="block text-base font-bold text-white mb-2">
+            Fanfiction Protection & Safe Harbor Guarantee
+          </strong>
+          Fanfiction chapters on FicForge are always 100% free to read and cannot be locked, sold, Fast Passed, or placed behind paid tiers. Memberships and Sparks support the platform infrastructure, host creator tools and plugins, and empower independent writers.
+        </div>
+
+      </div>
     </div>
   );
 }

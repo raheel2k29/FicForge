@@ -315,74 +315,83 @@ export default function HomePage() {
   
 
   <span className="ff-label">Premium Memberships</span>
-  <h2>Support FicForge and get more from the platform.</h2>
+  <h2>Support FicForge & Supercharge Your Journey</h2>
   <p className="ff-section-intro">
-    Premium members receive monthly Sparks, bonus Sparks, an ad-free experience, profile status, priority support, reading perks, member updates, and early access to new FicForge features.
+    Memberships are engineered for both dedicated readers and ambitious creators — featuring monthly Sparks, an ad-free reading experience, exclusive creator studio tools, formatting plugins, deep analytics, and early access to platform features.
   </p>
 
   <div className="ff-home-tier-grid">
     <div className="ff-home-tier">
-      <span className="tier-tag">Reader</span>
+      <span className="tier-tag">Reader & Creator Starter</span>
       <h3>Reader</h3>
       <div className="ff-home-price">$4.99 <span>/ month</span></div>
       <div className="ff-home-sparks">400 monthly Sparks</div>
       <div className="ff-home-bonus">+200 bonus · 600 total</div>
-      <p>For readers who want basic Premium perks and a small monthly Spark balance.</p>
+      <p>For dedicated readers and hobby creators seeking an elevated experience.</p>
       <ul>
-        <li>Ad-free experience</li>
-        <li>Reader Supporter badge</li>
-        <li>Reading list tools</li>
-        <li>Member-only updates</li>
+        <li>100% Ad-free reading experience</li>
+        <li>Reader Supporter badge & profile flair</li>
+        <li>Unlimited custom reading lists</li>
+        <li>Basic Creator Studio (up to 3 story drafts)</li>
+        <li>Member-only community roadmap polls</li>
       </ul>
-      <a href="/premium/">View Reader</a>
+      <a href="/premium">View Reader</a>
     </div>
 
     <div className="ff-home-tier">
-      <span className="tier-tag">Supporter</span>
+      <span className="tier-tag">Supporter & Emerging Writer</span>
       <h3>Supporter</h3>
       <div className="ff-home-price">$9.99 <span>/ month</span></div>
       <div className="ff-home-sparks">800 monthly Sparks</div>
       <div className="ff-home-bonus">+200 bonus · 1,000 total</div>
-      <p>For active readers who want stronger supporter perks and more monthly Sparks.</p>
+      <p>For active readers and developing authors who publish regularly.</p>
       <ul>
-        <li>Ad-free experience</li>
-        <li>Supporter badge upgrade</li>
-        <li>Profile accent or border</li>
-        <li>Priority support</li>
+        <li>100% Ad-free reading experience</li>
+        <li>Supporter badge upgrade & custom profile accent</li>
+        <li>Unlimited story drafts & scheduled releases</li>
+        <li>Custom scene break dividers & chapter decor</li>
+        <li>Priority reader & author support</li>
+        <li>Creator discovery & spotlight voting</li>
       </ul>
-      <a href="/premium/">View Supporter</a>
+      <a href="/premium">View Supporter</a>
     </div>
 
     <div className="ff-home-tier featured">
-      <span className="tier-tag">Best Balance</span>
+      <span className="tier-tag">Pro Creator & Reader (Best Balance)</span>
       <h3>Forge Plus</h3>
       <div className="ff-home-price">$14.99 <span>/ month</span></div>
       <div className="ff-home-sparks">1,300 monthly Sparks</div>
       <div className="ff-home-bonus">+200 bonus · 1,500 total</div>
-      <p>For committed readers and creators who want stronger platform benefits.</p>
+      <p>Unlocks advanced creator tools, bulk publishing, and analytics not available to free accounts.</p>
       <ul>
-        <li>Ad-free experience</li>
-        <li>Forge Plus badge</li>
-        <li>Enhanced profile styling</li>
-        <li>Beta feature access</li>
+        <li>100% Ad-free reading experience</li>
+        <li>Forge Plus badge & animated profile banner</li>
+        <li><strong>Smart Bulk Chapter Importer (.docx / .txt)</strong></li>
+        <li><strong>Readership Analytics Plugin (retention & drop-offs)</strong></li>
+        <li><strong>Custom Story Styling Plugin (fonts & chapter drop-caps)</strong></li>
+        <li>Boosted discovery in trending & recommended algorithms</li>
+        <li>Beta access to all new creator plugins</li>
       </ul>
-      <a href="/premium/">View Forge Plus</a>
+      <a href="/premium">View Forge Plus</a>
     </div>
 
     <div className="ff-home-tier">
-      <span className="tier-tag">Elite</span>
+      <span className="tier-tag">VIP Creator & Elite Supporter</span>
       <h3>Forge Elite</h3>
       <div className="ff-home-price">$20.99 <span>/ month</span></div>
       <div className="ff-home-sparks">1,900 monthly Sparks</div>
       <div className="ff-home-bonus">+400 bonus · 2,300 total</div>
-      <p>For dedicated supporters who want the highest Premium status and strongest perks.</p>
+      <p>For top-tier serialized creators and elite supporters commanding the platform.</p>
       <ul>
-        <li>Ad-free experience</li>
-        <li>Forge Elite badge</li>
-        <li>Highest priority support</li>
-        <li>Major feature early access</li>
+        <li>100% Ad-free VIP experience</li>
+        <li>Prestigious Forge Elite Gold badge & frame</li>
+        <li><strong>Full Creator Plugin Ecosystem Access</strong></li>
+        <li><strong>Advanced Bulk Auto-Splitter & Batch Publishing Pro</strong></li>
+        <li><strong>Fast Pass Monetization Analytics & Revenue Forecasts</strong></li>
+        <li>Priority eligibility for Homepage Carousel & Editor's Picks</li>
+        <li>VIP 1-on-1 fast-track creator support line</li>
       </ul>
-      <a href="/premium/">View Forge Elite</a>
+      <a href="/premium">View Forge Elite</a>
     </div>
   </div>
 
