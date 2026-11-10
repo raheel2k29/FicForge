@@ -1,0 +1,458 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ==========================================
+// User, Auth & Security (Admin 2FA)
+// ==========================================
+
+enum UserRole {
+  READER
+  CREATOR
+  MODERATOR
+  SUPPORT
+  SUPER_ADMIN
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String?
+  username      String    @unique
+  role          UserRole  @default(READER)
+  isVerified    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile       Profile?
+  security      UserSecurity?
+  stories       Story[]
+  wallet        SparksWallet?
+  membership    PlatformMembership?
+  fastPassUnlocks FastPassUnlock[]
+  bookmarks     Bookmark[]
+  readingHistory ReadingHistory[]
+  comments      Comment[]
+  vault         CreatorVault?
+  refundRequests RefundRequest[]
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName String
+  avatarUrl   String?
+  bannerUrl   String?
+  bio         String?  @db.Text
+  twitter     String?
+  discord     String?
+  patreonUrl  String?
+  kofiUrl     String?
+  website     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model UserSecurity {
+  id                  String    @id @default(cuid())
+  userId              String    @unique
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  totpSecret          String?   // For Admin 2FA (Google Authenticator / Authy)
+  totpEnabled         Boolean   @default(false)
+  recoveryCodes       String[]  @default([])
+  failedLoginAttempts Int       @default(0)
+  lockedUntil         DateTime?
+  updatedAt           DateTime  @updatedAt
+}
+
+// ==========================================
+// Story & Taxonomy Engine
+// ==========================================
+
+enum StoryClassification {
+  FANFICTION // 100% Free hard-lock for DMCA Safe Harbor compliance
+  ORIGINAL    // Fast Pass & monetization enabled
+}
+
+enum StoryStatus {
+  DRAFT
+  ONGOING
+  COMPLETED
+  HIATUS
+}
+
+enum ContentRating {
+  GENERAL
+  TEEN
+  MATURE
+  EXPLICIT // 18+ Age Gate + Hard Disabled Sparks & Fast Pass (merchant protection)
+}
+
+model Story {
+  id                    String              @id @default(cuid())
+  title                 String
+  slug                  String              @unique
+  synopsis              String              @db.Text
+  coverImageUrl         String?
+  authorId              String
+  author                User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  classification        StoryClassification @default(FANFICTION)
+  status                StoryStatus         @default(DRAFT)
+  rating                ContentRating       @default(GENERAL)
+  isExplicit18Plus      Boolean             @default(false)
+  isMonetizationBlocked Boolean             @default(false)
+  viewCount             Int                 @default(0)
+  bookmarkCount         Int                 @default(0)
+  likeCount             Int                 @default(0)
+
+  chapters              Chapter[]
+  fandoms               StoryFandom[]
+  genres                StoryGenre[]
+  tags                  StoryTag[]
+  bookmarks             Bookmark[]
+  readingHistory        ReadingHistory[]
+  analytics             StoryAnalytics?
+
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+}
+
+model Chapter {
+  id                  String           @id @default(cuid())
+  storyId             String
+  story               Story            @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  chapterNumber       Int
+  title               String
+  slug                String
+  content             String           @db.Text
+  wordCount           Int              @default(0)
+  orderIndex          Int              @default(0)
+  topAuthorNote       String?          @db.Text
+  bottomAuthorNote    String?          @db.Text
+  isPublished         Boolean          @default(false)
+  publishedAt         DateTime?
+
+  // Fast Pass Monetization Engine
+  isFastPass          Boolean          @default(false)
+  fastPassPriceSparks Int              @default(0)
+  fastPassUnlockAt    DateTime?        // Scheduled auto-unlock date (7 days / 168 hours)
+
+  unlocks             FastPassUnlock[]
+  comments            Comment[]
+
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  @@unique([storyId, chapterNumber])
+}
+
+model Fandom {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  slug        String        @unique
+  description String?
+  iconEmoji   String        @default("🚀")
+  stories     StoryFandom[]
+}
+
+model StoryFandom {
+  id       String @id @default(cuid())
+  storyId  String
+  story    Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  fandomId String
+  fandom   Fandom @relation(fields: [fandomId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, fandomId])
+}
+
+model Genre {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  slug        String       @unique
+  description String?
+  iconEmoji   String       @default("🐉")
+  colorGlow   String?
+  stories     StoryGenre[]
+}
+
+model StoryGenre {
+  id      String @id @default(cuid())
+  storyId String
+  story   Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  genreId String
+  genre   Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, genreId])
+}
+
+enum TagType {
+  GENERAL
+  WARNING
+  CHARACTER
+  RELATIONSHIP
+}
+
+model Tag {
+  id      String     @id @default(cuid())
+  name    String     @unique
+  slug    String     @unique
+  type    TagType    @default(GENERAL)
+  stories StoryTag[]
+}
+
+model StoryTag {
+  id      String @id @default(cuid())
+  storyId String
+  story   Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  tagId   String
+  tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, tagId])
+}
+
+// ==========================================
+// Sparks Wallet & Fast Pass Ledger
+// ==========================================
+
+enum SparksTransactionType {
+  PURCHASE
+  FAST_PASS_UNLOCK
+  TIP_AUTHOR
+  MEMBERSHIP_STIPEND
+  REFUND
+}
+
+enum TransactionStatus {
+  COMPLETED
+  PENDING
+  REVERSED
+}
+
+model SparksWallet {
+  id                String              @id @default(cuid())
+  userId            String              @unique
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balanceSparks     Int                 @default(0)
+  totalEarnedSparks Int                 @default(0)
+  totalSpentSparks  Int                 @default(0)
+  transactions      SparksTransaction[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+}
+
+model SparksTransaction {
+  id             String                @id @default(cuid())
+  walletId       String
+  wallet         SparksWallet          @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  amount         Int
+  type           SparksTransactionType
+  status         TransactionStatus     @default(COMPLETED)
+  idempotencyKey String?               @unique
+  referenceId    String?
+  note           String?
+  createdAt      DateTime              @default(now())
+}
+
+model FastPassUnlock {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId   String
+  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  sparksSpent Int
+  unlockedAt  DateTime @default(now())
+
+  @@unique([userId, chapterId])
+}
+
+// ==========================================
+// Platform Memberships (PayPal Subscriptions)
+// ==========================================
+
+enum MembershipTier {
+  READER     // $4.99/mo (400 Sparks + 200 bonus)
+  SUPPORTER  // $9.99/mo (800 Sparks + 200 bonus)
+  FORGE_PLUS // $14.99/mo (1,300 Sparks + 200 bonus)
+  FORGE_ELITE// $20.99/mo (1,900 Sparks + 400 bonus)
+}
+
+enum MembershipStatus {
+  ACTIVE
+  CANCELED
+  PAST_DUE
+  EXPIRED
+}
+
+model PlatformMembership {
+  id                   String           @id @default(cuid())
+  userId               String           @unique
+  user                 User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tier                 MembershipTier
+  status               MembershipStatus @default(ACTIVE)
+  paypalSubscriptionId String?          @unique
+  monthlySparksStipend Int              @default(0)
+  currentPeriodStart   DateTime         @default(now())
+  currentPeriodEnd     DateTime
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+}
+
+// ==========================================
+// Reader Engagement & Library
+// ==========================================
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storyId   String
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, storyId])
+}
+
+model ReadingHistory {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  storyId       String
+  story         Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  lastChapterId String?
+  lastReadAt    DateTime @default(now())
+
+  @@unique([userId, storyId])
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId String
+  chapter   Chapter   @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    Comment?  @relation("ThreadedComments", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("ThreadedComments")
+  content   String    @db.Text
+  isSpoiler Boolean   @default(false)
+  isFlagged Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ==========================================
+// Creator Vault & Payouts (82/18 Split)
+// ==========================================
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model CreatorVault {
+  id                  String          @id @default(cuid())
+  userId              String          @unique
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clearedBalanceUsd   Decimal         @default(0.00) @db.Decimal(10, 2)
+  pendingHoldingUsd   Decimal         @default(0.00) @db.Decimal(10, 2) // 7-14 day buffer
+  paypalEmail         String?
+  isEligibleForPayout Boolean         @default(false) // Min $50 threshold
+  payouts             PayoutRequest[]
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model PayoutRequest {
+  id                   String       @id @default(cuid())
+  creatorVaultId       String
+  creatorVault         CreatorVault @relation(fields: [creatorVaultId], references: [id], onDelete: Cascade)
+  amountUsd            Decimal      @db.Decimal(10, 2)
+  sparksDeducted       Int
+  status               PayoutStatus @default(PENDING)
+  paypalPayoutBatchId  String?
+  requestedAt          DateTime     @default(now())
+  processedAt          DateTime?
+}
+
+// ==========================================
+// Platform Financial Reconciliation & Refunds
+// ==========================================
+
+model FinancialLedger {
+  id                    String   @id @default(cuid())
+  transactionType       String   // SPARKS_PACK, MEMBERSHIP_SUB
+  grossAmountUsd        Decimal  @db.Decimal(10, 2)
+  gatewayFeeUsd         Decimal  @db.Decimal(10, 2)
+  netPlatformRevenueUsd Decimal  @db.Decimal(10, 2)
+  creatorLiabilityUsd   Decimal  @default(0.00) @db.Decimal(10, 2) // 82% allocation
+  paypalTransactionId   String?  @unique
+  createdAt             DateTime @default(now())
+}
+
+enum RefundStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+model RefundRequest {
+  id              String       @id @default(cuid())
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactionId   String
+  reason          String       @db.Text
+  status          RefundStatus @default(PENDING_REVIEW)
+  adminReviewerId String?
+  adminNotes      String?      @db.Text
+  requestedAt     DateTime     @default(now())
+  resolvedAt      DateTime?
+}
+
+// ==========================================
+// Legal & Dedicated Takedown Queue
+// ==========================================
+
+enum TakedownStatus {
+  OPEN
+  UNDER_REVIEW
+  ACCEPTED_REMOVED
+  REJECTED
+}
+
+model TakedownTicket {
+  id                         String         @id @default(cuid())
+  claimantName               String
+  claimantEmail              String
+  copyrightedWorkDescription String         @db.Text
+  allegedInfringingUrls      String         @db.Text
+  digitalSignature           String
+  status                     TakedownStatus @default(OPEN)
+  moderatorNotes             String?        @db.Text
+  createdAt                  DateTime       @default(now())
+  resolvedAt                 DateTime?
+}
+
+// ==========================================
+// Analytics & Readership Insights
+// ==========================================
+
+model StoryAnalytics {
+  id             String   @id @default(cuid())
+  storyId        String   @unique
+  story          Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  views          Int      @default(0)
+  uniqueReaders  Int      @default(0)
+  likes          Int      @default(0)
+  bookmarks      Int      @default(0)
+  completionRate Float    @default(0.0)
+  lastUpdated    DateTime @default(now())
+}
