@@ -1,532 +1,409 @@
-import Link from "next/link";
-import { Sparkles, ArrowRight, ShieldCheck, Flame, BookOpen, PenTool } from "lucide-react";
+﻿import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <div className="relative overflow-hidden">
-      {/* Background radial glow effects */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[600px] w-[1000px] -translate-x-1/2 rounded-full bg-gradient-to-b from-[#6D5DFB]/15 via-[#F97316]/10 to-transparent blur-3xl" />
+    <div className="min-h-screen bg-[#050B16] text-white">
+  {/* ===== Widget 1 & 2 : Hero Section ===== */}
+  <section className="ficforge-hero-section">
+    <div className="ficforge-hero-wrapper">
+<div className="ficforge-hero-copy">
+  <div className="ficforge-hero-badge">FOR READERS & WRITERS</div>
 
-      {/* ============================================================== */}
-      {/* SECTION 1 & 2: HERO COPY & INTERACTIVE CARD (WIDGET 1 & 2)     */}
-      {/* ============================================================== */}
-      <section className="mx-auto max-w-7xl px-4 pt-16 pb-20 sm:px-6 sm:pt-24 lg:px-8">
-        <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-12">
-          
-          {/* Left Hero Column */}
-          <div className="lg:col-span-7">
-            <div className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-3.5 py-1.5 text-xs font-black tracking-widest text-[#F97316] uppercase mb-6">
-              <span>✦</span> FOR READERS & WRITERS
-            </div>
+  <h1>
+    Where Stories<br />
+    Are Forged.
+  </h1>
 
-            <h1 className="text-5xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl leading-[1.02]">
-              Where Stories <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-[#F97316]">
-                Are Forged.
-              </span>
-            </h1>
+  <p>
+    Discover unforgettable fanfiction and original fiction, or publish your own stories in a community built for readers, writers, and the worlds they love.
+  </p>
 
-            <p className="mt-6 text-lg sm:text-xl leading-relaxed text-slate-300 max-w-2xl font-normal">
-              Discover unforgettable fanfiction and original fiction, or publish your own stories in a community built for readers, writers, and the worlds they love.
-            </p>
+  <div className="ficforge-hero-buttons">
+    <a className="ficforge-primary-btn" href="/browse">Start Reading</a>
+    <a className="ficforge-secondary-btn" href="/write">Start Writing</a>
+  </div>
+</div>
+<div className="ficforge-hero-visual">
+  <div className="ficforge-glow"></div>
 
-            <div className="mt-9 flex flex-wrap items-center gap-4">
-              <Link
-                href="/browse"
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-8 py-4 text-base font-extrabold text-white shadow-xl shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] hover:shadow-indigo-600/50 transition-all active:scale-95"
-              >
-                Start Reading
-              </Link>
-              <Link
-                href="/write"
-                className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-8 py-4 text-base font-bold text-white hover:border-[#F97316] hover:text-[#F97316] hover:bg-orange-500/5 transition-all"
-              >
-                Start Writing
-              </Link>
-            </div>
+  <div className="ficforge-main-card">
+    <div className="ficforge-card-top">
+      <span>ðŸ”¥ Featured World</span>
+      <span>4.9 â˜…</span>
+    </div>
 
-            <div className="mt-10 flex items-center gap-6 text-xs font-semibold text-slate-400">
-              <span className="flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-[#34D399]" /> 100% Free Fanfiction
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Flame className="h-4 w-4 text-[#F97316]" /> Chapter Sanctuary
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4 text-[#A78BFA]" /> 82/18 Creator Split
-              </span>
-            </div>
-          </div>
+    <div className="ficforge-book-window">
+      <div className="ficforge-book-icon">ðŸ“–</div>
+      <div className="ficforge-flame-icon">ðŸ”¥</div>
+    </div>
 
-          {/* Right Hero Column: Featured World Mockup Card */}
-          <div className="relative lg:col-span-5 flex justify-center">
-            {/* Ambient Card Glow */}
-            <div className="absolute inset-0 -z-10 h-80 w-80 m-auto rounded-full bg-gradient-to-tr from-[#6D5DFB]/30 via-[#F97316]/20 to-transparent blur-2xl" />
+    <div className="ficforge-card-content">
+      <h3>The Ember Archive</h3>
+      <p>A rising collection of original fiction, fanfiction, and worlds waiting to be discovered.</p>
 
-            {/* Main Visual Book Card */}
-            <div className="relative w-full max-w-[390px] rounded-3xl border border-white/15 bg-gradient-to-b from-[#111827] to-[#0B1220] p-1 shadow-2xl shadow-black/60 overflow-hidden">
-              <div className="flex items-center justify-between border-b border-white/10 bg-white/[0.03] px-5 py-3.5 text-xs font-bold text-slate-200">
-                <span className="flex items-center gap-1.5 text-orange-400">
-                  🔥 Featured World
-                </span>
-                <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-amber-300">
-                  4.9 ★
-                </span>
-              </div>
+      <div className="ficforge-card-stats">
+        <span>96K Reads</span>
+        <span>24 Chapters</span>
+        <span>Ongoing</span>
+      </div>
+    </div>
+  </div>
 
-              {/* Cover Artwork Area */}
-              <div className="relative flex h-60 items-center justify-center bg-gradient-to-br from-[#1E293B] via-[#0F172A] to-[#111827] overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(249,115,22,0.35),transparent_45%)]" />
-                <span className="text-8xl drop-shadow-2xl select-none">📖</span>
-                <span className="absolute top-8 right-16 text-4xl select-none animate-pulse">🔥</span>
-              </div>
+  <div className="ficforge-floating-card ficforge-card-one">
+    <strong>Fantasy</strong>
+    <span>Kingdoms, magic, legends</span>
+  </div>
 
-              {/* Book Details */}
-              <div className="p-6">
-                <h3 className="text-2xl font-black text-white tracking-tight">The Ember Archive</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-300">
-                  A rising collection of original fiction, fanfiction, and worlds waiting to be discovered.
-                </p>
+  <div className="ficforge-floating-card ficforge-card-two">
+    <strong>Fanfiction</strong>
+    <span>Stories built from worlds you love</span>
+  </div>
+</div>
+    </div>
+  </section>
 
-                <div className="mt-4 flex flex-wrap gap-2 text-xs font-bold">
-                  <span className="rounded-full border border-indigo-500/30 bg-indigo-500/15 px-3 py-1 text-indigo-300">
-                    96K Reads
-                  </span>
-                  <span className="rounded-full border border-indigo-500/30 bg-indigo-500/15 px-3 py-1 text-indigo-300">
-                    24 Chapters
-                  </span>
-                  <span className="rounded-full border border-emerald-500/30 bg-emerald-500/15 px-3 py-1 text-emerald-300">
-                    Ongoing
-                  </span>
-                </div>
-              </div>
-            </div>
+  {/* ===== Widget 3 : Featured Stories Notice ===== */}
+<section className="ff-home-empty-stories">
+  
 
-            {/* Floating Tag Card 1 */}
-            <div className="hidden sm:block absolute -left-8 top-16 rounded-2xl border border-white/15 bg-slate-900/90 p-4 shadow-xl backdrop-blur-md max-w-[190px]">
-              <strong className="block text-sm font-black text-white">Fantasy</strong>
-              <span className="text-xs text-slate-400">Kingdoms, magic, legends</span>
-            </div>
+  <div className="ff-empty-story-box">
+    <span className="ff-label">Featured Stories</span>
+    <h2>Featured stories are coming soon.</h2>
+    <p>
+      FicForge is preparing its first wave of stories. As writers begin publishing, this space will highlight standout fanfiction, original webnovels, rising creators, and reader favorites from across the platform.
+    </p>
 
-            {/* Floating Tag Card 2 */}
-            <div className="hidden sm:block absolute -right-6 bottom-14 rounded-2xl border border-white/15 bg-slate-900/90 p-4 shadow-xl backdrop-blur-md max-w-[200px]">
-              <strong className="block text-sm font-black text-white">Fanfiction</strong>
-              <span className="text-xs text-slate-400">Stories built from worlds you love</span>
-            </div>
-          </div>
+    <div className="ff-empty-story-actions">
+      <a className="primary" href="/write/">Become one of the first writers</a>
+      <a href="/browse/">Visit the story library</a>
+    </div>
 
-        </div>
-      </section>
+    <div className="ff-empty-story-note">
+      No placeholder stories. No fake rankings. Real stories will appear here once FicForge begins filling its library.
+    </div>
+  </div>
+</section>
 
-      {/* ============================================================== */}
-      {/* SECTION 3: EMPTY STORIES / CALLOUT BANNER (WIDGET 3)           */}
-      {/* ============================================================== */}
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl border border-white/10 bg-gradient-to-br from-[#0F172A]/90 via-[#0B1220]/90 to-[#0F172A]/90 p-8 text-center sm:p-14 shadow-2xl overflow-hidden">
-          <div className="absolute top-0 right-0 -z-10 h-64 w-64 rounded-full bg-indigo-600/10 blur-3xl" />
-          
-          <span className="inline-flex items-center rounded-full border border-orange-500/30 bg-orange-500/10 px-3.5 py-1 text-xs font-black tracking-wider text-[#F97316] uppercase mb-4">
-            FEATURED STORIES
-          </span>
+  {/* ===== Widget 4 : Browse by Fandom ===== */}
+<section className="ficforge-fandom-section">
+  <div className="ficforge-fandom-header">
+    <span className="ficforge-section-label">EXPLORE WORLDS</span>
+    <h2>Browse by Fandom</h2>
+    <p>Find stories inspired by the worlds, characters, and universes readers already love.</p>
+  </div>
 
-          <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
-            Featured stories are coming soon.
-          </h2>
+  <div className="ficforge-fandom-grid">
+    <a className="ficforge-fandom-card" href="/browse">
+      <span className="ficforge-fandom-icon">ðŸš€</span>
+      <div>
+        <h3>Star Wars</h3>
+        <p>Galactic wars, Jedi, Sith, clones, empires, and alternate timelines.</p>
+      </div>
+    </a>
 
-          <p className="mx-auto mt-4 max-w-2xl text-base text-slate-300 leading-relaxed">
-            FicForge is preparing its first wave of stories. As writers begin publishing, this space will highlight standout fanfiction, original webnovels, rising creators, and reader favorites from across the platform.
-          </p>
+    <a className="ficforge-fandom-card" href="/browse">
+      <span className="ficforge-fandom-icon">ðŸ‰</span>
+      <div>
+        <h3>Game of Thrones</h3>
+        <p>Houses, crowns, dragons, war, intrigue, and kingdom-building.</p>
+      </div>
+    </a>
 
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link
-              href="/write"
-              className="rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-6 py-3.5 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/25 hover:from-[#5B4BE0] hover:to-[#6D5DFB]"
-            >
-              Become one of the first writers
-            </Link>
-            <Link
-              href="/browse"
-              className="rounded-xl border border-white/15 bg-slate-900/60 px-6 py-3.5 text-sm font-bold text-white hover:bg-white/5"
-            >
-              Visit the story library
-            </Link>
-          </div>
+    <a className="ficforge-fandom-card" href="/browse">
+      <span className="ficforge-fandom-icon">ðŸ¥</span>
+      <div>
+        <h3>Naruto</h3>
+        <p>Shinobi worlds, clans, bloodlines, villages, and rewritten destinies.</p>
+      </div>
+    </a>
 
-          <div className="mt-6 text-xs font-semibold text-slate-500">
-            No placeholder stories. No fake rankings. Real stories will appear here as writers forge their universes.
-          </div>
-        </div>
-      </section>
+    <a className="ficforge-fandom-card" href="/browse">
+      <span className="ficforge-fandom-icon">ðŸ´â€â˜ ï¸</span>
+      <div>
+        <h3>One Piece</h3>
+        <p>Pirates, Marines, Devil Fruits, grand voyages, and rising legends.</p>
+      </div>
+    </a>
 
-      {/* ============================================================== */}
-      {/* SECTION 4: BROWSE BY FANDOM (WIDGET 4)                         */}
-      {/* ============================================================== */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mb-10">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-[#F97316]">
-            EXPLORE WORLDS
-          </span>
-          <h2 className="mt-1 text-3xl font-black text-white sm:text-4xl">Browse by Fandom</h2>
-          <p className="mt-2 text-base text-slate-400">
-            Find stories inspired by the worlds, characters, and universes readers already love.
-          </p>
-        </div>
+    <a className="ficforge-fandom-card" href="/browse">
+      <span className="ficforge-fandom-icon">ðŸª„</span>
+      <div>
+        <h3>Harry Potter</h3>
+        <p>Magic schools, ancient houses, hidden families, and darker paths.</p>
+      </div>
+    </a>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              title: "Star Wars",
-              icon: "🚀",
-              desc: "Galactic wars, Jedi, Sith, clones, empires, and alternate timelines.",
-            },
-            {
-              title: "Game of Thrones",
-              icon: "🐉",
-              desc: "Houses, crowns, dragons, war, intrigue, and kingdom-building.",
-            },
-            {
-              title: "Naruto",
-              icon: "🍥",
-              desc: "Shinobi worlds, clans, bloodlines, villages, and rewritten destinies.",
-            },
-            {
-              title: "One Piece",
-              icon: "🏴‍☠️",
-              desc: "Pirates, Marines, Devil Fruits, grand voyages, and rising legends.",
-            },
-            {
-              title: "Harry Potter",
-              icon: "🪄",
-              desc: "Magic schools, ancient houses, hidden families, and darker paths.",
-            },
-            {
-              title: "Marvel & DC",
-              icon: "🦸",
-              desc: "Heroes, villains, secret identities, multiverses, and cosmic threats.",
-            },
-          ].map((fandom) => (
-            <Link
-              key={fandom.title}
-              href="/browse"
-              className="group flex items-start gap-4 rounded-2xl border border-white/10 bg-slate-900/60 p-6 transition-all hover:-translate-y-1 hover:border-orange-500/50 hover:bg-slate-900/90"
-            >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-indigo-500/30 bg-indigo-500/15 text-2xl group-hover:scale-110 transition-transform">
-                {fandom.icon}
-              </div>
-              <div>
-                <h3 className="text-lg font-black text-white group-hover:text-orange-400 transition-colors">
-                  {fandom.title}
-                </h3>
-                <p className="mt-1 text-sm leading-relaxed text-slate-400">{fandom.desc}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+    <a className="ficforge-fandom-card" href="/browse">
+      <span className="ficforge-fandom-icon">ðŸ¦¸</span>
+      <div>
+        <h3>Marvel & DC</h3>
+        <p>Heroes, villains, secret identities, multiverses, and cosmic threats.</p>
+      </div>
+    </a>
+  </div>
+</section>
 
-      {/* ============================================================== */}
-      {/* SECTION 5: BROWSE BY GENRE (WIDGET 5)                          */}
-      {/* ============================================================== */}
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-6 w-6 items-center justify-center rounded-lg border border-purple-500/40 bg-purple-500/15 text-xs">
-              🧬
-            </span>
-            <span className="text-xs font-black uppercase tracking-wider text-white">
-              BROWSE BY GENRE
-            </span>
-          </div>
+  {/* ===== Widget 5 : Browse by Genre ===== */}
+<section className="ficforge-genre-strip">
+  <div className="ficforge-genre-top">
+    <div className="ficforge-genre-title">
+      <span className="ficforge-genre-title-icon">ðŸ§¬</span>
+      <span>BROWSE BY GENRE</span>
+    </div>
 
-          <Link href="/browse" className="text-xs font-bold text-slate-300 hover:text-orange-400 flex items-center gap-1">
-            View All <ArrowRight className="h-3 w-3" />
-          </Link>
-        </div>
+    <a className="ficforge-genre-view" href="/browse">View All â†’</a>
+  </div>
 
-        <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-4 lg:grid-cols-8">
-          {[
-            { name: "Fantasy", icon: "🐉", color: "from-purple-500/20" },
-            { name: "Science Fiction", icon: "🛸", color: "from-sky-500/20" },
-            { name: "Romance", icon: "💖", color: "from-pink-500/20" },
-            { name: "Action", icon: "⚔️", color: "from-orange-500/20" },
-            { name: "Adventure", icon: "📜", color: "from-amber-500/20" },
-            { name: "Horror", icon: "🩸", color: "from-red-500/20" },
-            { name: "Mystery", icon: "🔎", color: "from-purple-500/20" },
-            { name: "Historical", icon: "🏛️", color: "from-blue-500/20" },
-          ].map((genre) => (
-            <Link
-              key={genre.name}
-              href="/browse"
-              className="group relative flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-slate-900/60 p-4 text-center transition-all hover:-translate-y-1 hover:border-white/25 hover:bg-slate-900/90 overflow-hidden"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-2xl mb-2 group-hover:scale-110 transition-transform">
-                {genre.icon}
-              </div>
-              <h3 className="text-xs font-extrabold text-white">{genre.name}</h3>
-            </Link>
-          ))}
-        </div>
-      </section>
+  <div className="ficforge-genre-row">
+    <a className="ficforge-genre-mini fantasy" href="/browse">
+      <div className="ficforge-genre-icon">ðŸ‰</div>
+      <h3>Fantasy</h3>
+      <p></p>
+    </a>
 
-      {/* ============================================================== */}
-      {/* SECTION 6: WHY FICFORGE? (WIDGET 6)                            */}
-      {/* ============================================================== */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2 mb-8">
-          <span className="flex h-6 w-6 items-center justify-center rounded-lg border border-purple-500/40 bg-purple-500/15 text-xs">
-            💜
-          </span>
-          <span className="text-xs font-black uppercase tracking-wider text-white">
-            WHY FICFORGE?
-          </span>
-        </div>
+    <a className="ficforge-genre-mini scifi" href="/browse">
+      <div className="ficforge-genre-icon">ðŸ›¸</div>
+      <h3>Science Fiction</h3>
+      <p></p>
+    </a>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/10">
-          <div className="flex items-start gap-5 pt-6 md:pt-0 md:pr-8">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-purple-500/40 bg-purple-500/15 text-2xl shadow-lg shadow-purple-500/10">
-              👤
-            </div>
-            <div>
-              <h3 className="text-lg font-black text-purple-300">Creator First</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-300">
-                We believe creators deserve more. FicForge is built to help writers publish, grow, and keep more control over their stories.
-              </p>
-            </div>
-          </div>
+    <a className="ficforge-genre-mini romance" href="/browse">
+      <div className="ficforge-genre-icon">ðŸ’–</div>
+      <h3>Romance</h3>
+      <p></p>
+    </a>
 
-          <div className="flex items-start gap-5 pt-6 md:pt-0 md:px-8">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-orange-500/40 bg-orange-500/15 text-2xl shadow-lg shadow-orange-500/10">
-              🎧
-            </div>
-            <div>
-              <h3 className="text-lg font-black text-orange-300">Built for Readers</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-300">
-                Powerful search, smart tags, clean browsing, and a focused reading experience make it easier to find your next obsession.
-              </p>
-            </div>
-          </div>
+    <a className="ficforge-genre-mini action" href="/browse">
+      <div className="ficforge-genre-icon">âš”ï¸</div>
+      <h3>Action</h3>
+      <p></p>
+    </a>
 
-          <div className="flex items-start gap-5 pt-6 md:pt-0 md:pl-8">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-emerald-500/40 bg-emerald-500/15 text-2xl shadow-lg shadow-emerald-500/10">
-              💬
-            </div>
-            <div>
-              <h3 className="text-lg font-black text-emerald-300">Community Driven</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-300">
-                Join a passionate community of readers and writers. Share, discuss, support creators, and grow together.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+    <a className="ficforge-genre-mini adventure" href="/browse">
+      <div className="ficforge-genre-icon">ðŸ“œ</div>
+      <h3>Adventure</h3>
+      <p></p>
+    </a>
 
-      {/* ============================================================== */}
-      {/* SECTION 7: POWERFUL FEATURES (WIDGET 7)                        */}
-      {/* ============================================================== */}
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2 mb-8">
-          <span className="flex h-6 w-6 items-center justify-center rounded-lg border border-sky-500/40 bg-sky-500/15 text-xs">
-            ⚙️
-          </span>
-          <span className="text-xs font-black uppercase tracking-wider text-white">
-            POWERFUL FEATURES
-          </span>
-        </div>
+    <a className="ficforge-genre-mini horror" href="/browse">
+      <div className="ficforge-genre-icon">ðŸ©¸</div>
+      <h3>Horror</h3>
+      <p></p>
+    </a>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { title: "Advanced Tagging", desc: "Find exactly what you want to read with deep relationship and genre filters.", icon: "🏷️" },
-            { title: "Sparks System", desc: "Support creators, unlock content, and earn reading streak rewards.", icon: "⭐" },
-            { title: "Fast Pass", desc: "Read ahead of the crowd with optional Fast Pass access on original webnovels.", icon: "⚡" },
-            { title: "Achievements", desc: "Earn reading milestone badges and show off your journey in the community.", icon: "🏆" },
-            { title: "Custom Profiles", desc: "Personalize your profile with author badges, bio links, and custom frames.", icon: "🪪" },
-            { title: "Active Community", desc: "Chapter-end reviews, author updates, and real-time theory discussions.", icon: "💬" },
-          ].map((feature) => (
-            <div
-              key={feature.title}
-              className="flex items-start gap-4 rounded-2xl border border-white/10 bg-slate-900/60 p-5"
-            >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-xl">
-                {feature.icon}
-              </div>
-              <div>
-                <h3 className="text-base font-extrabold text-white">{feature.title}</h3>
-                <p className="mt-1 text-xs leading-relaxed text-slate-300">{feature.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+    <a className="ficforge-genre-mini mystery" href="/browse">
+      <div className="ficforge-genre-icon">ðŸ”Ž</div>
+      <h3>Mystery</h3>
+      <p></p>
+    </a>
 
-      {/* ============================================================== */}
-      {/* SECTION 8: MEMBERSHIPS PREVIEW (WIDGET 8)                      */}
-      {/* ============================================================== */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <span className="inline-flex items-center rounded-full border border-orange-500/30 bg-orange-500/10 px-3.5 py-1 text-xs font-black tracking-wider text-[#F97316] uppercase mb-3">
-            PREMIUM MEMBERSHIPS
-          </span>
-          <h2 className="text-3xl font-black text-white sm:text-4xl">
-            Support FicForge and get more from the platform.
-          </h2>
-          <p className="mt-2 max-w-2xl text-base text-slate-300">
-            Premium members receive monthly Sparks, bonus Sparks, an ad-free experience, profile status, priority support, and early access to new platform features.
-          </p>
-        </div>
+    <a className="ficforge-genre-mini historical" href="/browse">
+      <div className="ficforge-genre-icon">ðŸ›ï¸</div>
+      <h3>Historical</h3>
+      <p></p>
+    </a>
+  </div>
+</section>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Tier 1 */}
-          <div className="flex flex-col justify-between rounded-2xl border border-white/10 bg-slate-900/70 p-6">
-            <div>
-              <span className="rounded-full border border-indigo-500/40 bg-indigo-500/20 px-3 py-1 text-[11px] font-black uppercase text-indigo-300">
-                Reader
-              </span>
-              <h3 className="mt-4 text-2xl font-black text-white">Reader</h3>
-              <div className="mt-2 text-3xl font-black text-white">
-                $4.99 <span className="text-xs text-slate-400 font-bold">/ month</span>
-              </div>
-              <div className="mt-2 text-sm font-bold text-orange-400">400 monthly Sparks</div>
-              <div className="text-xs text-purple-300 font-bold mb-4">+200 bonus · 600 total</div>
-              <ul className="space-y-2 text-xs text-slate-300 border-t border-white/10 pt-4">
-                <li>✓ 100% Ad-free experience</li>
-                <li>✓ Reader Supporter badge</li>
-                <li>✓ Reading list tools</li>
-                <li>✓ Member-only updates</li>
-              </ul>
-            </div>
-            <Link
-              href="/premium"
-              className="mt-6 block rounded-xl border border-white/15 bg-slate-950/60 py-3 text-center text-xs font-black text-white hover:bg-white/10"
-            >
-              View Reader
-            </Link>
-          </div>
+  {/* ===== Widget 6 : Why FicForge? ===== */}
+<section className="ficforge-why-strip">
+  <div className="ficforge-why-title">
+    <span className="ficforge-why-title-icon">ðŸ’œ</span>
+    <span>WHY FICFORGE?</span>
+  </div>
 
-          {/* Tier 2 */}
-          <div className="flex flex-col justify-between rounded-2xl border border-white/10 bg-slate-900/70 p-6">
-            <div>
-              <span className="rounded-full border border-indigo-500/40 bg-indigo-500/20 px-3 py-1 text-[11px] font-black uppercase text-indigo-300">
-                Supporter
-              </span>
-              <h3 className="mt-4 text-2xl font-black text-white">Supporter</h3>
-              <div className="mt-2 text-3xl font-black text-white">
-                $9.99 <span className="text-xs text-slate-400 font-bold">/ month</span>
-              </div>
-              <div className="mt-2 text-sm font-bold text-orange-400">800 monthly Sparks</div>
-              <div className="text-xs text-purple-300 font-bold mb-4">+200 bonus · 1,000 total</div>
-              <ul className="space-y-2 text-xs text-slate-300 border-t border-white/10 pt-4">
-                <li>✓ 100% Ad-free experience</li>
-                <li>✓ Supporter badge upgrade</li>
-                <li>✓ Profile accent or border</li>
-                <li>✓ Priority support</li>
-              </ul>
-            </div>
-            <Link
-              href="/premium"
-              className="mt-6 block rounded-xl border border-white/15 bg-slate-950/60 py-3 text-center text-xs font-black text-white hover:bg-white/10"
-            >
-              View Supporter
-            </Link>
-          </div>
+  <div className="ficforge-why-row">
+    <div className="ficforge-why-item">
+      <div className="ficforge-why-icon purple">ðŸ‘¤</div>
+      <div className="ficforge-why-copy">
+        <h3>Creator First</h3>
+        <p>
+          We believe creators deserve more. FicForge is built to help writers publish, grow, and keep more control over their stories.
+        </p>
+      </div>
+    </div>
 
-          {/* Tier 3: Featured */}
-          <div className="flex flex-col justify-between rounded-2xl border border-orange-500/50 bg-gradient-to-b from-orange-500/10 to-slate-900/90 p-6 shadow-xl shadow-orange-500/10 relative">
-            <span className="absolute -top-3 right-6 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-3 py-1 text-[10px] font-black uppercase text-white shadow-md">
-              Most Popular
-            </span>
-            <div>
-              <span className="rounded-full border border-orange-500/50 bg-orange-500/20 px-3 py-1 text-[11px] font-black uppercase text-orange-300">
-                Forge Plus
-              </span>
-              <h3 className="mt-4 text-2xl font-black text-white">Forge Plus</h3>
-              <div className="mt-2 text-3xl font-black text-white">
-                $14.99 <span className="text-xs text-slate-400 font-bold">/ month</span>
-              </div>
-              <div className="mt-2 text-sm font-bold text-orange-400">1,300 monthly Sparks</div>
-              <div className="text-xs text-purple-300 font-bold mb-4">+200 bonus · 1,500 total</div>
-              <ul className="space-y-2 text-xs text-slate-300 border-t border-white/10 pt-4">
-                <li>✓ 100% Ad-free experience</li>
-                <li>✓ Forge Plus badge & flair</li>
-                <li>✓ Enhanced profile styling</li>
-                <li>✓ Beta feature early access</li>
-              </ul>
-            </div>
-            <Link
-              href="/premium"
-              className="mt-6 block rounded-xl bg-gradient-to-r from-[#F97316] to-[#EA580C] py-3 text-center text-xs font-black text-white shadow-lg shadow-orange-500/25 hover:from-[#EA580C] hover:to-[#F97316]"
-            >
-              Join Forge Plus
-            </Link>
-          </div>
+    <div className="ficforge-why-item">
+      <div className="ficforge-why-icon orange">ðŸŽ§</div>
+      <div className="ficforge-why-copy">
+        <h3>Built for Readers</h3>
+        <p>
+          Powerful search, smart tags, clean browsing, and a focused reading experience make it easier to find your next obsession.
+        </p>
+      </div>
+    </div>
 
-          {/* Tier 4 */}
-          <div className="flex flex-col justify-between rounded-2xl border border-white/10 bg-slate-900/70 p-6">
-            <div>
-              <span className="rounded-full border border-indigo-500/40 bg-indigo-500/20 px-3 py-1 text-[11px] font-black uppercase text-indigo-300">
-                Elite
-              </span>
-              <h3 className="mt-4 text-2xl font-black text-white">Forge Elite</h3>
-              <div className="mt-2 text-3xl font-black text-white">
-                $20.99 <span className="text-xs text-slate-400 font-bold">/ month</span>
-              </div>
-              <div className="mt-2 text-sm font-bold text-orange-400">1,900 monthly Sparks</div>
-              <div className="text-xs text-purple-300 font-bold mb-4">+400 bonus · 2,300 total</div>
-              <ul className="space-y-2 text-xs text-slate-300 border-t border-white/10 pt-4">
-                <li>✓ 100% Ad-free experience</li>
-                <li>✓ Forge Elite badge & crown</li>
-                <li>✓ Highest priority support</li>
-                <li>✓ Major feature early access</li>
-              </ul>
-            </div>
-            <Link
-              href="/premium"
-              className="mt-6 block rounded-xl border border-white/15 bg-slate-950/60 py-3 text-center text-xs font-black text-white hover:bg-white/10"
-            >
-              View Forge Elite
-            </Link>
-          </div>
-        </div>
+    <div className="ficforge-why-item">
+      <div className="ficforge-why-icon green">ðŸ’¬</div>
+      <div className="ficforge-why-copy">
+        <h3>Community Driven</h3>
+        <p>
+          Join a passionate community of readers and writers. Share, discuss, support creators, and grow together.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
 
-        <div className="mt-6 rounded-2xl border border-white/10 bg-slate-900/40 p-4 text-xs text-slate-400 leading-relaxed">
-          <strong className="text-white">Premium is not paid fanfiction access.</strong> Fanfiction chapters remain 100% free to read and cannot be locked, sold, Fast Passed, or offered as paid early access. Premium supports the platform and provides reading convenience tools.
-        </div>
-      </section>
+  {/* ===== Widget 7 : Powerful Features ===== */}
+<section className="ficforge-features-strip">
+  <div className="ficforge-features-title">
+    <span className="ficforge-features-title-icon">âš™ï¸</span>
+    <span>POWERFUL FEATURES</span>
+  </div>
 
-      {/* ============================================================== */}
-      {/* SECTION 9: FINAL CALL TO ACTION (WIDGET 9)                     */}
-      {/* ============================================================== */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 mb-12">
-        <div className="relative rounded-3xl border border-white/15 bg-gradient-to-br from-[#111827] via-[#0B1220] to-[#111827] p-10 text-center sm:p-16 shadow-2xl overflow-hidden">
-          <div className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-80 w-80 -translate-x-1/2 rounded-full bg-gradient-to-r from-orange-500/25 to-indigo-500/25 blur-3xl" />
+  <div className="ficforge-features-row">
+    <div className="ficforge-feature-item blue">
+      <div className="ficforge-feature-icon">ðŸ·ï¸</div>
+      <div>
+        <h3>Advanced Tagging</h3>
+        <p>Find exactly what you want to read.</p>
+      </div>
+    </div>
 
-          <span className="inline-flex items-center rounded-full border border-orange-500/30 bg-orange-500/10 px-3.5 py-1 text-xs font-black tracking-wider text-[#F97316] uppercase mb-4">
-            JOIN THE FORGE
-          </span>
+    <div className="ficforge-feature-item gold">
+      <div className="ficforge-feature-icon">â­</div>
+      <div>
+        <h3>Sparks System</h3>
+        <p>Support creators, unlock content, and earn rewards.</p>
+      </div>
+    </div>
 
-          <h2 className="mx-auto max-w-2xl text-3xl font-black text-white sm:text-5xl leading-tight">
-            Start Reading. Start Writing. Start Forging Worlds.
-          </h2>
+    <div className="ficforge-feature-item purple">
+      <div className="ficforge-feature-icon">âš¡</div>
+      <div>
+        <h3>Fast Pass</h3>
+        <p>Read ahead of the crowd with optional Fast Pass access.</p>
+      </div>
+    </div>
 
-          <p className="mx-auto mt-4 max-w-xl text-base text-slate-300">
-            FicForge is being built for readers, writers, fandoms, and original worlds. Join early and become part of the founding community shaping what comes next.
-          </p>
+    <div className="ficforge-feature-item amber">
+      <div className="ficforge-feature-icon">ðŸ†</div>
+      <div>
+        <h3>Achievements</h3>
+        <p>Earn badges and show off your journey.</p>
+      </div>
+    </div>
 
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link
-              href="/browse"
-              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-8 py-4 text-sm font-extrabold text-white shadow-xl shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB]"
-            >
-              Start Reading
-            </Link>
-            <Link
-              href="/write"
-              className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-8 py-4 text-sm font-bold text-white hover:border-[#F97316] hover:text-[#F97316]"
-            >
-              Become a Writer
-            </Link>
-          </div>
-        </div>
-      </section>
+    <div className="ficforge-feature-item green">
+      <div className="ficforge-feature-icon">ðŸªª</div>
+      <div>
+        <h3>Custom Profiles</h3>
+        <p>Personalize your profile with badges and frames.</p>
+      </div>
+    </div>
+
+    <div className="ficforge-feature-item gray">
+      <div className="ficforge-feature-icon">ðŸ’¬</div>
+      <div>
+        <h3>Active Community</h3>
+        <p>Reviews, forums, events, and more ways to connect.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+  {/* ===== Widget 8 : Premium Memberships ===== */}
+<section className="ff-home-memberships">
+  
+
+  <span className="ff-label">Premium Memberships</span>
+  <h2>Support FicForge and get more from the platform.</h2>
+  <p className="ff-section-intro">
+    Premium members receive monthly Sparks, bonus Sparks, an ad-free experience, profile status, priority support, reading perks, member updates, and early access to new FicForge features.
+  </p>
+
+  <div className="ff-home-tier-grid">
+    <div className="ff-home-tier">
+      <span className="tier-tag">Reader</span>
+      <h3>Reader</h3>
+      <div className="ff-home-price">$4.99 <span>/ month</span></div>
+      <div className="ff-home-sparks">400 monthly Sparks</div>
+      <div className="ff-home-bonus">+200 bonus Â· 600 total</div>
+      <p>For readers who want basic Premium perks and a small monthly Spark balance.</p>
+      <ul>
+        <li>Ad-free experience</li>
+        <li>Reader Supporter badge</li>
+        <li>Reading list tools</li>
+        <li>Member-only updates</li>
+      </ul>
+      <a href="/premium/">View Reader</a>
+    </div>
+
+    <div className="ff-home-tier">
+      <span className="tier-tag">Supporter</span>
+      <h3>Supporter</h3>
+      <div className="ff-home-price">$9.99 <span>/ month</span></div>
+      <div className="ff-home-sparks">800 monthly Sparks</div>
+      <div className="ff-home-bonus">+200 bonus Â· 1,000 total</div>
+      <p>For active readers who want stronger supporter perks and more monthly Sparks.</p>
+      <ul>
+        <li>Ad-free experience</li>
+        <li>Supporter badge upgrade</li>
+        <li>Profile accent or border</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="/premium/">View Supporter</a>
+    </div>
+
+    <div className="ff-home-tier featured">
+      <span className="tier-tag">Best Balance</span>
+      <h3>Forge Plus</h3>
+      <div className="ff-home-price">$14.99 <span>/ month</span></div>
+      <div className="ff-home-sparks">1,300 monthly Sparks</div>
+      <div className="ff-home-bonus">+200 bonus Â· 1,500 total</div>
+      <p>For committed readers and creators who want stronger platform benefits.</p>
+      <ul>
+        <li>Ad-free experience</li>
+        <li>Forge Plus badge</li>
+        <li>Enhanced profile styling</li>
+        <li>Beta feature access</li>
+      </ul>
+      <a href="/premium/">View Forge Plus</a>
+    </div>
+
+    <div className="ff-home-tier">
+      <span className="tier-tag">Elite</span>
+      <h3>Forge Elite</h3>
+      <div className="ff-home-price">$20.99 <span>/ month</span></div>
+      <div className="ff-home-sparks">1,900 monthly Sparks</div>
+      <div className="ff-home-bonus">+400 bonus Â· 2,300 total</div>
+      <p>For dedicated supporters who want the highest Premium status and strongest perks.</p>
+      <ul>
+        <li>Ad-free experience</li>
+        <li>Forge Elite badge</li>
+        <li>Highest priority support</li>
+        <li>Major feature early access</li>
+      </ul>
+      <a href="/premium/">View Forge Elite</a>
+    </div>
+  </div>
+
+  <div className="ff-home-membership-note">
+    <strong>Premium is not paid fanfiction access.</strong>
+    Fanfiction chapters remain free to read and cannot be locked, sold, Fast Passed, or offered as paid early access. Premium supports FicForge and provides platform benefits.
+  </div>
+</section>
+
+  {/* ===== Widget 9 : Final Call to Action ===== */}
+<section className="ficforge-final-cta">
+  <div className="ficforge-final-cta-inner">
+    <div className="ficforge-final-glow"></div>
+
+    <span className="ficforge-final-label">JOIN THE FORGE</span>
+
+    <h2>Start Reading. Start Writing. Start Forging Worlds.</h2>
+
+    <p>
+      FicForge is being built for readers, writers, fandoms, and original worlds. Join early and become part of the founding community shaping what comes next.
+    </p>
+
+    <div className="ficforge-final-buttons">
+      <a className="ficforge-final-primary" href="/browse">Start Reading</a>
+      <a className="ficforge-final-secondary" href="/write">Become a Writer</a>
+    </div>
+  </div>
+</section>
     </div>
   );
 }
