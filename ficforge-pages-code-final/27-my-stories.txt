@@ -1,0 +1,857 @@
+<style>
+.ff-workroom {
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  background:
+    radial-gradient(circle at top left, rgba(109, 93, 251, 0.10), transparent 30%),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.08), transparent 28%),
+    #050B16;
+  color: #FFFFFF;
+  font-family: inherit;
+}
+
+.ff-workroom-sidebar {
+  min-height: 100vh;
+  padding: 26px 22px;
+  background: rgba(2, 6, 23, 0.72);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ff-workroom-logo {
+  color: #FFFFFF;
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 42px;
+}
+
+.ff-side-group {
+  margin-bottom: 32px;
+}
+
+.ff-side-group span {
+  display: block;
+  color: #A78BFA;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.ff-side-group a {
+  display: block;
+  color: #CBD5E1 !important;
+  text-decoration: none !important;
+  padding: 11px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.ff-side-group a:hover,
+.ff-side-group a.active {
+  color: #FFFFFF !important;
+  background: rgba(109, 93, 251, 0.22);
+  border: 1px solid rgba(109, 93, 251, 0.42);
+}
+
+.ff-workroom-main {
+  padding: 34px 38px 60px 38px;
+}
+
+.ff-workroom-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.ff-workroom-topbar h1 {
+  color: #FFFFFF;
+  font-size: 42px;
+  line-height: 1.05;
+  margin: 0 0 8px 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+.ff-workroom-topbar p {
+  color: #CBD5E1;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ff-return-btn {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ff-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.ff-stat-card {
+  background: rgba(15, 23, 42, 0.76);
+ border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.ff-stat-card span {
+  color: #CBD5E1;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ff-stat-card strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 30px;
+  margin: 8px 0 4px 0;
+  font-weight: 900;
+}
+
+.ff-stat-card small {
+  color: #94A3B8;
+  font-size: 13px;
+}
+
+.ff-story-type-note {
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  color: #CBD5E1;
+  font-size: 14px;
+  line-height: 1.6;
+  background: rgba(15, 23, 42, 0.74);
+border: 1px solid rgba(109, 93, 251, 0.45);
+}
+
+.ff-story-type-note strong {
+  color: #FFFFFF;
+}
+
+.ff-workroom-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 0.85fr;
+  gap: 22px;
+  align-items: flex-start;
+}
+
+.ff-library-panel,
+.ff-editor-panel {
+  background: rgba(15, 23, 42, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.ff-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.ff-panel-head h2 {
+  color: #FFFFFF;
+  font-size: 24px;
+  margin: 0 0 6px 0;
+  font-weight: 900;
+}
+
+.ff-panel-head p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.ff-create-small {
+  color: #FFFFFF !important;
+  background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+  text-decoration: none !important;
+  padding: 11px 15px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.ff-story-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.ff-story-tabs a {
+  color: #CBD5E1 !important;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none !important;
+}
+
+.ff-story-tabs a:hover {
+  color: #FFFFFF !important;
+  background: rgba(109, 93, 251, 0.14);
+  border-color: rgba(109, 93, 251, 0.32);
+}
+
+.ff-story-tabs a.active {
+  color: #FFFFFF !important;
+  background: rgba(109, 93, 251, 0.22);
+  border-color: rgba(109, 93, 251, 0.45);
+}
+
+.ff-empty-library {
+  text-align: center;
+ padding: 42px 22px;
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.42);
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  margin-bottom: 22px;
+}
+
+.ff-empty-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(109, 93, 251, 0.22);
+  color: #FFFFFF;
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+
+.ff-empty-library h3 {
+  color: #FFFFFF;
+  font-size: 22px;
+  margin: 0 0 8px 0;
+}
+.ff-empty-library p {
+  color: #94A3B8;
+  max-width: 560px;
+  margin: 0 auto;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.ff-create-form-card {
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.52);
+  border: 1px solid rgba(249, 115, 22, 0.22);
+  padding: 24px;
+}
+
+.ff-create-form-head span {
+  display: inline-flex;
+  color: #F97316;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+
+.ff-create-form-head h2 {
+  color: #FFFFFF;
+  font-size: 28px;
+  margin: 0 0 8px 0;
+  font-weight: 900;
+}
+.ff-editor-cover {
+  margin-bottom: 16px;
+}
+
+.ff-cover-placeholder {
+  height: 180px;
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(109, 93, 251, 0.22), rgba(249, 115, 22, 0.10)),
+    rgba(2, 6, 23, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ff-cover-placeholder span {
+  color: #CBD5E1;
+  font-size: 14px;
+  font-weight: 800;
+}
+.ff-editor-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+}
+
+.ff-editor-stats div {
+  text-align: center;
+}
+
+.ff-editor-stats strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.ff-editor-stats span {
+  color: #94A3B8;
+  font-size: 12px;
+}
+.ff-editor-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+
+.ff-editor-tabs a {
+  color: #94A3B8 !important;
+  background: transparent;
+  border: 0;
+  padding: 8px 8px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+.ff-editor-tabs a:hover {
+  color: #FFFFFF !important;
+  border-bottom: 2px solid rgba(139, 92, 246, 0.75);
+}
+
+.ff-editor-tabs a.active {
+  color: #FFFFFF !important;
+  border-bottom: 2px solid #8B5CF6;
+}
+.ff-writing-box h3 {
+  color: #FFFFFF;
+  font-size: 18px;
+  margin: 0 0 8px 0;
+}
+
+.ff-writing-box > p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.ff-writing-placeholder {
+  min-height: 210px;
+  border-radius: 14px;
+  padding: 18px;
+  background: rgba(2, 6, 23, 0.64);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ff-writing-placeholder span {
+  display: block;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+.ff-writing-placeholder p {
+  color: #CBD5E1;
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ff-editor-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.ff-editor-actions button {
+  color: #FFFFFF;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.ff-editor-actions button.primary {
+  background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+  border-color: rgba(109, 93, 251, 0.72);
+}
+@media (max-width: 1180px) {
+  .ff-workroom {
+    grid-template-columns: 1fr;
+  }
+
+  .ff-workroom-sidebar {
+    display: none;
+  }
+
+  .ff-workroom-main {
+    padding: 30px 24px 56px 24px;
+  }
+
+  .ff-workroom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .ff-workroom-main {
+    padding: 24px 18px 48px 18px;
+  }
+
+  .ff-workroom-topbar {
+    flex-direction: column;
+  }
+.ff-workroom-topbar h1 {
+    font-size: 36px;
+  }
+
+  .ff-stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ff-panel-head {
+    flex-direction: column;
+  }
+
+  .ff-create-small,
+  .ff-return-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+.ff-create-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 28px 0 16px 0;
+}
+
+.ff-create-divider::before,
+.ff-create-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: rgba(255, 255, 255, 0.10);
+}
+.ff-create-divider span {
+  color: #F97316;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.10em;
+}
+.ff-mini-tool-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.ff-mini-tool-list div {
+  padding: 13px 14px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ff-mini-tool-list strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.ff-mini-tool-list small {
+  display: block;
+  color: #94A3B8;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.ff-editor-actions a {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  text-align: center;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.ff-editor-actions a.primary {
+  background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+  border-color: rgba(109, 93, 251, 0.72);
+}.ff-real-story-manager {
+  margin: 24px 0 28px 0;
+  padding: 22px;
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.52);
+border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ff-real-story-manager-head {
+  margin-bottom: 18px;
+}
+
+.ff-real-story-manager-head span {
+  display: inline-flex;
+  color: #A78BFA;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.ff-real-story-manager-head h3 {
+  color: #FFFFFF;
+  font-size: 22px;
+  margin: 0 0 8px 0;
+  font-weight: 900;
+}
+
+.ff-real-story-manager-head p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Style WP User Frontend Dashboard inside My Stories */
+body:has(.ff-workroom) .wpuf-dashboard-container,
+body:has(.ff-workroom) .wpuf-dashboard-content,
+body:has(.ff-workroom) .wpuf-dashboard {
+  color: #E2E8F0 !important;
+  background: transparent !important;
+}
+body:has(.ff-workroom) .wpuf-dashboard table,
+body:has(.ff-workroom) .wpuf-dashboard-container table,
+body:has(.ff-workroom) table.wpuf-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  background: rgba(15, 23, 42, 0.72) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255, 255, 255, 0.10) !important;
+}
+body:has(.ff-workroom) .wpuf-dashboard th,
+body:has(.ff-workroom) .wpuf-dashboard td,
+body:has(.ff-workroom) table.wpuf-table th,
+body:has(.ff-workroom) table.wpuf-table td {
+  color: #E2E8F0 !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+  padding: 12px !important;
+}
+
+body:has(.ff-workroom) .wpuf-dashboard th,
+body:has(.ff-workroom) table.wpuf-table th {
+  color: #FFFFFF !important;
+  background: rgba(109, 93, 251, 0.20) !important;
+  font-weight: 900 !important;
+}
+body:has(.ff-workroom) .wpuf-dashboard a,
+body:has(.ff-workroom) table.wpuf-table a {
+  color: #A78BFA !important;
+  font-weight: 800 !important;
+  text-decoration: none !important;
+}
+
+body:has(.ff-workroom) .wpuf-dashboard a:hover,
+body:has(.ff-workroom) table.wpuf-table a:hover {
+  color: #F97316 !important;
+}
+.ff-schedule-tools {
+  margin: 24px 0 28px 0;
+  padding: 22px;
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+.ff-schedule-tools-head span {
+  display: inline-flex;
+  color: #A78BFA;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.ff-schedule-tools-head h3 {
+  color: #FFFFFF;
+  font-size: 22px;
+  margin: 0 0 8px 0;
+  font-weight: 900;
+}
+
+.ff-schedule-tools-head p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+.ff-trash-tools {
+  margin: 24px 0 28px 0;
+  padding: 22px;
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ff-trash-tools-head span {
+  display: inline-flex;
+  color: #F97316;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.ff-trash-tools-head h3 {
+  color: #FFFFFF;
+  font-size: 22px;
+  margin: 0 0 8px 0;
+  font-weight: 900;
+}
+
+.ff-trash-tools-head p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+</style>
+
+<section class="ff-workroom">
+   <aside class="ff-workroom-sidebar">
+  <div class="ff-workroom-logo">✦ FicForge</div>
+
+  <div class="ff-side-group">
+    <span>WORKSHOP</span>
+    <a href="#create-story-form">Create Story</a>
+    <a href="#create-story-form">Cover & Image Uploads</a>
+    <a href="#create-story-form">Publish Story</a>
+  </div>
+
+  <div class="ff-side-group">
+    <span>MY LIBRARY</span>
+    <a class="active" href="#story-library">My Stories</a>
+    <a href="#story-library">Drafts</a>
+    <a href="#story-library">Scheduled Releases</a>
+    <a href="#trash-tools">Trash</a>
+  </div>
+
+ <div class="ff-side-group">
+  <span>TOOLS</span>
+  <a href="/creator-analytics/">Analytics</a>
+  <a href="/creator-earnings/">Earnings</a>
+  <a href="/creator-engagement/">Followers & Comments</a>
+</div>
+
+  <div class="ff-side-group">
+    <span>SUPPORT</span>
+    <a href="/support/">Protection & Rights</a>
+    <a href="/support/">Help Center</a>
+    <a href="/support/">Guides & Resources</a>
+  </div>
+</aside> 
+
+  <main class="ff-workroom-main">
+
+    <div class="ff-workroom-topbar">
+      <div>
+        <h1>My Stories</h1>
+        <p>Organize, manage, and write your stories. Track chapters, drafts, covers, and updates from one place.</p>
+      </div>
+
+      <a class="ff-return-btn" href="/write/">← Return to Writer Portal</a>
+    </div>
+
+    <div class="ff-stats-row">
+      <div class="ff-stat-card">
+        <span>Published Stories</span>
+        <strong>0</strong>
+        <small>Live on FicForge</small>
+      </div>
+
+      <div class="ff-stat-card">
+        <span>Draft Stories</span>
+        <strong>0</strong>
+        <small>In progress</small>
+      </div>
+
+      <div class="ff-stat-card">
+        <span>Total Chapters</span>
+        <strong>0</strong>
+        <small>Published</small>
+      </div>
+
+      <div class="ff-stat-card">
+        <span>Total Words</span>
+        <strong>0</strong>
+        <small>Across all works</small>
+      </div>
+    </div>
+
+    <div class="ff-story-type-note">
+      <strong>Story Type Notice:</strong>
+      FicForge labels stories based on the Story Type selected during creation. Fanfiction and Original Webnovel works may follow different browsing, rights, and monetization rules.
+    </div>
+
+    <div class="ff-workroom-grid">
+
+      <section id="story-library" class="ff-library-panel">
+        <div class="ff-panel-head">
+          <div>
+            <h2>Your Stories</h2>
+            <p>Your published stories, drafts, and future chapters will appear here.</p>
+          </div>
+
+          <a class="ff-create-small" href="#create-story-form">+ Create New Story</a>
+        </div>
+
+       <div class="ff-story-tabs">
+  <a class="active" href="#story-library">All</a>
+  <a href="#submitted-stories">Published</a>
+  <a href="#create-story-form">Drafts</a>
+  <a href="#schedule-tools">Scheduled</a>
+</div>
+
+        <div class="ff-empty-library">
+          <div class="ff-empty-icon">✍</div>
+          <h3>No stories yet</h3>
+          <p>
+            Create your first FicForge story below. Once you publish, this area will become your story manager with covers, chapters, drafts, and editing tools.
+          </p>
+        </div>
+      <div id="schedule-tools" class="ff-schedule-tools">
+  <div class="ff-schedule-tools-head">
+    <span>SCHEDULED RELEASES</span>
+    <h3>Scheduled Chapters</h3>
+    <p>
+      Scheduled release tools will appear here once chapter scheduling is connected. For now, writers can prepare story drafts through the Create Story form below.
+    </p>
+  </div>
+</div>
+<div id="trash-tools" class="ff-trash-tools">
+  <div class="ff-trash-tools-head">
+    <span>TRASH & REMOVED STORIES</span>
+    <h3>Trash</h3>
+    <p>
+  Removed stories and deleted drafts will appear here when available. This area helps creators keep track of work that has been deleted, archived, or moved out of the active story library.
+    </p>
+  </div>
+
+  <div class="ff-trash-dashboard">
+    <div class="wpuf-message">This page is restricted. Please <a href="https://ficforge.org/wp-login.php?redirect_to=https%3A%2F%2Fficforge.org%2Fmy-stories%2F">Log in</a> to view this page.</div>
+  </div>
+</div>
+        <div class="ff-create-divider">
+  <span>NEW STORY SETUP</span>
+</div>
+
+        <div id="create-story-form" class="ff-create-form-card">
+          <div class="ff-create-form-head">
+            <span>CREATE STORY</span>
+            <h2>Start a New Story</h2>
+            <p>
+              Use the form below to create a story, upload a cover, choose story type, add ratings and warnings, and publish your first chapter.
+            </p>
+          </div>
+          <div class="wpuf-message">This page is restricted. Please <a href="https://ficforge.org/wp-login.php">Login</a> / <a href="https://ficforge.org/wp-login.php?action=register">Register</a> to view this page.</div>
+        </div>
+      </section>
+      
+      <aside class="ff-editor-panel">
+        <div class="ff-editor-cover">
+          <div class="ff-cover-placeholder">
+            <span>Story Cover Preview</span>
+          </div>
+        </div>
+
+        <div class="ff-editor-stats">
+          <div>
+            <strong>0</strong>
+            <span>Chapters</span>
+          </div>
+          <div>
+            <strong>0</strong>
+            <span>Drafts</span>
+          </div>
+          <div>
+            <strong>0</strong>
+            <span>Words</span>
+          </div>
+        </div>
+
+       <div class="ff-editor-tabs">
+  <a href="#story-library">Story Library</a>
+  <a href="#create-story-form" class="active">Create / Edit</a>
+  <a href="#create-story-form">Publish</a>
+</div>
+
+       <div class="ff-writing-box">
+  <h3>Selected Story Workspace</h3>
+  <p>
+    Once a story is selected, this area will show its cover, story status, chapters, drafts, and writing tools.
+  </p>
+
+  <div class="ff-writing-placeholder">
+    <span>No story selected yet</span>
+    <p>
+      Create your first story below. After it is published or saved, it will appear in your library where you can open it, add chapters, edit drafts, and manage updates.
+    </p>
+
+    <div class="ff-mini-tool-list">
+      <div>
+        <strong>Story Overview</strong>
+        <small>Cover, type, status, genre, fandom, and warnings.</small>
+      </div>
+
+      <div>
+        <strong>Chapter Writing</strong>
+        <small>Write new chapters and continue saved drafts.</small>
+      </div>
+
+      <div>
+        <strong>Publishing Controls</strong>
+        <small>Publish updates, revise chapters, and prepare releases.</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-editor-actions">
+  <a href="#create-story-form">Create Story</a>
+  <a class="primary" href="#story-library">View Library</a>
+</div>
+</div>
+      </aside>
+
+    </div>
+
+  </main>
+</section>

@@ -1,0 +1,665 @@
+<section class="ff-support-creator-page">
+  <style>
+    .ff-support-creator-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+      font-family: inherit;
+    }
+
+    .ff-support-hero,
+    .ff-support-card,
+    .ff-transfer-card,
+    .ff-pack-card,
+    .ff-note-card,
+    .ff-step-card {
+      background: rgba(15, 23, 42, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 24px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+    }
+
+    .ff-support-hero {
+      padding: 34px;
+      margin-bottom: 18px;
+      background:
+        radial-gradient(circle at top left, rgba(109, 93, 251, 0.22), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.15), transparent 34%),
+        rgba(15, 23, 42, 0.84);
+    }
+
+    .ff-label {
+      display: inline-flex;
+      width: fit-content;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-support-hero h1 {
+      color: #FFFFFF;
+      font-size: 58px;
+      line-height: 1.04;
+      margin: 0 0 14px 0;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      max-width: 820px;
+    }
+
+    .ff-support-hero p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.7;
+      margin: 0;
+      max-width: 840px;
+    }
+
+    .ff-support-layout {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .ff-support-card,
+    .ff-transfer-card {
+      padding: 24px;
+    }
+
+    .ff-support-card h2,
+    .ff-transfer-card h2,
+    .ff-pack-section h2,
+    .ff-note-card h2 {
+      color: #FFFFFF;
+      font-size: 32px;
+      line-height: 1.1;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+    }
+
+    .ff-support-card p,
+    .ff-transfer-card p,
+    .ff-note-card p,
+    .ff-step-card p {
+      color: #94A3B8;
+      font-size: 14.5px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-search-box {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .ff-search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    .ff-search-row input,
+    .ff-custom-input input {
+      width: 100%;
+      color: #FFFFFF;
+      background: rgba(2, 6, 23, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 15px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .ff-search-row input::placeholder,
+    .ff-custom-input input::placeholder {
+      color: #64748B;
+    }
+
+    .ff-search-row input:focus,
+    .ff-custom-input input:focus {
+      border-color: rgba(109, 93, 251, 0.70);
+      box-shadow: 0 0 0 3px rgba(109, 93, 251, 0.14);
+    }
+
+    .ff-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-weight: 900;
+      transition: 0.18s ease;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .ff-btn.primary {
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border-color: rgba(109, 93, 251, 0.78);
+      box-shadow: 0 0 26px rgba(109, 93, 251, 0.20);
+    }
+
+    .ff-btn.orange {
+      background: linear-gradient(135deg, #F97316, #EA580C);
+      border-color: rgba(249, 115, 22, 0.76);
+      box-shadow: 0 0 22px rgba(249, 115, 22, 0.15);
+    }
+
+    .ff-btn:hover {
+      color: #FFFFFF !important;
+      transform: translateY(-1px);
+      border-color: rgba(249, 115, 22, 0.50);
+    }
+
+    .ff-creator-result {
+      display: grid;
+      grid-template-columns: 72px 1fr auto;
+      gap: 14px;
+      align-items: center;
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .ff-creator-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      padding: 4px;
+      background: linear-gradient(135deg, #6D5DFB, #F97316);
+      box-shadow: 0 0 28px rgba(109, 93, 251, 0.22);
+    }
+
+    .ff-creator-avatar span {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #0F172A;
+      border: 4px solid #050B16;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .ff-creator-result strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .ff-creator-result span {
+      display: block;
+      color: #94A3B8;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .ff-mini-badges {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 9px;
+    }
+
+    .ff-mini-badge {
+      display: inline-flex;
+      color: #FFFFFF;
+      background: rgba(109, 93, 251, 0.22);
+      border: 1px solid rgba(109, 93, 251, 0.42);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .ff-mini-badge.gold {
+      color: #FDBA74;
+      background: rgba(249, 115, 22, 0.14);
+      border-color: rgba(249, 115, 22, 0.38);
+    }
+
+    .ff-transfer-card {
+      background:
+        radial-gradient(circle at top left, rgba(109, 93, 251, 0.18), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.12), transparent 32%),
+        rgba(15, 23, 42, 0.84);
+    }
+
+    .ff-balance {
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+      margin: 18px 0;
+    }
+
+    .ff-balance span {
+      display: block;
+      color: #94A3B8;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+
+    .ff-balance strong {
+      color: #FFFFFF;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .ff-spark-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .ff-spark-choice {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(2, 6, 23, 0.48);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 16px;
+      padding: 15px;
+      text-align: center;
+      transition: 0.18s ease;
+    }
+
+    .ff-spark-choice:hover {
+      border-color: rgba(109, 93, 251, 0.60);
+      transform: translateY(-1px);
+    }
+
+    .ff-spark-choice strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 22px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .ff-spark-choice span {
+      display: block;
+      color: #94A3B8;
+      font-size: 12.5px;
+      font-weight: 800;
+    }
+
+    .ff-custom-input {
+      display: grid;
+      gap: 9px;
+      margin-bottom: 16px;
+    }
+
+    .ff-custom-input label {
+      color: #CBD5E1;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .ff-support-safe {
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 15px;
+      margin-top: 16px;
+    }
+
+    .ff-support-safe strong {
+      display: block;
+      color: #FDBA74;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .ff-support-safe p {
+      color: #CBD5E1;
+      font-size: 12.8px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-pack-section {
+      margin-top: 18px;
+    }
+
+    .ff-pack-section > p {
+      color: #94A3B8;
+      font-size: 14.5px;
+      line-height: 1.65;
+      margin: 0 0 16px 0;
+      max-width: 840px;
+    }
+
+    .ff-pack-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+    }
+
+    .ff-pack-card {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      min-height: 225px;
+    }
+
+    .ff-pack-card span {
+      color: #F97316;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 9px;
+      display: block;
+    }
+
+    .ff-pack-card h3 {
+      color: #FFFFFF;
+      font-size: 22px;
+      font-weight: 900;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-pack-card .price {
+      color: #FDBA74;
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 10px;
+    }
+
+    .ff-pack-card p {
+      color: #94A3B8;
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 0 0 16px 0;
+    }
+
+    .ff-pack-card .ff-btn {
+      margin-top: auto;
+      width: 100%;
+    }
+
+    .ff-info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .ff-step-card,
+    .ff-note-card {
+      padding: 18px;
+    }
+
+    .ff-step-number {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #6D5DFB, #F97316);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 900;
+      margin-bottom: 13px;
+    }
+
+    .ff-step-card strong {
+      color: #FFFFFF;
+      display: block;
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .ff-note-card {
+      margin-top: 18px;
+      border-color: rgba(249, 115, 22, 0.24);
+      background:
+        radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 30%),
+        rgba(15, 23, 42, 0.82);
+    }
+
+    .ff-note-card strong {
+      display: block;
+      color: #FDBA74;
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    @media (max-width: 1100px) {
+      .ff-support-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-pack-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .ff-info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-support-hero,
+      .ff-support-card,
+      .ff-transfer-card {
+        padding: 24px 18px;
+      }
+
+      .ff-support-hero h1 {
+        font-size: 38px;
+      }
+
+      .ff-support-hero p {
+        font-size: 16px;
+      }
+
+      .ff-search-row,
+      .ff-creator-result,
+      .ff-spark-grid,
+      .ff-pack-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-btn {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <section class="ff-support-hero">
+    <span class="ff-label">Creator Support</span>
+    <h1>Search a creator and show support with Sparks.</h1>
+    <p>
+      Use Sparks to show appreciation for a creator’s time, passion, and overall creative presence on FicForge. Support happens through the creator’s profile identity, not as payment for a specific fanfiction story, chapter, fandom, update, or reward.
+    </p>
+  </section>
+
+  <div class="ff-support-layout">
+    <section class="ff-support-card">
+      <span class="ff-label">Find Creator</span>
+      <h2>Who do you want to support?</h2>
+      <p>
+        Search by creator name, username, or profile handle. Once the creator is selected, choose how many Sparks you want to send.
+      </p>
+
+      <div class="ff-search-box">
+        <div class="ff-search-row">
+          <input type="text" placeholder="Search creator name or username">
+          <a class="ff-btn primary" href="#">Search</a>
+        </div>
+      </div>
+
+      <div class="ff-creator-result">
+        <div class="ff-creator-avatar">
+          <span>F</span>
+        </div>
+
+        <div>
+          <strong>Creator preview</strong>
+          <span>@creator-name · Select a creator to send Sparks to their profile.</span>
+
+          <div class="ff-mini-badges">
+            <span class="ff-mini-badge">Creator</span>
+            <span class="ff-mini-badge gold">Support Enabled</span>
+          </div>
+        </div>
+
+        <a class="ff-btn" href="#">Select</a>
+      </div>
+    </section>
+
+    <section class="ff-transfer-card">
+      <span class="ff-label">Send Sparks</span>
+      <h2>Show Support</h2>
+      <p>
+        Enjoy their work? You can show appreciation for this creator’s time, passion, and overall creative presence on FicForge.
+      </p>
+
+      <div class="ff-balance">
+        <span>Your Spark Balance</span>
+        <strong>0 Sparks</strong>
+      </div>
+
+      <div class="ff-spark-grid">
+        <a class="ff-spark-choice" href="#">
+          <strong>100</strong>
+          <span>Sparks</span>
+        </a>
+
+        <a class="ff-spark-choice" href="#">
+          <strong>500</strong>
+          <span>Sparks</span>
+        </a>
+
+        <a class="ff-spark-choice" href="#">
+          <strong>1,000</strong>
+          <span>Sparks</span>
+        </a>
+      </div>
+
+      <div class="ff-custom-input">
+        <label>Custom Spark Amount</label>
+        <input type="number" placeholder="Enter custom amount">
+      </div>
+
+      <a class="ff-btn primary" href="#">Send Sparks</a>
+
+      <div class="ff-support-safe">
+        <strong>Important support boundary</strong>
+        <p>
+          Support is not payment for any specific story, chapter, fandom, update, continuation, bonus scene, or reward.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <section id="spark-packs" class="ff-pack-section">
+    <span class="ff-label">Buy Sparks</span>
+    <h2>Need more Sparks?</h2>
+    <p>
+      Once WooCommerce is connected, these Spark packs can become real purchasable products. Readers will be able to buy Sparks here and return to supporting creators without leaving the support flow.
+    </p>
+
+    <div class="ff-pack-grid">
+      <div class="ff-pack-card">
+        <span>Starter</span>
+        <h3>100 Sparks</h3>
+        <div class="price">$1</div>
+        <p>Small support pack for quick appreciation.</p>
+        <a class="ff-btn" href="#spark-packs">Buy Starter</a>
+      </div>
+
+      <div class="ff-pack-card">
+        <span>Standard</span>
+        <h3>1,000 Sparks</h3>
+        <div class="price">$10</div>
+        <p>Standard pack for regular reader support.</p>
+        <a class="ff-btn primary" href="#spark-packs">Buy Standard</a>
+      </div>
+
+      <div class="ff-pack-card">
+        <span>Supporter</span>
+        <h3>5,500 Sparks</h3>
+        <div class="price">$50</div>
+        <p>Includes 5,000 Sparks plus 500 bonus Sparks.</p>
+        <a class="ff-btn" href="#spark-packs">Buy Supporter</a>
+      </div>
+
+      <div class="ff-pack-card">
+        <span>Power Reader</span>
+        <h3>9,000 Sparks</h3>
+        <div class="price">$80</div>
+        <p>Includes 8,000 Sparks plus 1,000 bonus Sparks.</p>
+        <a class="ff-btn" href="#spark-packs">Buy Power Reader</a>
+      </div>
+
+      <div class="ff-pack-card">
+        <span>Patron</span>
+        <h3>17,500 Sparks</h3>
+        <div class="price">$125</div>
+        <p>Includes 15,000 Sparks plus 2,500 bonus Sparks.</p>
+        <a class="ff-btn orange" href="#spark-packs">Buy Patron</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="ff-info-grid">
+    <div class="ff-step-card">
+      <div class="ff-step-number">1</div>
+      <strong>Buy Sparks</strong>
+      <p>Purchase Spark packs through FicForge once WooCommerce is connected.</p>
+    </div>
+
+    <div class="ff-step-card">
+      <div class="ff-step-number">2</div>
+      <strong>Find a creator</strong>
+      <p>Search for the creator profile you want to support.</p>
+    </div>
+
+    <div class="ff-step-card">
+      <div class="ff-step-number">3</div>
+      <strong>Send support</strong>
+      <p>Choose a Spark amount and send appreciation to the creator profile.</p>
+    </div>
+  </div>
+
+  <div class="ff-note-card">
+    <strong>Backend status</strong>
+    <p>
+      This page is the front-end support flow. The search, Spark balance, Spark transfer, WooCommerce products, creator balances, and payout tracking still need backend connection. For now, this gives FicForge a professional support interface ready for integration.
+    </p>
+  </div>
+</section>

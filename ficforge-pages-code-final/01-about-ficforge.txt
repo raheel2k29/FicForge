@@ -1,0 +1,458 @@
+<section class="ff-about-page">
+  <style>
+    .ff-about-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+    }
+
+    .ff-about-page .label {
+      display: inline-flex;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-about-hero {
+      max-width: 980px;
+      margin-bottom: 30px;
+    }
+
+    .ff-about-hero h1 {
+      color: #FFFFFF;
+      font-size: 56px;
+      line-height: 1.05;
+      margin: 0 0 14px 0;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .ff-about-hero p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-about-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .ff-about-actions a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .ff-about-actions a.primary {
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border-color: rgba(109, 93, 251, 0.72);
+    }
+
+    .ff-about-note,
+    .ff-about-card,
+    .ff-about-panel,
+    .ff-about-bottom {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .ff-about-note {
+      margin-bottom: 22px;
+      border-color: rgba(249, 115, 22, 0.28);
+      background: rgba(249, 115, 22, 0.08);
+    }
+
+    .ff-about-note strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 17px;
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+
+    .ff-about-note p,
+    .ff-about-card p,
+    .ff-about-panel p,
+    .ff-about-bottom p {
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .ff-section-head {
+      margin: 34px 0 18px 0;
+      max-width: 900px;
+    }
+
+    .ff-section-head h2 {
+      color: #FFFFFF;
+      font-size: 36px;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-section-head p {
+      color: #94A3B8;
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .ff-about-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .ff-about-card {
+      min-height: 100%;
+    }
+
+    .ff-about-card span {
+      display: inline-flex;
+      width: fit-content;
+      color: #FFFFFF;
+      background: rgba(109, 93, 251, 0.28);
+      border: 1px solid rgba(109, 93, 251, 0.48);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .ff-about-card h3 {
+      color: #FFFFFF;
+      font-size: 24px;
+      margin: 0 0 8px 0;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-about-panel {
+      margin-bottom: 18px;
+    }
+
+    .ff-about-panel h2,
+    .ff-about-bottom h2 {
+      color: #FFFFFF;
+      font-size: 30px;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .ff-about-two {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .ff-about-box {
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .ff-about-box strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .ff-about-box p {
+      color: #94A3B8;
+      font-size: 13.5px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-about-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .ff-about-row {
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .ff-about-row strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .ff-about-row p {
+      color: #94A3B8;
+      font-size: 13.5px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-about-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .ff-about-links a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .ff-about-bottom {
+      margin-top: 24px;
+    }
+
+    @media (max-width: 1000px) {
+      .ff-about-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .ff-about-two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-about-hero h1 {
+        font-size: 40px;
+      }
+
+      .ff-about-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-about-actions a,
+      .ff-about-links a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <div class="ff-about-hero">
+    <span class="label">About FicForge</span>
+    <h1>A home for fanfiction, original fiction, and serialized storytelling.</h1>
+    <p>
+      FicForge is a story-first platform for readers, fanfiction writers, original webnovel authors, and creators building worlds one chapter at a time. It is designed to bring reading, publishing, community, and creator support together in one place.
+    </p>
+
+    <div class="ff-about-actions">
+      <a class="primary" href="/browse/">Start Reading</a>
+      <a href="/write/">Start Writing</a>
+      <a href="/community/">Join Community</a>
+    </div>
+  </div>
+
+  <div class="ff-about-note">
+    <strong>Stories come first.</strong>
+    <p>
+      FicForge is not being built as a forum with stories attached. It is being built as a fiction platform where discussion, support, and community grow naturally around the stories people read and create.
+    </p>
+  </div>
+
+  <div class="ff-section-head">
+    <span class="label">What FicForge Is</span>
+    <h2>A platform for readers and creators</h2>
+    <p>
+      FicForge exists to give writers a place to publish their work and give readers a place to discover fandom stories, original webnovels, serialized fiction, and creator-driven worlds.
+    </p>
+  </div>
+
+  <div class="ff-about-grid">
+    <div class="ff-about-card">
+      <span>Fanfiction</span>
+      <h3>Fandom storytelling</h3>
+      <p>
+        FicForge welcomes transformative fiction, fandom-inspired stories, crossovers, alternate universes, canon divergence, and reader communities built around shared fictional worlds.
+      </p>
+    </div>
+
+    <div class="ff-about-card">
+      <span>Originals</span>
+      <h3>Original webnovels</h3>
+      <p>
+        FicForge also supports original fiction, creator-owned stories, serialized novels, fantasy, sci-fi, romance, drama, action, dark fiction, and long-form webnovel projects.
+      </p>
+    </div>
+
+    <div class="ff-about-card">
+      <span>Community</span>
+      <h3>Discussion around stories</h3>
+      <p>
+        Readers and writers can connect through story comments, forum rooms, recommendations, writing help, fandom discussions, and community spaces centered on fiction.
+      </p>
+    </div>
+  </div>
+
+  <div class="ff-about-panel">
+    <span class="label">Our Vision</span>
+    <h2>FicForge is built around the reader-writer connection</h2>
+    <p>
+      A strong fiction platform should make it easy for creators to publish and easy for readers to find stories worth following. FicForge is being built to support that connection through clean story pages, community interaction, creator profiles, memberships, Sparks, and future tools for original fiction monetization.
+    </p>
+
+    <div class="ff-about-two">
+      <div class="ff-about-box">
+        <strong>For readers</strong>
+        <p>
+          FicForge gives readers a place to browse stories, follow creators, join discussions, save favorites, support creators through approved features, and become part of growing story communities.
+        </p>
+      </div>
+
+      <div class="ff-about-box">
+        <strong>For writers</strong>
+        <p>
+          FicForge gives writers a place to publish chapters, organize story details, build a public creator presence, connect with readers, and prepare for stronger creator tools as the platform grows.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-about-panel">
+    <span class="label">Platform Values</span>
+    <h2>What FicForge stands for</h2>
+
+    <div class="ff-about-list">
+      <div class="ff-about-row">
+        <strong>Story-first design</strong>
+        <p>
+          FicForge is focused on reading, writing, publishing, discovery, and creator identity before anything else.
+        </p>
+      </div>
+
+      <div class="ff-about-row">
+        <strong>Room for fanfiction and original work</strong>
+        <p>
+          Fanfiction and original fiction belong on the same platform, but they require different rules, rights boundaries, and monetization limits.
+        </p>
+      </div>
+
+      <div class="ff-about-row">
+        <strong>Clear creator boundaries</strong>
+        <p>
+          FicForge does not sell fanfiction. Fanfiction chapters remain free to read and cannot be locked, sold, Fast Passed, or offered as paid early access.
+        </p>
+      </div>
+
+      <div class="ff-about-row">
+        <strong>Useful community interaction</strong>
+        <p>
+          FicForge encourages discussion, feedback, recommendations, writing help, fandom talk, and reader activity without letting the community side overwhelm the story platform.
+        </p>
+      </div>
+
+      <div class="ff-about-row">
+        <strong>Growth in stages</strong>
+        <p>
+          FicForge is being built step by step, starting with the foundation: pages, publishing, browsing, accounts, community, support, memberships, Sparks, and creator tools.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-about-panel">
+    <span class="label">Creator Support</span>
+    <h2>Supporting creators responsibly</h2>
+    <p>
+      FicForge is designed to support creators while respecting the difference between original fiction and fanfiction. Original webnovels may be eligible for broader monetization features as the platform grows. Fanfiction support must remain general profile support, not payment for specific fanfiction chapters, fandoms, updates, continuations, or rewards.
+    </p>
+
+    <div class="ff-about-two">
+      <div class="ff-about-box">
+        <strong>Sparks</strong>
+        <p>
+          Sparks are FicForge’s platform currency. Readers can use Sparks through approved features, including general creator support and future platform tools.
+        </p>
+      </div>
+
+      <div class="ff-about-box">
+        <strong>Premium</strong>
+        <p>
+          Premium memberships give readers monthly Sparks, an ad-free experience, supporter status, profile perks, priority support, and early access to new FicForge features.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-about-panel">
+    <span class="label">What We Are Building Toward</span>
+    <h2>The long-term FicForge goal</h2>
+    <p>
+      FicForge is being built to become a home for serialized fiction, fandom storytelling, creator-owned webnovels, story communities, and reader-supported creativity. The platform will grow over time with better publishing tools, improved discovery, creator profiles, story organization, community features, and responsible monetization systems.
+    </p>
+  </div>
+
+  <div class="ff-about-panel">
+    <span class="label">Explore FicForge</span>
+    <h2>Where to go next</h2>
+    <p>
+      Start reading, begin writing, join the community, or review the support pages that explain how FicForge works.
+    </p>
+
+    <div class="ff-about-links">
+      <a href="/browse/">Browse Stories</a>
+      <a href="/write/">Write on FicForge</a>
+      <a href="/community/">Community</a>
+      <a href="/forum/">Forums</a>
+      <a href="/premium/">Premium</a>
+      <a href="/sparks-faq/">Sparks FAQ</a>
+      <a href="/support/">Support Hub</a>
+    </div>
+  </div>
+
+  <div class="ff-about-bottom">
+    <h2>FicForge is being forged for stories that keep growing.</h2>
+    <p>
+      Whether you are here to read, write, discuss, recommend, support, or build an audience, FicForge is designed to become a platform where stories come first and communities form around them.
+    </p>
+
+    <div class="ff-about-actions">
+      <a class="primary" href="/browse/">Start Reading</a>
+      <a href="/write/">Start Writing</a>
+      <a href="/community/">Join Community</a>
+    </div>
+  </div>
+</section>

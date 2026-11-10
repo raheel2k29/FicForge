@@ -1,0 +1,516 @@
+<section class="ff-moderation-page">
+  <style>
+    .ff-moderation-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+    }
+
+    .ff-moderation-page .label {
+      display: inline-flex;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-moderation-hero {
+      max-width: 940px;
+      margin-bottom: 30px;
+    }
+
+    .ff-moderation-hero h1 {
+      color: #FFFFFF;
+      font-size: 56px;
+      line-height: 1.05;
+      margin: 0 0 14px 0;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .ff-moderation-hero p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-moderation-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .ff-moderation-actions a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .ff-moderation-actions a.primary {
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border-color: rgba(109, 93, 251, 0.72);
+    }
+
+    .ff-moderation-alert,
+    .ff-moderation-card,
+    .ff-moderation-panel,
+    .ff-moderation-bottom {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .ff-moderation-alert {
+      margin-bottom: 18px;
+      border-color: rgba(249, 115, 22, 0.28);
+      background: rgba(249, 115, 22, 0.08);
+    }
+
+    .ff-moderation-alert strong,
+    .ff-moderation-card strong,
+    .ff-moderation-box strong,
+    .ff-moderation-list strong {
+      display: block;
+      color: #FFFFFF;
+      font-weight: 900;
+    }
+
+    .ff-moderation-alert strong,
+    .ff-moderation-card strong {
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .ff-moderation-alert p,
+    .ff-moderation-card p,
+    .ff-moderation-panel p,
+    .ff-moderation-bottom p {
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .ff-moderation-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .ff-moderation-panel {
+      margin-bottom: 18px;
+    }
+
+    .ff-moderation-panel h2,
+    .ff-moderation-bottom h2 {
+      color: #FFFFFF;
+      font-size: 30px;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .ff-moderation-two {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .ff-moderation-box,
+    .ff-moderation-list div {
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .ff-moderation-box strong,
+    .ff-moderation-list strong {
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .ff-moderation-box p,
+    .ff-moderation-list p {
+      color: #94A3B8;
+      font-size: 13.5px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-moderation-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .ff-moderation-highlight {
+      background: rgba(109, 93, 251, 0.10);
+      border: 1px solid rgba(109, 93, 251, 0.32);
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 18px;
+    }
+
+    .ff-moderation-highlight p {
+      color: #CBD5E1;
+      font-size: 14px;
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .ff-moderation-highlight strong {
+      color: #FFFFFF;
+    }
+
+    .ff-moderation-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .ff-moderation-links a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .ff-moderation-bottom {
+      margin-top: 24px;
+    }
+
+    @media (max-width: 1000px) {
+      .ff-moderation-grid,
+      .ff-moderation-two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-moderation-hero h1 {
+        font-size: 40px;
+      }
+
+      .ff-moderation-actions a,
+      .ff-moderation-links a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <div class="ff-moderation-hero">
+    <span class="label">Safety & Review</span>
+    <h1>Moderation & Appeals</h1>
+    <p>
+      FicForge uses moderation to protect readers, creators, stories, payments, and the overall platform. This page explains how reports, enforcement actions, and appeals are handled.
+    </p>
+
+    <div class="ff-moderation-actions">
+      <a href="/support/">← Return to Support</a>
+      <a class="primary" href="/contact/">Submit a Report or Appeal</a>
+    </div>
+  </div>
+
+  <div class="ff-moderation-alert">
+    <strong>Important launch note</strong>
+    <p>
+      During early launch, FicForge moderation may be handled manually through support forms and admin review. More advanced report tools, story-level report buttons, and automated moderation features may be added later.
+    </p>
+  </div>
+
+  <div class="ff-moderation-grid">
+    <div class="ff-moderation-card">
+      <strong>Reports</strong>
+      <p>Users may report content, profiles, comments, plagiarism, impersonation, payment abuse, or safety concerns.</p>
+    </div>
+
+    <div class="ff-moderation-card">
+      <strong>Reviews</strong>
+      <p>FicForge may review reports, account activity, content history, evidence, and platform rules before taking action.</p>
+    </div>
+
+    <div class="ff-moderation-card">
+      <strong>Appeals</strong>
+      <p>Users may appeal certain warnings, removals, restrictions, suspensions, or account actions.</p>
+    </div>
+  </div>
+
+  <div class="ff-moderation-panel">
+    <span class="label">Purpose</span>
+    <h2>What moderation is for</h2>
+    <p>
+      Moderation exists to keep FicForge usable, safe, fair, and focused on stories. FicForge may review content or accounts when there are reports, policy concerns, copyright issues, payment risks, spam, harassment, impersonation, or signs of platform abuse.
+    </p>
+
+    <div class="ff-moderation-two">
+      <div class="ff-moderation-box">
+        <strong>Protecting users</strong>
+        <p>
+          Moderation helps protect readers and creators from harassment, spam, impersonation, stolen work, misleading monetization, and abusive behavior.
+        </p>
+      </div>
+
+      <div class="ff-moderation-box">
+        <strong>Protecting the platform</strong>
+        <p>
+          FicForge may act when content, accounts, payments, or behavior create risk for the platform, creators, readers, payment systems, or hosting stability.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-moderation-panel">
+    <span class="label">Reports</span>
+    <h2>What users can report</h2>
+    <p>
+      Users may report issues that appear to violate FicForge rules, harm other users, abuse the platform, or misuse creator-support features.
+    </p>
+
+    <div class="ff-moderation-list">
+      <div>
+        <strong>Content concerns</strong>
+        <p>Stories, chapters, profiles, comments, images, tags, summaries, warnings, or other material that may violate FicForge rules.</p>
+      </div>
+
+      <div>
+        <strong>Copyright and plagiarism</strong>
+        <p>Copied stories, reposted chapters, stolen cover art, impersonation, or content uploaded without permission.</p>
+      </div>
+
+      <div>
+        <strong>Harassment and abuse</strong>
+        <p>Threats, targeted harassment, hate, spam, brigading, evasion, manipulation, or abusive behavior toward users or staff.</p>
+      </div>
+
+      <div>
+        <strong>Payment and Spark abuse</strong>
+        <p>Suspicious transactions, fake support, refund abuse, chargebacks, monetization abuse, or attempts to sell restricted content.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-moderation-panel">
+    <span class="label">Review Process</span>
+    <h2>How FicForge reviews reports</h2>
+    <p>
+      FicForge may review reports manually, compare them against platform rules, check available evidence, and decide whether action is needed. Not every report will result in removal or account action.
+    </p>
+
+    <div class="ff-moderation-list">
+      <div>
+        <strong>1. Report received</strong>
+        <p>A user submits a report through Contact Support, a report form, or another approved FicForge support channel.</p>
+      </div>
+
+      <div>
+        <strong>2. Evidence reviewed</strong>
+        <p>FicForge may review URLs, screenshots, account history, story details, timestamps, previous reports, payment activity, or other available information.</p>
+      </div>
+
+      <div>
+        <strong>3. Rule check</strong>
+        <p>The report is compared against FicForge’s Content Policy, DMCA & Copyright page, Sparks rules, payout rules, and community standards.</p>
+      </div>
+
+      <div>
+        <strong>4. Action or no action</strong>
+        <p>FicForge may take action, request more information, issue a warning, remove content, restrict features, or decide that no violation was found.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-moderation-panel">
+    <span class="label">Possible Actions</span>
+    <h2>Moderation actions FicForge may take</h2>
+    <p>
+      FicForge may choose the action that fits the severity, evidence, history, and risk of the issue.
+    </p>
+
+    <div class="ff-moderation-list">
+      <div>
+        <strong>Content-level action</strong>
+        <p>Content may be edited, age-restricted, hidden, unpublished, removed, reclassified, or required to add stronger ratings, warnings, tags, or disclaimers.</p>
+      </div>
+
+      <div>
+        <strong>Account-level action</strong>
+        <p>Users may receive warnings, temporary restrictions, publishing limits, comment restrictions, account suspension, or permanent account termination.</p>
+      </div>
+
+      <div>
+        <strong>Monetization-level action</strong>
+        <p>FicForge may pause creator support, hold earnings, delay payouts, suspend Sparks access, restrict monetized tools, or review payout eligibility.</p>
+      </div>
+
+      <div>
+        <strong>Security-level action</strong>
+        <p>FicForge may block spam, restrict suspicious accounts, investigate abuse patterns, or prevent users from evading previous enforcement.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-moderation-panel">
+    <span class="label">Monetization Review</span>
+    <h2>Payout holds and creator-support review</h2>
+    <p>
+      FicForge may hold or review creator earnings when there are serious policy concerns, copyright reports, payment disputes, suspicious activity, or account verification issues.
+    </p>
+
+    <div class="ff-moderation-highlight">
+      <p>
+        <strong>Platform fee rule:</strong> FicForge applies a 9% platform fee to eligible creator-support and monetized creator earnings. Creators keep 91% of eligible support value before payment-provider, refund, tax, or account-review issues that may apply.
+      </p>
+    </div>
+
+    <div class="ff-moderation-list">
+      <div>
+        <strong>Why earnings may be held</strong>
+        <p>Copyright complaints, plagiarism reports, chargebacks, refund abuse, suspicious Sparks activity, fake engagement, identity issues, or rule violations may trigger review.</p>
+      </div>
+
+      <div>
+        <strong>What may happen</strong>
+        <p>Earnings may be delayed, held, reversed, reduced, removed from eligible balance, or blocked from payout depending on the situation.</p>
+      </div>
+
+      <div>
+        <strong>Where payout rules live</strong>
+        <p>Detailed payout thresholds, schedules, payment methods, and creator tax responsibility are explained on the Creator Payout FAQ page.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-moderation-panel">
+    <span class="label">Copyright Enforcement</span>
+    <h2>Copyright, plagiarism, and reposting enforcement</h2>
+    <p>
+      FicForge may remove or restrict content that appears to involve copyright infringement, plagiarism, reposting, impersonation, stolen cover art, or false ownership claims.
+    </p>
+
+    <div class="ff-moderation-list">
+      <div>
+        <strong>Formal copyright notices</strong>
+        <p>Formal copyright complaints and counter-notices should be handled through the DMCA & Copyright process.</p>
+      </div>
+
+      <div>
+        <strong>Platform plagiarism reports</strong>
+        <p>Reports involving copied stories, reposted chapters, stolen summaries, or impersonation may be reviewed under FicForge platform rules even if they are not formal DMCA notices.</p>
+      </div>
+
+      <div>
+        <strong>Repeat violations</strong>
+        <p>Users who repeatedly upload infringing, copied, or stolen content may lose publishing access, monetization access, or their account.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-moderation-panel">
+    <span class="label">Appeals</span>
+    <h2>How to appeal a moderation decision</h2>
+    <p>
+      Users may appeal certain moderation decisions if they believe FicForge made a mistake, misunderstood the situation, or acted on incomplete information.
+    </p>
+
+    <div class="ff-moderation-list">
+      <div>
+        <strong>What can be appealed</strong>
+        <p>Warnings, content removals, account restrictions, monetization holds, payout delays, suspensions, or other enforcement decisions may be eligible for review.</p>
+      </div>
+
+      <div>
+        <strong>What to include</strong>
+        <p>Include your username, email, story or content URL, the action being appealed, a clear explanation, and any evidence that supports your appeal.</p>
+      </div>
+
+      <div>
+        <strong>Be specific and honest</strong>
+        <p>Appeals should explain why the decision was mistaken or why the issue has been corrected. Abusive, spammy, or dishonest appeals may be ignored or denied.</p>
+      </div>
+
+      <div>
+        <strong>Appeal results</strong>
+        <p>FicForge may uphold the decision, reverse it, reduce the action, request more information, restore content, or keep restrictions in place.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-moderation-panel">
+    <span class="label">Report Abuse</span>
+    <h2>Abuse of reports and appeals</h2>
+    <p>
+      Reports and appeals exist to solve real issues, not to harass creators, attack competitors, silence criticism, manipulate rankings, or overload support.
+    </p>
+
+    <div class="ff-moderation-list">
+      <div>
+        <strong>False reports</strong>
+        <p>Repeated false, misleading, malicious, or bad-faith reports may lead to account restrictions or support limitations.</p>
+      </div>
+
+      <div>
+        <strong>Appeal spam</strong>
+        <p>Submitting the same appeal repeatedly without new information may delay review or result in the appeal being closed.</p>
+      </div>
+
+      <div>
+        <strong>Retaliation</strong>
+        <p>Using reports to target, threaten, or punish another user may be treated as harassment or platform abuse.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-moderation-panel">
+    <span class="label">Related Pages</span>
+    <h2>Where to go next</h2>
+    <p>
+      This page explains enforcement and appeals. Use the pages below for the detailed rules behind specific issues.
+    </p>
+
+    <div class="ff-moderation-links">
+      <a href="/content-policy/">Content Policy</a>
+      <a href="/dmca-copyright/">DMCA & Copyright</a>
+      <a href="/creator-payout-faq/">Creator Payout FAQ</a>
+      <a href="/sparks-faq/">Sparks FAQ</a>
+      <a href="/protection-rights/">Protection & Rights</a>
+      <a href="/contact/">Contact Support</a>
+    </div>
+  </div>
+
+  <div class="ff-moderation-bottom">
+    <h2>Need to report or appeal something?</h2>
+    <p>
+      Use Contact Support to submit reports, appeals, copyright concerns, plagiarism evidence, payment concerns, or account-review questions.
+    </p>
+
+    <div class="ff-moderation-actions">
+      <a class="primary" href="/contact/">Submit Report or Appeal</a>
+      <a href="/support/">Return to Support</a>
+    </div>
+  </div>
+</section>

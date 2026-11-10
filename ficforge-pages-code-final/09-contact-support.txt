@@ -1,0 +1,174 @@
+<section class="ff-contact-page">
+  <style>
+    .ff-contact-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto 26px auto;
+      color: #FFFFFF;
+    }
+
+    .ff-contact-page .label {
+      display: inline-flex;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-contact-hero {
+      max-width: 940px;
+      margin-bottom: 24px;
+    }
+
+    .ff-contact-hero h1 {
+      color: #FFFFFF;
+      font-size: 56px;
+      line-height: 1.05;
+      margin: 0 0 14px 0;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .ff-contact-hero p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-contact-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .ff-contact-actions a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .ff-contact-actions a.primary {
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border-color: rgba(109, 93, 251, 0.72);
+    }
+
+    .ff-contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .ff-contact-card {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .ff-contact-card strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 17px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .ff-contact-card p {
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-contact-note {
+      background: rgba(249, 115, 22, 0.08);
+      border: 1px solid rgba(249, 115, 22, 0.26);
+      border-radius: 18px;
+      padding: 20px;
+      margin-top: 18px;
+    }
+
+    .ff-contact-note strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 17px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .ff-contact-note p {
+      color: #CBD5E1;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    @media (max-width: 1000px) {
+      .ff-contact-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-contact-hero h1 {
+        font-size: 40px;
+      }
+
+      .ff-contact-actions a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <div class="ff-contact-hero">
+    <span class="label">Support Desk</span>
+    <h1>Contact FicForge Support</h1>
+    <p>
+      Use this page to contact FicForge about general support, story reports, user reports, moderation appeals, copyright concerns, Sparks issues, payout questions, or account problems.
+    </p>
+
+    <div class="ff-contact-actions">
+      <a href="/support/">← Return to Support</a>
+      <a class="primary" href="/moderation-appeals/">Moderation & Appeals</a>
+    </div>
+  </div>
+
+  <div class="ff-contact-grid">
+    <div class="ff-contact-card">
+      <strong>Reports</strong>
+      <p>Report stories, profiles, comments, plagiarism, impersonation, harassment, stolen work, or platform abuse.</p>
+    </div>
+
+    <div class="ff-contact-card">
+      <strong>Appeals</strong>
+      <p>Appeal warnings, removals, restrictions, payout holds, account suspensions, or moderation decisions.</p>
+    </div>
+
+    <div class="ff-contact-card">
+      <strong>Support</strong>
+      <p>Ask for help with accounts, Sparks, creator earnings, publishing issues, or general FicForge questions.</p>
+    </div>
+  </div>
+
+  <div class="ff-contact-note">
+    <strong>Before submitting</strong>
+    <p>
+      Include as much detail as possible. For reports or appeals, provide usernames, story titles, chapter links, screenshots if available, and a clear explanation of the issue.
+    </p>
+  </div>
+</section>

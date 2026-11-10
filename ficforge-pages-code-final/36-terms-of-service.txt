@@ -1,0 +1,334 @@
+<section class="ff-terms-page">
+  <style>
+    .ff-terms-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+    }
+
+    .ff-terms-page .label {
+      display: inline-flex;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-terms-hero {
+      max-width: 980px;
+      margin-bottom: 30px;
+    }
+
+    .ff-terms-hero h1 {
+      color: #FFFFFF;
+      font-size: 56px;
+      line-height: 1.05;
+      margin: 0 0 14px 0;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .ff-terms-hero p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-terms-note,
+    .ff-terms-panel,
+    .ff-terms-bottom {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    .ff-terms-note {
+      border-color: rgba(249, 115, 22, 0.28);
+      background: rgba(249, 115, 22, 0.08);
+    }
+
+    .ff-terms-note strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 17px;
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+
+    .ff-terms-panel h2,
+    .ff-terms-bottom h2 {
+      color: #FFFFFF;
+      font-size: 30px;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .ff-terms-note p,
+    .ff-terms-panel p,
+    .ff-terms-bottom p {
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.75;
+      margin: 0 0 12px 0;
+    }
+
+    .ff-terms-panel ul {
+      margin: 12px 0 0 0;
+      padding-left: 20px;
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .ff-terms-panel li {
+      margin-bottom: 8px;
+    }
+
+    .ff-terms-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .ff-terms-links a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .ff-terms-links a:hover {
+      color: #FFFFFF !important;
+      border-color: rgba(249, 115, 22, 0.55);
+    }
+
+    @media (max-width: 767px) {
+      .ff-terms-hero h1 {
+        font-size: 40px;
+      }
+
+      .ff-terms-links a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <div class="ff-terms-hero">
+    <span class="label">FicForge Legal</span>
+    <h1>Terms of Service</h1>
+    <p>
+      These Terms explain the basic rules for using FicForge, including accounts, publishing, community activity, Premium memberships, Sparks, creator support, and platform boundaries.
+    </p>
+  </div>
+
+  <div class="ff-terms-note">
+    <strong>Important note</strong>
+    <p>
+      This page is a working Terms of Service for FicForge. It will be reviewed and updated as the platform grows.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>1. Acceptance of these Terms</h2>
+    <p>
+      By accessing or using FicForge, you agree to follow these Terms, our Content Policy, Privacy Policy, DMCA & Copyright Policy, community rules, and any other platform rules that apply to your use of the service.
+    </p>
+    <p>
+      If you do not agree with these Terms, you should not use FicForge.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>2. What FicForge is</h2>
+    <p>
+      FicForge is a fiction platform for readers, fanfiction writers, original fiction authors, serialized storytelling, creator profiles, community discussion, and approved creator-support features.
+    </p>
+    <p>
+      FicForge is built around stories first. Community features, Premium memberships, Sparks, forums, support tools, and creator systems exist to support the reading and writing experience.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>3. Accounts and user responsibility</h2>
+    <p>
+      You may need an account to publish stories, comment, participate in forums, use Premium features, purchase Sparks, or access creator tools.
+    </p>
+    <ul>
+      <li>You are responsible for keeping your login information secure.</li>
+      <li>You may not impersonate another person, creator, company, moderator, or rights-holder.</li>
+      <li>You may not use FicForge for spam, fraud, abuse, harassment, or illegal activity.</li>
+      <li>FicForge may limit, suspend, or remove accounts that violate platform rules.</li>
+    </ul>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>4. User content</h2>
+    <p>
+      Users may publish or submit stories, chapters, titles, descriptions, tags, covers, profile text, comments, forum posts, reviews, messages, reports, and other content through FicForge.
+    </p>
+    <p>
+      You are responsible for the content you post. By submitting content to FicForge, you confirm that you have the rights or permission needed to share it, or that your use is otherwise allowed under applicable rules.
+    </p>
+    <p>
+      FicForge may remove, restrict, label, moderate, or review content that violates platform rules, creates legal risk, receives credible reports, or appears unsafe for the platform.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>5. Creator ownership and platform license</h2>
+    <p>
+      Creators keep ownership of the original content they create, subject to any rights they do not own. By posting content on FicForge, you give FicForge permission to host, display, store, format, distribute, promote, and make your content available through the platform.
+    </p>
+    <p>
+      This permission is necessary for FicForge to operate the website, show your stories to readers, display your profile, support browsing, show search results, and run platform features.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>6. Fanfiction boundaries</h2>
+    <p>
+      FicForge welcomes fanfiction, but fanfiction has different boundaries from original fiction.
+    </p>
+    <ul>
+      <li>Fanfiction chapters remain free to read on FicForge.</li>
+      <li>Fanfiction chapters cannot be sold, locked, Fast Passed, or offered as paid early access.</li>
+      <li>Creators may not offer paid fanfiction rewards, bonus scenes, continuations, fandom-specific updates, or chapter access in exchange for payment.</li>
+      <li>General profile support must not be presented as payment for a specific fanfiction work, chapter, fandom, ship, character, update, continuation, or reward.</li>
+    </ul>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>7. Original fiction and monetization</h2>
+    <p>
+      Original fiction may be eligible for broader monetization features as FicForge develops. This may include approved creator support, future original-fiction tools, and other platform systems.
+    </p>
+    <p>
+      FicForge may review stories, accounts, creator activity, payment activity, and monetization eligibility before allowing or continuing access to creator earning features.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>8. Premium memberships</h2>
+    <p>
+      FicForge Premium memberships may provide benefits such as monthly Sparks, bonus Sparks, ad-free experience, profile/status perks, priority support, member updates, polls, reading tools, and early access to selected platform features.
+    </p>
+    <p>
+      Premium is a platform membership. It is not paid fanfiction access and does not allow users to bypass FicForge content, copyright, payment, or community rules.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>9. Sparks</h2>
+    <p>
+      Sparks are FicForge’s platform currency. Sparks may be purchased, included with Premium memberships, awarded as bonuses, or made available through approved platform features.
+    </p>
+    <ul>
+      <li>Sparks may only be used through approved FicForge features.</li>
+      <li>Purchased Sparks, bonus Sparks, promotional Sparks, and membership Sparks may have different refund, payout, review, and eligibility rules.</li>
+      <li>For eligible creator support, 100 eligible Sparks equals $1.00 before FicForge’s 9% platform fee and before payment-provider, refund, tax, account-review, or processing issues.</li>
+      <li>FicForge applies a 9% platform fee to eligible creator-support and monetized creator earnings. Creators keep 91% of eligible support value before other applicable deductions or reviews.</li>
+    </ul>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>10. Payments, refunds, and payout reviews</h2>
+    <p>
+      Payments for Premium memberships, Sparks, creator support, and other paid features may be processed through third-party payment providers.
+    </p>
+    <p>
+      FicForge may review transactions for fraud, abuse, refund risk, chargebacks, account issues, policy violations, payment-provider requirements, or legal concerns.
+    </p>
+    <p>
+      Creator payouts may be delayed, adjusted, denied, or reviewed if there are account problems, refund issues, suspicious activity, eligibility concerns, or policy violations.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>11. Community rules</h2>
+    <p>
+      FicForge users may participate in comments, reviews, forums, discussions, creator spaces, and other community features.
+    </p>
+    <ul>
+      <li>Criticism and disagreement are allowed when done respectfully.</li>
+      <li>Harassment, threats, doxxing, impersonation, spam, targeted abuse, and malicious behavior are not allowed.</li>
+      <li>Users may not pressure creators into unsafe, illegal, or rule-breaking content.</li>
+      <li>Users may not use community areas to sell fanfiction chapters or paid fanfiction rewards.</li>
+    </ul>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>12. Copyright, plagiarism, and takedowns</h2>
+    <p>
+      FicForge respects creator rights and copyright concerns. Users may not upload stolen work, impersonate creators, repost another person’s writing without permission, or falsely claim ownership of content.
+    </p>
+    <p>
+      Copyright complaints should be submitted through the DMCA & Copyright page. FicForge may remove or restrict content while reviewing credible copyright, plagiarism, or rights-holder concerns.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>13. Moderation and enforcement</h2>
+    <p>
+      FicForge may moderate content, restrict features, remove posts, suspend accounts, limit monetization, hide content, issue warnings, or take other action when users violate platform rules or create risk for the platform.
+    </p>
+    <p>
+      Users may be able to appeal certain moderation decisions through the Moderation & Appeals process.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>14. Platform availability and changes</h2>
+    <p>
+      FicForge is being built in stages. Features may change, pause, launch, be removed, or be adjusted as the platform develops.
+    </p>
+    <p>
+      FicForge does not guarantee that every feature will always be available, uninterrupted, error-free, or unchanged.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>15. No guarantee of success</h2>
+    <p>
+      FicForge does not guarantee that creators will receive readers, followers, earnings, rankings, promotion, visibility, or payouts. Reader activity, creator support, and platform discovery may vary.
+    </p>
+  </div>
+
+  <div class="ff-terms-panel">
+    <h2>16. Contact</h2>
+    <p>
+      Questions about these Terms can be sent through FicForge’s Contact Support page.
+    </p>
+
+    <div class="ff-terms-links">
+      <a href="/contact/">Contact Support</a>
+      <a href="/content-policy/">Content Policy</a>
+      <a href="/privacy-policy/">Privacy Policy</a>
+      <a href="/dmca-copyright/">DMCA & Copyright</a>
+      <a href="/moderation-appeals/">Moderation & Appeals</a>
+    </div>
+  </div>
+
+  <div class="ff-terms-bottom">
+    <h2>FicForge Terms of Service</h2>
+    <p>
+      These Terms are part of FicForge’s platform foundation and should be updated as the site grows, especially as memberships, Sparks, creator tools, forums, monetization, and payout systems become more advanced.
+    </p>
+  </div>
+</section>

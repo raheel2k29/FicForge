@@ -1,0 +1,355 @@
+<section class="ff-rights-page">
+  <div class="ff-rights-hero">
+    <span>CREATOR PROTECTION</span>
+    <h1>Protection & Rights</h1>
+    <p>
+      FicForge is built to give writers a clear, respectful place to publish stories while understanding how ownership, fanfiction, original webnovels, copyright, monetization, and platform protections work.
+    </p>
+
+    <div class="ff-rights-actions">
+      <a href="/support/">← Return to Support</a>
+      <a class="primary" href="/dmca-copyright/">DMCA & Copyright</a>
+    </div>
+  </div>
+
+  <div class="ff-rights-grid">
+    <div class="ff-rights-card">
+      <strong>Original Fiction Ownership</strong>
+      <p>
+        Writers keep ownership of their original stories, characters, worlds, and intellectual property. Publishing on FicForge does not transfer ownership of your work to the platform.
+      </p>
+    </div>
+
+    <div class="ff-rights-card">
+      <strong>Fanfiction & Transformative Works</strong>
+      <p>
+        Fanfiction can be published and shared on FicForge, but fanfiction chapters cannot be sold directly, locked behind chapter paywalls, or monetized as copyrighted derivative works.
+      </p>
+    </div>
+
+    <div class="ff-rights-card">
+      <strong>Anti-Scraping Position</strong>
+      <p>
+        FicForge does not support scraping, reposting, unauthorized compilation, or mass collection of creator work. Abuse may lead to account restrictions or permanent removal.
+      </p>
+    </div>
+  </div>
+
+  <div class="ff-rights-panel">
+    <span>CREATOR OWNERSHIP</span>
+    <h2>Your stories remain yours</h2>
+    <p>
+      When you publish original fiction on FicForge, you remain the owner of your original intellectual property. FicForge does not claim ownership over your characters, worlds, plots, prose, or future publishing opportunities.
+    </p>
+    <p>
+      By posting on the platform, you give FicForge limited permission to host, display, organize, cache, and promote your work inside normal platform features. This permission exists so your story can appear on your profile, in search results, in story listings, in reader libraries, and other FicForge discovery tools.
+    </p>
+  </div>
+
+  <div class="ff-rights-panel">
+    <span>FANFICTION BOUNDARIES</span>
+    <h2>Fanfiction is free to read and separate from direct sales</h2>
+    <p>
+      FicForge welcomes fanfiction and transformative storytelling, but fanfiction chapters cannot be sold directly, locked behind Sparks, placed behind Fast Pass, offered as paid early access, or tied to paid chapter continuations.
+    </p>
+    <p>
+      FicForge’s safe  support model separates financial support from specific fanfiction works. Readers may support a creator’s overall public profile as general appreciation for that creator’s time, talent, and broader creative presence, but that support is not a purchase of any specific fanfiction story, chapter, fandom, ship, character, update, or continuation.
+    </p>
+    <p>
+      Creators may not promise bonus fanfiction, exclusive fanfiction, early fanfiction access, fandom-specific rewards, or future fanfiction updates in exchange for Sparks, subscriptions, tips, donations, or outside payments.
+    </p>
+  </div>
+
+  <div class="ff-rights-panel">
+    <span>GENERAL CREATOR SUPPORT</span>
+    <h2>Profile support is not story payment</h2>
+    <p>
+      FicForge may allow readers to support a creator’s public profile as a broad show of appreciation. This support is directed toward the creator as an independent creative person, not toward the sale of any specific fanfiction work.
+    </p>
+    <p>
+      This means profile support should not be advertised as payment for a particular fanfiction chapter, fandom project, ship, character, continuation, bonus scene, commission, or release schedule.The profile support is there as a show of respect and solidarity as   writers  invested their sweat, time and tears for a creative work they wish to share with others for free.
+    </p>
+    <p>
+      FicForge’s goal is to maintain a clear separation between general creator appreciation and the direct sale of unlicensed derivative works. This approach reduces legal risk, and FicForge may restrict or disable support tools if a creator uses them to indirectly sell fanfiction or promise fanfiction rewards.
+    </p>
+  </div>
+
+  <div class="ff-rights-panel">
+    <span>ORIGINAL WEBNOVEL RIGHTS</span>
+    <h2>Original webnovels can use full creator monetization tools</h2>
+    <p>
+      Original webnovels are treated differently from fanfiction because the creator owns the underlying original world, characters, story structure, and intellectual property. This gives original fiction authors access to broader publishing and monetization options on FicForge.
+    </p>
+    <p>
+      Original fiction creators may later use FicForge monetization tools such as Sparks-based Fast Pass, creator subscriptions, gated early-access chapters, and other approved earning systems. These tools are designed for stories where the creator controls the original rights.
+    </p>
+    <p>
+      FicForge’s goal is to let original webnovel authors build sustainable audiences without surrendering massive ownership of their work. Publishing an original story on FicForge does not transfer copyright ownership to the platform.
+    </p>
+    <p>
+      Original webnovel creators remain responsible for making sure their work is truly original, properly tagged, correctly rated, and compliant with FicForge’s content and payment rules.
+    </p>
+  </div>
+
+  <div class="ff-rights-panel">
+    <span>ORIGINAL FICTION MONETIZATION</span>
+    <h2>How original creators may earn on FicForge</h2>
+    <p>
+      Original fiction and original webnovels may eventually use FicForge’s creator earning systems because the creator owns the core work being monetized. This can include Sparks-based early access, Fast Pass chapters, creator subscriptions, and approved profile support.
+    </p>
+    <p>
+      Fast Pass is intended for original webnovels only. It allows impatient readers to spend Sparks to access selected upcoming chapters early, while patient readers can still wait for scheduled free release.
+    </p>
+    <p>
+      Creator subscriptions may later allow original authors to offer broader supporter benefits, early access collections, behind-the-scenes material, or other original-content rewards, as long as those rewards follow FicForge’s content and payment rules.
+    </p>
+    <p>
+      FicForge may apply platform revenue sharing, payout thresholds, verification requirements, and payment processor rules to monetized original fiction. These systems are meant to support creators while keeping the platform sustainable.
+    </p>
+  </div>
+
+  <div class="ff-rights-panel">
+    <span>PLATFORM PROTECTION</span>
+    <h2>What FicForge can help with</h2>
+
+    <div class="ff-rights-list">
+      <div>
+        <strong>Plagiarism Reports</strong>
+        <p>Creators and readers may report stolen, copied, or improperly reposted work for review.</p>
+      </div>
+
+      <div>
+        <strong>Copyright Concerns</strong>
+        <p>Rights holders can submit copyright concerns through the DMCA & Copyright process.</p>
+      </div>
+
+      <div>
+        <strong>Impersonation Reports</strong>
+        <p>Users can report accounts pretending to be another creator, brand, or public identity.</p>
+      </div>
+
+      <div>
+        <strong>Scraping Abuse</strong>
+        <p>Accounts or systems involved in unauthorized collection, reposting, or compilation may be restricted.</p>
+      </div>
+
+      <div>
+        <strong>Content Misuse</strong>
+        <p>FicForge may investigate cases where creator work is being misused, spammed, duplicated, or misrepresented on the platform.</p>
+      </div>
+
+      <div>
+        <strong>Policy Enforcement</strong>
+        <p>Violations of FicForge rules may lead to warnings, content restriction, account suspension, or permanent removal.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-rights-panel">
+    <span>IMPORTANT LIMITATIONS</span>
+    <h2>No platform can promise perfect protection</h2>
+    <p>
+      FicForge can use platform rules, reporting systems, takedown support, moderation, and technical safeguards to discourage abuse. However, no public website can fully prevent screenshots, copying, manual reposting, scraping attempts, or misuse by bad actors. But ofcourse we'll use 110% of our efforts to deter and stop any such action against our community.
+    </p>
+    <p>
+      FicForge’s role is to provide reasonable platform protections, clear rules, and a process for responding to abuse when it is reported.
+    </p>
+  </div>
+
+  <div class="ff-rights-panel">
+    <span>DMCA & COPYRIGHT</span>
+    <h2>Copyright holders and creators have a reporting path</h2>
+    <p>
+      FicForge respects intellectual property rights. Copyright holders may submit takedown notices, and creators may submit counter-notices if they believe a removal was made in error.
+    </p>
+    <p>
+      Repeated copyright violations, plagiarism, malicious reposting, or abuse of other creators’ work may result in monetization restrictions, content removal, account suspension, or permanent termination.
+    </p>
+
+    <div class="ff-rights-actions lower">
+      <a class="primary" href="/dmca-copyright/">Read DMCA & Copyright Policy</a>
+      <a href="/contact/">Contact Support</a>
+    </div>
+  </div>
+
+  <div class="ff-rights-warning">
+    <strong>Important note</strong>
+    <p>
+      This page explains FicForge platform rules and creator support practices. It is not legal advice. FicForge cannot guarantee that every use of fanfiction will be protected from copyright claims, takedown requests, or rights-holder objections. Creators with serious legal, publishing, contract, copyright, or intellectual property concerns should seek qualified legal guidance.
+    </p>
+  </div>
+</section>
+
+<style>
+.ff-rights-page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  color: #FFFFFF;
+}
+
+.ff-rights-hero {
+  max-width: 900px;
+  margin-bottom: 32px;
+}
+
+.ff-rights-hero span,
+.ff-rights-panel span {
+  display: inline-flex;
+  color: #F97316;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  border-radius: 999px;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.ff-rights-hero h1 {
+  color: #FFFFFF;
+  font-size: 56px;
+  line-height: 1.05;
+  margin: 0 0 14px 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.ff-rights-hero p {
+  color: #CBD5E1;
+  font-size: 18px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ff-rights-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.ff-rights-actions.lower {
+  margin-top: 20px;
+}
+
+.ff-rights-actions a {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.ff-rights-actions a.primary {
+  background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+  border-color: rgba(109, 93, 251, 0.72);
+}
+
+.ff-rights-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.ff-rights-card,
+.ff-rights-panel,
+.ff-rights-warning {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.ff-rights-card strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.ff-rights-card p,
+.ff-rights-panel p,
+.ff-rights-warning p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.ff-rights-panel {
+  margin-bottom: 18px;
+}
+
+.ff-rights-panel h2 {
+  color: #FFFFFF;
+  font-size: 30px;
+  margin: 0 0 10px 0;
+  font-weight: 900;
+}
+
+.ff-rights-panel p + p {
+  margin-top: 12px;
+}
+
+.ff-rights-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.ff-rights-list div {
+  background: rgba(2, 6, 23, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.ff-rights-list strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.ff-rights-list p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ff-rights-warning {
+  border-color: rgba(249, 115, 22, 0.28);
+  background: rgba(249, 115, 22, 0.08);
+}
+
+.ff-rights-warning strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 1000px) {
+  .ff-rights-grid,
+  .ff-rights-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .ff-rights-hero h1 {
+    font-size: 40px;
+  }
+
+  .ff-rights-actions a {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>

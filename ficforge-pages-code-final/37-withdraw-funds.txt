@@ -1,0 +1,232 @@
+<section class="ff-withdraw-page">
+  <div class="ff-withdraw-topbar">
+    <div>
+      <span>CREATOR PAYOUTS</span>
+      <h1>Withdraw Funds</h1>
+      <p>
+        Request creator payouts once your FicForge earnings meet the minimum payout threshold.
+      </p>
+    </div>
+
+    <a href="/creator-earnings/">← Return to Creator Earnings</a>
+  </div>
+
+  <div class="ff-withdraw-grid">
+    <div class="ff-withdraw-card">
+      <strong>Available Balance</strong>
+      <span>0 Sparks</span>
+      <p>Your available creator balance will appear here once earnings are connected.</p>
+    </div>
+
+    <div class="ff-withdraw-card">
+      <strong>Payout Threshold</strong>
+      <span>5,000 Sparks / $50</span>
+      <p>Creators must reach the payout threshold before requesting a withdrawal.</p>
+    </div>
+
+    <div class="ff-withdraw-card">
+      <strong>Payout Schedule</strong>
+      <span>1st and 15th</span>
+      <p>Approved creator payouts are planned for semi-monthly processing.</p>
+    </div>
+  </div>
+
+  <div class="ff-withdraw-panel">
+    <span>WITHDRAWAL STATUS</span>
+    <h2>Withdrawals are being prepared.</h2>
+    <p>
+      FicForge’s creator payout system is not connected yet. This page is prepared for future payout requests through PayPal, Stripe Connect, or direct/bank transfer once creator monetization is fully active.
+    </p>
+
+    <div class="ff-withdraw-form-preview">
+      <div class="ff-withdraw-field">
+        <label>Payout Method</label>
+        <div class="ff-disabled-input">PayPal, Stripe Connect, or Bank Transfer</div>
+      </div>
+
+      <div class="ff-withdraw-field">
+        <label>Payout Account</label>
+        <div class="ff-disabled-input">Payment email or payout account details</div>
+      </div>
+
+      <div class="ff-withdraw-field">
+        <label>Requested Amount</label>
+        <div class="ff-disabled-input">Available after threshold is reached</div>
+      </div>
+
+      <button class="ff-disabled-button" type="button">Request Withdrawal — Not Available Yet</button>
+    </div>
+
+    <p class="ff-withdraw-note">
+      Creators should only request withdrawals after reaching the payout threshold. Final payout methods, tax requirements, and processing rules will be added before creator earnings go live.
+    </p>
+  </div>
+</section>
+
+<style>
+.ff-withdraw-page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  color: #FFFFFF;
+}
+
+.ff-withdraw-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 28px;
+  margin-bottom: 28px;
+}
+
+.ff-withdraw-topbar span,
+.ff-withdraw-panel > span {
+  display: inline-flex;
+  color: #F97316;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  border-radius: 999px;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.ff-withdraw-topbar h1 {
+  color: #FFFFFF;
+  font-size: 54px;
+  line-height: 1.05;
+  margin: 0 0 14px 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.ff-withdraw-topbar p {
+  color: #CBD5E1;
+  font-size: 17px;
+  line-height: 1.65;
+  max-width: 760px;
+  margin: 0;
+}
+
+.ff-withdraw-topbar a {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.ff-withdraw-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.ff-withdraw-card,
+.ff-withdraw-panel {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.ff-withdraw-card strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.ff-withdraw-card span {
+  display: block;
+  color: #A78BFA;
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.ff-withdraw-card p,
+.ff-withdraw-panel p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ff-withdraw-panel h2 {
+  color: #FFFFFF;
+  font-size: 30px;
+  margin: 0 0 10px 0;
+  font-weight: 900;
+}
+
+.ff-withdraw-form-preview {
+  margin-top: 22px;
+  display: grid;
+  gap: 14px;
+}
+
+.ff-withdraw-field label {
+  display: block;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.ff-disabled-input {
+  color: #94A3B8;
+  background: rgba(2, 6, 23, 0.70);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ff-disabled-button {
+  color: #FFFFFF;
+  background: rgba(109, 93, 251, 0.38);
+  border: 1px solid rgba(109, 93, 251, 0.50);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: not-allowed;
+  opacity: 0.82;
+}
+
+.ff-withdraw-note {
+  margin-top: 18px !important;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+@media (max-width: 900px) {
+  .ff-withdraw-topbar {
+    flex-direction: column;
+  }
+
+  .ff-withdraw-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .ff-withdraw-topbar h1 {
+    font-size: 38px;
+  }
+
+  .ff-withdraw-topbar a {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>

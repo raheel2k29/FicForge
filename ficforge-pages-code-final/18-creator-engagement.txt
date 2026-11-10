@@ -1,0 +1,215 @@
+<section class="ff-tool-page">
+  <div class="ff-tool-topbar">
+    <div>
+      <span>CREATOR TOOLS</span>
+      <h1>Followers & Comments</h1>
+      <p>
+        Manage reader engagement, story comments, followers, reviews, discussion activity, and audience growth from one creator-focused hub.
+      </p>
+    </div>
+
+    <a href="/my-stories/">← Return to My Stories</a>
+  </div>
+
+  <div class="ff-tool-grid">
+    <div class="ff-tool-card">
+      <strong>Followers</strong>
+      <p>Track readers who follow your creator profile, stories, and future updates once following tools are connected.</p>
+    </div>
+
+    <div class="ff-tool-card">
+      <strong>Comments</strong>
+      <p>Review reader comments, story replies, feedback, and discussion activity connected to your published work.</p>
+    </div>
+
+    <div class="ff-tool-card">
+      <strong>Reviews</strong>
+      <p>See reader ratings, written reviews, story impressions, and audience feedback once review tools are connected.</p>
+    </div>
+  </div>
+
+  <div class="ff-tool-panel">
+    <span>ENGAGEMENT STATUS</span>
+    <h2>Creator engagement tools are being prepared.</h2>
+    <p>
+      FicForge will eventually give creators a central place to review followers, comments, reader activity, story discussions, and reader reviews. For now, this page is prepared as the future engagement hub.
+    </p>
+
+    <div class="ff-engagement-list">
+      <div class="ff-engagement-row">
+        <strong>Followers</strong>
+        <span>Not connected yet</span>
+      </div>
+
+      <div class="ff-engagement-row">
+        <strong>Story Comments</strong>
+        <span>Uses WordPress comments for now</span>
+      </div>
+
+      <div class="ff-engagement-row">
+        <strong>Reader Discussions</strong>
+        <span>Coming later</span>
+      </div>
+
+      <div class="ff-engagement-row">
+        <strong>Reviews</strong>
+        <span>Preparing system</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+.ff-tool-page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  color: #FFFFFF;
+}
+
+.ff-tool-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 28px;
+  margin-bottom: 28px;
+}
+
+.ff-tool-topbar span,
+.ff-tool-panel span {
+  display: inline-flex;
+  color: #F97316;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  border-radius: 999px;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.ff-tool-topbar h1 {
+  color: #FFFFFF;
+  font-size: 54px;
+  line-height: 1.05;
+  margin: 0 0 14px 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.ff-tool-topbar p {
+  color: #CBD5E1;
+  font-size: 17px;
+  line-height: 1.65;
+  max-width: 760px;
+  margin: 0;
+}
+
+.ff-tool-topbar a {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.ff-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.ff-tool-card,
+.ff-tool-panel {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.ff-tool-card strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.ff-tool-card p,
+.ff-tool-panel p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ff-tool-panel h2 {
+  color: #FFFFFF;
+  font-size: 30px;
+  margin: 0 0 10px 0;
+  font-weight: 900;
+}
+
+.ff-engagement-list {
+  margin-top: 22px;
+  display: grid;
+  gap: 12px;
+}
+
+.ff-engagement-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 15px 16px;
+  border-radius: 12px;
+  background: rgba(2, 6, 23, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ff-engagement-row strong {
+  color: #FFFFFF;
+  font-size: 14px;
+}
+
+.ff-engagement-row span {
+  color: #CBD5E1;
+  font-size: 14px;
+  font-weight: 800;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  letter-spacing: normal;
+}
+
+@media (max-width: 900px) {
+  .ff-tool-topbar {
+    flex-direction: column;
+  }
+
+  .ff-tool-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .ff-tool-topbar h1 {
+    font-size: 38px;
+  }
+
+  .ff-tool-topbar a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .ff-engagement-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+</style>

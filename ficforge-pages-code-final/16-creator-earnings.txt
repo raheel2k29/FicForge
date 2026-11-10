@@ -1,0 +1,221 @@
+<section class="ff-tool-page">
+  <div class="ff-tool-topbar">
+    <div>
+      <span>CREATOR TOOLS</span>
+      <h1>Creator Earnings</h1>
+      <p>
+        Track Sparks, creator balance, payout progress, support activity, and monetization status from one earnings hub.
+      </p>
+    </div>
+
+    <a href="/my-stories/">← Return to My Stories</a>
+  </div>
+
+  <div class="ff-tool-grid">
+    <div class="ff-tool-card">
+      <strong>Sparks Balance</strong>
+      <p>View Sparks received from reader support, future Fast Pass activity, and creator monetization tools.</p>
+    </div>
+
+    <div class="ff-tool-card">
+      <strong>Payout Progress</strong>
+      <p>Track progress toward the creator payout threshold once FicForge payouts are connected.</p>
+    </div>
+
+    <div class="ff-tool-card">
+      <strong>Support Activity</strong>
+      <p>Review creator support, premium reader activity, and earnings-related updates in one place.</p>
+    </div>
+  </div>
+
+  <div class="ff-tool-panel">
+    <span>EARNINGS STATUS</span>
+    <h2>Creator earnings are being prepared.</h2>
+    <p>
+      FicForge’s earnings system will eventually track Sparks, creator balances, payout eligibility, payout dates, and payment methods. For now, this page is prepared as the future creator earnings hub.
+    </p>
+
+    <div class="ff-earnings-progress">
+      <div class="ff-earnings-row">
+        <strong>Current Balance</strong>
+        <span>0 Sparks</span>
+      </div>
+
+      <div class="ff-earnings-row">
+        <strong>Payout Threshold</strong>
+        <span>5,000 Sparks / $50</span>
+      </div>
+
+      <div class="ff-earnings-row">
+        <strong>Payout Schedule</strong>
+        <span>1st and 15th</span>
+      </div>
+
+      <div class="ff-earnings-row">
+        <strong>Status</strong>
+        <span>Not connected yet</span>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="ff-withdraw-action">
+  <a href="/withdraw-funds/">Request Withdrawal</a>
+  <p>
+    Withdrawals will become available once creator payouts are connected. Creators must meet the payout threshold before requesting payment.
+  </p>
+</div>
+
+<style>
+.ff-tool-page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  color: #FFFFFF;
+}
+
+.ff-tool-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 28px;
+  margin-bottom: 28px;
+}
+
+.ff-tool-topbar span,
+.ff-tool-panel span {
+  display: inline-flex;
+  color: #F97316;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  border-radius: 999px;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.ff-tool-topbar h1 {
+  color: #FFFFFF;
+  font-size: 54px;
+  line-height: 1.05;
+  margin: 0 0 14px 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.ff-tool-topbar p {
+  color: #CBD5E1;
+  font-size: 17px;
+  line-height: 1.65;
+  max-width: 760px;
+  margin: 0;
+}
+
+.ff-tool-topbar a {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.ff-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.ff-tool-card,
+.ff-tool-panel {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.ff-tool-card strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.ff-tool-card p,
+.ff-tool-panel p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ff-tool-panel h2 {
+  color: #FFFFFF;
+  font-size: 30px;
+  margin: 0 0 10px 0;
+  font-weight: 900;
+}
+
+.ff-earnings-progress {
+  margin-top: 22px;
+  display: grid;
+  gap: 12px;
+}
+
+.ff-earnings-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 15px 16px;
+  border-radius: 12px;
+  background: rgba(2, 6, 23, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ff-earnings-row strong {
+  color: #FFFFFF;
+  font-size: 14px;
+}
+
+.ff-earnings-row span {
+  color: #CBD5E1;
+  font-size: 14px;
+  font-weight: 800;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  letter-spacing: normal;
+}
+
+@media (max-width: 900px) {
+  .ff-tool-topbar {
+    flex-direction: column;
+  }
+
+  .ff-tool-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .ff-tool-topbar h1 {
+    font-size: 38px;
+  }
+
+  .ff-tool-topbar a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .ff-earnings-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+</style>

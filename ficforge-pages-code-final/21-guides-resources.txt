@@ -1,0 +1,486 @@
+<section class="ff-guides-page">
+  <style>
+    .ff-guides-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+    }
+
+    .ff-guides-hero {
+      max-width: 920px;
+      margin-bottom: 30px;
+    }
+
+    .ff-guides-page .label {
+      display: inline-flex;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .ff-guides-page h1 {
+      color: #FFFFFF;
+      font-size: 56px;
+      line-height: 1.05;
+      margin: 0 0 14px 0;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .ff-guides-page h2 {
+      color: #FFFFFF;
+      font-size: 30px;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+    }
+
+    .ff-guides-page p {
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .ff-guides-hero p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .ff-guides-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .ff-guides-actions a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .ff-guides-actions a.primary {
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border-color: rgba(109, 93, 251, 0.72);
+    }
+
+    .ff-guides-intro,
+    .ff-guide-card,
+    .ff-guide-panel,
+    .ff-guides-bottom {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .ff-guides-intro {
+      margin-bottom: 18px;
+    }
+
+    .ff-guides-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .ff-guide-card {
+      text-decoration: none !important;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .ff-guide-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(249, 115, 22, 0.38);
+      background: rgba(15, 23, 42, 0.90);
+    }
+
+    .ff-guide-card strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .ff-guide-card p {
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+
+    .ff-guide-panel {
+      margin-bottom: 18px;
+    }
+
+    .ff-guide-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .ff-guide-list div {
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .ff-guide-list strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .ff-guide-list p {
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+
+    .ff-guides-bottom {
+      margin-top: 24px;
+    }
+
+    @media (max-width: 1100px) {
+      .ff-guides-grid,
+      .ff-guide-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-guides-page h1 {
+        font-size: 40px;
+      }
+
+      .ff-guides-grid,
+      .ff-guide-list {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-guides-actions a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <div class="ff-guides-hero">
+    <span class="label">CREATOR GUIDES</span>
+    <h1>Guides & Resources</h1>
+    <p>
+      Practical guides for preparing, formatting, and publishing stories on FicForge. This page helps new creators understand what to prepare before posting their first work.
+    </p>
+
+    <div class="ff-guides-actions">
+      <a href="/support/">← Return to Support</a>
+      <a class="primary" href="/my-stories/">Open My Stories</a>
+    </div>
+  </div>
+
+  <div class="ff-guides-intro">
+    <span class="label">START HERE</span>
+    <h2>Prepare your story before publishing</h2>
+    <p>
+      A strong story page helps readers understand what your work is, where it belongs, and why they should keep reading. Before publishing, prepare your title, synopsis, story type, fandom or genre, tags, rating, warnings, cover image, and first chapter.
+    </p>
+  </div>
+
+  <div class="ff-guides-grid">
+    <a class="ff-guide-card" href="#story-checklist">
+      <strong>Story Checklist</strong>
+      <p>What to prepare before using the Create Story form.</p>
+    </a>
+
+    <a class="ff-guide-card" href="#story-type">
+      <strong>Story Type</strong>
+      <p>Choose Fanfiction or Original Webnovel correctly.</p>
+    </a>
+
+    <a class="ff-guide-card" href="#synopsis">
+      <strong>Synopsis Guide</strong>
+      <p>Write a clear hook that helps readers start reading.</p>
+    </a>
+
+    <a class="ff-guide-card" href="#metadata">
+      <strong>Genres, Fandoms & Tags</strong>
+      <p>Use metadata so readers can find your story.</p>
+    </a>
+
+    <a class="ff-guide-card" href="#ratings">
+      <strong>Ratings & Warnings</strong>
+      <p>Label your strongest content honestly.</p>
+    </a>
+
+    <a class="ff-guide-card" href="#covers">
+      <strong>Cover Images</strong>
+      <p>Prepare a readable cover for your story listing.</p>
+    </a>
+
+    <a class="ff-guide-card" href="#formatting">
+      <strong>Chapter Formatting</strong>
+      <p>Make your chapters clean and comfortable to read.</p>
+    </a>
+
+    <a class="ff-guide-card" href="#publishing">
+      <strong>Publishing Habits</strong>
+      <p>Build consistency and trust with readers.</p>
+    </a>
+  </div>
+
+  <div id="story-checklist" class="ff-guide-panel">
+    <span class="label">STORY CHECKLIST</span>
+    <h2>What to prepare before creating a story</h2>
+    <p>
+      The Create Story form works best when your main story details are ready before you begin.
+    </p>
+
+    <div class="ff-guide-list">
+      <div>
+        <strong>Story Title</strong>
+        <p>Choose a clear, memorable title that is easy to read and not overloaded with extra symbols.</p>
+      </div>
+
+      <div>
+        <strong>Synopsis</strong>
+        <p>Prepare a short description that explains the premise, main conflict, tone, and reason readers should care.</p>
+      </div>
+
+      <div>
+        <strong>Story Type</strong>
+        <p>Select whether your work is Fanfiction or Original Webnovel so FicForge can organize it properly.</p>
+      </div>
+
+      <div>
+        <strong>First Chapter</strong>
+        <p>Have your opening chapter ready. The first chapter should give readers a reason to continue.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="story-type" class="ff-guide-panel">
+    <span class="label">STORY TYPE</span>
+    <h2>Choosing Fanfiction or Original Webnovel</h2>
+    <p>
+      Story type tells FicForge how your work should be organized.
+    </p>
+
+    <div class="ff-guide-list">
+      <div>
+        <strong>Fanfiction</strong>
+        <p>Choose Fanfiction when your story uses an existing fandom, world, characters, setting, or source material. Add the fandom name clearly so readers can find it.</p>
+      </div>
+
+      <div>
+        <strong>Original Webnovel</strong>
+        <p>Choose Original Webnovel when your story is built from your own original characters, setting, world, and core concept.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="synopsis" class="ff-guide-panel">
+    <span class="label">SYNOPSIS GUIDE</span>
+    <h2>Writing a stronger synopsis</h2>
+    <p>
+      Your synopsis should tell readers what kind of journey they are entering without revealing every major twist.
+    </p>
+
+    <div class="ff-guide-list">
+      <div>
+        <strong>Start with the premise</strong>
+        <p>Explain the main idea of the story in plain language. Readers should understand the setup quickly.</p>
+      </div>
+
+      <div>
+        <strong>Show the conflict</strong>
+        <p>Let readers know what pressure, danger, romance, mystery, war, rivalry, or personal struggle drives the story.</p>
+      </div>
+
+      <div>
+        <strong>Make the tone clear</strong>
+        <p>Signal whether the story is dark, comedic, romantic, political, action-heavy, tragic, slow-burn, or adventurous.</p>
+      </div>
+
+      <div>
+        <strong>Avoid empty hype</strong>
+        <p>Instead of saying your story is “epic,” describe what actually makes it interesting.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="metadata" class="ff-guide-panel">
+    <span class="label">DISCOVERY</span>
+    <h2>Genres, fandoms, and tags</h2>
+    <p>
+      Accurate metadata helps the right readers find your story.
+    </p>
+
+    <div class="ff-guide-list">
+      <div>
+        <strong>Genres</strong>
+        <p>Use broad categories such as Fantasy, Science Fiction, Romance, Horror, Mystery, Action, Adventure, Historical, LitRPG, Drama, War, or Political Intrigue.</p>
+      </div>
+
+      <div>
+        <strong>Fandoms</strong>
+        <p>For fanfiction, name the main fandom clearly. For crossovers, include the major fandoms without overcrowding the field.</p>
+      </div>
+
+      <div>
+        <strong>Tags</strong>
+        <p>Use tags for tropes, tone, relationships, setting, pacing, and major elements like Reincarnation, Slow Burn, Kingdom Building, or Time Travel.</p>
+      </div>
+
+      <div>
+        <strong>Accuracy Matters</strong>
+        <p>Do not use popular tags that do not apply. Misleading tags damage reader trust.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="ratings" class="ff-guide-panel">
+    <span class="label">RATINGS & WARNINGS</span>
+    <h2>Help readers choose safely</h2>
+    <p>
+      Ratings and warnings help readers decide what they are comfortable reading.
+    </p>
+
+    <div class="ff-guide-list">
+      <div>
+        <strong>Pick the honest rating</strong>
+        <p>Choose the rating based on the strongest content in the story, not the average chapter.</p>
+      </div>
+
+      <div>
+        <strong>Use warnings for major content</strong>
+        <p>Warn for major themes such as graphic violence, sexual content, abuse themes, self-harm themes, major character death, or extreme horror.</p>
+      </div>
+
+      <div>
+        <strong>Update when needed</strong>
+        <p>When your story grows darker or more intense, update the rating and warnings.</p>
+      </div>
+
+      <div>
+        <strong>Use the Content Policy</strong>
+        <p>For detailed rules about Mature, Explicit, prohibited content, and safety boundaries, check the Content Policy page.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="covers" class="ff-guide-panel">
+    <span class="label">COVER IMAGES</span>
+    <h2>Make your story cover readable</h2>
+    <p>
+      A cover should be clean, readable, and suited to the story’s tone.
+    </p>
+
+    <div class="ff-guide-list">
+      <div>
+        <strong>Readable Title</strong>
+        <p>Make sure the title can still be read when the cover appears smaller on mobile or in story lists.</p>
+      </div>
+
+      <div>
+        <strong>Match the Genre</strong>
+        <p>A horror story, romance, war epic, and sci-fi adventure should not all feel visually identical.</p>
+      </div>
+
+      <div>
+        <strong>Use Permitted Images</strong>
+        <p>Use your own art, licensed assets, public-domain materials, or images you have permission to use.</p>
+      </div>
+
+      <div>
+        <strong>Simple Is Fine</strong>
+        <p>A clean text-based cover is better than a crowded image that looks messy or unreadable.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="formatting" class="ff-guide-panel">
+    <span class="label">CHAPTER FORMATTING</span>
+    <h2>Make chapters comfortable to read</h2>
+    <p>
+      Clean formatting keeps readers immersed in the story.
+    </p>
+
+    <div class="ff-guide-list">
+      <div>
+        <strong>Break paragraphs clearly</strong>
+        <p>Avoid giant walls of text. Break paragraphs naturally around dialogue, action, description, and emotional beats.</p>
+      </div>
+
+      <div>
+        <strong>Preview after pasting</strong>
+        <p>When copying from Google Docs or Microsoft Word, preview the chapter to make sure spacing and line breaks still look right.</p>
+      </div>
+
+      <div>
+        <strong>Use author notes carefully</strong>
+        <p>Keep notes helpful and brief. Avoid interrupting the middle of the chapter with unrelated announcements.</p>
+      </div>
+
+      <div>
+        <strong>Think mobile first</strong>
+        <p>Many readers will use phones. Shorter paragraphs and clean spacing make long chapters easier to read.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="publishing" class="ff-guide-panel">
+    <span class="label">PUBLISHING HABITS</span>
+    <h2>Build reader trust over time</h2>
+    <p>
+      Strong creators build trust through consistency, clean presentation, and honest communication.
+    </p>
+
+    <div class="ff-guide-list">
+      <div>
+        <strong>Set realistic update goals</strong>
+        <p>A steady weekly or biweekly schedule is often better than promising daily chapters and burning out.</p>
+      </div>
+
+      <div>
+        <strong>Keep story details updated</strong>
+        <p>Update your synopsis, tags, rating, warnings, and status when the story changes direction.</p>
+      </div>
+
+      <div>
+        <strong>Respect reader expectations</strong>
+        <p>Readers should not feel tricked by misleading tags, hidden warnings, or false update promises.</p>
+      </div>
+
+      <div>
+        <strong>Use support pages</strong>
+        <p>For deeper rules about copyright, content limits, creator rights, Sparks, payouts, or moderation, use the dedicated Support pages.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-guides-bottom">
+    <h2>Ready to publish?</h2>
+    <p>
+      Open My Stories when you are ready to create your first story, upload a cover, choose your story type, add ratings and warnings, and publish your first chapter.
+    </p>
+
+    <div class="ff-guides-actions">
+      <a class="primary" href="/my-stories/">Open My Stories</a>
+      <a href="/help-center/">Visit Help Center</a>
+    </div>
+  </div>
+</section>

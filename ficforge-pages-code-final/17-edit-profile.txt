@@ -1,0 +1,1176 @@
+<section class="ff-edit-profile-page">
+  <style>
+    .ff-edit-profile-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+      font-family: inherit;
+    }
+
+    .ff-edit-shell {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 18px;
+    }
+
+    .ff-edit-sidebar,
+    .ff-profile-preview,
+    .ff-edit-card,
+    .ff-badge-card,
+    .ff-cosmetic-card {
+      background: rgba(15, 23, 42, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 24px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+    }
+
+    .ff-edit-sidebar {
+      padding: 20px;
+      height: fit-content;
+      position: sticky;
+      top: 24px;
+    }
+
+    .ff-edit-logo {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 22px;
+    }
+
+    .ff-logo-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6D5DFB, #F97316);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 900;
+      box-shadow: 0 0 24px rgba(109, 93, 251, 0.28);
+    }
+
+    .ff-edit-logo strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 18px;
+      line-height: 1.1;
+    }
+
+    .ff-edit-logo span {
+      display: block;
+      color: #94A3B8;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .ff-side-nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .ff-side-nav a {
+      color: #CBD5E1 !important;
+      text-decoration: none !important;
+      padding: 12px 13px;
+      border-radius: 13px;
+      font-size: 14px;
+      font-weight: 850;
+      background: rgba(2, 6, 23, 0.30);
+      border: 1px solid transparent;
+    }
+
+    .ff-side-nav a.active,
+    .ff-side-nav a:hover {
+      color: #FFFFFF !important;
+      background: rgba(109, 93, 251, 0.22);
+      border-color: rgba(109, 93, 251, 0.38);
+    }
+
+    .ff-sidebar-note {
+      margin-top: 20px;
+      padding: 14px;
+      border-radius: 15px;
+      background: rgba(249, 115, 22, 0.10);
+      border: 1px solid rgba(249, 115, 22, 0.24);
+    }
+
+    .ff-sidebar-note strong {
+      color: #FDBA74;
+      display: block;
+      font-size: 13px;
+      margin-bottom: 6px;
+      font-weight: 900;
+    }
+
+    .ff-sidebar-note p {
+      color: #CBD5E1;
+      font-size: 12.5px;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .ff-edit-main {
+      display: grid;
+      gap: 18px;
+    }
+
+    .ff-edit-hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .ff-label {
+      display: inline-flex;
+      width: fit-content;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 7px 12px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-edit-hero h1 {
+      color: #FFFFFF;
+      font-size: 46px;
+      line-height: 1.05;
+      margin: 0;
+      font-weight: 900;
+      letter-spacing: -0.045em;
+    }
+
+    .ff-edit-hero p {
+      color: #94A3B8;
+      font-size: 15px;
+      line-height: 1.65;
+      margin: 9px 0 0 0;
+      max-width: 720px;
+    }
+
+    .ff-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-weight: 900;
+      transition: 0.18s ease;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .ff-btn.primary {
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border-color: rgba(109, 93, 251, 0.78);
+      box-shadow: 0 0 26px rgba(109, 93, 251, 0.20);
+    }
+
+    .ff-btn.orange {
+      background: linear-gradient(135deg, #F97316, #EA580C);
+      border-color: rgba(249, 115, 22, 0.76);
+    }
+
+    .ff-btn:hover {
+      color: #FFFFFF !important;
+      transform: translateY(-1px);
+      border-color: rgba(249, 115, 22, 0.50);
+    }
+
+    .ff-profile-preview {
+      overflow: hidden;
+    }
+
+    .ff-preview-banner {
+      height: 170px;
+      background:
+        radial-gradient(circle at 16% 20%, rgba(249, 115, 22, 0.48), transparent 26%),
+        radial-gradient(circle at 84% 18%, rgba(109, 93, 251, 0.58), transparent 32%),
+        linear-gradient(135deg, #111827, #020617);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+      position: relative;
+    }
+
+    .ff-preview-banner::after {
+      content: "Profile Banner";
+      position: absolute;
+      right: 18px;
+      bottom: 16px;
+      color: #FFFFFF;
+      background: rgba(2, 6, 23, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .ff-preview-body {
+      padding: 24px;
+    }
+
+    .ff-avatar-frame {
+      width: 108px;
+      height: 108px;
+      border-radius: 50%;
+      padding: 5px;
+      background: linear-gradient(135deg, #6D5DFB, #F97316);
+      box-shadow: 0 0 38px rgba(109, 93, 251, 0.28);
+      margin: 0 0 18px 0;
+      box-sizing: border-box;
+    }
+
+    .ff-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #0F172A;
+      border: 5px solid #050B16;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-size: 36px;
+      font-weight: 900;
+      box-sizing: border-box;
+    }
+
+    .ff-preview-body h2 {
+      color: #FFFFFF;
+      font-size: 32px;
+      margin: 0 0 5px 0;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-handle {
+      color: #94A3B8;
+      display: block;
+      font-size: 14px;
+      margin-bottom: 13px;
+      font-weight: 800;
+    }
+
+    .ff-badge-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .ff-small-status {
+      display: inline-flex;
+      color: #FFFFFF;
+      background: rgba(109, 93, 251, 0.22);
+      border: 1px solid rgba(109, 93, 251, 0.42);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .ff-small-status.gold {
+      color: #FDBA74;
+      background: rgba(249, 115, 22, 0.14);
+      border-color: rgba(249, 115, 22, 0.38);
+    }
+
+    .ff-small-status.green {
+      color: #86EFAC;
+      background: rgba(34, 197, 94, 0.13);
+      border-color: rgba(34, 197, 94, 0.34);
+    }
+
+    .ff-small-status.red {
+      color: #FDA4AF;
+      background: rgba(244, 63, 94, 0.13);
+      border-color: rgba(244, 63, 94, 0.34);
+    }
+
+    .ff-preview-body p {
+      color: #CBD5E1;
+      font-size: 15px;
+      line-height: 1.65;
+      margin: 0;
+      max-width: 760px;
+    }
+
+    .ff-edit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .ff-edit-card,
+    .ff-badge-card,
+    .ff-cosmetic-card {
+      padding: 22px;
+    }
+
+    .ff-edit-card h2,
+    .ff-badge-card h2,
+    .ff-cosmetic-card h2 {
+      color: #FFFFFF;
+      font-size: 28px;
+      line-height: 1.1;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-edit-card p,
+    .ff-badge-card p,
+    .ff-cosmetic-card p {
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.65;
+      margin: 0 0 18px 0;
+    }
+
+    .ff-form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .ff-field label {
+      display: block;
+      color: #CBD5E1;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    .ff-field input,
+    .ff-field textarea,
+    .ff-field select {
+      width: 100%;
+      color: #FFFFFF;
+      background: rgba(2, 6, 23, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 13px;
+      padding: 14px;
+      font-size: 15px;
+      outline: none;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    .ff-field textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .ff-field input::placeholder,
+    .ff-field textarea::placeholder {
+      color: #64748B;
+    }
+
+    .ff-field input:focus,
+    .ff-field textarea:focus,
+    .ff-field select:focus {
+      border-color: rgba(109, 93, 251, 0.70);
+      box-shadow: 0 0 0 3px rgba(109, 93, 251, 0.14);
+    }
+
+    .ff-upload-box {
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px dashed rgba(255, 255, 255, 0.20);
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .ff-upload-box strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .ff-upload-box span {
+      display: block;
+      color: #94A3B8;
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+
+    .ff-badge-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .ff-displayed-badges {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .ff-badge-slot {
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 18px;
+      padding: 18px 14px;
+      text-align: center;
+      min-height: 184px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ff-badge-slot.locked {
+      opacity: 0.55;
+      border-style: dashed;
+    }
+
+    .ff-badge-symbol {
+      width: 112px;
+      height: 78px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 900;
+      position: relative;
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.32);
+      border: 2px solid rgba(255, 255, 255, 0.14);
+      overflow: hidden;
+    }
+
+    .ff-badge-symbol.reader {
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.28), transparent 28%),
+        linear-gradient(135deg, #312E81, #6D5DFB, #111827);
+      color: #FFFFFF;
+    }
+
+    .ff-badge-symbol.writer {
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.26), transparent 28%),
+        linear-gradient(135deg, #7C2D12, #F97316, #111827);
+      color: #FFFFFF;
+    }
+
+    .ff-badge-symbol.member {
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.25), transparent 28%),
+        linear-gradient(135deg, #334155, #94A3B8, #111827);
+      color: #FFFFFF;
+    }
+
+    .ff-badge-symbol.locked-symbol {
+      background:
+        linear-gradient(135deg, rgba(30, 41, 59, 0.72), rgba(2, 6, 23, 0.94));
+      color: #475569;
+      border: 2px dashed rgba(148, 163, 184, 0.28);
+      box-shadow: none;
+    }
+
+    .ff-badge-slot strong {
+      color: #FFFFFF;
+      display: block;
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .ff-badge-slot span {
+      color: #94A3B8;
+      display: block;
+      font-size: 12.5px;
+      line-height: 1.4;
+      font-weight: 800;
+    }
+
+    .ff-badge-slot.locked strong,
+    .ff-badge-slot.locked span {
+      color: #64748B;
+    }
+
+    .ff-badge-note {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(109, 93, 251, 0.10);
+      border: 1px solid rgba(109, 93, 251, 0.24);
+    }
+
+    .ff-badge-note p {
+      margin: 0;
+      color: #CBD5E1;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .ff-cosmetic-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .ff-cosmetic-item {
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .ff-cosmetic-preview {
+      height: 58px;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      background:
+        radial-gradient(circle at top left, rgba(249, 115, 22, 0.40), transparent 34%),
+        linear-gradient(135deg, rgba(109, 93, 251, 0.50), rgba(2, 6, 23, 0.80));
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ff-cosmetic-preview.border-demo::after {
+      content: "";
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      border: 4px solid rgba(255, 255, 255, 0.78);
+      box-shadow: 0 0 18px rgba(255, 255, 255, 0.18);
+    }
+
+    .ff-cosmetic-preview.badge-demo::after {
+      content: "★";
+      position: absolute;
+      width: 46px;
+      height: 32px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      background: rgba(2, 6, 23, 0.54);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .ff-cosmetic-item strong {
+      color: #FFFFFF;
+      display: block;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .ff-cosmetic-item span {
+      color: #94A3B8;
+      display: block;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .ff-action-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+    }
+
+    .ff-action-bar p {
+      color: #94A3B8;
+      font-size: 13.5px;
+      line-height: 1.55;
+      margin: 0;
+      max-width: 690px;
+    }
+
+    .ff-bottom-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 1050px) {
+      .ff-edit-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-edit-sidebar {
+        position: static;
+      }
+
+      .ff-side-nav {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .ff-edit-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-displayed-badges,
+      .ff-cosmetic-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .ff-action-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .ff-bottom-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-edit-hero,
+      .ff-badge-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .ff-edit-hero h1 {
+        font-size: 38px;
+      }
+
+      .ff-side-nav,
+      .ff-cosmetic-grid,
+      .ff-displayed-badges {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-btn {
+        width: 100%;
+      }
+
+      .ff-badge-symbol {
+        width: 120px;
+        height: 80px;
+      }
+
+      .ff-bottom-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+
+  <div class="ff-edit-shell">
+    <aside class="ff-edit-sidebar">
+      <div class="ff-edit-logo">
+        <div class="ff-logo-mark">F</div>
+        <div>
+          <strong>FicForge</strong>
+          <span>Edit Profile</span>
+        </div>
+      </div>
+
+      <nav class="ff-side-nav">
+        <a href="/account/">Account Hub</a>
+        <a class="active" href="/edit-profile/">Edit Profile</a>
+        <a href="/my-stories/">My Stories</a>
+        <a href="/library/">Saved Library</a>
+        <a href="/support-creator/">Support Creator</a>
+        <a href="/premium/">Membership</a>
+       
+      </nav>
+
+      <div class="ff-sidebar-note">
+        <strong>Profile identity</strong>
+        <p>
+          Edit your avatar, bio, banner,  
+        </p>
+      </div>
+    </aside>
+
+    <main class="ff-edit-main">
+      <section class="ff-edit-hero">
+        <div>
+          <span class="ff-label">Profile Settings</span>
+          <h1>Edit your FicForge profile.</h1>
+          <p>
+            Customize your public identity, profile look, bio, avatar, banner.
+          </p>
+        </div>
+
+        <a class="ff-btn primary" href="/account/">Back to Account</a>
+      </section>
+
+      <section class="ff-profile-preview">
+        <div class="ff-preview-banner"></div>
+
+        <div class="ff-preview-body">
+          <div class="ff-avatar-frame">
+            <div class="ff-avatar">F</div>
+          </div>
+
+          <h2>Your Display Name</h2>
+          <span class="ff-handle">@ficforge-member</span>
+
+          <div class="ff-badge-row">
+            <span class="ff-small-status">Reader</span>
+            <span class="ff-small-status gold">New Member</span>
+            <span class="ff-small-status green">Unlocked Badge Slot</span>
+            <span class="ff-small-status red">Cosmetic Slot</span>
+          </div>
+
+          <p>
+            Your profile preview appears here. Your avatar circle is fully visible.
+          </p>
+        </div>
+      </section>
+
+      <div class="ff-edit-grid">
+        <section class="ff-edit-card">
+          <span class="ff-label">Basic Info</span>
+          <h2>Profile details</h2>
+          <p>
+            Update your display name, profile handle, short bio, and public creator/reader identity.
+          </p>
+
+          <div class="ff-form-grid">
+            <div class="ff-field">
+              <label>Display Name</label>
+              <input type="text" placeholder="Your public display name">
+            </div>
+
+            <div class="ff-field">
+              <label>Username / Handle</label>
+              <input type="text" placeholder="@ficforge-member">
+            </div>
+
+            <div class="ff-field">
+              <label>Profile Type</label>
+              <select>
+                <option>Reader</option>
+                <option>Writer</option>
+                <option>Reader & Writer</option>
+              </select>
+            </div>
+
+            <div class="ff-field">
+              <label>Bio</label>
+              <textarea placeholder="Tell readers and creators a little about yourself."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="ff-edit-card">
+          <span class="ff-label">Avatar & Banner</span>
+          <h2>Profile visuals</h2>
+          <p>
+            Prepare your avatar, profile banner, and visual identity. Upload fields can be connected later.
+          </p>
+
+          <div class="ff-form-grid">
+            <div class="ff-upload-box">
+              <strong>Avatar Upload</strong>
+              <span>Recommended: square image. This becomes the user’s profile picture.</span>
+            </div>
+
+            <div class="ff-upload-box">
+              <strong>Profile Banner Upload</strong>
+              <span>Recommended: wide banner image for profile header styling.</span>
+            </div>
+
+            <div class="ff-field">
+              <label>Profile Accent</label>
+              <select>
+                <option>FicForge Purple</option>
+                <option>Ember Orange</option>
+                <option>Arcane Blue</option>
+                <option>Royal Gold</option>
+                <option>Shadow Red</option>
+              </select>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="ff-badge-card">
+        <div class="ff-badge-top">
+          <div>
+            <span class="ff-label">Displayed Badges</span>
+            <h2>Badges shown on your profile</h2>
+            <p>
+              This area should only show badges the user has unlocked, earned, received through membership. 
+        
+
+        <div class="ff-displayed-badges">
+          <div class="ff-badge-slot">
+            <div class="ff-badge-symbol reader">📖</div>
+            <strong>Reader</strong>
+            <span>Default Badge</span>
+          </div>
+
+          <div class="ff-badge-slot">
+            <div class="ff-badge-symbol writer">✒</div>
+            <strong>Writer</strong>
+            <span>Default Badge</span>
+          </div>
+
+          <div class="ff-badge-slot">
+            <div class="ff-badge-symbol member">★</div>
+            <strong>New Member</strong>
+            <span>Account Badge</span>
+          </div>
+
+          <div class="ff-badge-slot locked">
+            <div class="ff-badge-symbol locked-symbol"
+          >?</div>
+            <strong>Empty Slot</strong>
+            <span> To be updated</span>
+          </div>  
+        </div>
+        <section class="ff-membership-badges-inline">
+  <style>
+    .ff-membership-badges-inline {
+      width: 100%;
+      margin-top: 22px;
+      color: #ffffff;
+      font-family: inherit;
+    }
+
+    .ff-membership-badges-box {
+      width: 100%;
+      background:
+        radial-gradient(circle at top right, rgba(249, 115, 22, 0.10), transparent 34%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.94));
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 22px;
+      padding: 22px;
+      box-sizing: border-box;
+    }
+
+    .ff-membership-badges-head {
+      margin-bottom: 20px;
+    }
+
+    .ff-membership-badges-head span {
+      display: inline-flex;
+      color: #FDBA74;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .ff-membership-badges-head h3 {
+      color: #ffffff;
+      font-size: 26px;
+      line-height: 1.15;
+      margin: 0;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-membership-badges-head p {
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 8px 0 0;
+      max-width: 760px;
+    }
+
+    .ff-membership-badge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .ff-membership-badge-card {
+      position: relative;
+      text-align: center;
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 22px 12px 18px;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .ff-membership-badge-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(255, 255, 255, 0.07), transparent 38%);
+      pointer-events: none;
+    }
+
+    .ff-membership-badge-status {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      color: #94A3B8;
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 999px;
+      padding: 4px 7px;
+      font-size: 9px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      z-index: 4;
+    }
+
+    .ff-membership-badge-status::before {
+      content: "Locked";
+    }
+
+    .ff-membership-badge-art {
+      width: 132px;
+      height: 92px;
+      border-radius: 999px;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid rgba(148, 163, 184, 0.20);
+      box-shadow:
+        0 14px 24px rgba(0, 0, 0, 0.22),
+        inset 0 -18px 30px rgba(0, 0, 0, 0.26);
+      filter: grayscale(1) brightness(0.55);
+      opacity: 0.58;
+      transition: 0.25s ease;
+    }
+
+    .ff-membership-badge-art::before {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      z-index: 1;
+    }
+
+    .ff-membership-badge-art::after {
+      content: "";
+      position: absolute;
+      width: 64px;
+      height: 22px;
+      top: 9px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      filter: blur(9px);
+      transform: rotate(-16deg);
+      z-index: 1;
+    }
+
+    .ff-membership-badge-icon {
+      position: relative;
+      z-index: 2;
+      color: #ffffff;
+      font-size: 36px;
+      font-weight: 950;
+      line-height: 1;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
+    }
+
+    .ff-membership-badge-tier {
+      display: inline-flex;
+      color: #94A3B8;
+      background: rgba(15, 23, 42, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 10px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 9px;
+    }
+
+    .ff-membership-badge-card h4 {
+      color: #CBD5E1;
+      font-size: 18px;
+      font-weight: 950;
+      line-height: 1.2;
+      margin: 0 0 7px;
+      letter-spacing: -0.02em;
+    }
+
+    .ff-membership-badge-card p {
+      color: #64748B;
+      font-size: 13px;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .ff-reader-membership .ff-membership-badge-art {
+      background:
+        radial-gradient(circle at 32% 24%, rgba(147, 197, 253, 0.58), transparent 26%),
+        linear-gradient(135deg, #0B1B46, #2563EB 52%, #020617);
+    }
+
+    .ff-supporter-membership .ff-membership-badge-art {
+      background:
+        radial-gradient(circle at 32% 24%, rgba(187, 247, 208, 0.55), transparent 26%),
+        linear-gradient(135deg, #052E16, #22C55E 52%, #020617);
+    }
+
+    .ff-plus-membership .ff-membership-badge-art {
+      background:
+        radial-gradient(circle at 32% 24%, rgba(233, 213, 255, 0.58), transparent 26%),
+        linear-gradient(135deg, #2E1065, #9333EA 52%, #020617);
+    }
+
+    .ff-elite-membership .ff-membership-badge-art {
+      background:
+        radial-gradient(circle at 32% 24%, rgba(254, 240, 138, 0.60), transparent 26%),
+        linear-gradient(135deg, #451A03, #F97316 48%, #020617);
+    }
+
+    .ff-membership-badge-card.active {
+      border-color: rgba(109, 93, 251, 0.36);
+      background:
+        radial-gradient(circle at top, rgba(109, 93, 251, 0.13), transparent 40%),
+        rgba(15, 23, 42, 0.72);
+    }
+
+    .ff-membership-badge-card.active .ff-membership-badge-art {
+      filter: none;
+      opacity: 1;
+      border-color: rgba(255, 255, 255, 0.26);
+      box-shadow:
+        0 18px 34px rgba(0, 0, 0, 0.42),
+        0 0 26px rgba(109, 93, 251, 0.22),
+        inset 0 -18px 30px rgba(0, 0, 0, 0.26);
+    }
+
+    .ff-membership-badge-card.active .ff-membership-badge-status {
+      color: #86EFAC;
+      background: rgba(34, 197, 94, 0.16);
+      border-color: rgba(34, 197, 94, 0.34);
+    }
+
+    .ff-membership-badge-card.active .ff-membership-badge-status::before {
+      content: "Active";
+    }
+
+    .ff-membership-badge-card.active h4 {
+      color: #ffffff;
+    }
+
+    .ff-membership-badge-card.active p {
+      color: #94A3B8;
+    }
+
+    @media (max-width: 980px) {
+      .ff-membership-badge-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .ff-membership-badge-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-membership-badges-box {
+        padding: 20px;
+      }
+    }
+  </style>
+
+  <div class="ff-membership-badges-box">
+    <div class="ff-membership-badges-head">
+      <span>Membership Badges</span>
+      <h3>Membership badges</h3>
+      <p>
+        These badges appear below your displayed badges. They stay locked until the matching membership tier is active.
+      </p>
+    </div>
+
+    <div class="ff-membership-badge-grid">
+
+      <article class="ff-membership-badge-card ff-reader-membership">
+        <span class="ff-membership-badge-status"></span>
+        <div class="ff-membership-badge-art">
+          <span class="ff-membership-badge-icon">📖</span>
+        </div>
+        <span class="ff-membership-badge-tier">Reader Tier</span>
+        <h4>Reader Badge</h4>
+        <p>Unlocked with Reader membership.</p>
+      </article>
+
+      <article class="ff-membership-badge-card ff-supporter-membership">
+        <span class="ff-membership-badge-status"></span>
+        <div class="ff-membership-badge-art">
+          <span class="ff-membership-badge-icon">💛</span>
+        </div>
+        <span class="ff-membership-badge-tier">Supporter Tier</span>
+        <h4>Supporter Badge</h4>
+        <p>Unlocked with Supporter membership.</p>
+      </article>
+
+      <article class="ff-membership-badge-card ff-plus-membership">
+        <span class="ff-membership-badge-status"></span>
+        <div class="ff-membership-badge-art">
+          <span class="ff-membership-badge-icon">∞</span>
+        </div>
+        <span class="ff-membership-badge-tier">Forge Plus Tier</span>
+        <h4>Forge Plus Badge</h4>
+        <p>Unlocked with Forge Plus membership.</p>
+      </article>
+
+      <article class="ff-membership-badge-card ff-elite-membership">
+        <span class="ff-membership-badge-status"></span>
+        <div class="ff-membership-badge-art">
+          <span class="ff-membership-badge-icon">👑</span>
+        </div>
+        <span class="ff-membership-badge-tier">Forge Elite Tier</span>
+        <h4>Forge Elite Badge</h4>
+        <p>Unlocked with Forge Elite membership.</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+  </div>
+</section>				</div>
+					</div>

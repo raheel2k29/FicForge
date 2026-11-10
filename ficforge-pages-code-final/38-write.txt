@@ -1,0 +1,649 @@
+<div class="ff-writer-quote">
+  <p>
+    “Every reader is a writer. Whether we put words to paper or carry stories quietly within ourselves, we are still of the same.”
+  </p>
+</div>
+
+<section class="ff-write-gate">
+  <div class="ff-write-gate-card">
+    <span class="ff-write-gate-label">WRITER PORTAL</span>
+
+    <h1>Welcome to the FicForge Writer Portal</h1>
+
+    <p>
+      Create a FicForge account or sign in to access your writer dashboard, workshop, profile tools, analytics, earnings, and support center.
+    </p>
+
+    <div class="ff-write-gate-actions">
+      <a class="ff-write-gate-primary" href="/wp-login.php?action=register&redirect_to=/write/">
+        Create Writer Account
+      </a>
+
+      <a class="ff-write-gate-secondary" href="/wp-login.php?redirect_to=/write/">
+        Sign In
+      </a>
+    </div>
+
+    <div class="ff-write-gate-note">
+      Writers need a FicForge account before accessing story creation tools.
+    </div>
+  </div>
+
+  <div class="ff-write-gate-preview">
+    <div class="ff-preview-item">
+      <span>Workshop</span>
+      <p>Create stories, format chapters, manage drafts, and prepare releases.</p>
+    </div>
+
+    <div class="ff-preview-item">
+      <span>Writer Profile</span>
+      <p>Build your public author identity, bio, links, and story shelf.</p>
+    </div>
+
+    <div class="ff-preview-item">
+      <span>Analytics</span>
+      <p>Track reader engagement, follows, comments, and chapter activity.</p>
+    </div>
+
+    <div class="ff-preview-item">
+      <span>Earnings</span>
+      <p>View Sparks support, payout status, and creator tools.</p>
+    </div>
+  </div>
+</section>
+
+<section class="ff-writer-portal">
+  <div class="ff-portal-hero">
+    <span class="ff-portal-label">WRITER PORTAL</span>
+    <h1>Your FicForge Writing Space</h1>
+    <p>
+      Manage your stories, build chapters in the Workshop, track reader engagement, and prepare your work for the FicForge library.
+    </p>
+  </div>
+
+  <nav class="ff-portal-tabs">
+    <a href="#dashboard">Dashboard</a>
+    <a href="#workshop">Workshop</a>
+    <a href="#profile">Writer Profile</a>
+    <a href="#analytics">Analytics</a>
+    <a href="#earnings">Earnings</a>
+    <a href="#settings">Settings</a>
+    <a href="#support">Support</a>
+  </nav>
+
+  <div id="dashboard" class="ff-portal-section">
+    <div class="ff-section-heading">
+      <span>DASHBOARD</span>
+      <h2>Writer Command Center</h2>
+      <p>Your central space for drafts, stories, profile tools, reader activity, and creator features.</p>
+    </div>
+
+    <div class="ff-dashboard-grid">
+      <div class="ff-dashboard-card">
+        <span class="ff-card-mark">WS</span>
+        <h3>Workshop</h3>
+        <p>Create stories, manage chapters, import drafts, and prepare releases.</p>
+      </div>
+
+      <div class="ff-dashboard-card">
+        <span class="ff-card-mark">PF</span>
+        <h3>Writer Profile</h3>
+        <p>Build your creator identity, bio, story shelf, and public presence.</p>
+      </div>
+
+      <div class="ff-dashboard-card">
+        <span class="ff-card-mark">AN</span>
+        <h3>Analytics</h3>
+        <p>Track reads, follows, comments, chapter engagement, and reader activity.</p>
+      </div>
+
+      <div class="ff-dashboard-card">
+        <span class="ff-card-mark">EA</span>
+        <h3>Earnings</h3>
+        <p>Review Sparks support, payout status, and creator monetization details.</p>
+      </div>
+    </div>
+  </div>
+<div id="workshop" class="ff-workshop-panel refined">
+  <div class="ff-workshop-left">
+    <span class="ff-panel-label">WORKSHOP</span>
+    <h2>The place where stories are built.</h2>
+    <p>
+      The Workshop is the core writing space for FicForge. Create stories, upload covers, publish chapters, manage your library, and return to your work whenever you need to continue.
+    </p>
+
+    <div class="ff-workshop-buttons">
+      <a href="/my-stories/">Create New Story</a>
+      <a href="/my-stories/">My Stories</a>
+    </div>
+  </div>
+
+  <div class="ff-workshop-tools refined-tools">
+    <a class="ff-tool-row" href="/my-stories/">
+      <strong>Create Story</strong>
+      <span>Start a new story with title, synopsis, genre, fandom, tags, content rating, warnings, cover image, and first chapter.</span>
+    </a>
+
+    <a class="ff-tool-row" href="/my-stories/">
+      <strong>Cover & Image Uploads</strong>
+      <span>Upload your main story cover and prepare visual assets connected to your story listing.</span>
+    </a>
+
+    <a class="ff-tool-row" href="/my-stories/">
+      <strong>Publish Story</strong>
+      <span>Publish your story immediately to FicForge once the required details and first chapter are ready.</span>
+    </a>
+
+    <a class="ff-tool-row" href="/my-stories/">
+      <strong>My Stories</strong>
+      <span>Review your published stories, saved drafts, chapter count, story covers, updates, edits, and future releases.</span>
+    </a>
+
+    <a class="ff-tool-row" href="/support/">
+      <strong>Protection & Rights</strong>
+      <span>Review FicForge’s creator protections, anti-scraping position, copyright support, and platform rules.</span>
+    </a>
+  </div>
+</div>
+
+    <a class="ff-tool-row" href="/my-stories/">
+      <strong>Publish Story</strong>
+      <span>Publish your story 
+
+  <div class="ff-portal-grid-two">
+    <div id="earnings" class="ff-feature-panel">
+      <span class="ff-panel-label">EARNINGS</span>
+      <h3>Sparks and creator support.</h3>
+      <p>Review Sparks support, payout eligibility, pending balances, and creator monetization settings.</p>
+    </div>
+
+    <div id="settings" class="ff-feature-panel">
+      <span class="ff-panel-label">SETTINGS</span>
+      <h3>Control your writing space.</h3>
+      <p>Manage account settings, notifications, privacy options, story visibility, and content controls.</p>
+    </div>
+  </div>
+
+  <div id="support" class="ff-support-panel">
+    <div>
+      <span class="ff-panel-label">WRITER SUPPORT</span>
+      <h2>Need help getting started?</h2>
+      <p>Founding writers can request onboarding help and prepare their first stories for the FicForge library.</p>
+    </div>
+
+    <div class="ff-support-actions">
+      <a class="ff-portal-primary" href="/contact">Contact Support</a>
+      <a class="ff-portal-secondary" href="/community">Join Community</a>
+    </div>
+  </div>
+</section>
+
+<style>
+/* Default state: logged-out visitors see the gate, portal hidden */
+.ff-writer-portal {
+  display: none;
+}
+
+/* Logged-in users see the portal, gate hidden */
+body.logged-in .ff-write-gate {
+  display: none !important;
+}
+
+body.logged-in .ff-writer-portal {
+  display: block !important;
+}
+
+/* Writer quote */
+.ff-writer-quote {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto 24px auto;
+  padding: 18px 24px;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  text-align: center;
+}
+
+.ff-writer-quote p {
+  color: #E2E8F0;
+  font-size: 17px;
+  line-height: 1.65;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Gate section */
+.ff-write-gate {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 28px;
+  align-items: center;
+  min-height: 600px;
+}
+
+.ff-write-gate-card {
+  position: relative;
+  overflow: hidden;
+  padding: 58px 42px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(249, 115, 22, 0.22), transparent 38%),
+    radial-gradient(circle at 80% 0%, rgba(109, 93, 251, 0.24), transparent 36%),
+    linear-gradient(135deg, rgba(17, 24, 39, 0.98), rgba(11, 18, 32, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.34);
+}
+
+.ff-write-gate-label,
+.ff-portal-label,
+.ff-section-heading span,
+.ff-panel-label {
+  display: inline-flex;
+  color: #F97316;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ff-write-gate-label,
+.ff-portal-label {
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  border-radius: 999px;
+  padding: 8px 14px;
+  margin-bottom: 22px;
+}
+
+.ff-write-gate h1,
+.ff-portal-hero h1 {
+  color: #FFFFFF;
+  font-size: 56px;
+  line-height: 1.04;
+  margin: 0 0 20px 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.ff-write-gate p,
+.ff-portal-hero p {
+  color: #CBD5E1;
+  font-size: 18px;
+  line-height: 1.65;
+  max-width: 760px;
+  margin: 0 0 30px 0;
+}
+
+.ff-write-gate-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.ff-write-gate-actions a,
+.ff-workshop-buttons a,
+.ff-support-actions a {
+  min-height: 50px;
+  padding: 14px 22px;
+  border-radius: 10px;
+  text-decoration: none !important;
+  font-size: 15px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ff-write-gate-primary,
+.ff-portal-primary,
+.ff-workshop-buttons a:first-child {
+  color: #FFFFFF !important;
+  background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+  border: 1px solid rgba(109, 93, 251, 0.72);
+}
+
+.ff-write-gate-secondary,
+.ff-portal-secondary,
+.ff-workshop-buttons a:last-child {
+  color: #FFFFFF !important;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.ff-write-gate-note {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ff-write-gate-preview {
+  display: grid;
+  gap: 14px;
+}
+
+.ff-preview-item,
+.ff-dashboard-card,
+.ff-feature-panel {
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.94), rgba(11, 18, 32, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.ff-preview-item {
+  padding: 22px;
+}
+
+.ff-preview-item span {
+  display: block;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.ff-preview-item p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Portal section */
+.ff-writer-portal {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.ff-portal-hero {
+  text-align: center;
+  max-width: 850px;
+  margin: 0 auto 34px auto;
+}
+
+.ff-portal-hero p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ff-portal-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px;
+  margin-bottom: 34px;
+  border-radius: 18px;
+  background: rgba(2, 6, 23, 0.50);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ff-portal-tabs a {
+  color: #CBD5E1 !important;
+  text-decoration: none !important;
+  padding: 10px 13px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ff-portal-tabs a:hover {
+  color: #F97316 !important;
+}
+
+.ff-portal-section {
+  margin-bottom: 34px;
+}
+
+.ff-section-heading {
+  margin-bottom: 20px;
+}
+
+.ff-section-heading h2,
+.ff-workshop-left h2,
+.ff-support-panel h2 {
+  color: #FFFFFF;
+  font-size: 38px;
+  line-height: 1.1;
+  margin: 8px 0 10px 0;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.ff-section-heading p,
+.ff-workshop-left p,
+.ff-support-panel p,
+.ff-dashboard-card p,
+.ff-feature-panel p {
+  color: #CBD5E1;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ff-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.ff-dashboard-card {
+  min-height: 200px;
+  padding: 22px;
+}
+
+.ff-card-mark {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  color: #FFFFFF;
+  background: rgba(109, 93, 251, 0.20);
+  border: 1px solid rgba(109, 93, 251, 0.38);
+  font-size: 13px;
+  font-weight: 900;
+  margin-bottom: 18px;
+}
+
+.ff-dashboard-card h3,
+.ff-feature-panel h3 {
+  color: #FFFFFF;
+  font-size: 20px;
+  line-height: 1.2;
+  margin: 0 0 10px 0;
+  font-weight: 900;
+}
+
+.ff-workshop-panel {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 24px;
+  padding: 30px;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(249, 115, 22, 0.16), transparent 36%),
+    linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(11, 18, 32, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 34px;
+}
+
+.ff-workshop-buttons,
+.ff-support-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.ff-workshop-tools {
+  display: grid;
+  gap: 12px;
+}
+
+.ff-tool-row {
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(2, 6, 23, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.ff-tool-row strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.ff-tool-row span {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ff-portal-grid-two {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.ff-feature-panel {
+  padding: 26px;
+}
+
+.ff-feature-panel h3 {
+  font-size: 25px;
+  margin-top: 10px;
+}
+
+.ff-support-panel {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 24px;
+  align-items: center;
+  padding: 34px;
+  margin-top: 34px;
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+@media (max-width: 1000px) {
+  .ff-write-gate,
+  .ff-workshop-panel,
+  .ff-support-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .ff-dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ff-portal-grid-two {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .ff-write-gate-card {
+    padding: 42px 22px;
+  }
+
+  .ff-write-gate h1,
+  .ff-portal-hero h1 {
+    font-size: 40px;
+  }
+
+  .ff-write-gate p,
+  .ff-portal-hero p {
+    font-size: 16px;
+  }
+
+  .ff-write-gate-actions,
+  .ff-workshop-buttons,
+  .ff-support-actions {
+    flex-direction: column;
+  }
+
+  .ff-write-gate-actions a,
+  .ff-workshop-buttons a,
+  .ff-support-actions a {
+    width: 100%;
+  }
+
+  .ff-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ff-workshop-panel,
+  .ff-support-panel {
+    padding: 22px;
+  }
+
+  .ff-section-heading h2,
+  .ff-workshop-left h2,
+  .ff-support-panel h2 {
+    font-size: 30px;
+  }
+}/* Remove leftover old workshop duplicate rows */
+.ff-writer-portal > .ff-workshop-tools,
+.ff-writer-portal > .ff-tool-row,
+.ff-workshop-panel + .ff-workshop-tools {
+  display: none !important;
+}
+</style>
+    <script>
+(function () {
+  function moveCreateStoryForm() {
+    const slot = document.getElementById("create-story-form-slot");
+    const form = document.querySelector(".ff-create-story-form");
+
+    if (slot && form && !slot.contains(form)) {
+      slot.appendChild(form);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", moveCreateStoryForm);
+  setTimeout(moveCreateStoryForm, 500);
+  setTimeout(moveCreateStoryForm, 1500);
+})();
+</script>
+<div class="ff-page-transition-overlay"></div>
+
+<style>
+.ff-page-transition-overlay {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(109, 93, 251, 0.18), transparent 34%),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 30%),
+    #050B16;
+  z-index: 999999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+body.ff-transitioning .ff-page-transition-overlay {
+  opacity: 1;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const workroomLinks = document.querySelectorAll('a[href="/my-stories/"], a[href="/my-stories"]');
+
+  workroomLinks.forEach(function(link) {
+    link.addEventListener("click", function () {
+      document.body.classList.add("ff-transitioning");
+    });
+  });
+});
+</script>

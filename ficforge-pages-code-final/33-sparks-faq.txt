@@ -1,0 +1,559 @@
+<section class="ff-sparks-page">
+  <style>
+    .ff-sparks-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+    }
+
+    .ff-sparks-page .label {
+      display: inline-flex;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-sparks-hero {
+      max-width: 940px;
+      margin-bottom: 30px;
+    }
+
+    .ff-sparks-hero h1 {
+      color: #FFFFFF;
+      font-size: 56px;
+      line-height: 1.05;
+      margin: 0 0 14px 0;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .ff-sparks-hero p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-sparks-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .ff-sparks-actions a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .ff-sparks-actions a.primary {
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border-color: rgba(109, 93, 251, 0.72);
+    }
+
+    .ff-sparks-alert,
+    .ff-sparks-card,
+    .ff-sparks-panel,
+    .ff-sparks-bottom {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .ff-sparks-alert {
+      margin-bottom: 18px;
+      border-color: rgba(249, 115, 22, 0.28);
+      background: rgba(249, 115, 22, 0.08);
+    }
+
+    .ff-sparks-alert strong,
+    .ff-sparks-card strong,
+    .ff-sparks-box strong,
+    .ff-sparks-list strong {
+      display: block;
+      color: #FFFFFF;
+      font-weight: 900;
+    }
+
+    .ff-sparks-alert strong,
+    .ff-sparks-card strong {
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .ff-sparks-alert p,
+    .ff-sparks-card p,
+    .ff-sparks-panel p,
+    .ff-sparks-bottom p {
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .ff-sparks-pricing {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .ff-sparks-card.price {
+      position: relative;
+      overflow: hidden;
+      min-height: 185px;
+    }
+
+    .ff-sparks-card.price.best {
+      border-color: rgba(249, 115, 22, 0.42);
+      background: rgba(249, 115, 22, 0.10);
+    }
+
+    .ff-sparks-card .tag {
+      display: inline-flex;
+      color: #FFFFFF;
+      background: rgba(109, 93, 251, 0.28);
+      border: 1px solid rgba(109, 93, 251, 0.48);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .ff-sparks-card.best .tag {
+      background: rgba(249, 115, 22, 0.24);
+      border-color: rgba(249, 115, 22, 0.50);
+    }
+
+    .ff-sparks-price {
+      color: #FFFFFF;
+      font-size: 28px;
+      font-weight: 900;
+      margin: 4px 0 8px 0;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-sparks-bonus {
+      color: #F97316;
+      font-size: 13px;
+      font-weight: 900;
+      margin-top: 8px;
+    }
+
+    .ff-sparks-panel {
+      margin-bottom: 18px;
+    }
+
+    .ff-sparks-panel h2,
+    .ff-sparks-bottom h2 {
+      color: #FFFFFF;
+      font-size: 30px;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .ff-sparks-two {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .ff-sparks-box,
+    .ff-sparks-list div {
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .ff-sparks-box strong,
+    .ff-sparks-list strong {
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .ff-sparks-box p,
+    .ff-sparks-list p {
+      color: #94A3B8;
+      font-size: 13.5px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-sparks-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .ff-sparks-highlight {
+      background: rgba(109, 93, 251, 0.10);
+      border: 1px solid rgba(109, 93, 251, 0.32);
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 18px;
+    }
+
+    .ff-sparks-highlight p {
+      color: #CBD5E1;
+      font-size: 14px;
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    .ff-sparks-highlight strong {
+      color: #FFFFFF;
+    }
+
+    .ff-sparks-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .ff-sparks-links a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .ff-sparks-bottom {
+      margin-top: 24px;
+    }
+
+    @media (max-width: 1150px) {
+      .ff-sparks-pricing {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .ff-sparks-two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-sparks-hero h1 {
+        font-size: 40px;
+      }
+
+      .ff-sparks-pricing {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-sparks-actions a,
+      .ff-sparks-links a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <div class="ff-sparks-hero">
+    <span class="label">Sparks System</span>
+    <h1>Sparks FAQ</h1>
+    <p>
+      Sparks are FicForge’s platform currency for supporting creators, powering approved platform features, and giving readers a simple way to participate in the FicForge creator economy.
+    </p>
+
+    <div class="ff-sparks-actions">
+      <a href="/support/">← Return to Support</a>
+      <a class="primary" href="/premium/">View Premium</a>
+    </div>
+  </div>
+
+  <div class="ff-sparks-alert">
+    <strong>Important launch note</strong>
+    <p>
+      Sparks are part of FicForge’s planned monetization system. Some purchasing, wallet, support, and creator-earning features may launch in stages as the platform grows.
+    </p>
+  </div>
+
+  <div class="ff-sparks-pricing">
+    <div class="ff-sparks-card price">
+      <span class="tag">Starter</span>
+      <strong>100 Sparks</strong>
+      <div class="ff-sparks-price">$1</div>
+      <p>A small pack for testing Sparks or giving light creator support.</p>
+    </div>
+
+    <div class="ff-sparks-card price">
+      <span class="tag">Standard</span>
+      <strong>1,000 Sparks</strong>
+      <div class="ff-sparks-price">$10</div>
+      <p>A simple everyday pack for casual readers and regular supporters.</p>
+    </div>
+
+    <div class="ff-sparks-card price">
+      <span class="tag">Supporter</span>
+      <strong>5,000 Sparks</strong>
+      <div class="ff-sparks-price">$50</div>
+      <p>For active readers who support creators more often.</p>
+      <div class="ff-sparks-bonus">+500 bonus Sparks</div>
+    </div>
+
+    <div class="ff-sparks-card price">
+      <span class="tag">Power Reader</span>
+      <strong>8,000 Sparks</strong>
+      <div class="ff-sparks-price">$80</div>
+      <p>For frequent readers who want a larger Spark balance.</p>
+      <div class="ff-sparks-bonus">+1,200 bonus Sparks</div>
+    </div>
+
+    <div class="ff-sparks-card price best">
+      <span class="tag">Best Value</span>
+      <strong>15,000 Sparks</strong>
+      <div class="ff-sparks-price">$125</div>
+      <p>The premium Spark package for heavy supporters and active readers.</p>
+      <div class="ff-sparks-bonus">+2,500 bonus Sparks</div>
+    </div>
+  </div>
+
+  <div class="ff-sparks-panel">
+    <span class="label">Basics</span>
+    <h2>What are Sparks?</h2>
+    <p>
+      Sparks are a FicForge platform currency that readers may use through approved FicForge features. They make it easier to support creators without making a separate payment every time.
+    </p>
+
+    <div class="ff-sparks-two">
+      <div class="ff-sparks-box">
+        <strong>For readers</strong>
+        <p>
+          Sparks let readers support creators, participate in future platform features, and manage support from one FicForge wallet.
+        </p>
+      </div>
+
+      <div class="ff-sparks-box">
+        <strong>For creators</strong>
+        <p>
+          Sparks may contribute to eligible creator earnings when used through approved support features and when the creator account meets payout requirements.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-sparks-panel">
+    <span class="label">Spark Packs</span>
+    <h2>How much do Sparks cost?</h2>
+    <p>
+      FicForge uses simple Spark packs so readers can choose how much they want to add to their account.
+    </p>
+
+    <div class="ff-sparks-highlight">
+      <p>
+        <strong>Starter:</strong> 100 Sparks — $1<br>
+        <strong>Standard:</strong> 1,000 Sparks — $10<br>
+        <strong>Supporter:</strong> 5,000 Sparks + 500 bonus — $50<br>
+        <strong>Power Reader:</strong> 8,000 Sparks + 1,200 bonus — $80<br>
+        <strong>Patron:</strong> 15,000 Sparks + 2,500 bonus — $125
+      </p>
+    </div>
+
+    <p style="margin-top:14px;">
+      Bonus Sparks are promotional extras included with larger packs. Spark prices may account for platform operations, payment processing, fraud prevention, refunds, taxes, and service costs.
+    </p>
+  </div>
+
+  <div class="ff-sparks-panel">
+    <span class="label">Using Sparks</span>
+    <h2>What can Sparks be used for?</h2>
+    <p>
+      Sparks may be used only through approved FicForge features. The exact features may expand over time as the platform develops.
+    </p>
+
+    <div class="ff-sparks-list">
+      <div>
+        <strong>General creator support</strong>
+        <p>Readers may use Sparks to support a creator’s public profile as general appreciation for their presence and writing activity on FicForge.</p>
+      </div>
+
+      <div>
+        <strong>Original webnovel features</strong>
+        <p>Original webnovels may become eligible for approved monetization features as FicForge expands its creator tools.</p>
+      </div>
+
+      <div>
+        <strong>Future platform features</strong>
+        <p>Sparks may later support approved features such as event participation, reader boosts, creator tools, profile upgrades, or other FicForge-native features.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-sparks-panel">
+    <span class="label">Limits</span>
+    <h2>What Sparks cannot buy</h2>
+    <p>
+      Sparks are not a way to bypass FicForge’s content, copyright, fanfiction, or payment rules.
+    </p>
+
+    <div class="ff-sparks-list">
+      <div>
+        <strong>No paid fanfiction chapters</strong>
+        <p>Sparks cannot be used to buy, unlock, Fast Pass, request, commission, or receive paid early access to fanfiction chapters.</p>
+      </div>
+
+      <div>
+        <strong>No specific fanfiction rewards</strong>
+        <p>Sparks cannot be exchanged for a specific fanfiction story, chapter, fandom, update, continuation, ship, character, bonus scene, private scene, or reward.</p>
+      </div>
+
+      <div>
+        <strong>No rule-breaking content</strong>
+        <p>Sparks cannot be used to purchase, encourage, or reward content that violates FicForge’s Content Policy, copyright rules, payment rules, or safety rules.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-sparks-panel">
+    <span class="label">Fanfiction Boundary</span>
+    <h2>How Sparks work around fanfiction</h2>
+    <p>
+      Fanfiction chapters on FicForge remain free to read. They cannot be sold, locked behind payment, placed behind Fast Pass, offered as paid early access, or used as paid rewards.
+    </p>
+
+    <div class="ff-sparks-list">
+      <div>
+        <strong>Allowed</strong>
+        <p>General profile support for a creator’s overall public presence on FicForge, as long as it is not tied to any specific fanfiction work or reward.</p>
+      </div>
+
+      <div>
+        <strong>Not allowed</strong>
+        <p>Promising fanfiction chapters, continuations, bonus scenes, fandom requests, private updates, commissions, or special rewards in exchange for Sparks or payment.</p>
+      </div>
+
+      <div>
+        <strong>Why this rule exists</strong>
+        <p>This boundary helps FicForge separate general creator support from selling or monetizing third-party fanfiction content.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-sparks-panel">
+    <span class="label">Creator Conversion</span>
+    <h2>Do creators receive the same amount readers pay?</h2>
+    <p>
+      No. Reader purchase pricing and creator-side earnings are related, but they are not the same thing.
+    </p>
+
+    <div class="ff-sparks-highlight">
+      <p>
+        <strong>Reader purchase example:</strong> 1,000 Sparks costs $10<br>
+        <strong>Creator-side conversion:</strong> 100 eligible Sparks = $1.00<br>
+        <strong>Creator payout threshold:</strong> 5,000 eligible Sparks = $50.00
+      </p>
+    </div>
+
+    <p style="margin-top:14px;">
+      For payout rules, payout timing, holds, account review, payment methods, and creator tax responsibility, visit the Creator Payout FAQ.
+    </p>
+  </div>
+
+  <div class="ff-sparks-panel">
+    <span class="label">Refunds & Reversals</span>
+    <h2>Can Sparks be refunded?</h2>
+    <p>
+      Refunds may depend on payment status, payment processor rules, platform review, account activity, fraud concerns, and whether Sparks have already been used.
+    </p>
+
+    <div class="ff-sparks-list">
+      <div>
+        <strong>Unused Sparks</strong>
+        <p>Refund requests for unused Sparks may be reviewed by FicForge according to platform policy and payment processor rules.</p>
+      </div>
+
+      <div>
+        <strong>Used Sparks</strong>
+        <p>Sparks that have already been used for support or platform features may not always be refundable.</p>
+      </div>
+
+      <div>
+        <strong>Chargebacks and disputes</strong>
+        <p>Payment disputes, chargebacks, refunds, or reversals may affect account balances, creator earnings, and payout eligibility.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-sparks-panel">
+    <span class="label">Safety</span>
+    <h2>Abuse prevention and account review</h2>
+    <p>
+      FicForge may review Spark activity to protect readers, creators, and the platform from fraud, abuse, manipulation, copyright issues, and payment misuse.
+    </p>
+
+    <div class="ff-sparks-list">
+      <div>
+        <strong>Suspicious activity</strong>
+        <p>Unusual purchases, fake support patterns, refund abuse, chargebacks, stolen payment methods, or coordinated abuse may trigger review.</p>
+      </div>
+
+      <div>
+        <strong>Creator account review</strong>
+        <p>Creator earnings connected to suspicious Spark activity may be delayed, held, reversed, or removed from eligible payout balance.</p>
+      </div>
+
+      <div>
+        <strong>Platform action</strong>
+        <p>FicForge may restrict wallets, pause payouts, remove access to monetized tools, or suspend accounts when Spark abuse is found.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-sparks-panel">
+    <span class="label">Related Pages</span>
+    <h2>Where to go next</h2>
+    <p>
+      This page explains Sparks from the reader and platform-currency side. Use the pages below for deeper rules.
+    </p>
+
+    <div class="ff-sparks-links">
+      <a href="/creator-payout-faq/">Creator Payout FAQ</a>
+      <a href="/premium/">Premium</a>
+      <a href="/protection-rights/">Protection & Rights</a>
+      <a href="/content-policy/">Content Policy</a>
+      <a href="/dmca-copyright/">DMCA & Copyright</a>
+      <a href="/contact/">Contact Support</a>
+    </div>
+  </div>
+
+  <div class="ff-sparks-bottom">
+    <h2>Need help with Sparks?</h2>
+    <p>
+      Contact FicForge Support if you have a question about Spark purchases, wallet balance, creator support, refunds, or suspicious activity.
+    </p>
+
+    <div class="ff-sparks-actions">
+      <a class="primary" href="/contact/">Contact Support</a>
+      <a href="/support/">Return to Support</a>
+    </div>
+  </div>
+</section>

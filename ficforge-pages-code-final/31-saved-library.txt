@@ -1,0 +1,551 @@
+<section class="ff-library-page">
+  <style>
+    .ff-library-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+      font-family: inherit;
+    }
+
+    .ff-library-hero,
+    .ff-library-card,
+    .ff-library-filter,
+    .ff-story-card,
+    .ff-library-note {
+      background: rgba(15, 23, 42, 0.84);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 24px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+    }
+
+    .ff-library-hero {
+      padding: 36px;
+      margin-bottom: 18px;
+      background:
+        radial-gradient(circle at top left, rgba(109, 93, 251, 0.24), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.16), transparent 34%),
+        rgba(15, 23, 42, 0.84);
+    }
+
+    .ff-label {
+      display: inline-flex;
+      width: fit-content;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-library-hero h1 {
+      color: #FFFFFF;
+      font-size: 58px;
+      line-height: 1.04;
+      margin: 0 0 14px 0;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      max-width: 880px;
+    }
+
+    .ff-library-hero p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.7;
+      margin: 0;
+      max-width: 850px;
+    }
+
+    .ff-library-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    .ff-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 14px;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-weight: 900;
+      transition: 0.18s ease;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .ff-btn.primary {
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border-color: rgba(109, 93, 251, 0.78);
+      box-shadow: 0 0 26px rgba(109, 93, 251, 0.20);
+    }
+
+    .ff-btn.orange {
+      background: linear-gradient(135deg, #F97316, #EA580C);
+      border-color: rgba(249, 115, 22, 0.76);
+      box-shadow: 0 0 22px rgba(249, 115, 22, 0.15);
+    }
+
+    .ff-btn:hover {
+      color: #FFFFFF !important;
+      transform: translateY(-1px);
+      border-color: rgba(249, 115, 22, 0.50);
+    }
+
+    .ff-library-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .ff-library-card {
+      padding: 22px;
+    }
+
+    .ff-library-card strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 34px;
+      font-weight: 900;
+      margin-bottom: 7px;
+      letter-spacing: -0.04em;
+    }
+
+    .ff-library-card span {
+      color: #94A3B8;
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .ff-library-filter {
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    .ff-library-filter h2,
+    .ff-library-section h2,
+    .ff-library-note h2 {
+      color: #FFFFFF;
+      font-size: 34px;
+      line-height: 1.1;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+    }
+
+    .ff-library-filter p,
+    .ff-library-note p {
+      color: #94A3B8;
+      font-size: 15px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-search-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .ff-search-row input {
+      width: 100%;
+      color: #FFFFFF;
+      background: rgba(2, 6, 23, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 15px;
+      padding: 15px;
+      font-size: 15px;
+      outline: none;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    .ff-search-row input::placeholder {
+      color: #64748B;
+    }
+
+    .ff-library-tabs {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .ff-tab {
+      color: #CBD5E1;
+      background: rgba(2, 6, 23, 0.38);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 999px;
+      padding: 10px 13px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .ff-tab.active {
+      color: #FFFFFF;
+      background: rgba(109, 93, 251, 0.26);
+      border-color: rgba(109, 93, 251, 0.48);
+    }
+
+    .ff-library-section {
+      margin-top: 18px;
+    }
+
+    .ff-library-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .ff-library-section-header p {
+      color: #94A3B8;
+      font-size: 15px;
+      line-height: 1.65;
+      margin: 0;
+      max-width: 720px;
+    }
+
+    .ff-story-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .ff-story-card {
+      padding: 18px;
+      min-height: 300px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .ff-cover {
+      height: 150px;
+      border-radius: 18px;
+      margin-bottom: 14px;
+      background:
+        radial-gradient(circle at top left, rgba(249, 115, 22, 0.36), transparent 36%),
+        radial-gradient(circle at bottom right, rgba(109, 93, 251, 0.44), transparent 38%),
+        linear-gradient(135deg, #111827, #020617);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      position: relative;
+    }
+
+    .ff-cover::after {
+      content: "Saved";
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      color: #FFFFFF;
+      background: rgba(2, 6, 23, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .ff-cover.reading {
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.38), transparent 36%),
+        linear-gradient(135deg, #082F49, #020617);
+    }
+
+    .ff-cover.favorite {
+      background:
+        radial-gradient(circle at top left, rgba(250, 204, 21, 0.38), transparent 36%),
+        linear-gradient(135deg, #78350F, #020617);
+    }
+
+    .ff-cover.later {
+      background:
+        radial-gradient(circle at top left, rgba(168, 85, 247, 0.38), transparent 36%),
+        linear-gradient(135deg, #3B0764, #020617);
+    }
+
+    .ff-story-card span {
+      color: #F97316;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .ff-story-card h3 {
+      color: #FFFFFF;
+      font-size: 24px;
+      line-height: 1.15;
+      margin: 0 0 8px 0;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-story-card p {
+      color: #94A3B8;
+      font-size: 13.5px;
+      line-height: 1.6;
+      margin: 0 0 16px 0;
+    }
+
+    .ff-story-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 0 0 16px 0;
+    }
+
+    .ff-pill {
+      color: #CBD5E1;
+      background: rgba(2, 6, 23, 0.44);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .ff-story-card .ff-btn {
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .ff-empty-panel {
+      background:
+        radial-gradient(circle at top right, rgba(109, 93, 251, 0.16), transparent 34%),
+        rgba(15, 23, 42, 0.84);
+      border: 1px dashed rgba(255, 255, 255, 0.18);
+      border-radius: 24px;
+      padding: 28px;
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .ff-empty-panel h3 {
+      color: #FFFFFF;
+      font-size: 28px;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+    }
+
+    .ff-empty-panel p {
+      color: #94A3B8;
+      font-size: 15px;
+      line-height: 1.65;
+      margin: 0 auto;
+      max-width: 700px;
+    }
+
+    .ff-library-note {
+      padding: 22px;
+      margin-top: 18px;
+      border-color: rgba(249, 115, 22, 0.24);
+      background:
+        radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 30%),
+        rgba(15, 23, 42, 0.82);
+    }
+
+    .ff-library-note strong {
+      display: block;
+      color: #FDBA74;
+      font-size: 16px;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    @media (max-width: 1100px) {
+      .ff-library-stats,
+      .ff-story-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-library-hero,
+      .ff-library-filter,
+      .ff-library-card,
+      .ff-library-note {
+        padding: 22px 18px;
+      }
+
+      .ff-library-hero h1 {
+        font-size: 38px;
+      }
+
+      .ff-library-hero p {
+        font-size: 16px;
+      }
+
+      .ff-library-stats,
+      .ff-story-grid,
+      .ff-search-row {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-library-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .ff-btn {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <section class="ff-library-hero">
+    <span class="ff-label">Saved Library</span>
+    <h1>Your personal FicForge reading shelf.</h1>
+    <p>
+      Save stories you like, keep track of what you are reading, organize favorites, follow updates, and return to your reading list from your Account Hub.
+    </p>
+
+    <div class="ff-library-actions">
+      <a class="ff-btn primary" href="/browse/">Browse Stories</a>
+      <a class="ff-btn" href="/account/">Back to Account</a>
+      <a class="ff-btn orange" href="/write/">Start Writing</a>
+    </div>
+  </section>
+
+  <div class="ff-library-stats">
+    <section class="ff-library-card">
+      <strong>0</strong>
+      <span>Saved Stories</span>
+    </section>
+
+    <section class="ff-library-card">
+      <strong>0</strong>
+      <span>Currently Reading</span>
+    </section>
+
+    <section class="ff-library-card">
+      <strong>0</strong>
+      <span>Favorites</span>
+    </section>
+
+    <section class="ff-library-card">
+      <strong>0</strong>
+      <span>Followed Authors</span>
+    </section>
+  </div>
+
+  <section class="ff-library-filter">
+    <span class="ff-label">Reading Manager</span>
+    <h2>Organize your saved stories</h2>
+    <p>
+      This page will eventually show stories saved by the logged-in user. For launch, this is the front-end library structure until story-saving and reading-history logic are connected.
+    </p>
+
+    <div class="ff-search-row">
+      <input type="text" placeholder="Search your saved stories, authors, fandoms, or tags...">
+      <a class="ff-btn primary" href="#">Search Library</a>
+    </div>
+
+    <div class="ff-library-tabs">
+      <span class="ff-tab active">All Saved</span>
+      <span class="ff-tab">Currently Reading</span>
+      <span class="ff-tab">Reading Later</span>
+      <span class="ff-tab">Favorites</span>
+      <span class="ff-tab">Completed</span>
+      <span class="ff-tab">Followed Authors</span>
+      <span class="ff-tab">Recently Viewed</span>
+    </div>
+  </section>
+
+  <section class="ff-library-section">
+    <div class="ff-library-section-header">
+      <div>
+        <span class="ff-label">Library Preview</span>
+        <h2>Saved stories</h2>
+        <p>
+          Once saving is connected, story cards will appear here with reading progress, latest chapter status, author updates, and quick actions.
+        </p>
+      </div>
+
+      <a class="ff-btn" href="/browse/">Find Stories</a>
+    </div>
+
+    <div class="ff-story-grid">
+      <article class="ff-story-card">
+        <div class="ff-cover reading"></div>
+        <span>Currently Reading</span>
+        <h3>Story Slot One</h3>
+        <p>
+          A saved story preview will appear here once readers begin adding stories to their personal library.
+        </p>
+
+        <div class="ff-story-meta">
+          <span class="ff-pill">Progress</span>
+          <span class="ff-pill">Latest Chapter</span>
+          <span class="ff-pill">Updates</span>
+        </div>
+
+        <a class="ff-btn primary" href="/browse/">Continue Reading</a>
+      </article>
+
+      <article class="ff-story-card">
+        <div class="ff-cover favorite"></div>
+        <span>Favorite</span>
+        <h3>Story Slot Two</h3>
+        <p>
+          Favorites will let users keep their most-loved stories separate from their general saved list.
+        </p>
+
+        <div class="ff-story-meta">
+          <span class="ff-pill">Favorite</span>
+          <span class="ff-pill">Author</span>
+          <span class="ff-pill">Fandom</span>
+        </div>
+
+        <a class="ff-btn" href="/browse/">View Story</a>
+      </article>
+
+      <article class="ff-story-card">
+        <div class="ff-cover later"></div>
+        <span>Reading Later</span>
+        <h3>Story Slot Three</h3>
+        <p>
+          Reading Later will help readers save interesting stories without losing track of them.
+        </p>
+
+        <div class="ff-story-meta">
+          <span class="ff-pill">Later</span>
+          <span class="ff-pill">Unread</span>
+          <span class="ff-pill">Saved</span>
+        </div>
+
+        <a class="ff-btn orange" href="/browse/">Open Story</a>
+      </article>
+    </div>
+
+    <div class="ff-empty-panel">
+      <h3>Your saved library is waiting.</h3>
+      <p>
+        When the save-story system is connected, this page will automatically show the stories each user saves, follows, favorites, completes, or returns to later.
+      </p>
+    </div>
+  </section>
+
+  <section class="ff-library-note">
+    <strong>Backend status</strong>
+    <p>
+      This page is the front-end Saved Library structure. Story saving, followed authors, reading progress, recently viewed stories, and user-specific library data still need backend connection.
+    </p>
+  </section>
+</section>

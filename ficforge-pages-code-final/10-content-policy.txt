@@ -1,0 +1,443 @@
+<section class="ff-content-page">
+  <div class="ff-content-hero">
+    <span>FICFORGE POLICY</span>
+    <h1>Content Policy</h1>
+    <p>
+      FicForge supports broad creative freedom while requiring accurate ratings, clear warnings, lawful publishing, and responsible community conduct.
+    </p>
+
+    <div class="ff-content-actions">
+      <a href="/support/">← Return to Support</a>
+      <a class="primary" href="/moderation-appeals/">Moderation & Appeals</a>
+    </div>
+  </div>
+
+  <div class="ff-content-intro">
+    <span>OUR APPROACH</span>
+    <h2>Creative freedom with clear boundaries</h2>
+    <p>
+      This platform  is built for fanfiction writers, original webnovel authors, and serialized storytellers. We support mature themes, dark fiction, political fiction, horror, romance, action, and complex storytelling, but creators must label their work honestly and avoid unlawful or harmful content. We want to ensure all get the point and follow the rules.
+    </p>
+  </div>
+
+  <div class="ff-content-grid">
+    <a class="ff-content-card" href="#allowed-content">
+      <strong>Allowed Content</strong>
+      <p>Creative works that are lawful, properly rated, and clearly tagged.</p>
+    </a>
+
+    <a class="ff-content-card" href="#required-warnings">
+      <strong>Required Warnings</strong>
+      <p>Major themes and sensitive content that must be disclosed.</p>
+    </a>
+
+    <a class="ff-content-card" href="#ratings">
+      <strong>Ratings System</strong>
+      <p>General, Teen, Mature, and Explicit rating expectations.</p>
+    </a>
+
+    <a class="ff-content-card" href="#explicit-rules">
+      <strong>Explicit Content Rules</strong>
+      <p>Age-gating and monetization limits for explicit content.</p>
+    </a>
+
+    <a class="ff-content-card" href="#fanfiction-rules">
+      <strong>Fanfiction Boundaries</strong>
+      <p>Fanfiction remains free and separate from direct story sales.</p>
+    </a>
+
+    <a class="ff-content-card" href="#prohibited-content">
+      <strong>Prohibited Content</strong>
+      <p>Content and behavior that may lead to removal or bans.</p>
+    </a>
+  </div>
+
+  <div id="allowed-content" class="ff-content-panel">
+    <span>ALLOWED CONTENT</span>
+    <h2>What FicForge allows</h2>
+    <p>
+      FicForge allows a wide range of fiction, fanfiction, original webnovels, serialized stories, and mature creative themes as long as the content remains lawful, properly labeled, and compliant with platform rules.
+    </p>
+
+    <div class="ff-content-list">
+      <div>
+        <strong>Fanfiction</strong>
+        <p>Transformative stories based on existing fandoms, worlds, characters, or settings, subject to FicForge’s fanfiction boundaries.</p>
+      </div>
+
+      <div>
+        <strong>Original Fiction</strong>
+        <p>Creator-owned stories, worlds, characters, and webnovels written from original intellectual property.</p>
+      </div>
+
+      <div>
+        <strong>Mature Themes</strong>
+        <p>Stories may explore war, politics, trauma, horror, romance, grief, violence, social conflict, or morally complex characters when properly rated.</p>
+      </div>
+
+      <div>
+        <strong>Dark Fiction</strong>
+        <p>Dark stories are allowed when they remain fictional, properly warned, and do not encourage real-world harm.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="required-warnings" class="ff-content-panel">
+    <span>REQUIRED WARNINGS</span>
+    <h2>Creators must warn readers honestly</h2>
+    <p>
+      Content warnings help readers make informed choices. FicForge does not require every small detail to be spoiled, but major sensitive content should be clearly labeled.
+    </p>
+
+    <div class="ff-content-list">
+      <div>
+        <strong>Graphic Violence</strong>
+        <p>Use warnings for intense violence, gore, torture, battlefield brutality, or repeated violent imagery.</p>
+      </div>
+
+      <div>
+        <strong>Sexual Content</strong>
+        <p>Use the correct rating and warning when a story contains sexual themes, sexual situations, or explicit adult material.</p>
+      </div>
+
+      <div>
+        <strong>Abuse or Trauma Themes</strong>
+        <p>Warn for abuse, coercion, trauma, captivity, exploitation themes, or similar sensitive material.</p>
+      </div>
+
+      <div>
+        <strong>Self-Harm or Suicide Themes</strong>
+        <p>Stories involving self-harm, suicidal ideation, or related themes should be clearly warned.</p>
+      </div>
+
+      <div>
+        <strong>Major Character Death</strong>
+        <p>Use warnings when major character death is a central or serious part of the story.</p>
+      </div>
+
+      <div>
+        <strong>Extreme Horror</strong>
+        <p>Warn for extreme horror, psychological horror, body horror, or disturbing imagery that may affect readers.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="ratings" class="ff-content-panel">
+    <span>RATINGS SYSTEM</span>
+    <h2>Choose the rating that fits the strongest content</h2>
+    <p>
+      Ratings should reflect the strongest material in your story, not just the average chapter. Under-rating content may lead to correction requests or moderation action.
+    </p>
+
+    <div class="ff-rating-grid">
+      <div>
+        <strong>General</strong>
+        <p>Suitable for most readers. Little to no intense violence, sexual content, or heavy mature themes.</p>
+      </div>
+
+      <div>
+        <strong>Teen</strong>
+        <p>May include mild violence, light romance, moderate language, or themes appropriate for older teen readers.</p>
+      </div>
+
+      <div>
+        <strong>Mature</strong>
+        <p>May include heavy profanity, intense themes, stronger action violence, trauma, political darkness, or fade-to-black sexual content.</p>
+      </div>
+
+      <div>
+        <strong>Explicit</strong>
+        <p>For adult audiences only. Applies to highly graphic sexual detail, prolonged anatomical sexual description, extreme gore, or extreme visceral torture.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="explicit-rules" class="ff-content-panel">
+    <span>EXPLICIT CONTENT</span>
+    <h2>Explicit content has stricter platform limits</h2>
+    <p>
+      Explicit-rated stories must be clearly labeled and age-gated. FicForge may require an 18+ gateway before readers access Explicit content.
+    </p>
+    <p>
+      Explicit content cannot use Sparks, Fast Pass, internal profile-support triggers, paid chapter access, or other FicForge monetization tools. Explicit stories must remain free to access where permitted by platform rules and payment processor requirements.
+    </p>
+  </div>
+
+  <div id="fanfiction-rules" class="ff-content-panel">
+    <span>FANFICTION MONETIZATION BOUNDARIES</span>
+    <h2>FicForge does not sell fanfiction</h2>
+    <p>
+      Fanfiction chapters on FicForge remain free to read. They cannot be sold, locked, placed behind Fast Pass, offered as paid early access, or used as payment rewards.
+    </p>
+    <p>
+      General profile support, where available, is for the creator’s overall public presence on FicForge. It is not attached to any specific fanfiction story, fandom, chapter, update, continuation, ship, character, bonus scene, or reward.
+    </p>
+    <p>
+      Creators may not use FicForge profile support, author notes, story descriptions, comments, or platform tools to promise fanfiction rewards in exchange for payment.
+    </p>
+  </div>
+
+  <div id="prohibited-content" class="ff-content-panel warning">
+    <span>PROHIBITED CONTENT</span>
+    <h2>Content that is not allowed on FicForge</h2>
+    <p>
+      FicForge may remove content, restrict accounts, suspend users, or permanently ban accounts when serious violations occur.
+    </p>
+
+    <div class="ff-content-list">
+      <div>
+        <strong>Illegal Exploitation</strong>
+        <p>Any illegal exploitative material, especially involving minors, is strictly prohibited and may be reported where required.</p>
+      </div>
+
+      <div>
+        <strong>Plagiarism and Scraping</strong>
+        <p>Stolen work, unauthorized reposting, scraping, compilation theft, or impersonation of another creator is prohibited.</p>
+      </div>
+
+      <div>
+        <strong>Doxxing and Harassment</strong>
+        <p>Threats, stalking, targeted harassment, coordinated abuse, or sharing private personal information is not allowed.</p>
+      </div>
+
+      <div>
+        <strong>Hate or Real-World Harm</strong>
+        <p>Content or behavior that promotes real-world violence, targeted hate, extremist recruitment, or direct harm is prohibited.</p>
+      </div>
+
+      <div>
+        <strong>Fraud or Platform Abuse</strong>
+        <p>Fake accounts, payment fraud, manipulation, spam, malicious links, or abuse of platform systems may lead to enforcement.</p>
+      </div>
+
+      <div>
+        <strong>Copyright Abuse</strong>
+        <p>Repeated infringement, ignoring takedown rules, or reposting removed material may lead to account termination.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-content-panel">
+    <span>COMMUNITY CONDUCT</span>
+    <h2>Respect readers, writers, and moderators</h2>
+    <p>
+      FicForge communities should form naturally around stories. Discussion, criticism, theories, reviews, and disagreement are allowed, but harassment, threats, stalking, slurs, coordinated attacks, and malicious behavior are not.
+    </p>
+    <p>
+      Users are expected to follow platform rules in comments, profiles, story descriptions, author notes, community areas, and support interactions.
+    </p>
+  </div>
+
+  <div class="ff-content-bottom">
+    <h2>Need to report a problem?</h2>
+    <p>
+      Use Contact Support for bugs, account issues, plagiarism reports, content concerns, copyright questions, or moderation problems. More detailed rules are available through DMCA & Copyright and Moderation & Appeals.
+    </p>
+
+    <div class="ff-content-actions">
+      <a class="primary" href="/contact/">Contact Support</a>
+      <a href="/dmca-copyright/">DMCA & Copyright</a>
+      <a href="/moderation-appeals/">Moderation & Appeals</a>
+    </div>
+  </div>
+</section>
+
+<style>
+.ff-content-page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  color: #FFFFFF;
+}
+
+.ff-content-hero {
+  max-width: 920px;
+  margin-bottom: 30px;
+}
+
+.ff-content-hero span,
+.ff-content-intro span,
+.ff-content-panel span {
+  display: inline-flex;
+  color: #F97316;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  border-radius: 999px;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.ff-content-hero h1 {
+  color: #FFFFFF;
+  font-size: 56px;
+  line-height: 1.05;
+  margin: 0 0 14px 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.ff-content-hero p {
+  color: #CBD5E1;
+  font-size: 18px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ff-content-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.ff-content-actions a {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.ff-content-actions a.primary {
+  background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+  border-color: rgba(109, 93, 251, 0.72);
+}
+
+.ff-content-intro,
+.ff-content-card,
+.ff-content-panel,
+.ff-content-bottom {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.ff-content-intro {
+  margin-bottom: 18px;
+}
+
+.ff-content-intro h2,
+.ff-content-panel h2,
+.ff-content-bottom h2 {
+  color: #FFFFFF;
+  font-size: 30px;
+  margin: 0 0 10px 0;
+  font-weight: 900;
+}
+
+.ff-content-intro p,
+.ff-content-panel p,
+.ff-content-bottom p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.ff-content-panel p + p {
+  margin-top: 12px;
+}
+
+.ff-content-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.ff-content-card {
+  text-decoration: none !important;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.ff-content-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(249, 115, 22, 0.38);
+  background: rgba(15, 23, 42, 0.90);
+}
+
+.ff-content-card strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.ff-content-card p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ff-content-panel {
+  margin-bottom: 18px;
+}
+
+.ff-content-list,
+.ff-rating-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.ff-content-list div,
+.ff-rating-grid div {
+  background: rgba(2, 6, 23, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.ff-content-list strong,
+.ff-rating-grid strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.ff-content-list p,
+.ff-rating-grid p {
+  color: #94A3B8;
+  font-size: 13.5px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ff-content-panel.warning {
+  border-color: rgba(249, 115, 22, 0.28);
+  background: rgba(249, 115, 22, 0.08);
+}
+
+.ff-content-bottom {
+  margin-top: 24px;
+}
+
+@media (max-width: 1000px) {
+  .ff-content-grid,
+  .ff-content-list,
+  .ff-rating-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .ff-content-hero h1 {
+    font-size: 40px;
+  }
+
+  .ff-content-actions a {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>

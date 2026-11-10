@@ -1,0 +1,520 @@
+<section class="ff-register-page">
+  <style>
+    .ff-register-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+      font-family: inherit;
+    }
+
+    .ff-register-shell {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .ff-register-left,
+    .ff-register-card,
+    .ff-register-step,
+    .ff-register-note-box {
+      background: rgba(15, 23, 42, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 24px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+    }
+
+    .ff-register-left {
+      padding: 34px;
+      min-height: 640px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      position: relative;
+      background:
+        radial-gradient(circle at top left, rgba(109, 93, 251, 0.22), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.14), transparent 34%),
+        rgba(15, 23, 42, 0.84);
+    }
+
+    .ff-register-left::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      right: -90px;
+      bottom: -90px;
+      border-radius: 50%;
+      background: rgba(109, 93, 251, 0.18);
+      filter: blur(10px);
+    }
+
+    .ff-register-label {
+      display: inline-flex;
+      width: fit-content;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 18px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-register-left h1 {
+      color: #FFFFFF;
+      font-size: 58px;
+      line-height: 1.04;
+      margin: 0 0 16px 0;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      max-width: 650px;
+    }
+
+    .ff-register-left p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.7;
+      margin: 0;
+      max-width: 650px;
+    }
+
+    .ff-register-identity {
+      position: relative;
+      z-index: 2;
+      margin-top: 34px;
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 22px;
+      padding: 18px;
+    }
+
+    .ff-mini-profile-banner {
+      height: 92px;
+      border-radius: 17px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(249, 115, 22, 0.42), transparent 30%),
+        radial-gradient(circle at 82% 20%, rgba(109, 93, 251, 0.55), transparent 34%),
+        linear-gradient(135deg, #111827, #020617);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+    }
+
+    .ff-mini-profile-body {
+      margin-top: -32px;
+      padding: 0 10px 8px 10px;
+    }
+
+    .ff-mini-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      padding: 4px;
+      background: linear-gradient(135deg, #6D5DFB, #F97316);
+      box-shadow: 0 0 28px rgba(109, 93, 251, 0.22);
+      margin-bottom: 12px;
+    }
+
+    .ff-mini-avatar span {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #0F172A;
+      border: 4px solid #050B16;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .ff-mini-profile-body strong {
+      color: #FFFFFF;
+      display: block;
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .ff-mini-profile-body p {
+      color: #94A3B8;
+      font-size: 13.5px;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .ff-register-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 13px;
+    }
+
+    .ff-register-badge {
+      display: inline-flex;
+      color: #FFFFFF;
+      background: rgba(109, 93, 251, 0.22);
+      border: 1px solid rgba(109, 93, 251, 0.42);
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .ff-register-badge.gold {
+      color: #FDBA74;
+      background: rgba(249, 115, 22, 0.14);
+      border-color: rgba(249, 115, 22, 0.38);
+    }
+
+    .ff-register-right {
+      display: grid;
+      gap: 16px;
+    }
+
+    .ff-register-card {
+      padding: 30px;
+      background:
+        radial-gradient(circle at top left, rgba(109, 93, 251, 0.17), transparent 33%),
+        rgba(15, 23, 42, 0.84);
+    }
+
+    .ff-register-card h2 {
+      color: #FFFFFF;
+      font-size: 34px;
+      line-height: 1.1;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+    }
+
+    .ff-register-card p {
+      color: #94A3B8;
+      font-size: 14.5px;
+      line-height: 1.65;
+      margin: 0 0 22px 0;
+    }
+
+    .ff-register-form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .ff-field label {
+      display: block;
+      color: #CBD5E1;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    .ff-field input {
+      width: 100%;
+      color: #FFFFFF;
+      background: rgba(2, 6, 23, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 13px;
+      padding: 14px 14px;
+      font-size: 15px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .ff-field input::placeholder {
+      color: #64748B;
+    }
+
+    .ff-field input:focus {
+      border-color: rgba(109, 93, 251, 0.70);
+      box-shadow: 0 0 0 3px rgba(109, 93, 251, 0.14);
+    }
+
+    .ff-register-checks {
+      display: grid;
+      gap: 9px;
+      margin: 4px 0 2px 0;
+    }
+
+    .ff-register-check {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      color: #94A3B8;
+      font-size: 12.5px;
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .ff-register-check input {
+      margin-top: 3px;
+      accent-color: #6D5DFB;
+    }
+
+    .ff-register-check a {
+      color: #FDBA74 !important;
+      text-decoration: none !important;
+      font-weight: 900;
+    }
+
+    .ff-register-submit {
+      display: inline-flex;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border: 1px solid rgba(109, 93, 251, 0.78);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 900;
+      box-shadow: 0 0 26px rgba(109, 93, 251, 0.20);
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    .ff-register-submit:hover {
+      transform: translateY(-1px);
+      color: #FFFFFF !important;
+    }
+
+    .ff-register-login {
+      margin-top: 18px;
+      text-align: center;
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .ff-register-login a {
+      color: #FDBA74 !important;
+      text-decoration: none !important;
+      font-weight: 900;
+    }
+
+    .ff-register-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .ff-register-step {
+      padding: 18px;
+      min-height: 140px;
+    }
+
+    .ff-step-number {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #6D5DFB, #F97316);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 900;
+      margin-bottom: 13px;
+    }
+
+    .ff-register-step strong {
+      color: #FFFFFF;
+      display: block;
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .ff-register-step span {
+      color: #94A3B8;
+      display: block;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .ff-register-note-box {
+      padding: 18px;
+      border-color: rgba(249, 115, 22, 0.24);
+      background:
+        radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 30%),
+        rgba(15, 23, 42, 0.82);
+    }
+
+    .ff-register-note-box strong {
+      color: #FDBA74;
+      display: block;
+      font-size: 14px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .ff-register-note-box p {
+      color: #CBD5E1;
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .ff-register-note-box a {
+      color: #FDBA74 !important;
+      text-decoration: none !important;
+      font-weight: 900;
+    }
+
+    .ff-working-note {
+      margin-top: 14px;
+      color: #64748B;
+      font-size: 12.5px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    @media (max-width: 1050px) {
+      .ff-register-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-register-left {
+        min-height: auto;
+      }
+
+      .ff-register-left h1 {
+        font-size: 48px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-register-left,
+      .ff-register-card {
+        padding: 24px 18px;
+      }
+
+      .ff-register-left h1 {
+        font-size: 38px;
+      }
+
+      .ff-register-left p {
+        font-size: 16px;
+      }
+
+      .ff-register-card h2 {
+        font-size: 28px;
+      }
+
+      .ff-register-steps {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <div class="ff-register-shell">
+    <section class="ff-register-left">
+      <div>
+        <span class="ff-register-label">Create your FicForge account</span>
+        <h1>Start your profile, library, and creator identity.</h1>
+        <p>
+          Join FicForge to save stories, follow creators, enter the community, unlock profile features, use Sparks, join Premium, and publish your own work.
+        </p>
+      </div>
+
+      <div class="ff-register-identity">
+        <div class="ff-mini-profile-banner"></div>
+
+        <div class="ff-mini-profile-body">
+          <div class="ff-mini-avatar">
+            <span>F</span>
+          </div>
+
+          <strong>Your FicForge Profile</strong>
+          <p>
+            Every account begins with a reader profile. Writers can grow that profile into a creator presence with stories, badges, supporters, and future profile cosmetics.
+          </p>
+
+          <div class="ff-register-badges">
+            <span class="ff-register-badge">Reader</span>
+            <span class="ff-register-badge">Writer Ready</span>
+            <span class="ff-register-badge gold">Cosmetics Future</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ff-register-right">
+      <div class="ff-register-card">
+        <h2>Create Account</h2>
+        <p>
+          Choose a username and email to begin. WordPress may send your password setup or account confirmation through email.
+        </p>
+
+        <form class="ff-register-form" action="/wp-login.php?action=register" method="post">
+          <div class="ff-field">
+            <label for="ff-user-register">Username</label>
+            <input id="ff-user-register" type="text" name="user_login" placeholder="Choose your FicForge username" required>
+          </div>
+
+          <div class="ff-field">
+            <label for="ff-user-email">Email Address</label>
+            <input id="ff-user-email" type="email" name="user_email" placeholder="Enter your email address" required>
+          </div>
+
+          <div class="ff-register-checks">
+            <label class="ff-register-check">
+              <input type="checkbox" required>
+              <span>I understand that saving stories, buying Sparks, joining Premium, supporting creators, and customizing profiles require a FicForge account.</span>
+            </label>
+
+            <label class="ff-register-check">
+              <input type="checkbox" required>
+              <span>I agree to follow FicForge’s <a href="/terms/">Terms</a>, <a href="/privacy-policy/">Privacy Policy</a>, and <a href="/content-policy/">Content Policy</a>.</span>
+            </label>
+          </div>
+
+          <input type="hidden" name="redirect_to" value="/account/">
+
+          <button class="ff-register-submit" type="submit">Create My Account</button>
+        </form>
+
+        <div class="ff-register-login">
+          Already have an account?
+          <a href="/login/">Sign in here</a>
+        </div>
+
+        <div class="ff-working-note">
+          This page uses the standard WordPress registration system for now. We can connect a more advanced membership/account plugin later.
+        </div>
+      </div>
+
+      <div class="ff-register-steps">
+        <div class="ff-register-step">
+          <div class="ff-step-number">1</div>
+          <strong>Create your profile</strong>
+          <span>Start with a reader account and basic FicForge identity.</span>
+        </div>
+
+        <div class="ff-register-step">
+          <div class="ff-step-number">2</div>
+          <strong>Save and follow</strong>
+          <span>Build your library and follow stories or creators you enjoy.</span>
+        </div>
+
+        <div class="ff-register-step">
+          <div class="ff-step-number">3</div>
+          <strong>Write or support</strong>
+          <span>Publish stories, use Sparks, join Premium, and support creators.</span>
+        </div>
+      </div>
+
+      <div class="ff-register-note-box">
+        <strong>Creator support stays neutral.</strong>
+        <p>
+          Enjoy their work? You can show appreciation for this creator’s time, passion, and overall creative presence on FicForge. Support is not payment for any specific story, chapter, fandom, update, continuation, bonus scene, or reward.
+        </p>
+      </div>
+    </section>
+  </div>
+</section>

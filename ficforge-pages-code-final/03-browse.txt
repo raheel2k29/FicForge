@@ -1,0 +1,562 @@
+<!-- ===== Browse : HTML widget 1 of 2 ===== -->
+
+<section class="ff-browse-page">
+  <div class="ff-browse-hero">
+    <span class="ff-browse-label">EXPLORE THE FORGE</span>
+    <h1>Browse Stories</h1>
+    <p>
+      Discover fanfiction, original fiction, fandom worlds, and serialized stories as FicForge opens its library to readers and writers.
+    </p>
+  </div>
+
+  <div class="ff-browse-panel">
+    <form class="ff-browse-search" action="/" method="get">
+      <input type="search" name="s" placeholder="Search stories, fandoms, authors, or tags..." />
+      <button type="submit">Search</button>
+    </form>
+
+    <div class="ff-browse-filters">
+      <a href="/browse/">All</a>
+      <a href="/browse/">Fanfiction</a>
+      <a href="/browse/">Original Fiction</a>
+      <a href="/browse/">Fantasy</a>
+      <a href="/browse/">Sci-Fi</a>
+      <a href="/browse/">Romance</a>
+      <a href="/browse/">Action</a>
+      <a href="/browse/">Horror</a>
+    </div>
+  </div>
+
+  <div class="ff-browse-section-title">
+    <div>
+      <span>STORY LIBRARY</span>
+      <h2>Opening Soon</h2>
+    </div>
+    <a href="/write/">Become a Founding Writer →</a>
+  </div>
+
+  <div class="ff-library-empty">
+    <div class="ff-library-glow"></div>
+
+    <div class="ff-empty-mark">
+      <span></span>
+    </div>
+
+    <h3>The FicForge story library is being prepared.</h3>
+
+    <p>
+      We are building the foundation for authors, fandom writers, and original creators. Real stories will appear here once the first works are added to the platform.
+    </p>
+
+    <div class="ff-empty-actions">
+      <a class="ff-empty-primary" href="/write/">Start Writing</a>
+      <a class="ff-empty-secondary" href="/library/">Open Saved Library</a>
+      <a class="ff-empty-secondary" href="/community/">Join the Community</a>
+    </div>
+  </div>
+
+  <div class="ff-save-preview">
+    <span>SAVED LIBRARY FEATURE</span>
+    <h3>Save stories you want to return to.</h3>
+    <p>
+      When story cards are live, readers will be able to save stories, favorite them, follow updates, and organize them inside their personal Saved Library.
+    </p>
+
+    <div class="ff-save-preview-actions">
+      <a class="ff-save-demo" href="/library/">♡ Save to Library</a>
+      <a class="ff-save-demo secondary" href="/library/">View Reading List</a>
+    </div>
+  </div>
+
+  <div class="ff-browse-categories">
+    <div class="ff-category-card purple">
+      <span>Original Fiction</span>
+      <p>Novels, serialized fiction, and creator-owned worlds.</p>
+    </div>
+
+    <div class="ff-category-card orange">
+      <span>Fanfiction</span>
+      <p>Transformative stories inspired by fandoms and shared universes.</p>
+    </div>
+
+    <div class="ff-category-card blue">
+      <span>Fandom Worlds</span>
+      <p>Browse stories by universe, franchise, setting, and community.</p>
+    </div>
+
+    <div class="ff-category-card green">
+      <span>Writer Submissions</span>
+      <p>Founding writers will help shape the first public library.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+.ff-browse-page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.ff-browse-hero {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 34px auto;
+}
+
+.ff-browse-label {
+  display: inline-flex;
+  color: #F97316;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  border-radius: 999px;
+  padding: 8px 14px;
+  margin-bottom: 18px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.ff-browse-hero h1 {
+  color: #FFFFFF;
+  font-size: 58px;
+  line-height: 1.05;
+  margin: 0 0 16px 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.ff-browse-hero p {
+  color: #CBD5E1;
+  font-size: 18px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ff-browse-panel {
+  padding: 22px;
+  border-radius: 22px;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  margin-bottom: 36px;
+}
+
+.ff-browse-search {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ff-browse-search input {
+  width: 100%;
+  min-height: 50px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(2, 6, 23, 0.72);
+  color: #FFFFFF;
+  padding: 0 16px;
+  font-size: 15px;
+  outline: none;
+}
+
+.ff-browse-search input::placeholder {
+  color: #64748B;
+}
+
+.ff-browse-search button {
+  min-width: 120px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.ff-browse-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ff-browse-filters a {
+  color: #CBD5E1 !important;
+  text-decoration: none !important;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 9px 13px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ff-browse-filters a:hover {
+  color: #F97316 !important;
+  border-color: rgba(249, 115, 22, 0.5);
+}
+
+.ff-browse-section-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.ff-browse-section-title span {
+  color: #F97316;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.ff-browse-section-title h2 {
+  color: #FFFFFF;
+  font-size: 36px;
+  line-height: 1.1;
+  margin: 8px 0 0 0;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.ff-browse-section-title a {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.ff-browse-section-title a:hover {
+  color: #F97316 !important;
+}
+
+.ff-library-empty {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 56px 34px;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(109, 93, 251, 0.24), transparent 42%),
+    linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(11, 18, 32, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.30);
+  margin-bottom: 26px;
+}
+
+.ff-library-glow {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  left: 50%;
+  top: -280px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.30), rgba(109, 93, 251, 0.22), transparent 70%);
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+.ff-empty-mark {
+  position: relative;
+  z-index: 2;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 22px auto;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(109, 93, 251, 0.28), rgba(249, 115, 22, 0.24));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ff-empty-mark span {
+  width: 30px;
+  height: 38px;
+  border-radius: 5px;
+  border: 2px solid rgba(255, 255, 255, 0.86);
+  position: relative;
+}
+
+.ff-empty-mark span::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 9px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 8px 0 rgba(255, 255, 255, 0.42);
+}
+
+.ff-library-empty h3 {
+  position: relative;
+  z-index: 2;
+  color: #FFFFFF;
+  font-size: 30px;
+  line-height: 1.18;
+  margin: 0 0 14px 0;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.ff-library-empty p {
+  position: relative;
+  z-index: 2;
+  color: #CBD5E1;
+  font-size: 16px;
+  line-height: 1.65;
+  max-width: 680px;
+  margin: 0 auto 28px auto;
+}
+
+.ff-empty-actions {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ff-empty-actions a {
+  min-height: 46px;
+  padding: 13px 20px;
+  border-radius: 10px;
+  text-decoration: none !important;
+  font-size: 14px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ff-empty-primary {
+  color: #FFFFFF !important;
+  background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+  border: 1px solid rgba(109, 93, 251, 0.72);
+}
+
+.ff-empty-secondary {
+  color: #FFFFFF !important;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.ff-empty-secondary:hover {
+  color: #F97316 !important;
+  border-color: rgba(249, 115, 22, 0.7);
+}
+
+.ff-save-preview {
+  padding: 26px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top right, rgba(109, 93, 251, 0.16), transparent 34%),
+    rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  margin-bottom: 26px;
+}
+
+.ff-save-preview span {
+  display: block;
+  color: #F97316;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.ff-save-preview h3 {
+  color: #FFFFFF;
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 0 0 10px 0;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.ff-save-preview p {
+  color: #CBD5E1;
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 760px;
+}
+
+.ff-save-preview-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.ff-save-demo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  background: rgba(109, 93, 251, 0.20);
+  border: 1px solid rgba(109, 93, 251, 0.44);
+  border-radius: 13px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.ff-save-demo.secondary {
+  background: rgba(2, 6, 23, 0.38);
+  border-color: rgba(255, 255, 255, 0.13);
+}
+
+.ff-save-demo:hover {
+  color: #FFFFFF !important;
+  border-color: rgba(249, 115, 22, 0.55);
+  transform: translateY(-1px);
+}
+
+.ff-browse-categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.ff-category-card {
+  min-height: 140px;
+  padding: 22px;
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.ff-category-card span {
+  display: block;
+  color: #FFFFFF;
+  font-size: 17px;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+.ff-category-card p {
+  color: #CBD5E1;
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.ff-category-card.purple {
+  border-color: rgba(109, 93, 251, 0.36);
+}
+
+.ff-category-card.orange {
+  border-color: rgba(249, 115, 22, 0.36);
+}
+
+.ff-category-card.blue {
+  border-color: rgba(56, 189, 248, 0.30);
+}
+
+.ff-category-card.green {
+  border-color: rgba(16, 185, 129, 0.30);
+}
+
+@media (max-width: 900px) {
+  .ff-browse-categories {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .ff-browse-hero h1 {
+    font-size: 42px;
+  }
+
+  .ff-browse-search {
+    flex-direction: column;
+  }
+
+  .ff-browse-search button {
+    min-height: 48px;
+    width: 100%;
+  }
+
+  .ff-browse-section-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ff-library-empty {
+    padding: 44px 22px;
+  }
+
+  .ff-library-empty h3,
+  .ff-save-preview h3 {
+    font-size: 25px;
+  }
+
+  .ff-empty-actions,
+  .ff-save-preview-actions {
+    flex-direction: column;
+  }
+
+  .ff-empty-actions a,
+  .ff-save-demo {
+    width: 100%;
+  }
+
+  .ff-browse-categories {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<!-- ===== Browse : HTML widget 2 of 2 ===== -->
+
+<div class="ff-home-footer">
+  <div class="ff-home-footer-top">
+    <div class="ff-home-footer-brand">
+      <h2>🔥 FicForge</h2>
+      <p>A home for fanfiction, original fiction, readers, writers, and the worlds they love.</p>
+    </div>
+
+    <div class="ff-home-footer-links">
+      <div>
+        <h4>Explore</h4>
+        <a href="/">Home</a>
+        <a href="/browse">Browse</a>
+        <a href="/premium">Premium</a>
+      </div>
+
+      <div>
+        <h4>Write</h4>
+        <a href="/write">Start Writing</a>
+        <a href="/community">Community</a>
+        <a href="/support">Support</a>
+      </div>
+
+      <div>
+        <h4>Company</h4>
+        <a href="/about">About</a>
+        <a href="/contact">Contact</a>
+        <a href="/faq">FAQ</a>
+      </div>
+
+      <div>
+        <h4>Legal</h4>
+        <a href="/terms-of-service">Terms</a>
+        <a href="/privacy-policy">Privacy</a>
+        <a href="/dmca-policy">DMCA</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-home-footer-bottom">
+    <span>© 2026 FicForge. All rights reserved.</span>
+    <span>Forged for readers and writers.</span>
+  </div>
+</div>

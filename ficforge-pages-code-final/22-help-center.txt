@@ -1,0 +1,423 @@
+<section class="ff-help-page">
+  <div class="ff-help-hero">
+    <span>FICFORGE HELP CENTER</span>
+    <h1>How can we help?</h1>
+    <p>
+      Find answers for account setup, reading, publishing, story management, creator tools, reports, Sparks, and general FicForge support.
+    </p>
+
+    <div class="ff-help-actions">
+      <a href="/support/">← Return to Support</a>
+      <a class="primary" href="/contact/">Contact Support</a>
+    </div>
+  </div>
+
+  <div class="ff-help-search">
+    <span>START HERE</span>
+    <h2>Choose the help area that matches your issue</h2>
+    <p>
+      The Help Center is built for quick answers. Deeper policy pages such as Content Policy, DMCA & Copyright, Creator Payout FAQ, Sparks FAQ, and Moderation & Appeals will explain the more serious platform rules in detail.
+    </p>
+  </div>
+
+  <div class="ff-help-grid">
+    <a class="ff-help-card" href="#account-help">
+      <strong>Account Help</strong>
+      <p>Login issues, passwords, email changes, profiles, and account access.</p>
+    </a>
+
+    <a class="ff-help-card" href="#reader-help">
+      <strong>Reader Help</strong>
+      <p>Finding stories, following creators, saving works, comments, and reader tools.</p>
+    </a>
+
+    <a class="ff-help-card" href="#creator-help">
+      <strong>Creator Help</strong>
+      <p>Publishing stories, using the writer portal, uploading covers, and managing work.</p>
+    </a>
+
+    <a class="ff-help-card" href="#story-setup">
+      <strong>Story Setup</strong>
+      <p>Titles, synopsis, story type, fandoms, genres, tags, ratings, and warnings.</p>
+    </a>
+
+    <a class="ff-help-card" href="#payments-support">
+      <strong>Sparks & Payments</strong>
+      <p>Basic help with Sparks, future payouts, profile support, and creator earnings.</p>
+    </a>
+
+    <a class="ff-help-card" href="#reports">
+      <strong>Reports & Safety</strong>
+      <p>Reporting bugs, content issues, copyright concerns, abuse, or moderation problems.</p>
+    </a>
+  </div>
+
+  <div id="account-help" class="ff-help-panel">
+    <span>ACCOUNT HELP</span>
+    <h2>Accounts, login, and profile basics</h2>
+
+    <div class="ff-faq-list">
+      <div>
+        <strong>I cannot log in. What should I do?</strong>
+        <p>
+          Use the password reset option on the login page first. Make sure you are using the same email address connected to your FicForge account. If the reset email does not arrive, check spam or contact support.
+        </p>
+      </div>
+
+      <div>
+        <strong>Can readers become writers?</strong>
+        <p>
+          Yes. FicForge is designed so readers can become creators without needing a separate platform. A user can read, follow stories, comment, and also open the Writer Portal when they are ready to publish.
+        </p>
+      </div>
+
+      <div>
+        <strong>Where do I manage my writer tools?</strong>
+        <p>
+          Go to the Writer Portal or My Stories page. These areas are used for story creation, submitted stories, drafts, scheduled release tools, creator analytics placeholders, earnings, and support links.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div id="reader-help" class="ff-help-panel">
+    <span>READER HELP</span>
+    <h2>Reading, following, and discovering stories</h2>
+
+    <div class="ff-faq-list">
+      <div>
+        <strong>How do I find stories?</strong>
+        <p>
+          Use Browse, fandom categories, genre categories, tags, search, and future story filters. FicForge will organize fanfiction and original webnovels clearly so readers can find the type of story they want.
+        </p>
+      </div>
+
+      <div>
+        <strong>Will chapters have ads in the middle?</strong>
+        <p>
+          No. FicForge is built around a stories-first reading experience. Ads should not interrupt the body of a story chapter. Any future ad placements should remain outside the actual chapter text.
+        </p>
+      </div>
+
+      <div>
+        <strong>Can I comment on stories?</strong>
+        <p>
+          FicForge is planned around reader discussion beneath stories and chapters. Comment tools may develop over time, but the goal is to let communities form naturally around the stories they read.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div id="creator-help" class="ff-help-panel">
+    <span>CREATOR HELP</span>
+    <h2>Publishing and managing your stories</h2>
+
+    <div class="ff-faq-list">
+      <div>
+        <strong>How do I publish a story?</strong>
+        <p>
+          Go to My Stories and use the Create Story form. Add your title, synopsis, story type, genre, fandom if needed, tags, rating, warnings, cover image, and first chapter.
+        </p>
+      </div>
+
+      <div>
+        <strong>What is the difference between Fanfiction and Original Webnovel?</strong>
+        <p>
+          Fanfiction uses existing copyrighted worlds, fandoms, characters, or settings and must remain free to read. Original webnovels are creator-owned stories and may later access broader monetization tools.
+        </p>
+      </div>
+
+      <div>
+        <strong>Can I edit a story after publishing?</strong>
+        <p>
+          Story management tools will appear in My Stories. As the platform develops, creators should be able to review submitted stories, update details, manage drafts, and continue publishing chapters.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div id="story-setup" class="ff-help-panel">
+    <span>STORY SETUP</span>
+    <h2>Titles, tags, ratings, and warnings</h2>
+
+    <div class="ff-faq-list">
+      <div>
+        <strong>What should my synopsis include?</strong>
+        <p>
+          A strong synopsis should explain the core premise, main conflict, tone, and reason readers should care. Keep it clear, direct, and interesting without spoiling every major twist.
+        </p>
+      </div>
+
+      <div>
+        <strong>Why do ratings and warnings matter?</strong>
+        <p>
+          Ratings and warnings help readers choose stories safely. Creators are responsible for tagging major content concerns such as violence, explicit themes, abuse, self-harm themes, major character death, or other sensitive material.
+        </p>
+      </div>
+
+      <div>
+        <strong>What tags should I use?</strong>
+        <p>
+          Use tags that help readers understand your story’s genre, tone, tropes, fandom, relationship focus, setting, and major themes. Avoid misleading tags or stuffing unrelated tags into your story.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div id="payments-support" class="ff-help-panel">
+    <span>SPARKS & PAYMENTS</span>
+    <h2>Basic Sparks, support, and payout help</h2>
+
+    <div class="ff-faq-list">
+      <div>
+        <strong>What are Sparks?</strong>
+        <p>
+          Sparks are FicForge’s planned platform currency. Readers may eventually use Sparks for approved platform features such as supporting creators or unlocking eligible original webnovel Fast Pass chapters.
+        </p>
+      </div>
+
+      <div>
+        <strong>Can fanfiction use Sparks?</strong>
+        <p>
+          Fanfiction chapters cannot be sold, locked, or placed behind Fast Pass.  Readers may only support a creator’s overall public profile as general appreciation for that creator’s time, talent, and broader writing activity. This support is not payment for any specific fanfiction story, chapter, fandom, update, continuation, bonus scene, or reward.
+        </p>
+      </div>
+
+      <div>
+        <strong>Where can I learn more about payouts?</strong>
+        <p>
+          The Creator Payout FAQ will explain creator earnings, payout thresholds, payout timing, verification requirements, and payment method availability once those systems are connected.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div id="reports" class="ff-help-panel">
+    <span>REPORTS & SAFETY</span>
+    <h2>Reporting issues and getting help</h2>
+
+    <div class="ff-faq-list">
+      <div>
+        <strong>How do I report plagiarism or stolen work?</strong>
+        <p>
+          Use the Contact Support page or the future report tools. Include the story link, creator name, copied material, and any evidence showing where the original work came from.
+        </p>
+      </div>
+
+      <div>
+        <strong>How do copyright holders contact FicForge?</strong>
+        <p>
+          Copyright holders should use the DMCA & Copyright page once it is created. That page will explain takedown notice requirements, counter-notices, and repeat infringer rules.
+        </p>
+      </div>
+
+      <div>
+        <strong>How do I report a bug?</strong>
+        <p>
+          Use Contact Support and describe what happened, what page you were on, what device or browser you used, and whether the issue happened more than once.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-help-bottom">
+    <h2>Still need help?</h2>
+    <p>
+      Contact FicForge Support for account help, technical issues, story reports, copyright concerns, creator payout questions, or anything that is not answered here.
+    </p>
+
+    <div class="ff-help-actions">
+      <a class="primary" href="/contact/">Contact Support</a>
+      <a href="/support/">Return to Support Hub</a>
+    </div>
+  </div>
+</section>
+
+<style>
+.ff-help-page {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  color: #FFFFFF;
+}
+
+.ff-help-hero {
+  max-width: 900px;
+  margin-bottom: 30px;
+}
+
+.ff-help-hero span,
+.ff-help-search span,
+.ff-help-panel span {
+  display: inline-flex;
+  color: #F97316;
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  border-radius: 999px;
+  padding: 8px 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.ff-help-hero h1 {
+  color: #FFFFFF;
+  font-size: 56px;
+  line-height: 1.05;
+  margin: 0 0 14px 0;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+.ff-help-hero p {
+  color: #CBD5E1;
+  font-size: 18px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ff-help-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.ff-help-actions a {
+  color: #FFFFFF !important;
+  text-decoration: none !important;
+  background: rgba(15, 23, 42, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.ff-help-actions a.primary {
+  background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+  border-color: rgba(109, 93, 251, 0.72);
+}
+
+.ff-help-search,
+.ff-help-card,
+.ff-help-panel,
+.ff-help-bottom {
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.ff-help-search {
+  margin-bottom: 18px;
+}
+
+.ff-help-search h2,
+.ff-help-panel h2,
+.ff-help-bottom h2 {
+  color: #FFFFFF;
+  font-size: 30px;
+  margin: 0 0 10px 0;
+  font-weight: 900;
+}
+
+.ff-help-search p,
+.ff-help-panel p,
+.ff-help-bottom p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.ff-help-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.ff-help-card {
+  text-decoration: none !important;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.ff-help-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(249, 115, 22, 0.38);
+  background: rgba(15, 23, 42, 0.90);
+}
+
+.ff-help-card strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.ff-help-card p {
+  color: #94A3B8;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ff-help-panel {
+  margin-bottom: 18px;
+}
+
+.ff-faq-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.ff-faq-list div {
+  background: rgba(2, 6, 23, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.ff-faq-list strong {
+  display: block;
+  color: #FFFFFF;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.ff-faq-list p {
+  color: #94A3B8;
+  font-size: 13.5px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ff-help-bottom {
+  margin-top: 24px;
+}
+
+@media (max-width: 1000px) {
+  .ff-help-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .ff-help-hero h1 {
+    font-size: 40px;
+  }
+
+  .ff-help-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ff-help-actions a {
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>

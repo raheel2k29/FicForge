@@ -1,0 +1,476 @@
+<section class="ff-account-page">
+  <style>
+    .ff-account-page {
+      width: 100%;
+      color: #ffffff;
+      font-family: inherit;
+      padding: 36px 0 80px;
+      box-sizing: border-box;
+    }
+
+    .ff-account-wrap {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+    }
+
+    .ff-account-sidebar {
+      background:
+        radial-gradient(circle at top left, rgba(109, 93, 251, 0.18), transparent 34%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.96));
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+      height: fit-content;
+    }
+
+    .ff-account-avatar {
+      width: 86px;
+      height: 86px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+      background:
+        radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.28), transparent 26%),
+        linear-gradient(135deg, #6d5dfb, #f97316);
+      border: 3px solid rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      box-shadow: 0 0 30px rgba(109, 93, 251, 0.22);
+    }
+
+    .ff-account-sidebar h2 {
+      color: #ffffff;
+      font-size: 24px;
+      line-height: 1.15;
+      margin: 0 0 6px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-account-sidebar p {
+      color: #94a3b8;
+      font-size: 13.5px;
+      line-height: 1.55;
+      margin: 0 0 18px;
+    }
+
+    .ff-account-status {
+      display: inline-flex;
+      color: #FDBA74;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 11px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+
+    .ff-account-nav {
+      display: grid;
+      gap: 9px;
+      margin-top: 4px;
+    }
+
+    .ff-account-nav a {
+      color: #CBD5E1 !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 12px 13px;
+      font-size: 13.5px;
+      font-weight: 850;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.18s ease;
+    }
+
+    .ff-account-nav a:hover,
+    .ff-account-nav a.active {
+      color: #ffffff !important;
+      background: rgba(109, 93, 251, 0.20);
+      border-color: rgba(109, 93, 251, 0.34);
+      transform: translateY(-1px);
+    }
+
+    .ff-account-main {
+      min-width: 0;
+    }
+
+    .ff-account-hero {
+      background:
+        radial-gradient(circle at top right, rgba(249, 115, 22, 0.14), transparent 34%),
+        radial-gradient(circle at top left, rgba(109, 93, 251, 0.18), transparent 36%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(2, 6, 23, 0.96));
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 28px;
+      padding: 34px;
+      margin-bottom: 24px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+    }
+
+    .ff-account-kicker {
+      display: inline-flex;
+      color: #FDBA74;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.26);
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+
+    .ff-account-hero h1 {
+      color: #ffffff;
+      font-size: 48px;
+      line-height: 1.05;
+      margin: 0 0 12px;
+      font-weight: 950;
+      letter-spacing: -0.045em;
+    }
+
+    .ff-account-hero p {
+      color: #94a3b8;
+      font-size: 15.5px;
+      line-height: 1.65;
+      margin: 0;
+      max-width: 780px;
+    }
+
+    .ff-account-quick {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 26px;
+    }
+
+    .ff-quick-stat {
+      background: rgba(2, 6, 23, 0.42);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .ff-quick-stat strong {
+      display: block;
+      color: #ffffff;
+      font-size: 25px;
+      line-height: 1;
+      font-weight: 950;
+      margin-bottom: 7px;
+    }
+
+    .ff-quick-stat span {
+      color: #94a3b8;
+      font-size: 12.5px;
+      font-weight: 800;
+    }
+
+    .ff-account-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .ff-account-card {
+      background:
+        radial-gradient(circle at top left, rgba(109, 93, 251, 0.10), transparent 36%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.94));
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 24px;
+      padding: 24px;
+      min-height: 210px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ff-account-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.06), transparent 38%);
+      pointer-events: none;
+    }
+
+    .ff-card-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: rgba(109, 93, 251, 0.16);
+      border: 1px solid rgba(109, 93, 251, 0.26);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ff-account-card h3 {
+      color: #ffffff;
+      font-size: 23px;
+      line-height: 1.16;
+      margin: 0 0 9px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ff-account-card p {
+      color: #94a3b8;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0 0 18px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ff-card-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ff-account-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-size: 13.5px;
+      font-weight: 900;
+      transition: 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .ff-account-btn.primary {
+      background: linear-gradient(135deg, #6d5dfb, #7c3aed);
+      border-color: rgba(109, 93, 251, 0.72);
+      box-shadow: 0 0 24px rgba(109, 93, 251, 0.16);
+    }
+
+    .ff-account-btn.orange {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      border-color: rgba(249, 115, 22, 0.72);
+    }
+
+    .ff-account-btn:hover {
+      color: #ffffff !important;
+      transform: translateY(-1px);
+    }
+
+    .ff-account-support {
+      grid-column: 1 / -1;
+      background:
+        radial-gradient(circle at top right, rgba(249, 115, 22, 0.13), transparent 34%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.94), rgba(2, 6, 23, 0.94));
+      border: 1px solid rgba(249, 115, 22, 0.16);
+    }
+
+    .ff-support-warning {
+      color: #CBD5E1;
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.55;
+      margin-top: 14px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ff-support-warning strong {
+      color: #ffffff;
+    }
+
+    @media (max-width: 980px) {
+      .ff-account-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-account-quick {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .ff-account-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .ff-account-page {
+        padding: 28px 0 60px;
+      }
+
+      .ff-account-hero {
+        padding: 24px;
+        border-radius: 24px;
+      }
+
+      .ff-account-hero h1 {
+        font-size: 38px;
+      }
+
+      .ff-account-quick {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-account-card {
+        padding: 22px;
+      }
+
+      .ff-card-actions,
+      .ff-account-btn {
+        width: 100%;
+      }
+    }
+  </style>
+
+  <div class="ff-account-wrap">
+
+    <aside class="ff-account-sidebar">
+      <div class="ff-account-avatar">👤</div>
+
+      <h2>Account Hub</h2>
+      <p>Manage your FicForge profile, inbox, stories, earnings, memberships, Sparks, and creator support from one place.</p>
+
+      <span class="ff-account-status">Free Member</span>
+
+      <nav class="ff-account-nav">
+        <a class="active" href="/account/">Account Hub <span>›</span></a>
+        <a href="/edit-profile/">Edit Profile <span>›</span></a>
+        <a href="/inbox/">Inbox <span>›</span></a>
+        <a href="/my-stories/">My Stories <span>›</span></a>
+        <a href="/creator-earnings/">Earnings <span>›</span></a>
+        <a href="/library/">Saved Library <span>›</span></a>
+        <a href="/premium/">Membership <span>›</span></a>
+        <a href="/support-creator/">Support Creator <span>›</span></a>
+        <a href="/help-center/">Help Center <span>›</span></a>
+      </nav>
+    </aside>
+
+    <main class="ff-account-main">
+
+      <section class="ff-account-hero">
+        <span class="ff-account-kicker">Welcome back</span>
+        <h1>Your FicForge Account</h1>
+        <p>
+          This is your central hub for managing your profile, inbox, creator tools, membership, Sparks, and support activity across FicForge.
+        </p>
+
+        <div class="ff-account-quick">
+          <div class="ff-quick-stat">
+            <strong>0</strong>
+            <span>Unread Messages</span>
+          </div>
+
+          <div class="ff-quick-stat">
+            <strong>0</strong>
+            <span>Sparks Balance</span>
+          </div>
+
+          <div class="ff-quick-stat">
+            <strong>$0</strong>
+            <span>Creator Earnings</span>
+          </div>
+
+          <div class="ff-quick-stat">
+            <strong>Free</strong>
+            <span>Membership Tier</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="ff-account-grid">
+
+        <article class="ff-account-card">
+          <div class="ff-card-icon">📩</div>
+          <h3>Inbox</h3>
+          <p>
+            View messages, platform notices, creator updates, moderation replies, and important FicForge account alerts.
+          </p>
+          <div class="ff-card-actions">
+            <a class="ff-account-btn primary" href="/inbox/">Open Inbox</a>
+          </div>
+        </article>
+
+        <article class="ff-account-card">
+          <div class="ff-card-icon">💵</div>
+          <h3>Creator Earnings</h3>
+          <p>
+            Track creator support, eligible Sparks, payout status, and future earnings connected to your FicForge creator account.
+          </p>
+          <div class="ff-card-actions">
+            <a class="ff-account-btn primary" href="/creator-earnings/">View Earnings</a>
+            <a class="ff-account-btn" href="/creator-payout-faq/">Payout FAQ</a>
+          </div>
+        </article>
+
+        <article class="ff-account-card">
+          <div class="ff-card-icon">⚡</div>
+          <h3>Sparks Guide</h3>
+          <p>
+            Learn how Sparks work, how they support creators, and how paid Spark packs will function.
+          </p>
+          <div class="ff-card-actions">
+            <a class="ff-account-btn primary" href="/sparks-faq/">Read Sparks FAQ</a>
+          </div>
+        </article>
+
+        <article class="ff-account-card">
+          <div class="ff-card-icon">💬</div>
+          <h3>Forum & Discussions</h3>
+          <p>
+            Join FicForge discussions, reader conversations, creator updates, and community spaces.
+          </p>
+          <div class="ff-card-actions">
+            <a class="ff-account-btn primary" href="/forum/">Open Forum</a>
+            <a class="ff-account-btn" href="/community/">Community</a>
+          </div>
+        </article>
+
+        <article class="ff-account-card ff-account-support">
+          <div class="ff-card-icon">🔥</div>
+          <h3>Support Creators</h3>
+          <p>
+            Enjoy their work? You can show appreciation for this creator’s time, passion, and overall creative presence on FicForge.
+          </p>
+          <div class="ff-card-actions">
+            <a class="ff-account-btn orange" href="/support-creator/">Support a Creator</a>
+            <a class="ff-account-btn" href="/creator-payout-faq/">Creator Payout FAQ</a>
+          </div>
+
+          <div class="ff-support-warning">
+            <strong>Important:</strong> Support is not payment for any specific story, chapter, fandom, update, continuation, bonus scene, or reward.
+          </div>
+        </article>
+
+      </section>
+
+    </main>
+
+  </div>
+</section>

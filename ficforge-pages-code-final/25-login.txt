@@ -1,0 +1,404 @@
+<section class="ff-login-page">
+  <style>
+    .ff-login-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+      font-family: inherit;
+    }
+
+    .ff-login-wrap {
+      min-height: 70vh;
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 26px;
+      align-items: center;
+    }
+
+    .ff-login-copy {
+      padding: 10px 0;
+    }
+
+    .ff-login-label {
+      display: inline-flex;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-login-copy h1 {
+      color: #FFFFFF;
+      font-size: 58px;
+      line-height: 1.04;
+      margin: 0 0 16px 0;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      max-width: 650px;
+    }
+
+    .ff-login-copy p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.7;
+      margin: 0 0 22px 0;
+      max-width: 650px;
+    }
+
+    .ff-login-benefits {
+      display: grid;
+      gap: 12px;
+      margin-top: 26px;
+      max-width: 620px;
+    }
+
+    .ff-login-benefit {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: rgba(15, 23, 42, 0.70);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 16px;
+      padding: 15px;
+    }
+
+    .ff-login-icon {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #6D5DFB, #F97316);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-weight: 900;
+      box-shadow: 0 0 20px rgba(109, 93, 251, 0.20);
+    }
+
+    .ff-login-benefit strong {
+      color: #FFFFFF;
+      display: block;
+      font-size: 15px;
+      margin-bottom: 3px;
+      font-weight: 900;
+    }
+
+    .ff-login-benefit span {
+      color: #94A3B8;
+      display: block;
+      font-size: 13.5px;
+      line-height: 1.55;
+    }
+
+    .ff-login-card {
+      background:
+        radial-gradient(circle at top left, rgba(109, 93, 251, 0.18), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.12), transparent 32%),
+        rgba(15, 23, 42, 0.84);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 26px 80px rgba(0, 0, 0, 0.30);
+    }
+
+    .ff-login-card-top {
+      margin-bottom: 22px;
+    }
+
+    .ff-login-card-top h2 {
+      color: #FFFFFF;
+      font-size: 32px;
+      line-height: 1.1;
+      margin: 0 0 9px 0;
+      font-weight: 900;
+      letter-spacing: -0.035em;
+    }
+
+    .ff-login-card-top p {
+      color: #94A3B8;
+      font-size: 14.5px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-login-form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .ff-field label {
+      display: block;
+      color: #CBD5E1;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    .ff-field input {
+      width: 100%;
+      color: #FFFFFF;
+      background: rgba(2, 6, 23, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 13px;
+      padding: 14px 14px;
+      font-size: 15px;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .ff-field input::placeholder {
+      color: #64748B;
+    }
+
+    .ff-field input:focus {
+      border-color: rgba(109, 93, 251, 0.70);
+      box-shadow: 0 0 0 3px rgba(109, 93, 251, 0.14);
+    }
+
+    .ff-login-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin: 2px 0 4px 0;
+      flex-wrap: wrap;
+    }
+
+    .ff-remember {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #94A3B8;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .ff-remember input {
+      accent-color: #6D5DFB;
+    }
+
+    .ff-login-options a,
+    .ff-login-bottom a,
+    .ff-login-note a {
+      color: #FDBA74 !important;
+      text-decoration: none !important;
+      font-weight: 900;
+    }
+
+    .ff-login-options a:hover,
+    .ff-login-bottom a:hover,
+    .ff-login-note a:hover {
+      color: #FFFFFF !important;
+    }
+
+    .ff-login-submit {
+      display: inline-flex;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border: 1px solid rgba(109, 93, 251, 0.78);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 900;
+      box-shadow: 0 0 26px rgba(109, 93, 251, 0.20);
+      cursor: pointer;
+    }
+
+    .ff-login-submit:hover {
+      transform: translateY(-1px);
+      color: #FFFFFF !important;
+    }
+
+    .ff-login-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0;
+      color: #64748B;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .ff-login-divider::before,
+    .ff-login-divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: rgba(255, 255, 255, 0.10);
+    }
+
+    .ff-login-bottom {
+      text-align: center;
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .ff-login-note {
+      margin-top: 18px;
+      background: rgba(2, 6, 23, 0.38);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 15px;
+      padding: 14px;
+    }
+
+    .ff-login-note strong {
+      color: #FFFFFF;
+      display: block;
+      font-size: 13px;
+      margin-bottom: 5px;
+      font-weight: 900;
+    }
+
+    .ff-login-note p {
+      color: #94A3B8;
+      font-size: 12.5px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .ff-working-note {
+      margin-top: 16px;
+      color: #64748B;
+      font-size: 12.5px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    @media (max-width: 1000px) {
+      .ff-login-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-login-copy h1 {
+        font-size: 48px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-login-copy h1 {
+        font-size: 38px;
+      }
+
+      .ff-login-copy p {
+        font-size: 16px;
+      }
+
+      .ff-login-card {
+        padding: 24px 18px;
+      }
+
+      .ff-login-card-top h2 {
+        font-size: 28px;
+      }
+
+      .ff-login-options {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+
+  <div class="ff-login-wrap">
+    <div class="ff-login-copy">
+      <span class="ff-login-label">FicForge Login</span>
+      <h1>Return to your stories, profile, and community.</h1>
+      <p>
+        Sign in to manage your FicForge account, save stories, customize your profile, support creators, join Premium, and access your writer tools.
+      </p>
+
+      <div class="ff-login-benefits">
+        <div class="ff-login-benefit">
+          <div class="ff-login-icon">1</div>
+          <div>
+            <strong>Save stories and continue reading</strong>
+            <span>Keep your library organized and return to stories you follow.</span>
+          </div>
+        </div>
+
+        <div class="ff-login-benefit">
+          <div class="ff-login-icon">2</div>
+          <div>
+            <strong>Manage your FicForge profile</strong>
+            <span>Use badges, profile cosmetics, creator identity, and account settings.</span>
+          </div>
+        </div>
+
+        <div class="ff-login-benefit">
+          <div class="ff-login-icon">3</div>
+          <div>
+            <strong>Write, publish, and support creators</strong>
+            <span>Access My Stories, Sparks, Premium, and creator-support features.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ff-login-card">
+      <div class="ff-login-card-top">
+        <h2>Sign in to FicForge</h2>
+        <p>
+          Use your account to access your profile, saved stories, Sparks, memberships, forum activity, and writer dashboard.
+        </p>
+      </div>
+
+      <form class="ff-login-form" action="/wp-login.php" method="post">
+        <div class="ff-field">
+          <label for="ff-user-login">Username or Email</label>
+          <input id="ff-user-login" type="text" name="log" placeholder="Enter your username or email" required>
+        </div>
+
+        <div class="ff-field">
+          <label for="ff-user-pass">Password</label>
+          <input id="ff-user-pass" type="password" name="pwd" placeholder="Enter your password" required>
+        </div>
+
+        <div class="ff-login-options">
+          <label class="ff-remember">
+            <input type="checkbox" name="rememberme" value="forever">
+            Remember me
+          </label>
+
+          <a href="/reset-password/">Forgot password?</a>
+        </div>
+
+        <input type="hidden" name="redirect_to" value="/account/">
+
+        <button class="ff-login-submit" type="submit">Sign In</button>
+      </form>
+
+      <div class="ff-login-divider">New here?</div>
+
+      <p class="ff-login-bottom">
+        Don’t have an account yet?
+        <a href="/register/">Create your FicForge account</a>
+      </p>
+
+      <div class="ff-login-note">
+        <strong>Account required for platform features</strong>
+        <p>
+          Visitors can browse and read, but saving stories, buying Sparks, joining Premium, supporting creators, and customizing profiles require an account.
+        </p>
+      </div>
+
+      <div class="ff-working-note">
+        This page uses the standard WordPress login system for now. We’ll polish the full account flow as FicForge develops.
+      </div>
+    </div>
+  </div>
+</section>

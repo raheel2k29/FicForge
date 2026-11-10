@@ -1,0 +1,655 @@
+<section class="ff-premium-page">
+  <style>
+    .ff-premium-page {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      color: #FFFFFF;
+    }
+
+    .ff-premium-page .label {
+      display: inline-flex;
+      color: #F97316;
+      background: rgba(249, 115, 22, 0.12);
+      border: 1px solid rgba(249, 115, 22, 0.28);
+      border-radius: 999px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .ff-premium-hero {
+      max-width: 960px;
+      margin-bottom: 30px;
+    }
+
+    .ff-premium-hero h1 {
+      color: #FFFFFF;
+      font-size: 56px;
+      line-height: 1.05;
+      margin: 0 0 14px 0;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .ff-premium-hero p {
+      color: #CBD5E1;
+      font-size: 18px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-premium-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .ff-premium-actions a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(15, 23, 42, 0.86);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .ff-premium-actions a.primary {
+      background: linear-gradient(135deg, #6D5DFB, #7C3AED);
+      border-color: rgba(109, 93, 251, 0.72);
+    }
+
+    .ff-premium-note,
+    .ff-premium-tier,
+    .ff-spark-pack,
+    .ff-premium-panel,
+    .ff-premium-bottom {
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .ff-premium-note {
+      margin-bottom: 22px;
+      border-color: rgba(249, 115, 22, 0.28);
+      background: rgba(249, 115, 22, 0.08);
+    }
+
+    .ff-premium-note strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 17px;
+      margin-bottom: 8px;
+      font-weight: 900;
+    }
+
+    .ff-premium-note p,
+    .ff-premium-tier p,
+    .ff-spark-pack p,
+    .ff-premium-panel p,
+    .ff-premium-bottom p {
+      color: #94A3B8;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .ff-section-head {
+      margin: 34px 0 18px 0;
+      max-width: 900px;
+    }
+
+    .ff-section-head h2 {
+      color: #FFFFFF;
+      font-size: 36px;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-section-head p {
+      color: #94A3B8;
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .ff-premium-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .ff-premium-tier {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .ff-premium-tier.featured {
+      border-color: rgba(249, 115, 22, 0.42);
+      background: rgba(249, 115, 22, 0.10);
+    }
+
+    .ff-premium-tier .tier-tag,
+    .ff-spark-pack .pack-tag {
+      display: inline-flex;
+      width: fit-content;
+      color: #FFFFFF;
+      background: rgba(109, 93, 251, 0.28);
+      border: 1px solid rgba(109, 93, 251, 0.48);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .ff-premium-tier.featured .tier-tag,
+    .ff-spark-pack.best .pack-tag {
+      background: rgba(249, 115, 22, 0.24);
+      border-color: rgba(249, 115, 22, 0.50);
+    }
+
+    .ff-premium-tier h2,
+    .ff-spark-pack h3 {
+      color: #FFFFFF;
+      font-size: 26px;
+      margin: 0 0 8px 0;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .ff-premium-price,
+    .ff-spark-price {
+      color: #FFFFFF;
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      margin: 4px 0 6px 0;
+    }
+
+    .ff-premium-price span,
+    .ff-spark-price span {
+      color: #94A3B8;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .ff-premium-sparks,
+    .ff-spark-total {
+      color: #F97316;
+      font-size: 15px;
+      font-weight: 900;
+      margin: 10px 0 8px 0;
+    }
+
+    .ff-premium-bonus {
+      color: #A78BFA;
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .ff-premium-tier ul {
+      list-style: none;
+      padding: 0;
+      margin: 18px 0 22px 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .ff-premium-tier li {
+      color: #CBD5E1;
+      font-size: 13.5px;
+      line-height: 1.55;
+      padding-left: 22px;
+      position: relative;
+    }
+
+    .ff-premium-tier li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: #F97316;
+      font-weight: 900;
+    }
+
+    .ff-premium-tier a,
+    .ff-spark-pack a {
+      margin-top: auto;
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      text-align: center;
+      background: rgba(2, 6, 23, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 14px;
+      font-weight: 900;
+      display: block;
+    }
+
+    .ff-premium-tier.featured a,
+    .ff-spark-pack.best a {
+      background: linear-gradient(135deg, #F97316, #EA580C);
+      border-color: rgba(249, 115, 22, 0.72);
+    }
+
+    .ff-sparks-store {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .ff-spark-pack {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .ff-spark-pack.best {
+      border-color: rgba(249, 115, 22, 0.42);
+      background: rgba(249, 115, 22, 0.10);
+    }
+
+    .ff-spark-bonus {
+      color: #F97316;
+      font-size: 13px;
+      font-weight: 900;
+      margin-top: 8px;
+      margin-bottom: 18px;
+    }
+
+    .ff-spark-pack p {
+      margin-bottom: 18px;
+    }
+
+    .ff-premium-panel {
+      margin-bottom: 18px;
+    }
+
+    .ff-premium-panel h2,
+    .ff-premium-bottom h2 {
+      color: #FFFFFF;
+      font-size: 30px;
+      margin: 0 0 10px 0;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .ff-premium-two {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .ff-premium-box {
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .ff-premium-box strong {
+      display: block;
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .ff-premium-box p {
+      color: #94A3B8;
+      font-size: 13.5px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .ff-premium-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .ff-premium-links a {
+      color: #FFFFFF !important;
+      text-decoration: none !important;
+      background: rgba(2, 6, 23, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .ff-premium-bottom {
+      margin-top: 24px;
+    }
+
+    @media (max-width: 1150px) {
+      .ff-premium-grid,
+      .ff-sparks-store {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .ff-premium-two {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .ff-premium-hero h1 {
+        font-size: 40px;
+      }
+
+      .ff-premium-grid,
+      .ff-sparks-store {
+        grid-template-columns: 1fr;
+      }
+
+      .ff-premium-actions a,
+      .ff-premium-links a {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+
+  <div class="ff-premium-hero">
+    <span class="label">FicForge Premium</span>
+    <h1>Memberships, Sparks, and stronger reader perks.</h1>
+    <p>
+      Upgrade your FicForge experience with monthly Sparks, ad-free reading, priority support, and access to the platform benefits we are building for readers and creators.
+    </p>
+
+    <div class="ff-premium-actions">
+      <a href="/support/">← Return to Support</a>
+      <a class="primary" href="#sparks-store">Buy Sparks</a>
+    </div>
+  </div>
+
+  <div class="ff-section-head">
+    <span class="label">Memberships</span>
+    <h2>Choose your Premium tier</h2>
+    <p>
+      Premium members receive monthly Sparks plus bonus monthly Sparks, ad-free reading, badges, profile benefits, reading tools, priority support, member updates, polls, and early access to new FicForge features.
+    </p>
+  </div>
+
+  <div class="ff-premium-grid">
+    <div class="ff-premium-tier">
+      <span class="tier-tag">Reader</span>
+      <h2>Reader</h2>
+      <div class="ff-premium-price">$4.99 <span>/ month</span></div>
+      <div class="ff-premium-sparks">500 monthly Sparks</div>
+      <div class="ff-premium-bonus">+200 bonus Sparks monthly · 700 total</div>
+      <p>For readers who want to support FicForge and receive basic Premium perks.</p>
+
+      <ul>
+        <li>Ad-free experience</li>
+        <li>Reader Supporter badge</li>
+        <li>Basic profile supporter status</li>
+        <li>Save and organize reading lists</li>
+        <li>Member-only platform updates</li>
+        <li>Early access to selected new features</li>
+      </ul>
+
+      <a href="https://ficforge.org/product/reader-membership/">Join Reader</a>
+    </div>
+
+    <div class="ff-premium-tier">
+      <span class="tier-tag">Supporter</span>
+      <h2>Supporter</h2>
+      <div class="ff-premium-price">$9.99 <span>/ month</span></div>
+      <div class="ff-premium-sparks">1,000 monthly Sparks</div>
+      <div class="ff-premium-bonus">+200 bonus Sparks monthly · 1,200 total</div>
+      <p>For active readers who want stronger supporter perks and more monthly Sparks.</p>
+
+      <ul>
+        <li>Ad-free experience</li>
+        <li>Supporter badge upgrade</li>
+        <li>Early access to selected new features</li>
+        
+        <li>Priority support over free users</li>
+        <li>Member-only polls</li>
+        <li>Expanded reading list tools</li>
+        <li>Supporter recognition</li>
+      </ul>
+
+      <a href="/contact/">Join Supporter</a>
+    </div>
+
+    <div class="ff-premium-tier featured">
+      <span class="tier-tag">Best Balance</span>
+      <h2>Forge Plus</h2>
+      <div class="ff-premium-price">$14.99 <span>/ month</span></div>
+      <div class="ff-premium-sparks">1,500 monthly Sparks</div>
+      <div class="ff-premium-bonus">+300 bonus Sparks monthly · 1,800 total</div>
+      <p>For committed readers and creators who want stronger platform benefits.</p>
+
+      <ul>
+        <li>Ad-free experience</li>
+        <li>Forge Plus badge</li>
+
+        <li>Priority support</li>
+        <li>Member-only roadmap updates</li>
+        <li>Creator discovery voting</li>
+        <li>Expanded reading library tools</li>
+        <li>Early access to new  creator tools</li>
+        <li>Beta access to new FicForge features</li>
+      </ul>
+
+      <a href="/contact/">Join Forge Plus</a>
+    </div>
+
+    <div class="ff-premium-tier">
+      <span class="tier-tag">Elite</span>
+      <h2>Forge Elite</h2>
+      <div class="ff-premium-price">$20.99 <span>/ month</span></div>
+      <div class="ff-premium-sparks">2,100 monthly Sparks</div>
+      <div class="ff-premium-bonus">+500 bonus Sparks monthly · 2,600 total</div>
+      <p>For dedicated supporters who want the highest Premium status and strongest perks.</p>
+
+      <ul>
+        <li>Ad-free experience</li>
+        <li>Forge Elite badge</li>
+        <li>Premium profile styling</li>
+        <li>Highest priority support</li>
+        <li>Member-only roadmap previews</li>
+        <li>Monthly creator spotlight voting</li>
+        <li>Elite supporter recognition</li>
+        <li>Extra platform-support status</li>
+        <li>Early access to major feature rollouts</li>
+      </ul>
+
+      <a href="/contact/">Join Forge Elite</a>
+    </div>
+  </div>
+
+  <div id="sparks-store" class="ff-section-head">
+    <span class="label">Spark Store</span>
+    <h2>Buy Sparks separately</h2>
+    <p>
+      Readers can use Sparks through approved FicForge features, including general creator support and future platform tools.
+    </p>
+  </div>
+
+  <div class="ff-sparks-store">
+    <div class="ff-spark-pack">
+      <span class="pack-tag">Starter</span>
+      <h3>100 Sparks</h3>
+      <div class="ff-spark-price">$0.99</div>
+      <div class="ff-spark-total">100 total Sparks</div>
+      <p>A small pack for testing Sparks or giving light support.</p>
+      <a href="/contact/">Buy Starter</a>
+    </div>
+
+    <div class="ff-spark-pack">
+      <span class="pack-tag">Standard</span>
+      <h3>1,000 Sparks</h3>
+      <div class="ff-spark-price">$9.99</div>
+      <div class="ff-spark-total">1,000 total Sparks</div>
+      <p>A simple everyday pack for casual readers and regular supporters.</p>
+      <a href="/contact/">Buy Standard</a>
+    </div>
+
+    <div class="ff-spark-pack">
+      <span class="pack-tag">Supporter</span>
+      <h3>5,000 Sparks</h3>
+      <div class="ff-spark-price">$49.99</div>
+      <div class="ff-spark-total">5,600 total Sparks</div>
+      <p>For active readers who support creators more often.</p>
+      <div class="ff-spark-bonus">+600 bonus Sparks</div>
+      <a href="/contact/">Buy Supporter</a>
+    </div>
+
+    <div class="ff-spark-pack">
+      <span class="pack-tag">Power Reader</span>
+      <h3>8,000 Sparks</h3>
+      <div class="ff-spark-price">$79.99</div>
+      <div class="ff-spark-total">9,200 total Sparks</div>
+      <p>For frequent readers who want a larger Spark balance.</p>
+      <div class="ff-spark-bonus">+1,200 bonus Sparks</div>
+      <a href="/contact/">Buy Power Reader</a>
+    </div>
+
+    <div class="ff-spark-pack best">
+      <span class="pack-tag">Best Value</span>
+      <h3>15,000 Sparks</h3>
+      <div class="ff-spark-price">$124.99</div>
+      <div class="ff-spark-total">17,800 total Sparks</div>
+      <p>The premium Spark package for heavy supporters and active readers.</p>
+      <div class="ff-spark-bonus">+2,800 bonus Sparks</div>
+      <a href="/contact/">Buy Patron Pack</a>
+    </div>
+  </div>
+
+  <div class="ff-premium-panel">
+    <span class="label">What Premium Supports</span>
+    <h2>Premium helps FicForge grow</h2>
+    <p>
+      Premium memberships help support hosting, moderation, creator tools, reader features, support systems, platform development, and the long-term growth of FicForge.
+    </p>
+
+    <div class="ff-premium-two">
+      <div class="ff-premium-box">
+        <strong>For readers</strong>
+        <p>
+          Premium gives readers monthly Sparks, bonus monthly Sparks, ad-free reading, library tools, profile perks, supporter status, and early access to new FicForge features.
+        </p>
+      </div>
+
+      <div class="ff-premium-box">
+        <strong>For creators</strong>
+        <p>
+          Premium helps fund the tools creators need, including publishing improvements, profile features, discovery systems, support workflows, and future creator dashboards.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-premium-panel">
+    <span class="label">Spark Rules</span>
+    <h2>Sparks have platform rules</h2>
+    <p>
+      Sparks may only be used through approved FicForge features. Bonus Sparks, promotional Sparks, membership Sparks, and purchased Sparks may be subject to different refund, review, payout, or eligibility rules.
+    </p>
+
+    <div class="ff-premium-two">
+      <div class="ff-premium-box">
+        <strong>Reader purchase value</strong>
+        <p>
+          Spark packs are purchased from FicForge. Purchase prices help cover platform operations, payment processing, fraud prevention, refunds, taxes, and service costs.
+        </p>
+      </div>
+
+      <div class="ff-premium-box">
+        <strong>Creator-side conversion</strong>
+        <p>
+          For eligible creator support, 100 eligible Sparks equals $1.00 before FicForge’s 9% platform fee and before any payment-provider, refund, tax, or account-review issues.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-premium-panel">
+    <span class="label">Important Boundaries</span>
+    <h2>Premium and Sparks do not unlock fanfiction</h2>
+    <p>
+      Premium is a platform membership, and Sparks are platform currency. Neither should be used to sell restricted content or bypass FicForge rules.
+    </p>
+
+    <div class="ff-premium-two">
+      <div class="ff-premium-box">
+        <strong>Fanfiction remains free</strong>
+        <p>
+          Fanfiction chapters cannot be sold, locked behind Premium, offered as paid early access, placed behind Fast Pass, or used as paid rewards.
+        </p>
+      </div>
+
+      <div class="ff-premium-box">
+        <strong>General creator support only</strong>
+        <p>
+          Support connected to fanfiction creators must remain general profile support, not payment for a specific fanfiction story, chapter, fandom, update, continuation, bonus scene, or reward.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ff-premium-panel">
+    <span class="label">Future Feature</span>
+    <h2>Fast Pass is set aside for later</h2>
+    <p>
+      Fast Pass is planned as a future feature for eligible original webnovels only. It is not currently a Premium benefit, and it will not apply to fanfiction chapters.
+    </p>
+  </div>
+
+  <div class="ff-premium-panel">
+    <span class="label">Related Pages</span>
+    <h2>Learn more</h2>
+    <p>
+      Use these pages for deeper details about Sparks, creator payouts, content rules, and creator rights.
+    </p>
+
+    <div class="ff-premium-links">
+      <a href="/sparks-faq/">Sparks FAQ</a>
+      <a href="/creator-payout-faq/">Creator Payout FAQ</a>
+      <a href="/protection-rights/">Protection & Rights</a>
+      <a href="/content-policy/">Content Policy</a>
+      <a href="/support/">Support Hub</a>
+      <a href="/contact/">Contact Support</a>
+    </div>
+  </div>
+
+  <div class="ff-premium-bottom">
+    <h2>Ready to support FicForge?</h2>
+    <p>
+      Choose a Premium membership for monthly Sparks and platform perks, or buy Sparks separately to support creators through approved FicForge features.
+    </p>
+
+    <div class="ff-premium-actions">
+      <a class="primary" href="#sparks-store">View Spark Packs</a>
+      <a href="/contact/">Contact Support</a>
+    </div>
+  </div>
+</section>
