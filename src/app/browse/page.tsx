@@ -1,19 +1,149 @@
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Browse Stories — FicForge",
-  description: "Browse Stories on FicForge — Where Stories Are Forged",
-};
+import Link from "next/link";
+import { useState } from "react";
+import { Search, Compass, BookOpen, Sparkles, Filter } from "lucide-react";
 
-const rawHtml = "<!-- ===== Browse : HTML widget 1 of 2 ===== -->\n\n<section class=\"ff-browse-page\">\n  <div class=\"ff-browse-hero\">\n    <span class=\"ff-browse-label\">EXPLORE THE FORGE</span>\n    <h1>Browse Stories</h1>\n    <p>\n      Discover fanfiction, original fiction, fandom worlds, and serialized stories as FicForge opens its library to readers and writers.\n    </p>\n  </div>\n\n  <div class=\"ff-browse-panel\">\n    <form class=\"ff-browse-search\" action=\"/\" method=\"get\">\n      <input type=\"search\" name=\"s\" placeholder=\"Search stories, fandoms, authors, or tags...\" />\n      <button type=\"submit\">Search</button>\n    </form>\n\n    <div class=\"ff-browse-filters\">\n      <a href=\"/browse/\">All</a>\n      <a href=\"/browse/\">Fanfiction</a>\n      <a href=\"/browse/\">Original Fiction</a>\n      <a href=\"/browse/\">Fantasy</a>\n      <a href=\"/browse/\">Sci-Fi</a>\n      <a href=\"/browse/\">Romance</a>\n      <a href=\"/browse/\">Action</a>\n      <a href=\"/browse/\">Horror</a>\n    </div>\n  </div>\n\n  <div class=\"ff-browse-section-title\">\n    <div>\n      <span>STORY LIBRARY</span>\n      <h2>Opening Soon</h2>\n    </div>\n    <a href=\"/write/\">Become a Founding Writer →</a>\n  </div>\n\n  <div class=\"ff-library-empty\">\n    <div class=\"ff-library-glow\"></div>\n\n    <div class=\"ff-empty-mark\">\n      <span></span>\n    </div>\n\n    <h3>The FicForge story library is being prepared.</h3>\n\n    <p>\n      We are building the foundation for authors, fandom writers, and original creators. Real stories will appear here once the first works are added to the platform.\n    </p>\n\n    <div class=\"ff-empty-actions\">\n      <a class=\"ff-empty-primary\" href=\"/write/\">Start Writing</a>\n      <a class=\"ff-empty-secondary\" href=\"/library/\">Open Saved Library</a>\n      <a class=\"ff-empty-secondary\" href=\"/community/\">Join the Community</a>\n    </div>\n  </div>\n\n  <div class=\"ff-save-preview\">\n    <span>SAVED LIBRARY FEATURE</span>\n    <h3>Save stories you want to return to.</h3>\n    <p>\n      When story cards are live, readers will be able to save stories, favorite them, follow updates, and organize them inside their personal Saved Library.\n    </p>\n\n    <div class=\"ff-save-preview-actions\">\n      <a class=\"ff-save-demo\" href=\"/library/\">♡ Save to Library</a>\n      <a class=\"ff-save-demo secondary\" href=\"/library/\">View Reading List</a>\n    </div>\n  </div>\n\n  <div class=\"ff-browse-categories\">\n    <div class=\"ff-category-card purple\">\n      <span>Original Fiction</span>\n      <p>Novels, serialized fiction, and creator-owned worlds.</p>\n    </div>\n\n    <div class=\"ff-category-card orange\">\n      <span>Fanfiction</span>\n      <p>Transformative stories inspired by fandoms and shared universes.</p>\n    </div>\n\n    <div class=\"ff-category-card blue\">\n      <span>Fandom Worlds</span>\n      <p>Browse stories by universe, franchise, setting, and community.</p>\n    </div>\n\n    <div class=\"ff-category-card green\">\n      <span>Writer Submissions</span>\n      <p>Founding writers will help shape the first public library.</p>\n    </div>\n  </div>\n</section>\n\n<style>\n.ff-browse-page {\n  width: 100%;\n  max-width: 1180px;\n  margin: 0 auto;\n}\n\n.ff-browse-hero {\n  text-align: center;\n  max-width: 780px;\n  margin: 0 auto 34px auto;\n}\n\n.ff-browse-label {\n  display: inline-flex;\n  color: #F97316;\n  background: rgba(249, 115, 22, 0.12);\n  border: 1px solid rgba(249, 115, 22, 0.28);\n  border-radius: 999px;\n  padding: 8px 14px;\n  margin-bottom: 18px;\n  font-size: 13px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n}\n\n.ff-browse-hero h1 {\n  color: #FFFFFF;\n  font-size: 58px;\n  line-height: 1.05;\n  margin: 0 0 16px 0;\n  font-weight: 900;\n  letter-spacing: -0.04em;\n}\n\n.ff-browse-hero p {\n  color: #CBD5E1;\n  font-size: 18px;\n  line-height: 1.65;\n  margin: 0;\n}\n\n.ff-browse-panel {\n  padding: 22px;\n  border-radius: 22px;\n  background: rgba(15, 23, 42, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.11);\n  margin-bottom: 36px;\n}\n\n.ff-browse-search {\n  display: flex;\n  gap: 12px;\n  margin-bottom: 16px;\n}\n\n.ff-browse-search input {\n  width: 100%;\n  min-height: 50px;\n  border-radius: 12px;\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  background: rgba(2, 6, 23, 0.72);\n  color: #FFFFFF;\n  padding: 0 16px;\n  font-size: 15px;\n  outline: none;\n}\n\n.ff-browse-search input::placeholder {\n  color: #64748B;\n}\n\n.ff-browse-search button {\n  min-width: 120px;\n  border: none;\n  border-radius: 12px;\n  background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n  color: #FFFFFF;\n  font-size: 15px;\n  font-weight: 900;\n  cursor: pointer;\n}\n\n.ff-browse-filters {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 10px;\n}\n\n.ff-browse-filters a {\n  color: #CBD5E1 !important;\n  text-decoration: none !important;\n  font-size: 13px;\n  font-weight: 800;\n  padding: 9px 13px;\n  border-radius: 999px;\n  background: rgba(255, 255, 255, 0.05);\n  border: 1px solid rgba(255, 255, 255, 0.10);\n}\n\n.ff-browse-filters a:hover {\n  color: #F97316 !important;\n  border-color: rgba(249, 115, 22, 0.5);\n}\n\n.ff-browse-section-title {\n  display: flex;\n  align-items: flex-end;\n  justify-content: space-between;\n  gap: 24px;\n  margin-bottom: 20px;\n}\n\n.ff-browse-section-title span {\n  color: #F97316;\n  font-size: 13px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n}\n\n.ff-browse-section-title h2 {\n  color: #FFFFFF;\n  font-size: 36px;\n  line-height: 1.1;\n  margin: 8px 0 0 0;\n  font-weight: 900;\n  letter-spacing: -0.03em;\n}\n\n.ff-browse-section-title a {\n  color: #FFFFFF !important;\n  text-decoration: none !important;\n  font-size: 14px;\n  font-weight: 800;\n  white-space: nowrap;\n}\n\n.ff-browse-section-title a:hover {\n  color: #F97316 !important;\n}\n\n.ff-library-empty {\n  position: relative;\n  overflow: hidden;\n  text-align: center;\n  padding: 56px 34px;\n  border-radius: 26px;\n  background:\n    radial-gradient(circle at 50% 0%, rgba(109, 93, 251, 0.24), transparent 42%),\n    linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(11, 18, 32, 0.98));\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.30);\n  margin-bottom: 26px;\n}\n\n.ff-library-glow {\n  position: absolute;\n  width: 420px;\n  height: 420px;\n  left: 50%;\n  top: -280px;\n  transform: translateX(-50%);\n  border-radius: 999px;\n  background: radial-gradient(circle, rgba(249, 115, 22, 0.30), rgba(109, 93, 251, 0.22), transparent 70%);\n  filter: blur(18px);\n  pointer-events: none;\n}\n\n.ff-empty-mark {\n  position: relative;\n  z-index: 2;\n  width: 72px;\n  height: 72px;\n  margin: 0 auto 22px auto;\n  border-radius: 22px;\n  background: linear-gradient(135deg, rgba(109, 93, 251, 0.28), rgba(249, 115, 22, 0.24));\n  border: 1px solid rgba(255, 255, 255, 0.15);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.ff-empty-mark span {\n  width: 30px;\n  height: 38px;\n  border-radius: 5px;\n  border: 2px solid rgba(255, 255, 255, 0.86);\n  position: relative;\n}\n\n.ff-empty-mark span::before {\n  content: \"\";\n  position: absolute;\n  left: 6px;\n  right: 6px;\n  top: 9px;\n  height: 2px;\n  background: rgba(255, 255, 255, 0.72);\n  box-shadow: 0 8px 0 rgba(255, 255, 255, 0.42);\n}\n\n.ff-library-empty h3 {\n  position: relative;\n  z-index: 2;\n  color: #FFFFFF;\n  font-size: 30px;\n  line-height: 1.18;\n  margin: 0 0 14px 0;\n  font-weight: 900;\n  letter-spacing: -0.03em;\n}\n\n.ff-library-empty p {\n  position: relative;\n  z-index: 2;\n  color: #CBD5E1;\n  font-size: 16px;\n  line-height: 1.65;\n  max-width: 680px;\n  margin: 0 auto 28px auto;\n}\n\n.ff-empty-actions {\n  position: relative;\n  z-index: 2;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 14px;\n  flex-wrap: wrap;\n}\n\n.ff-empty-actions a {\n  min-height: 46px;\n  padding: 13px 20px;\n  border-radius: 10px;\n  text-decoration: none !important;\n  font-size: 14px;\n  font-weight: 900;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.ff-empty-primary {\n  color: #FFFFFF !important;\n  background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n  border: 1px solid rgba(109, 93, 251, 0.72);\n}\n\n.ff-empty-secondary {\n  color: #FFFFFF !important;\n  background: transparent;\n  border: 1px solid rgba(255, 255, 255, 0.22);\n}\n\n.ff-empty-secondary:hover {\n  color: #F97316 !important;\n  border-color: rgba(249, 115, 22, 0.7);\n}\n\n.ff-save-preview {\n  padding: 26px;\n  border-radius: 22px;\n  background:\n    radial-gradient(circle at top right, rgba(109, 93, 251, 0.16), transparent 34%),\n    rgba(15, 23, 42, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.11);\n  margin-bottom: 26px;\n}\n\n.ff-save-preview span {\n  display: block;\n  color: #F97316;\n  font-size: 13px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n  margin-bottom: 10px;\n}\n\n.ff-save-preview h3 {\n  color: #FFFFFF;\n  font-size: 30px;\n  line-height: 1.15;\n  margin: 0 0 10px 0;\n  font-weight: 900;\n  letter-spacing: -0.03em;\n}\n\n.ff-save-preview p {\n  color: #CBD5E1;\n  font-size: 15px;\n  line-height: 1.65;\n  margin: 0;\n  max-width: 760px;\n}\n\n.ff-save-preview-actions {\n  display: flex;\n  gap: 12px;\n  flex-wrap: wrap;\n  margin-top: 18px;\n}\n\n.ff-save-demo {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  color: #FFFFFF !important;\n  text-decoration: none !important;\n  background: rgba(109, 93, 251, 0.20);\n  border: 1px solid rgba(109, 93, 251, 0.44);\n  border-radius: 13px;\n  padding: 12px 16px;\n  font-size: 14px;\n  font-weight: 900;\n}\n\n.ff-save-demo.secondary {\n  background: rgba(2, 6, 23, 0.38);\n  border-color: rgba(255, 255, 255, 0.13);\n}\n\n.ff-save-demo:hover {\n  color: #FFFFFF !important;\n  border-color: rgba(249, 115, 22, 0.55);\n  transform: translateY(-1px);\n}\n\n.ff-browse-categories {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 14px;\n}\n\n.ff-category-card {\n  min-height: 140px;\n  padding: 22px;\n  border-radius: 18px;\n  background: rgba(15, 23, 42, 0.72);\n  border: 1px solid rgba(255, 255, 255, 0.10);\n}\n\n.ff-category-card span {\n  display: block;\n  color: #FFFFFF;\n  font-size: 17px;\n  font-weight: 900;\n  margin-bottom: 10px;\n}\n\n.ff-category-card p {\n  color: #CBD5E1;\n  font-size: 14px;\n  line-height: 1.55;\n  margin: 0;\n}\n\n.ff-category-card.purple {\n  border-color: rgba(109, 93, 251, 0.36);\n}\n\n.ff-category-card.orange {\n  border-color: rgba(249, 115, 22, 0.36);\n}\n\n.ff-category-card.blue {\n  border-color: rgba(56, 189, 248, 0.30);\n}\n\n.ff-category-card.green {\n  border-color: rgba(16, 185, 129, 0.30);\n}\n\n@media (max-width: 900px) {\n  .ff-browse-categories {\n    grid-template-columns: repeat(2, 1fr);\n  }\n}\n\n@media (max-width: 767px) {\n  .ff-browse-hero h1 {\n    font-size: 42px;\n  }\n\n  .ff-browse-search {\n    flex-direction: column;\n  }\n\n  .ff-browse-search button {\n    min-height: 48px;\n    width: 100%;\n  }\n\n  .ff-browse-section-title {\n    flex-direction: column;\n    align-items: flex-start;\n  }\n\n  .ff-library-empty {\n    padding: 44px 22px;\n  }\n\n  .ff-library-empty h3,\n  .ff-save-preview h3 {\n    font-size: 25px;\n  }\n\n  .ff-empty-actions,\n  .ff-save-preview-actions {\n    flex-direction: column;\n  }\n\n  .ff-empty-actions a,\n  .ff-save-demo {\n    width: 100%;\n  }\n\n  .ff-browse-categories {\n    grid-template-columns: 1fr;\n  }\n}\n</style>\n\n<!-- ===== Browse : HTML widget 2 of 2 ===== -->\n\n<div class=\"ff-home-footer\">\n  <div class=\"ff-home-footer-top\">\n    <div class=\"ff-home-footer-brand\">\n      <h2>🔥 FicForge</h2>\n      <p>A home for fanfiction, original fiction, readers, writers, and the worlds they love.</p>\n    </div>\n\n    <div class=\"ff-home-footer-links\">\n      <div>\n        <h4>Explore</h4>\n        <a href=\"/\">Home</a>\n        <a href=\"/browse\">Browse</a>\n        <a href=\"/premium\">Premium</a>\n      </div>\n\n      <div>\n        <h4>Write</h4>\n        <a href=\"/write\">Start Writing</a>\n        <a href=\"/community\">Community</a>\n        <a href=\"/support\">Support</a>\n      </div>\n\n      <div>\n        <h4>Company</h4>\n        <a href=\"/about\">About</a>\n        <a href=\"/contact\">Contact</a>\n        <a href=\"/faq\">FAQ</a>\n      </div>\n\n      <div>\n        <h4>Legal</h4>\n        <a href=\"/terms-of-service\">Terms</a>\n        <a href=\"/privacy-policy\">Privacy</a>\n        <a href=\"/dmca-policy\">DMCA</a>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"ff-home-footer-bottom\">\n    <span>© 2026 FicForge. All rights reserved.</span>\n    <span>Forged for readers and writers.</span>\n  </div>\n</div>\n";
+export default function BrowsePage() {
+  const [activeFilter, setActiveFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
-export default function Page() {
+  const filters = [
+    "All",
+    "Fanfiction",
+    "Original Fiction",
+    "Fantasy",
+    "Sci-Fi",
+    "Romance",
+    "Action",
+    "Adventure",
+    "Horror",
+    "Mystery",
+  ];
+
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
-      <div
-        className="max-w-[1180px] mx-auto"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
+    <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1180px] mx-auto">
+        
+        {/* Hero Header */}
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-[#F97316] bg-orange-500/10 border border-orange-500/30 rounded-full px-3.5 py-1.5 mb-4">
+            EXPLORE THE FORGE
+          </span>
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
+            Browse Stories
+          </h1>
+          <p className="mt-3 text-base text-slate-300 leading-relaxed">
+            Discover unforgettable fanfiction, serialized original webnovels, and rising worlds from creators across the platform.
+          </p>
+        </div>
+
+        {/* Search & Filter Panel */}
+        <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 mb-10 shadow-xl backdrop-blur-sm">
+          
+          {/* Search Bar */}
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="flex flex-col sm:flex-row gap-3 mb-5"
+          >
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by story title, fandom, author, or tags..."
+                className="w-full h-12 rounded-xl border border-white/10 bg-[#020617]/80 pl-11 pr-4 text-sm text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB] focus:ring-1 focus:ring-[#6D5DFB] transition-all"
+              />
+            </div>
+            <button
+              type="submit"
+              className="h-12 px-6 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] text-sm font-extrabold text-white shadow-md shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all"
+            >
+              Search
+            </button>
+          </form>
+
+          {/* Filter Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-2 flex items-center gap-1 shrink-0">
+              <Filter className="h-3.5 w-3.5" /> Genres:
+            </span>
+            {filters.map((filter) => {
+              const isActive = activeFilter === filter;
+              return (
+                <button
+                  key={filter}
+                  onClick={() => setActiveFilter(filter)}
+                  type="button"
+                  className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all ${
+                    isActive
+                      ? "bg-[#6D5DFB] text-white shadow-md shadow-indigo-600/30 border border-[#6D5DFB]"
+                      : "bg-white/5 text-slate-300 border border-white/10 hover:text-white hover:border-white/20"
+                  }`}
+                >
+                  {filter}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Section Heading */}
+        <div className="flex items-end justify-between gap-4 mb-6">
+          <div>
+            <span className="text-xs font-black uppercase tracking-wider text-[#F97316]">
+              STORY LIBRARY
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-white mt-1">
+              {activeFilter === "All" ? "Featured & Trending Stories" : `${activeFilter} Stories`}
+            </h2>
+          </div>
+          <Link
+            href="/write"
+            className="text-xs sm:text-sm font-bold text-slate-300 hover:text-[#F97316] transition-colors"
+          >
+            Become a Writer →
+          </Link>
+        </div>
+
+        {/* Main Content Area (Ready for dynamic Story Cards) */}
+        <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/90 via-slate-900/70 to-[#070E1E] p-10 sm:p-14 text-center shadow-2xl">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#6D5DFB]/20 to-[#F97316]/20 border border-white/10 text-3xl mb-5 shadow-lg">
+            📖
+          </div>
+
+          <h3 className="text-2xl sm:text-3xl font-black text-white">
+            The FicForge Story Library is Opening Soon
+          </h3>
+
+          <p className="mt-3 max-w-xl mx-auto text-sm sm:text-base text-slate-300 leading-relaxed">
+            We are preparing the first wave of fanfiction and original webnovels. Authors can start publishing chapters now, and standout stories will appear right here with interactive library and reader tools.
+          </p>
+
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="/write"
+              className="rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-6 py-3 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all"
+            >
+              Start Writing a Story
+            </Link>
+            <Link
+              href="/library"
+              className="rounded-xl border border-white/20 bg-slate-900/80 px-6 py-3 text-sm font-extrabold text-white hover:border-[#F97316] hover:text-[#F97316] transition-all"
+            >
+              My Saved Library
+            </Link>
+            <Link
+              href="/community"
+              className="rounded-xl border border-white/20 bg-slate-900/80 px-6 py-3 text-sm font-extrabold text-white hover:border-[#F97316] hover:text-[#F97316] transition-all"
+            >
+              Join Community
+            </Link>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }
