@@ -171,7 +171,7 @@ export const mockStories: Record<string, StoryData> = {
       warnings: ["None"],
       pairings: ["Gen (No Romance)"],
       characters: ["Cal Kestis (Mentioned)", "Inquisitorius", "Original Jedi Knight"],
-      general: ["Star Wars Legends", "Outer Rim", "Force Lore", "Lightsaber Combat", "Safe Harbor 100% Free"],
+      general: ["Star Wars Legends", "Outer Rim", "Force Lore", "Lightsaber Combat", "Jedi in Hiding"],
     },
     updatedAt: "1 day ago",
     chapters: [
@@ -181,8 +181,8 @@ export const mockStories: Record<string, StoryData> = {
         title: "Echoes in the Vapor",
         wordCount: 3100,
         publishedAt: "Oct 20, 2026",
-        topAuthorNote: "A transformative Star Wars tale. 100% free fanfiction under Safe Harbor.",
-        bottomAuthorNote: "May the Force be with you! Leave a comment with your thoughts.",
+        topAuthorNote: "A transformative Star Wars tale. May the Force be with you!",
+        bottomAuthorNote: "Leave a comment with your thoughts and theories!",
         content: [
           "The moisture vaporator sputtered, coughing up a plume of gray smoke that drifted into the bronze haze of the Jelucan afternoon.",
           "Joran wiped grease from his forehead with the back of his sleeve. He hated this planet. He hated the dust that got into the seals of every atmospheric intake, and he hated the endless crimson sunsets that reminded him of the temple burning.",
@@ -207,7 +207,7 @@ export const mockStories: Record<string, StoryData> = {
       username: "mkincaid",
       avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80",
       isVerified: true,
-      bio: "Writing dark cyberpunk fiction and gritty neo-noir narratives. Age-gated works strictly follow FicForge non-monetization guidelines.",
+      bio: "Writing dark cyberpunk fiction and gritty neo-noir narratives. Exploring the neon depths of Neo-Detroit.",
     },
     stats: {
       words: 54300,
@@ -220,7 +220,7 @@ export const mockStories: Record<string, StoryData> = {
       warnings: ["Explicit Language & Content", "Graphic Violence", "18+ Only"],
       pairings: ["Enemies to Lovers", "Noir Romance"],
       characters: ["Doc Thorne", "Vesper Seven"],
-      general: ["Cyberpunk", "Augmentations", "Sublevel Grime", "Anti-Hero", "Non-Monetized Firewall"],
+      general: ["Cyberpunk", "Augmentations", "Sublevel Grime", "Anti-Hero", "Sci-Fi Noir"],
     },
     updatedAt: "3 days ago",
     chapters: [
@@ -230,8 +230,8 @@ export const mockStories: Record<string, StoryData> = {
         title: "Sub-Level Zero",
         wordCount: 3450,
         publishedAt: "Oct 28, 2026",
-        topAuthorNote: "Content Warning: Explicit (18+). Non-monetized work per FicForge platform policies.",
-        bottomAuthorNote: "Strictly 18+. Tips and Fast Pass are hard-disabled on this title.",
+        topAuthorNote: "Content Warning: Explicit (18+). Contains mature themes and stylized action.",
+        bottomAuthorNote: "Thank you for reading Chapter 1! Drop your thoughts and feedback below.",
         content: [
           "Rain in Sub-Level Zero didn't fall from clouds; it condensed on colossal exhaust pipes suspended six hundred stories above and dripped down through the rusted grating like cold synthetic venom.",
           "Thorne tightened the strap on his dermal scanner. Across the steel gurney, the patient wasn't breathing, but their sub-neural core was still screaming telemetry into his visor.",

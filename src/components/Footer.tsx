@@ -161,7 +161,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 border-t border-white/10 pt-8 sm:flex sm:items-center sm:justify-between">
           <p className="text-xs text-slate-500">
-            © 2026 FicForge. All rights reserved. Fanfiction remains free and transformative under safe harbor. Original works are copyright their respective authors.
+            © 2026 FicForge. All rights reserved. Transformative fanworks are published freely by their creators. Original works are copyright their respective authors.
           </p>
           <p className="mt-4 text-xs font-semibold text-slate-400 sm:mt-0">
             Forged for readers and writers worldwide.

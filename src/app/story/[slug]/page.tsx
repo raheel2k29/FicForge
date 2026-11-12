@@ -55,17 +55,14 @@ function StoryDetailsContent() {
             ⚠️
           </div>
           <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-red-400 bg-red-500/10 border border-red-500/30 rounded-full px-3 py-1 mb-3">
-            AGE-RESTRICTED CONTENT (18+)
+            MATURE CONTENT ADVISORY (18+)
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-white">
-            Explicit Content Gateway
+            Age Verification Required
           </h1>
           <p className="mt-3 text-sm text-slate-300 leading-relaxed">
-            This work is rated <strong className="text-red-400">EXPLICIT (18+)</strong> and may contain adult themes, graphic violence, or explicit material intended only for adults.
+            This work is rated <strong className="text-red-400">EXPLICIT</strong> and contains adult themes intended exclusively for mature audiences. Please confirm you are 18 or older to proceed.
           </p>
-          <div className="mt-4 rounded-xl border border-white/10 bg-[#020617]/80 p-3.5 text-xs text-slate-400 text-left">
-            🛡️ <strong className="text-slate-200">Safe Harbor Notice:</strong> In accordance with payment processor policies and platform terms, explicit content cannot be monetized. Fast Pass unlocks and Sparks tipping are completely disabled on this title.
-          </div>
           <div className="mt-6 flex flex-col sm:flex-row gap-3">
             <button
               onClick={handleAgeConfirm}

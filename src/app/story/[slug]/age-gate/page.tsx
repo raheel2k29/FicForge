@@ -33,7 +33,7 @@ function AgeGateContent() {
           </div>
 
           <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-red-400 bg-red-500/10 border border-red-500/30 rounded-full px-3.5 py-1 mb-3">
-            CONTENT FIREWALL • 18+ ONLY
+            AGE ADVISORY • 18+ ONLY
           </span>
 
           <h1 className="text-3xl font-black text-white tracking-tight">
@@ -65,20 +65,12 @@ function AgeGateContent() {
           </div>
         )}
 
-        {/* Regulatory & Platform Compliance Notice */}
-        <div className="mt-5 rounded-2xl border border-white/10 bg-[#020617]/70 p-4 text-xs text-slate-400 relative z-10 space-y-2">
-          <div className="flex items-start gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-            <span>
-              <strong className="text-slate-200">Zero Commercialization:</strong> FicForge strictly disables all Sparks tipping, paid unlock tiers, and Fast Pass monetization on Explicit content.
-            </span>
-          </div>
-          <div className="flex items-start gap-2">
-            <Lock className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-            <span>
-              <strong className="text-slate-200">Legal Confirmation:</strong> By proceeding, you certify that you are at least 18 years old or the age of legal majority in your country of residence.
-            </span>
-          </div>
+        {/* Age Confirmation Advisory */}
+        <div className="mt-5 rounded-2xl border border-white/10 bg-[#020617]/70 p-4 text-xs text-slate-300 relative z-10 flex items-start gap-2.5">
+          <Lock className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+          <span>
+            By proceeding, you confirm that you are at least 18 years old or the age of legal majority in your jurisdiction.
+          </span>
         </div>
 
         {/* Action Buttons */}
