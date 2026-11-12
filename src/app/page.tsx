@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HomeFeaturedStories from "@/components/HomeFeaturedStories";
 
 export default function HomePage() {
   return (
@@ -64,27 +65,8 @@ export default function HomePage() {
       </section>
 
 
-      {/* ===== Widget 3 ===== */}
-      <section className="ff-home-empty-stories">
-  
-
-  <div className="ff-empty-story-box">
-    <span className="ff-label">Featured Stories</span>
-    <h2>Featured stories are coming soon.</h2>
-    <p>
-      FicForge is preparing its first wave of stories. As writers begin publishing, this space will highlight standout fanfiction, original webnovels, rising creators, and reader favorites from across the platform.
-    </p>
-
-    <div className="ff-empty-story-actions">
-      <a className="primary" href="/write/">Become one of the first writers</a>
-      <a href="/browse/">Visit the story library</a>
-    </div>
-
-    <div className="ff-empty-story-note">
-      No placeholder stories. No fake rankings. Real stories will appear here once FicForge begins filling its library.
-    </div>
-  </div>
-</section>
+      {/* ===== Widget 3: Live Featured Stories ===== */}
+      <HomeFeaturedStories />
   
 
       {/* ===== Widget 4 ===== */}

@@ -40,34 +40,42 @@ export default function BrowsePage() {
 
   useEffect(() => {
     const load = () => {
-      setStoriesList(Object.values(getAllStories()));
+      const all = Object.values(getAllStories());
+      setStoriesList(all);
     };
+
     load();
     window.addEventListener("ficforge_stories_updated", load);
-    return () => window.removeEventListener("ficforge_stories_updated", load);
+    window.addEventListener("storage", load);
+    return () => {
+      window.removeEventListener("ficforge_stories_updated", load);
+      window.removeEventListener("storage", load);
+    };
   }, []);
 
   const filteredStories = useMemo(() => {
     return storiesList.filter((story) => {
-      // Filter match
+      if (!story) return false;
+
+      // Classification & Genre filter
       let matchesFilter = true;
       if (activeFilter === "Fanfiction") {
         matchesFilter = story.classification === "FANFICTION";
       } else if (activeFilter === "Original Fiction") {
         matchesFilter = story.classification === "ORIGINAL";
       } else if (activeFilter !== "All") {
-        matchesFilter = story.genres.includes(activeFilter);
+        matchesFilter = (story.genres || []).includes(activeFilter);
       }
 
-      // Search match
+      // Keyword search
       const query = searchQuery.toLowerCase().trim();
       const matchesSearch =
         query === "" ||
-        story.title.toLowerCase().includes(query) ||
-        story.author.name.toLowerCase().includes(query) ||
-        story.genres.some((g) => g.toLowerCase().includes(query)) ||
+        (story.title || "").toLowerCase().includes(query) ||
+        (story.author?.name || "").toLowerCase().includes(query) ||
+        (story.genres || []).some((g) => g.toLowerCase().includes(query)) ||
         (story.fandom && story.fandom.toLowerCase().includes(query)) ||
-        story.tags.general.some((t) => t.toLowerCase().includes(query));
+        (story.tags?.general || []).some((t) => t.toLowerCase().includes(query));
 
       return matchesFilter && matchesSearch;
     });
@@ -215,20 +223,21 @@ export default function BrowsePage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredStories.map((story) => {
-              const isLiked = likedStories[story.id];
-              const isSaved = savedStories[story.id];
-              const likeCount = story.stats.likes + (isLiked ? 1 : 0);
+              const storyId = story.id || story.slug;
+              const isLiked = likedStories[storyId];
+              const isSaved = savedStories[storyId];
+              const likeCount = (story.stats?.likes || 0) + (isLiked ? 1 : 0);
 
               return (
                 <div
-                  key={story.id}
+                  key={storyId}
                   className="group relative flex flex-col rounded-2xl border border-white/10 bg-gradient-to-b from-slate-900/90 to-[#070E1E] overflow-hidden shadow-xl hover:border-[#6D5DFB]/50 hover:shadow-2xl hover:shadow-indigo-950/40 transition-all duration-300"
                 >
                   {/* Card Cover & Header */}
                   <div className="relative h-56 w-full overflow-hidden bg-slate-950">
                     <img
-                      src={story.coverImageUrl}
-                      alt={story.title}
+                      src={story.coverImageUrl || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"}
+                      alt={story.title || "Story"}
                       className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#070E1E] via-transparent to-black/60" />
@@ -254,17 +263,17 @@ export default function BrowsePage() {
                             : "bg-white/20 text-white"
                         }`}
                       >
-                        {story.rating}
+                        {story.rating || "GENERAL"}
                       </span>
                     </div>
 
                     {/* Fandom / Genres Pill on bottom cover */}
                     <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-slate-300 pointer-events-none">
-                      <span className="font-extrabold text-[#F97316] drop-shadow-sm">
-                        {story.fandom ? `⚔️ ${story.fandom}` : `✨ ${story.genres[0]}`}
+                      <span className="font-extrabold text-[#F97316] drop-shadow-sm truncate max-w-[200px]">
+                        {story.fandom ? `⚔️ ${story.fandom}` : story.genres?.[0] ? `✨ ${story.genres[0]}` : "✨ Story"}
                       </span>
-                      <span className="text-[11px] text-slate-300 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md">
-                        {story.chapters.length} Chapters
+                      <span className="text-[11px] text-slate-300 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md shrink-0">
+                        {story.chapters?.length || 0} Chapters
                       </span>
                     </div>
                   </div>
@@ -277,21 +286,21 @@ export default function BrowsePage() {
                       className="group-hover:text-[#F97316] transition-colors"
                     >
                       <h3 className="text-lg font-black text-white leading-snug line-clamp-1">
-                        {story.title}
+                        {story.title || "Untitled Story"}
                       </h3>
                     </Link>
 
                     {/* Author */}
                     <div className="mt-1 flex items-center gap-2">
                       <img
-                        src={story.author.avatarUrl}
-                        alt={story.author.name}
+                        src={story.author?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"}
+                        alt={story.author?.name || "Author"}
                         className="h-5 w-5 rounded-full object-cover"
                       />
                       <span className="text-xs font-semibold text-slate-300">
-                        {story.author.name}
+                        {story.author?.name || "Author"}
                       </span>
-                      {story.author.isVerified && (
+                      {story.author?.isVerified && (
                         <span className="text-blue-400 text-xs" title="Verified Creator">
                           ✓
                         </span>
@@ -305,7 +314,7 @@ export default function BrowsePage() {
 
                     {/* Genre Tags */}
                     <div className="mt-3 flex flex-wrap gap-1.5">
-                      {story.genres.slice(0, 3).map((g) => (
+                      {(story.genres || []).slice(0, 3).map((g) => (
                         <span
                           key={g}
                           className="rounded-md border border-white/5 bg-white/5 px-2 py-0.5 text-[10px] font-bold text-slate-300"
@@ -320,7 +329,7 @@ export default function BrowsePage() {
                       {/* Left: Like heart toggle */}
                       <button
                         type="button"
-                        onClick={(e) => toggleLike(story.id, e)}
+                        onClick={(e) => toggleLike(storyId, e)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           isLiked
                             ? "border-rose-500/50 bg-rose-500/15 text-rose-400 shadow-sm shadow-rose-500/20"
@@ -339,7 +348,7 @@ export default function BrowsePage() {
                       {/* Middle: Save to Library toggle */}
                       <button
                         type="button"
-                        onClick={(e) => toggleSave(story.id, story.title, e)}
+                        onClick={(e) => toggleSave(storyId, story.title, e)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           isSaved
                             ? "border-[#6D5DFB]/50 bg-[#6D5DFB]/20 text-[#A594FD]"

@@ -18,6 +18,8 @@ export function getAllStories(): Record<string, StoryData> {
       return mockStories;
     }
     const customStories: Record<string, StoryData> = JSON.parse(stored);
+    // Sync into in-memory object
+    Object.assign(mockStories, customStories);
     return { ...mockStories, ...customStories };
   } catch (err) {
     console.error("Error reading custom stories from localStorage:", err);
@@ -37,6 +39,9 @@ export function getStoryBySlug(slug: string): StoryData | undefined {
  * Save or update a story
  */
 export function saveStory(story: StoryData): void {
+  // Sync to in-memory
+  mockStories[story.slug] = story;
+
   if (typeof window === "undefined") return;
 
   try {
@@ -44,7 +49,8 @@ export function saveStory(story: StoryData): void {
     const customStories: Record<string, StoryData> = stored ? JSON.parse(stored) : {};
     customStories[story.slug] = story;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(customStories));
-    // Dispatch storage event so other tabs/components react
+    
+    // Dispatch storage events
     window.dispatchEvent(new Event("ficforge_stories_updated"));
   } catch (err) {
     console.error("Error saving story to localStorage:", err);
@@ -55,11 +61,12 @@ export function saveStory(story: StoryData): void {
  * Add or update a single chapter in a story
  */
 export function saveChapter(storySlug: string, chapter: ChapterData): boolean {
-  if (typeof window === "undefined") return false;
-
   const all = getAllStories();
   const story = all[storySlug];
   if (!story) return false;
+
+  story.chapters = story.chapters || [];
+  story.stats = story.stats || { words: 0, views: 0, likes: 0, bookmarks: 0, chapterCount: 0 };
 
   const existingIndex = story.chapters.findIndex((c) => c.slug === chapter.slug);
   if (existingIndex >= 0) {
@@ -81,11 +88,12 @@ export function saveChapter(storySlug: string, chapter: ChapterData): boolean {
  * Atomically save a batch of chapters to a story (Bulk Importer)
  */
 export function bulkSaveChapters(storySlug: string, newChapters: ChapterData[]): boolean {
-  if (typeof window === "undefined") return false;
-
   const all = getAllStories();
   const story = all[storySlug];
   if (!story) return false;
+
+  story.chapters = story.chapters || [];
+  story.stats = story.stats || { words: 0, views: 0, likes: 0, bookmarks: 0, chapterCount: 0 };
 
   // Append new chapters atomically with proper order numbers
   const startingNumber = story.chapters.length + 1;
