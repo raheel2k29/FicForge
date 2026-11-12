@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { saveStory } from "@/lib/storyStore";
 import { StoryData } from "@/data/mockStories";
+import WriterAuthGate from "@/components/WriterAuthGate";
 import {
   Sparkles,
   ArrowLeft,
@@ -155,7 +156,11 @@ export default function NewStoryWizardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
+    <WriterAuthGate
+      title="Create a New Story"
+      description="Sign in to your writer account to access the Story Creation Wizard, upload original covers, and define your story classification."
+    >
+      <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1040px] mx-auto">
         
         {/* Back Link */}
@@ -463,5 +468,6 @@ export default function NewStoryWizardPage() {
 
       </div>
     </div>
+    </WriterAuthGate>
   );
 }

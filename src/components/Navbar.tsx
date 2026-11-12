@@ -1,11 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { getCurrentUser, logoutUser, UserSession } from "@/lib/authStore";
+import { Menu, X, Sparkles, User, LogOut, PenTool } from "lucide-react";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+
+  useEffect(() => {
+    const check = () => {
+      setCurrentUser(getCurrentUser());
+    };
+    check();
+    window.addEventListener("ficforge_auth_changed", check);
+    return () => window.removeEventListener("ficforge_auth_changed", check);
+  }, []);
+
+  const handleLogout = () => {
+    logoutUser();
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#050B16]/90 backdrop-blur-md">
@@ -40,14 +55,64 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Right Action: Log In */}
-        <div className="hidden md:flex items-center gap-4">
-          <Link
-            href="/login"
-            className="rounded-lg bg-[#6D5DFB] hover:bg-[#5B4BE0] px-6 py-2.5 text-[15px] font-bold text-white shadow-md shadow-indigo-600/30 transition-all active:scale-95"
-          >
-            Log In
-          </Link>
+        {/* Right Action: Auth Session */}
+        <div className="hidden md:flex items-center gap-3">
+          {currentUser ? (
+            <div className="flex items-center gap-3">
+              {/* Sparks pill */}
+              <div className="flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-300">
+                <span>⚡</span>
+                <span>{currentUser.sparksBalance} Sparks</span>
+              </div>
+
+              {/* Creator Studio Shortcut */}
+              <Link
+                href="/my-stories"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 px-3.5 py-1.5 text-xs font-bold text-white transition-all"
+              >
+                <PenTool className="h-3.5 w-3.5 text-[#F97316]" />
+                Workshop
+              </Link>
+
+              {/* Avatar & Name */}
+              <Link
+                href="/account"
+                className="flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/80 px-2.5 py-1 hover:border-white/30 transition-all"
+              >
+                <img
+                  src={currentUser.avatarUrl}
+                  alt={currentUser.name}
+                  className="h-6 w-6 rounded-full object-cover"
+                />
+                <span className="text-xs font-bold text-white">{currentUser.name}</span>
+              </Link>
+
+              {/* Logout Button */}
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                title="Log Out"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/register"
+                className="text-xs font-bold text-slate-300 hover:text-white transition-colors"
+              >
+                Register
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-lg bg-[#6D5DFB] hover:bg-[#5B4BE0] px-5 py-2 text-xs font-bold text-white shadow-md shadow-indigo-600/30 transition-all active:scale-95"
+              >
+                Log In
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile Hamburger Toggle */}
@@ -70,46 +135,75 @@ export default function Navbar() {
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 text-base font-semibold text-white hover:bg-slate-800"
+              className="px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800 rounded-lg"
             >
               Home
             </Link>
             <Link
               href="/browse"
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 text-base font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"
+              className="px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg"
             >
               Browse
             </Link>
             <Link
               href="/write"
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 text-base font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"
+              className="px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg"
             >
               Write
             </Link>
             <Link
               href="/community"
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 text-base font-semibold text-slate-300 hover:bg-slate-800 hover:text-white"
+              className="px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg"
             >
               Community
             </Link>
             <Link
               href="/premium"
               onClick={() => setMobileMenuOpen(false)}
-              className="rounded-lg px-3 py-2 text-base font-semibold text-[#F97316] hover:bg-slate-800"
+              className="px-3 py-2 text-sm font-semibold text-[#F97316] hover:bg-slate-800 rounded-lg"
             >
               Premium
             </Link>
-            <div className="pt-2">
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block w-full text-center rounded-lg bg-[#6D5DFB] py-3 text-base font-bold text-white shadow-md shadow-indigo-600/30"
-              >
-                Log In
-              </Link>
+
+            <div className="pt-3 border-t border-white/10">
+              {currentUser ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs text-slate-300">
+                    <span>{currentUser.name}</span>
+                    <span className="text-amber-400 font-bold">⚡ {currentUser.sparksBalance} Sparks</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleLogout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full text-left py-2 text-xs font-bold text-red-400"
+                  >
+                    Log Out
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 text-center py-2 rounded-lg bg-[#6D5DFB] text-xs font-bold text-white"
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex-1 text-center py-2 rounded-lg border border-white/20 text-xs font-bold text-slate-300"
+                  >
+                    Register
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </div>

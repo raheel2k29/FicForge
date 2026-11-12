@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense, useMemo } from "react";
 import { getAllStories, saveChapter } from "@/lib/storyStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
+import WriterAuthGate from "@/components/WriterAuthGate";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -335,7 +336,12 @@ export default function ChapterEditorPage() {
         </div>
       }
     >
-      <ChapterEditorContent />
+      <WriterAuthGate
+        title="Chapter Editor Access"
+        description="Sign in to your creator account to write new chapters, edit autosaved drafts, or set Fast Pass early access."
+      >
+        <ChapterEditorContent />
+      </WriterAuthGate>
     </Suspense>
   );
 }

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense, useMemo } from "react";
 import { getAllStories, bulkSaveChapters } from "@/lib/storyStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
+import WriterAuthGate from "@/components/WriterAuthGate";
 import {
   UploadCloud,
   FileText,
@@ -577,7 +578,12 @@ export default function BulkImportPage() {
         </div>
       }
     >
-      <BulkImportContent />
+      <WriterAuthGate
+        title="Manuscript Importer Access"
+        description="Sign in to your FicForge account to batch import multiple chapters, split manuscripts, and manage release schedules."
+      >
+        <BulkImportContent />
+      </WriterAuthGate>
     </Suspense>
   );
 }

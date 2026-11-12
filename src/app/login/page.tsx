@@ -1,19 +1,190 @@
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Sign In — FicForge",
-  description: "Sign In on FicForge — Where Stories Are Forged",
-};
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { loginUser, loginAsDemoCreator } from "@/lib/authStore";
+import { Sparkles, ArrowRight, Lock, Mail, CheckCircle2, Shield } from "lucide-react";
 
-const rawHtml = "<section class=\"ff-login-page\">\n  <style>\n    .ff-login-page {\n      width: 100%;\n      max-width: 1180px;\n      margin: 0 auto;\n      color: #FFFFFF;\n      font-family: inherit;\n    }\n\n    .ff-login-wrap {\n      min-height: 70vh;\n      display: grid;\n      grid-template-columns: 1.05fr 0.95fr;\n      gap: 26px;\n      align-items: center;\n    }\n\n    .ff-login-copy {\n      padding: 10px 0;\n    }\n\n    .ff-login-label {\n      display: inline-flex;\n      color: #F97316;\n      background: rgba(249, 115, 22, 0.12);\n      border: 1px solid rgba(249, 115, 22, 0.28);\n      border-radius: 999px;\n      padding: 8px 14px;\n      margin-bottom: 16px;\n      font-size: 13px;\n      font-weight: 900;\n      letter-spacing: 0.08em;\n      text-transform: uppercase;\n    }\n\n    .ff-login-copy h1 {\n      color: #FFFFFF;\n      font-size: 58px;\n      line-height: 1.04;\n      margin: 0 0 16px 0;\n      font-weight: 900;\n      letter-spacing: -0.05em;\n      max-width: 650px;\n    }\n\n    .ff-login-copy p {\n      color: #CBD5E1;\n      font-size: 18px;\n      line-height: 1.7;\n      margin: 0 0 22px 0;\n      max-width: 650px;\n    }\n\n    .ff-login-benefits {\n      display: grid;\n      gap: 12px;\n      margin-top: 26px;\n      max-width: 620px;\n    }\n\n    .ff-login-benefit {\n      display: flex;\n      gap: 12px;\n      align-items: flex-start;\n      background: rgba(15, 23, 42, 0.70);\n      border: 1px solid rgba(255, 255, 255, 0.10);\n      border-radius: 16px;\n      padding: 15px;\n    }\n\n    .ff-login-icon {\n      width: 34px;\n      height: 34px;\n      min-width: 34px;\n      border-radius: 11px;\n      background: linear-gradient(135deg, #6D5DFB, #F97316);\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      color: #FFFFFF;\n      font-weight: 900;\n      box-shadow: 0 0 20px rgba(109, 93, 251, 0.20);\n    }\n\n    .ff-login-benefit strong {\n      color: #FFFFFF;\n      display: block;\n      font-size: 15px;\n      margin-bottom: 3px;\n      font-weight: 900;\n    }\n\n    .ff-login-benefit span {\n      color: #94A3B8;\n      display: block;\n      font-size: 13.5px;\n      line-height: 1.55;\n    }\n\n    .ff-login-card {\n      background:\n        radial-gradient(circle at top left, rgba(109, 93, 251, 0.18), transparent 34%),\n        radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.12), transparent 32%),\n        rgba(15, 23, 42, 0.84);\n      border: 1px solid rgba(255, 255, 255, 0.12);\n      border-radius: 24px;\n      padding: 30px;\n      box-shadow: 0 26px 80px rgba(0, 0, 0, 0.30);\n    }\n\n    .ff-login-card-top {\n      margin-bottom: 22px;\n    }\n\n    .ff-login-card-top h2 {\n      color: #FFFFFF;\n      font-size: 32px;\n      line-height: 1.1;\n      margin: 0 0 9px 0;\n      font-weight: 900;\n      letter-spacing: -0.035em;\n    }\n\n    .ff-login-card-top p {\n      color: #94A3B8;\n      font-size: 14.5px;\n      line-height: 1.65;\n      margin: 0;\n    }\n\n    .ff-login-form {\n      display: grid;\n      gap: 14px;\n    }\n\n    .ff-field label {\n      display: block;\n      color: #CBD5E1;\n      font-size: 13px;\n      font-weight: 900;\n      margin-bottom: 7px;\n    }\n\n    .ff-field input {\n      width: 100%;\n      color: #FFFFFF;\n      background: rgba(2, 6, 23, 0.62);\n      border: 1px solid rgba(255, 255, 255, 0.12);\n      border-radius: 13px;\n      padding: 14px 14px;\n      font-size: 15px;\n      outline: none;\n      box-sizing: border-box;\n    }\n\n    .ff-field input::placeholder {\n      color: #64748B;\n    }\n\n    .ff-field input:focus {\n      border-color: rgba(109, 93, 251, 0.70);\n      box-shadow: 0 0 0 3px rgba(109, 93, 251, 0.14);\n    }\n\n    .ff-login-options {\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n      gap: 12px;\n      margin: 2px 0 4px 0;\n      flex-wrap: wrap;\n    }\n\n    .ff-remember {\n      display: inline-flex;\n      align-items: center;\n      gap: 8px;\n      color: #94A3B8;\n      font-size: 13px;\n      font-weight: 800;\n    }\n\n    .ff-remember input {\n      accent-color: #6D5DFB;\n    }\n\n    .ff-login-options a,\n    .ff-login-bottom a,\n    .ff-login-note a {\n      color: #FDBA74 !important;\n      text-decoration: none !important;\n      font-weight: 900;\n    }\n\n    .ff-login-options a:hover,\n    .ff-login-bottom a:hover,\n    .ff-login-note a:hover {\n      color: #FFFFFF !important;\n    }\n\n    .ff-login-submit {\n      display: inline-flex;\n      width: 100%;\n      justify-content: center;\n      align-items: center;\n      color: #FFFFFF !important;\n      text-decoration: none !important;\n      background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n      border: 1px solid rgba(109, 93, 251, 0.78);\n      border-radius: 14px;\n      padding: 14px 18px;\n      font-size: 15px;\n      font-weight: 900;\n      box-shadow: 0 0 26px rgba(109, 93, 251, 0.20);\n      cursor: pointer;\n    }\n\n    .ff-login-submit:hover {\n      transform: translateY(-1px);\n      color: #FFFFFF !important;\n    }\n\n    .ff-login-divider {\n      display: flex;\n      align-items: center;\n      gap: 12px;\n      margin: 22px 0;\n      color: #64748B;\n      font-size: 12px;\n      font-weight: 900;\n      text-transform: uppercase;\n      letter-spacing: 0.08em;\n    }\n\n    .ff-login-divider::before,\n    .ff-login-divider::after {\n      content: \"\";\n      height: 1px;\n      flex: 1;\n      background: rgba(255, 255, 255, 0.10);\n    }\n\n    .ff-login-bottom {\n      text-align: center;\n      color: #94A3B8;\n      font-size: 14px;\n      line-height: 1.6;\n      margin: 0;\n    }\n\n    .ff-login-note {\n      margin-top: 18px;\n      background: rgba(2, 6, 23, 0.38);\n      border: 1px solid rgba(255, 255, 255, 0.08);\n      border-radius: 15px;\n      padding: 14px;\n    }\n\n    .ff-login-note strong {\n      color: #FFFFFF;\n      display: block;\n      font-size: 13px;\n      margin-bottom: 5px;\n      font-weight: 900;\n    }\n\n    .ff-login-note p {\n      color: #94A3B8;\n      font-size: 12.5px;\n      line-height: 1.6;\n      margin: 0;\n    }\n\n    .ff-working-note {\n      margin-top: 16px;\n      color: #64748B;\n      font-size: 12.5px;\n      line-height: 1.6;\n      text-align: center;\n    }\n\n    @media (max-width: 1000px) {\n      .ff-login-wrap {\n        grid-template-columns: 1fr;\n      }\n\n      .ff-login-copy h1 {\n        font-size: 48px;\n      }\n    }\n\n    @media (max-width: 767px) {\n      .ff-login-copy h1 {\n        font-size: 38px;\n      }\n\n      .ff-login-copy p {\n        font-size: 16px;\n      }\n\n      .ff-login-card {\n        padding: 24px 18px;\n      }\n\n      .ff-login-card-top h2 {\n        font-size: 28px;\n      }\n\n      .ff-login-options {\n        align-items: flex-start;\n        flex-direction: column;\n      }\n    }\n  </style>\n\n  <div class=\"ff-login-wrap\">\n    <div class=\"ff-login-copy\">\n      <span class=\"ff-login-label\">FicForge Login</span>\n      <h1>Return to your stories, profile, and community.</h1>\n      <p>\n        Sign in to manage your FicForge account, save stories, customize your profile, support creators, join Premium, and access your writer tools.\n      </p>\n\n      <div class=\"ff-login-benefits\">\n        <div class=\"ff-login-benefit\">\n          <div class=\"ff-login-icon\">1</div>\n          <div>\n            <strong>Save stories and continue reading</strong>\n            <span>Keep your library organized and return to stories you follow.</span>\n          </div>\n        </div>\n\n        <div class=\"ff-login-benefit\">\n          <div class=\"ff-login-icon\">2</div>\n          <div>\n            <strong>Manage your FicForge profile</strong>\n            <span>Use badges, profile cosmetics, creator identity, and account settings.</span>\n          </div>\n        </div>\n\n        <div class=\"ff-login-benefit\">\n          <div class=\"ff-login-icon\">3</div>\n          <div>\n            <strong>Write, publish, and support creators</strong>\n            <span>Access My Stories, Sparks, Premium, and creator-support features.</span>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"ff-login-card\">\n      <div class=\"ff-login-card-top\">\n        <h2>Sign in to FicForge</h2>\n        <p>\n          Use your account to access your profile, saved stories, Sparks, memberships, forum activity, and writer dashboard.\n        </p>\n      </div>\n\n      <form class=\"ff-login-form\" action=\"/wp-login.php\" method=\"post\">\n        <div class=\"ff-field\">\n          <label for=\"ff-user-login\">Username or Email</label>\n          <input id=\"ff-user-login\" type=\"text\" name=\"log\" placeholder=\"Enter your username or email\" required>\n        </div>\n\n        <div class=\"ff-field\">\n          <label for=\"ff-user-pass\">Password</label>\n          <input id=\"ff-user-pass\" type=\"password\" name=\"pwd\" placeholder=\"Enter your password\" required>\n        </div>\n\n        <div class=\"ff-login-options\">\n          <label class=\"ff-remember\">\n            <input type=\"checkbox\" name=\"rememberme\" value=\"forever\">\n            Remember me\n          </label>\n\n          <a href=\"/reset-password/\">Forgot password?</a>\n        </div>\n\n        <input type=\"hidden\" name=\"redirect_to\" value=\"/account/\">\n\n        <button class=\"ff-login-submit\" type=\"submit\">Sign In</button>\n      </form>\n\n      <div class=\"ff-login-divider\">New here?</div>\n\n      <p class=\"ff-login-bottom\">\n        Don’t have an account yet?\n        <a href=\"/register/\">Create your FicForge account</a>\n      </p>\n\n      <div class=\"ff-login-note\">\n        <strong>Account required for platform features</strong>\n        <p>\n          Visitors can browse and read, but saving stories, buying Sparks, joining Premium, supporting creators, and customizing profiles require an account.\n        </p>\n      </div>\n\n      <div class=\"ff-working-note\">\n        This page uses the standard WordPress login system for now. We’ll polish the full account flow as FicForge develops.\n      </div>\n    </div>\n  </div>\n</section>\n";
+function LoginContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect") || "/my-stories";
 
-export default function Page() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+
+    setIsLoading(true);
+    loginUser(email.trim());
+    router.push(redirectUrl);
+  };
+
+  const handleDemoCreatorLogin = () => {
+    loginAsDemoCreator();
+    router.push(redirectUrl);
+  };
+
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
-      <div
-        className="max-w-[1180px] mx-auto"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
+    <div className="min-h-screen bg-[#050B16] text-white py-14 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+      <div className="max-w-[1040px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        {/* Left: Branding & Pitch (6 cols) */}
+        <div className="lg:col-span-6 space-y-6">
+          <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-[#F97316] bg-orange-500/10 border border-orange-500/30 rounded-full px-3.5 py-1.5">
+            WELCOME BACK
+          </span>
+
+          <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+            Sign In to Fic<span className="text-[#F97316]">Forge</span>
+          </h1>
+
+          <p className="text-base text-slate-300 leading-relaxed max-w-lg">
+            Return to your reading library, continue your story drafts in the Creator Workshop, or support your favorite authors.
+          </p>
+
+          <div className="space-y-3 pt-2">
+            <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#6D5DFB] to-[#F97316] flex items-center justify-center text-white font-black text-sm shrink-0">
+                ✍️
+              </div>
+              <div>
+                <strong className="text-sm font-bold text-white block">Creator Workshop Access</strong>
+                <span className="text-xs text-slate-400">Write chapters, batch import manuscripts, and track reader engagement.</span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#6D5DFB] to-[#F97316] flex items-center justify-center text-white font-black text-sm shrink-0">
+                📚
+              </div>
+              <div>
+                <strong className="text-sm font-bold text-white block">Personal Saved Library</strong>
+                <span className="text-xs text-slate-400">Sync bookmarks, reading progress, and followed authors across devices.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: Login Form Card (6 cols) */}
+        <div className="lg:col-span-6 rounded-3xl border border-white/10 bg-slate-900/95 p-8 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+          
+          <div className="mb-6">
+            <h2 className="text-2xl font-black text-white">Sign In</h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Enter your FicForge account credentials below.
+            </p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1.5">
+                Email Address or Username
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                <input
+                  type="text"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="writer@ficforge.org"
+                  className="w-full h-11 rounded-xl border border-white/10 bg-[#020617] pl-10 pr-4 text-sm text-white placeholder-slate-600 outline-none focus:border-[#6D5DFB]"
+                />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-black uppercase tracking-wider text-slate-300">
+                  Password
+                </label>
+                <Link
+                  href="/reset-password"
+                  className="text-xs font-bold text-amber-400 hover:text-white"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="w-full h-11 rounded-xl border border-white/10 bg-[#020617] pl-10 pr-4 text-sm text-white placeholder-slate-600 outline-none focus:border-[#6D5DFB]"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-1">
+              <input
+                type="checkbox"
+                id="remember"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="rounded border-white/20 bg-slate-900 text-[#6D5DFB] h-4 w-4"
+              />
+              <label htmlFor="remember" className="text-xs font-bold text-slate-400 cursor-pointer">
+                Remember me on this browser
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] text-sm font-black text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
+            >
+              Sign In to FicForge <ArrowRight className="h-4 w-4" />
+            </button>
+          </form>
+
+          {/* Quick Demo Login Button for Testing */}
+          <div className="mt-6 pt-6 border-t border-white/10 text-center">
+            <span className="block text-xs text-slate-400 mb-3 font-semibold">
+              Or test writing immediately without creating an account:
+            </span>
+            <button
+              type="button"
+              onClick={handleDemoCreatorLogin}
+              className="w-full h-11 rounded-xl border border-amber-500/40 bg-amber-500/10 text-xs font-black text-amber-300 hover:bg-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Sparkles className="h-4 w-4 text-amber-400" />
+              1-Click Sign In as Demo Creator
+            </button>
+          </div>
+
+          <div className="mt-6 text-center text-xs text-slate-400">
+            Don't have an account?{" "}
+            <Link href="/register" className="font-extrabold text-[#F97316] hover:underline">
+              Create an Account
+            </Link>
+          </div>
+
+        </div>
+
+      </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#050B16] flex items-center justify-center text-slate-400">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+        </div>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }

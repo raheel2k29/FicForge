@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getAllStories } from "@/lib/storyStore";
 import { StoryData } from "@/data/mockStories";
+import WriterAuthGate from "@/components/WriterAuthGate";
 import {
   BookOpen,
   Plus,
@@ -46,7 +47,11 @@ export default function MyStoriesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6 lg:px-8">
+    <WriterAuthGate
+      title="Writer Workshop Access"
+      description="Sign in to your FicForge creator account to view your stories, review draft manuscripts, and publish new chapters."
+    >
+      <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1240px] mx-auto space-y-8">
         
         {/* Top Header */}
@@ -267,5 +272,6 @@ export default function MyStoriesPage() {
 
       </div>
     </div>
+    </WriterAuthGate>
   );
 }

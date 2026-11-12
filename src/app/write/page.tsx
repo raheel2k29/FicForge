@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import WriterAuthGate from "@/components/WriterAuthGate";
 import {
   PenTool,
   UploadCloud,
@@ -15,7 +16,11 @@ import {
 
 export default function WriterPortalPage() {
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
+    <WriterAuthGate
+      title="Welcome to the FicForge Writer Portal"
+      description="Create a FicForge account or sign in to access your writer dashboard, workshop, profile tools, analytics, earnings, and chapter editors."
+    >
+      <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-[1180px] mx-auto space-y-12">
         
         {/* Hero Section */}
@@ -109,5 +114,6 @@ export default function WriterPortalPage() {
 
       </div>
     </div>
+    </WriterAuthGate>
   );
 }
