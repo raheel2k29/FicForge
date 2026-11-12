@@ -471,13 +471,13 @@ function StoryDetailsContent() {
                 <div className="text-4xl mb-2">🎉</div>
                 <h4 className="text-lg font-black text-white">Sparks Sent!</h4>
                 <p className="text-xs text-slate-300 mt-1">
-                  You tipped {tipAmount} Sparks to {story.author.name}. 82% has been deposited into their author vault.
+                  You tipped {tipAmount} Sparks to {story.author.name}. Thank you for supporting this creator!
                 </p>
               </div>
             ) : (
               <div className="mt-5 space-y-4">
                 <p className="text-xs text-slate-300">
-                  Select a Sparks tip amount. Tips go directly to the creator through FicForge’s 82/18 revenue split.
+                  Select a Sparks tip amount. Tips go directly to the creator to support their writing.
                 </p>
 
                 <div className="grid grid-cols-4 gap-2">

@@ -26,7 +26,7 @@ export default function Footer() {
                 ✦ 100% Free Fanfiction
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1 text-xs font-bold text-[#A78BFA]">
-                ✦ 82/18 Creator Split
+                ✦ Creator-First Platform
               </span>
             </div>
           </div>
