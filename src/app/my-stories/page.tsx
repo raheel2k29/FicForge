@@ -1,19 +1,271 @@
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "My Stories — FicForge",
-  description: "My Stories on FicForge — Where Stories Are Forged",
-};
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { getAllStories } from "@/lib/storyStore";
+import { StoryData } from "@/data/mockStories";
+import {
+  BookOpen,
+  Plus,
+  UploadCloud,
+  Eye,
+  FileText,
+  Clock,
+  Sparkles,
+  ArrowRight,
+  TrendingUp,
+  Settings,
+  ShieldCheck,
+  CheckCircle2,
+} from "lucide-react";
 
-const rawHtml = "<style>\n.ff-workroom {\n  width: 100%;\n  min-height: 100vh;\n  display: grid;\n  grid-template-columns: 250px 1fr;\n  background:\n    radial-gradient(circle at top left, rgba(109, 93, 251, 0.10), transparent 30%),\n    radial-gradient(circle at top right, rgba(249, 115, 22, 0.08), transparent 28%),\n    #050B16;\n  color: #FFFFFF;\n  font-family: inherit;\n}\n\n.ff-workroom-sidebar {\n  min-height: 100vh;\n  padding: 26px 22px;\n  background: rgba(2, 6, 23, 0.72);\n  border-right: 1px solid rgba(255, 255, 255, 0.08);\n}\n\n.ff-workroom-logo {\n  color: #FFFFFF;\n  font-size: 24px;\n  font-weight: 900;\n  margin-bottom: 42px;\n}\n\n.ff-side-group {\n  margin-bottom: 32px;\n}\n\n.ff-side-group span {\n  display: block;\n  color: #A78BFA;\n  font-size: 12px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n  margin-bottom: 12px;\n}\n\n.ff-side-group a {\n  display: block;\n  color: #CBD5E1 !important;\n  text-decoration: none !important;\n  padding: 11px 12px;\n  border-radius: 10px;\n  font-size: 14px;\n  font-weight: 700;\n  margin-bottom: 5px;\n}\n\n.ff-side-group a:hover,\n.ff-side-group a.active {\n  color: #FFFFFF !important;\n  background: rgba(109, 93, 251, 0.22);\n  border: 1px solid rgba(109, 93, 251, 0.42);\n}\n\n.ff-workroom-main {\n  padding: 34px 38px 60px 38px;\n}\n\n.ff-workroom-topbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 24px;\n  margin-bottom: 24px;\n}\n\n.ff-workroom-topbar h1 {\n  color: #FFFFFF;\n  font-size: 42px;\n  line-height: 1.05;\n  margin: 0 0 8px 0;\n  font-weight: 900;\n  letter-spacing: -0.04em;\n}\n.ff-workroom-topbar p {\n  color: #CBD5E1;\n  font-size: 15px;\n  line-height: 1.6;\n  margin: 0;\n}\n\n.ff-return-btn {\n  color: #FFFFFF !important;\n  text-decoration: none !important;\n  background: rgba(15, 23, 42, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  padding: 12px 16px;\n  border-radius: 10px;\n  font-size: 14px;\n  font-weight: 800;\n  white-space: nowrap;\n}\n\n.ff-stats-row {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 14px;\n  margin-bottom: 18px;\n}\n\n.ff-stat-card {\n  background: rgba(15, 23, 42, 0.76);\n border: 1px solid rgba(255, 255, 255, 0.11);\n  border-radius: 16px;\n  padding: 20px;\n}\n\n.ff-stat-card span {\n  color: #CBD5E1;\n  font-size: 13px;\n  font-weight: 700;\n}\n\n.ff-stat-card strong {\n  display: block;\n  color: #FFFFFF;\n  font-size: 30px;\n  margin: 8px 0 4px 0;\n  font-weight: 900;\n}\n\n.ff-stat-card small {\n  color: #94A3B8;\n  font-size: 13px;\n}\n\n.ff-story-type-note {\n  padding: 18px 20px;\n  margin-bottom: 24px;\n  border-radius: 16px;\n  color: #CBD5E1;\n  font-size: 14px;\n  line-height: 1.6;\n  background: rgba(15, 23, 42, 0.74);\nborder: 1px solid rgba(109, 93, 251, 0.45);\n}\n\n.ff-story-type-note strong {\n  color: #FFFFFF;\n}\n\n.ff-workroom-grid {\n  display: grid;\n  grid-template-columns: 1.5fr 0.85fr;\n  gap: 22px;\n  align-items: flex-start;\n}\n\n.ff-library-panel,\n.ff-editor-panel {\n  background: rgba(15, 23, 42, 0.52);\n  border: 1px solid rgba(255, 255, 255, 0.10);\n  border-radius: 18px;\n  padding: 22px;\n}\n\n.ff-panel-head {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 18px;\n  margin-bottom: 18px;\n}\n.ff-panel-head h2 {\n  color: #FFFFFF;\n  font-size: 24px;\n  margin: 0 0 6px 0;\n  font-weight: 900;\n}\n\n.ff-panel-head p {\n  color: #94A3B8;\n  font-size: 14px;\n  line-height: 1.55;\n  margin: 0;\n}\n\n.ff-create-small {\n  color: #FFFFFF !important;\n  background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n  text-decoration: none !important;\n  padding: 11px 15px;\n  border-radius: 10px;\n  font-size: 13px;\n  font-weight: 900;\n  white-space: nowrap;\n}\n\n.ff-story-tabs {\n  display: flex;\n  gap: 8px;\n  margin-bottom: 18px;\n}\n.ff-story-tabs a {\n  color: #CBD5E1 !important;\n  background: transparent;\n  border: 1px solid transparent;\n  padding: 9px 12px;\n  border-radius: 10px;\n  font-size: 13px;\n  font-weight: 800;\n  text-decoration: none !important;\n}\n\n.ff-story-tabs a:hover {\n  color: #FFFFFF !important;\n  background: rgba(109, 93, 251, 0.14);\n  border-color: rgba(109, 93, 251, 0.32);\n}\n\n.ff-story-tabs a.active {\n  color: #FFFFFF !important;\n  background: rgba(109, 93, 251, 0.22);\n  border-color: rgba(109, 93, 251, 0.45);\n}\n\n.ff-empty-library {\n  text-align: center;\n padding: 42px 22px;\n  border-radius: 18px;\n  background: rgba(2, 6, 23, 0.42);\n  border: 1px dashed rgba(255, 255, 255, 0.16);\n  margin-bottom: 22px;\n}\n\n.ff-empty-icon {\n  width: 54px;\n  height: 54px;\n  border-radius: 999px;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  background: rgba(109, 93, 251, 0.22);\n  color: #FFFFFF;\n  font-size: 24px;\n  margin-bottom: 14px;\n}\n\n.ff-empty-library h3 {\n  color: #FFFFFF;\n  font-size: 22px;\n  margin: 0 0 8px 0;\n}\n.ff-empty-library p {\n  color: #94A3B8;\n  max-width: 560px;\n  margin: 0 auto;\n  font-size: 14px;\n  line-height: 1.65;\n}\n\n.ff-create-form-card {\n  border-radius: 18px;\n  background: rgba(2, 6, 23, 0.52);\n  border: 1px solid rgba(249, 115, 22, 0.22);\n  padding: 24px;\n}\n\n.ff-create-form-head span {\n  display: inline-flex;\n  color: #F97316;\n  font-size: 12px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n  margin-bottom: 12px;\n}\n\n.ff-create-form-head h2 {\n  color: #FFFFFF;\n  font-size: 28px;\n  margin: 0 0 8px 0;\n  font-weight: 900;\n}\n.ff-editor-cover {\n  margin-bottom: 16px;\n}\n\n.ff-cover-placeholder {\n  height: 180px;\n  border-radius: 14px;\n  background:\n    linear-gradient(135deg, rgba(109, 93, 251, 0.22), rgba(249, 115, 22, 0.10)),\n    rgba(2, 6, 23, 0.72);\n  border: 1px solid rgba(255, 255, 255, 0.11);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.ff-cover-placeholder span {\n  color: #CBD5E1;\n  font-size: 14px;\n  font-weight: 800;\n}\n.ff-editor-stats {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  border-bottom: 1px solid rgba(255, 255, 255, 0.10);\n  margin-bottom: 14px;\n  padding-bottom: 14px;\n}\n\n.ff-editor-stats div {\n  text-align: center;\n}\n\n.ff-editor-stats strong {\n  display: block;\n  color: #FFFFFF;\n  font-size: 20px;\n  margin-bottom: 2px;\n}\n\n.ff-editor-stats span {\n  color: #94A3B8;\n  font-size: 12px;\n}\n.ff-editor-tabs {\n  display: flex;\n  gap: 6px;\n  margin-bottom: 16px;\n  overflow-x: auto;\n}\n\n.ff-editor-tabs a {\n  color: #94A3B8 !important;\n  background: transparent;\n  border: 0;\n  padding: 8px 8px;\n  font-size: 13px;\n  font-weight: 800;\n  text-decoration: none !important;\n  white-space: nowrap;\n}\n.ff-editor-tabs a:hover {\n  color: #FFFFFF !important;\n  border-bottom: 2px solid rgba(139, 92, 246, 0.75);\n}\n\n.ff-editor-tabs a.active {\n  color: #FFFFFF !important;\n  border-bottom: 2px solid #8B5CF6;\n}\n.ff-writing-box h3 {\n  color: #FFFFFF;\n  font-size: 18px;\n  margin: 0 0 8px 0;\n}\n\n.ff-writing-box > p {\n  color: #94A3B8;\n  font-size: 14px;\n  line-height: 1.6;\n  margin-bottom: 14px;\n}\n\n.ff-writing-placeholder {\n  min-height: 210px;\n  border-radius: 14px;\n  padding: 18px;\n  background: rgba(2, 6, 23, 0.64);\n  border: 1px solid rgba(255, 255, 255, 0.10);\n}\n\n.ff-writing-placeholder span {\n  display: block;\n  color: #FFFFFF;\n  font-size: 15px;\n  font-weight: 900;\n  margin-bottom: 10px;\n}\n.ff-writing-placeholder p {\n  color: #CBD5E1;\n  font-size: 14px;\n  line-height: 1.65;\n  margin: 0;\n}\n\n.ff-editor-actions {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 10px;\n  margin-top: 14px;\n}\n\n.ff-editor-actions button {\n  color: #FFFFFF;\n  background: rgba(15, 23, 42, 0.86);\n  border: 1px solid rgba(255, 255, 255, 0.14);\n  border-radius: 10px;\n  padding: 12px;\n  font-size: 14px;\n  font-weight: 900;\n}\n\n.ff-editor-actions button.primary {\n  background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n  border-color: rgba(109, 93, 251, 0.72);\n}\n@media (max-width: 1180px) {\n  .ff-workroom {\n    grid-template-columns: 1fr;\n  }\n\n  .ff-workroom-sidebar {\n    display: none;\n  }\n\n  .ff-workroom-main {\n    padding: 30px 24px 56px 24px;\n  }\n\n  .ff-workroom-grid {\n    grid-template-columns: 1fr;\n  }\n}\n\n@media (max-width: 767px) {\n  .ff-workroom-main {\n    padding: 24px 18px 48px 18px;\n  }\n\n  .ff-workroom-topbar {\n    flex-direction: column;\n  }\n.ff-workroom-topbar h1 {\n    font-size: 36px;\n  }\n\n  .ff-stats-row {\n    grid-template-columns: 1fr;\n  }\n\n  .ff-panel-head {\n    flex-direction: column;\n  }\n\n  .ff-create-small,\n  .ff-return-btn {\n    width: 100%;\n    text-align: center;\n  }\n}\n.ff-create-divider {\n  display: flex;\n  align-items: center;\n  gap: 14px;\n  margin: 28px 0 16px 0;\n}\n\n.ff-create-divider::before,\n.ff-create-divider::after {\n  content: \"\";\n  height: 1px;\n  flex: 1;\n  background: rgba(255, 255, 255, 0.10);\n}\n.ff-create-divider span {\n  color: #F97316;\n  font-size: 12px;\n  font-weight: 900;\n  letter-spacing: 0.10em;\n}\n.ff-mini-tool-list {\n  display: grid;\n  gap: 10px;\n  margin-top: 18px;\n}\n\n.ff-mini-tool-list div {\n  padding: 13px 14px;\n  border-radius: 12px;\n  background: rgba(15, 23, 42, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.10);\n}\n\n.ff-mini-tool-list strong {\n  display: block;\n  color: #FFFFFF;\n  font-size: 14px;\n  margin-bottom: 4px;\n}\n\n.ff-mini-tool-list small {\n  display: block;\n  color: #94A3B8;\n  font-size: 12.5px;\n  line-height: 1.45;\n}\n.ff-editor-actions a {\n  color: #FFFFFF !important;\n  text-decoration: none !important;\n  text-align: center;\n  background: rgba(15, 23, 42, 0.86);\n  border: 1px solid rgba(255, 255, 255, 0.14);\n  border-radius: 10px;\n  padding: 12px;\n  font-size: 14px;\n  font-weight: 900;\n}\n\n.ff-editor-actions a.primary {\n  background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n  border-color: rgba(109, 93, 251, 0.72);\n}.ff-real-story-manager {\n  margin: 24px 0 28px 0;\n  padding: 22px;\n  border-radius: 18px;\n  background: rgba(2, 6, 23, 0.52);\nborder: 1px solid rgba(255, 255, 255, 0.10);\n}\n\n.ff-real-story-manager-head {\n  margin-bottom: 18px;\n}\n\n.ff-real-story-manager-head span {\n  display: inline-flex;\n  color: #A78BFA;\n  font-size: 12px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n  margin-bottom: 10px;\n}\n\n.ff-real-story-manager-head h3 {\n  color: #FFFFFF;\n  font-size: 22px;\n  margin: 0 0 8px 0;\n  font-weight: 900;\n}\n\n.ff-real-story-manager-head p {\n  color: #94A3B8;\n  font-size: 14px;\n  line-height: 1.6;\n  margin: 0;\n}\n\n/* Style WP User Frontend Dashboard inside My Stories */\nbody:has(.ff-workroom) .wpuf-dashboard-container,\nbody:has(.ff-workroom) .wpuf-dashboard-content,\nbody:has(.ff-workroom) .wpuf-dashboard {\n  color: #E2E8F0 !important;\n  background: transparent !important;\n}\nbody:has(.ff-workroom) .wpuf-dashboard table,\nbody:has(.ff-workroom) .wpuf-dashboard-container table,\nbody:has(.ff-workroom) table.wpuf-table {\n  width: 100% !important;\n  border-collapse: collapse !important;\n  background: rgba(15, 23, 42, 0.72) !important;\n  border-radius: 14px !important;\n  overflow: hidden !important;\n  border: 1px solid rgba(255, 255, 255, 0.10) !important;\n}\nbody:has(.ff-workroom) .wpuf-dashboard th,\nbody:has(.ff-workroom) .wpuf-dashboard td,\nbody:has(.ff-workroom) table.wpuf-table th,\nbody:has(.ff-workroom) table.wpuf-table td {\n  color: #E2E8F0 !important;\n  border-color: rgba(255, 255, 255, 0.10) !important;\n  padding: 12px !important;\n}\n\nbody:has(.ff-workroom) .wpuf-dashboard th,\nbody:has(.ff-workroom) table.wpuf-table th {\n  color: #FFFFFF !important;\n  background: rgba(109, 93, 251, 0.20) !important;\n  font-weight: 900 !important;\n}\nbody:has(.ff-workroom) .wpuf-dashboard a,\nbody:has(.ff-workroom) table.wpuf-table a {\n  color: #A78BFA !important;\n  font-weight: 800 !important;\n  text-decoration: none !important;\n}\n\nbody:has(.ff-workroom) .wpuf-dashboard a:hover,\nbody:has(.ff-workroom) table.wpuf-table a:hover {\n  color: #F97316 !important;\n}\n.ff-schedule-tools {\n  margin: 24px 0 28px 0;\n  padding: 22px;\n  border-radius: 18px;\n  background: rgba(2, 6, 23, 0.52);\n  border: 1px solid rgba(255, 255, 255, 0.10);\n}\n.ff-schedule-tools-head span {\n  display: inline-flex;\n  color: #A78BFA;\n  font-size: 12px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n  margin-bottom: 10px;\n}\n\n.ff-schedule-tools-head h3 {\n  color: #FFFFFF;\n  font-size: 22px;\n  margin: 0 0 8px 0;\n  font-weight: 900;\n}\n\n.ff-schedule-tools-head p {\n  color: #94A3B8;\n  font-size: 14px;\n  line-height: 1.6;\n  margin: 0;\n}\n.ff-trash-tools {\n  margin: 24px 0 28px 0;\n  padding: 22px;\n  border-radius: 18px;\n  background: rgba(2, 6, 23, 0.52);\n  border: 1px solid rgba(255, 255, 255, 0.10);\n}\n\n.ff-trash-tools-head span {\n  display: inline-flex;\n  color: #F97316;\n  font-size: 12px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n  margin-bottom: 10px;\n}\n\n.ff-trash-tools-head h3 {\n  color: #FFFFFF;\n  font-size: 22px;\n  margin: 0 0 8px 0;\n  font-weight: 900;\n}\n\n.ff-trash-tools-head p {\n  color: #94A3B8;\n  font-size: 14px;\n  line-height: 1.6;\n  margin: 0;\n}\n</style>\n\n<section class=\"ff-workroom\">\n   <aside class=\"ff-workroom-sidebar\">\n  <div class=\"ff-workroom-logo\">✦ FicForge</div>\n\n  <div class=\"ff-side-group\">\n    <span>WORKSHOP</span>\n    <a href=\"#create-story-form\">Create Story</a>\n    <a href=\"#create-story-form\">Cover & Image Uploads</a>\n    <a href=\"#create-story-form\">Publish Story</a>\n  </div>\n\n  <div class=\"ff-side-group\">\n    <span>MY LIBRARY</span>\n    <a class=\"active\" href=\"#story-library\">My Stories</a>\n    <a href=\"#story-library\">Drafts</a>\n    <a href=\"#story-library\">Scheduled Releases</a>\n    <a href=\"#trash-tools\">Trash</a>\n  </div>\n\n <div class=\"ff-side-group\">\n  <span>TOOLS</span>\n  <a href=\"/creator-analytics/\">Analytics</a>\n  <a href=\"/creator-earnings/\">Earnings</a>\n  <a href=\"/creator-engagement/\">Followers & Comments</a>\n</div>\n\n  <div class=\"ff-side-group\">\n    <span>SUPPORT</span>\n    <a href=\"/support/\">Protection & Rights</a>\n    <a href=\"/support/\">Help Center</a>\n    <a href=\"/support/\">Guides & Resources</a>\n  </div>\n</aside> \n\n  <main class=\"ff-workroom-main\">\n\n    <div class=\"ff-workroom-topbar\">\n      <div>\n        <h1>My Stories</h1>\n        <p>Organize, manage, and write your stories. Track chapters, drafts, covers, and updates from one place.</p>\n      </div>\n\n      <a class=\"ff-return-btn\" href=\"/write/\">← Return to Writer Portal</a>\n    </div>\n\n    <div class=\"ff-stats-row\">\n      <div class=\"ff-stat-card\">\n        <span>Published Stories</span>\n        <strong>0</strong>\n        <small>Live on FicForge</small>\n      </div>\n\n      <div class=\"ff-stat-card\">\n        <span>Draft Stories</span>\n        <strong>0</strong>\n        <small>In progress</small>\n      </div>\n\n      <div class=\"ff-stat-card\">\n        <span>Total Chapters</span>\n        <strong>0</strong>\n        <small>Published</small>\n      </div>\n\n      <div class=\"ff-stat-card\">\n        <span>Total Words</span>\n        <strong>0</strong>\n        <small>Across all works</small>\n      </div>\n    </div>\n\n    <div class=\"ff-story-type-note\">\n      <strong>Story Type Notice:</strong>\n      FicForge labels stories based on the Story Type selected during creation. Fanfiction and Original Webnovel works may follow different browsing, rights, and monetization rules.\n    </div>\n\n    <div class=\"ff-workroom-grid\">\n\n      <section id=\"story-library\" class=\"ff-library-panel\">\n        <div class=\"ff-panel-head\">\n          <div>\n            <h2>Your Stories</h2>\n            <p>Your published stories, drafts, and future chapters will appear here.</p>\n          </div>\n\n          <a class=\"ff-create-small\" href=\"#create-story-form\">+ Create New Story</a>\n        </div>\n\n       <div class=\"ff-story-tabs\">\n  <a class=\"active\" href=\"#story-library\">All</a>\n  <a href=\"#submitted-stories\">Published</a>\n  <a href=\"#create-story-form\">Drafts</a>\n  <a href=\"#schedule-tools\">Scheduled</a>\n</div>\n\n        <div class=\"ff-empty-library\">\n          <div class=\"ff-empty-icon\">✍</div>\n          <h3>No stories yet</h3>\n          <p>\n            Create your first FicForge story below. Once you publish, this area will become your story manager with covers, chapters, drafts, and editing tools.\n          </p>\n        </div>\n      <div id=\"schedule-tools\" class=\"ff-schedule-tools\">\n  <div class=\"ff-schedule-tools-head\">\n    <span>SCHEDULED RELEASES</span>\n    <h3>Scheduled Chapters</h3>\n    <p>\n      Scheduled release tools will appear here once chapter scheduling is connected. For now, writers can prepare story drafts through the Create Story form below.\n    </p>\n  </div>\n</div>\n<div id=\"trash-tools\" class=\"ff-trash-tools\">\n  <div class=\"ff-trash-tools-head\">\n    <span>TRASH & REMOVED STORIES</span>\n    <h3>Trash</h3>\n    <p>\n  Removed stories and deleted drafts will appear here when available. This area helps creators keep track of work that has been deleted, archived, or moved out of the active story library.\n    </p>\n  </div>\n\n  <div class=\"ff-trash-dashboard\">\n    <div class=\"wpuf-message\">This page is restricted. Please <a href=\"https://ficforge.org/wp-login.php?redirect_to=https%3A%2F%2Fficforge.org%2Fmy-stories%2F\">Log in</a> to view this page.</div>\n  </div>\n</div>\n        <div class=\"ff-create-divider\">\n  <span>NEW STORY SETUP</span>\n</div>\n\n        <div id=\"create-story-form\" class=\"ff-create-form-card\">\n          <div class=\"ff-create-form-head\">\n            <span>CREATE STORY</span>\n            <h2>Start a New Story</h2>\n            <p>\n              Use the form below to create a story, upload a cover, choose story type, add ratings and warnings, and publish your first chapter.\n            </p>\n          </div>\n          <div class=\"wpuf-message\">This page is restricted. Please <a href=\"https://ficforge.org/wp-login.php\">Login</a> / <a href=\"https://ficforge.org/wp-login.php?action=register\">Register</a> to view this page.</div>\n        </div>\n      </section>\n      \n      <aside class=\"ff-editor-panel\">\n        <div class=\"ff-editor-cover\">\n          <div class=\"ff-cover-placeholder\">\n            <span>Story Cover Preview</span>\n          </div>\n        </div>\n\n        <div class=\"ff-editor-stats\">\n          <div>\n            <strong>0</strong>\n            <span>Chapters</span>\n          </div>\n          <div>\n            <strong>0</strong>\n            <span>Drafts</span>\n          </div>\n          <div>\n            <strong>0</strong>\n            <span>Words</span>\n          </div>\n        </div>\n\n       <div class=\"ff-editor-tabs\">\n  <a href=\"#story-library\">Story Library</a>\n  <a href=\"#create-story-form\" class=\"active\">Create / Edit</a>\n  <a href=\"#create-story-form\">Publish</a>\n</div>\n\n       <div class=\"ff-writing-box\">\n  <h3>Selected Story Workspace</h3>\n  <p>\n    Once a story is selected, this area will show its cover, story status, chapters, drafts, and writing tools.\n  </p>\n\n  <div class=\"ff-writing-placeholder\">\n    <span>No story selected yet</span>\n    <p>\n      Create your first story below. After it is published or saved, it will appear in your library where you can open it, add chapters, edit drafts, and manage updates.\n    </p>\n\n    <div class=\"ff-mini-tool-list\">\n      <div>\n        <strong>Story Overview</strong>\n        <small>Cover, type, status, genre, fandom, and warnings.</small>\n      </div>\n\n      <div>\n        <strong>Chapter Writing</strong>\n        <small>Write new chapters and continue saved drafts.</small>\n      </div>\n\n      <div>\n        <strong>Publishing Controls</strong>\n        <small>Publish updates, revise chapters, and prepare releases.</small>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"ff-editor-actions\">\n  <a href=\"#create-story-form\">Create Story</a>\n  <a class=\"primary\" href=\"#story-library\">View Library</a>\n</div>\n</div>\n      </aside>\n\n    </div>\n\n  </main>\n</section>\n";
+export default function MyStoriesPage() {
+  const [stories, setStories] = useState<StoryData[]>([]);
+  const [filter, setFilter] = useState<"ALL" | "FANFICTION" | "ORIGINAL">("ALL");
 
-export default function Page() {
+  useEffect(() => {
+    const loadStories = () => {
+      const all = getAllStories();
+      setStories(Object.values(all));
+    };
+
+    loadStories();
+
+    // Listen to updates from other pages
+    window.addEventListener("ficforge_stories_updated", loadStories);
+    return () => window.removeEventListener("ficforge_stories_updated", loadStories);
+  }, []);
+
+  const totalWords = stories.reduce((acc, s) => acc + (s.stats.words || 0), 0);
+  const totalChapters = stories.reduce((acc, s) => acc + (s.chapters?.length || 0), 0);
+  const totalViews = stories.reduce((acc, s) => acc + (s.stats.views || 0), 0);
+
+  const filteredStories = stories.filter((s) => {
+    if (filter === "ALL") return true;
+    return s.classification === filter;
+  });
+
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
-      <div
-        className="max-w-[1180px] mx-auto"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
+    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1240px] mx-auto space-y-8">
+        
+        {/* Top Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/10 pb-6">
+          <div>
+            <span className="text-xs font-black tracking-widest uppercase text-[#F97316]">
+              CREATOR WORKSHOP
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight mt-1">
+              My Stories & Manuscripts
+            </h1>
+            <p className="mt-1.5 text-sm text-slate-400">
+              Manage your published works, write chapters, and batch import manuscripts.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/write/bulk-import"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-slate-900/80 px-4 py-2.5 text-xs font-extrabold text-white hover:border-[#6D5DFB] hover:text-[#A78BFA] transition-all"
+            >
+              <UploadCloud className="h-4 w-4" /> Bulk Import
+            </Link>
+            <Link
+              href="/write/new"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-2.5 text-xs font-extrabold text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all"
+            >
+              <Plus className="h-4 w-4" /> Create New Story
+            </Link>
+          </div>
+        </div>
+
+        {/* Creator Stats Overview */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Stories
+            </span>
+            <p className="text-2xl sm:text-3xl font-black text-white mt-1">
+              {stories.length}
+            </p>
+            <span className="text-[11px] text-emerald-400 font-semibold mt-1 inline-block">
+              ● Active in Workshop
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Total Chapters
+            </span>
+            <p className="text-2xl sm:text-3xl font-black text-white mt-1">
+              {totalChapters}
+            </p>
+            <span className="text-[11px] text-indigo-400 font-semibold mt-1 inline-block">
+              Across all works
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Total Words
+            </span>
+            <p className="text-2xl sm:text-3xl font-black text-white mt-1">
+              {totalWords.toLocaleString()}
+            </p>
+            <span className="text-[11px] text-amber-400 font-semibold mt-1 inline-block">
+              Published manuscript
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Total Reads
+            </span>
+            <p className="text-2xl sm:text-3xl font-black text-white mt-1">
+              {totalViews.toLocaleString()}
+            </p>
+            <span className="text-[11px] text-slate-400 font-semibold mt-1 inline-block">
+              Lifetime reader views
+            </span>
+          </div>
+        </div>
+
+        {/* Story Classification Filter Tabs */}
+        <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <div className="flex items-center gap-2">
+            {(["ALL", "FANFICTION", "ORIGINAL"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setFilter(tab)}
+                className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
+                  filter === tab
+                    ? "bg-[#6D5DFB] text-white shadow-md shadow-indigo-600/30"
+                    : "bg-white/5 text-slate-400 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                {tab === "ALL"
+                  ? "All Stories"
+                  : tab === "FANFICTION"
+                  ? "Fanfiction (100% Free)"
+                  : "Original Fiction"}
+              </button>
+            ))}
+          </div>
+
+          <span className="text-xs text-slate-400 hidden sm:inline">
+            Showing {filteredStories.length} {filteredStories.length === 1 ? "story" : "stories"}
+          </span>
+        </div>
+
+        {/* Stories Listing */}
+        {filteredStories.length === 0 ? (
+          <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-12 text-center max-w-lg mx-auto">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6D5DFB]/15 border border-[#6D5DFB]/30 text-2xl mb-4">
+              ✍️
+            </div>
+            <h3 className="text-xl font-bold text-white">No Stories in this Category</h3>
+            <p className="mt-2 text-xs text-slate-400 leading-relaxed">
+              Start building your next story or import an existing manuscript to begin publishing chapters.
+            </p>
+            <Link
+              href="/write/new"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-600/30"
+            >
+              <Plus className="h-4 w-4" /> Start New Story
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4">
+            {filteredStories.map((story) => (
+              <div
+                key={story.id}
+                className="group flex flex-col md:flex-row md:items-center justify-between gap-6 rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl hover:border-[#6D5DFB]/40 hover:bg-slate-900/95 transition-all"
+              >
+                {/* Left: Thumbnail & Story Identity */}
+                <div className="flex items-start gap-4 min-w-0">
+                  <img
+                    src={story.coverImageUrl}
+                    alt={story.title}
+                    className="h-24 w-16 rounded-xl object-cover shadow-md shrink-0 border border-white/10"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                      {story.classification === "FANFICTION" ? (
+                        <span className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-black uppercase text-emerald-400">
+                          Fanfiction • {story.fandom || "Fandom"}
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-orange-500/15 border border-orange-500/30 px-2.5 py-0.5 text-[10px] font-black uppercase text-orange-400">
+                          Original Webnovel
+                        </span>
+                      )}
+
+                      <span className="rounded-full bg-white/5 border border-white/10 px-2 py-0.5 text-[10px] font-bold text-slate-400 uppercase">
+                        {story.rating}
+                      </span>
+
+                      <span className="text-[11px] text-slate-400">
+                        Updated {story.updatedAt}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-black text-white truncate group-hover:text-[#F97316] transition-colors">
+                      {story.title}
+                    </h3>
+
+                    <p className="text-xs text-slate-400 line-clamp-1 mt-1 max-w-xl">
+                      {story.synopsis}
+                    </p>
+
+                    <div className="mt-2.5 flex items-center gap-4 text-xs text-slate-400">
+                      <span className="flex items-center gap-1 font-semibold text-slate-300">
+                        <BookOpen className="h-3.5 w-3.5 text-indigo-400" />
+                        {story.chapters.length} Chapters
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1 font-semibold text-slate-300">
+                        <FileText className="h-3.5 w-3.5 text-amber-400" />
+                        {story.stats.words.toLocaleString()} Words
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1 font-semibold text-slate-300">
+                        <Eye className="h-3.5 w-3.5 text-emerald-400" />
+                        {story.stats.views.toLocaleString()} Views
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Actions */}
+                <div className="flex items-center gap-2.5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-white/5">
+                  <Link
+                    href={`/write/chapter?storySlug=${story.slug}`}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-slate-800/80 px-3.5 py-2 text-xs font-bold text-slate-200 hover:border-white/30 hover:text-white transition-all"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Chapter
+                  </Link>
+
+                  <Link
+                    href={`/write/bulk-import?storySlug=${story.slug}`}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-3.5 py-2 text-xs font-bold text-indigo-300 hover:bg-indigo-500/20 transition-all"
+                  >
+                    <UploadCloud className="h-3.5 w-3.5" /> Bulk Import
+                  </Link>
+
+                  <Link
+                    href={`/story/${story.slug}`}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-4 py-2 text-xs font-extrabold text-white shadow-md shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all"
+                  >
+                    View <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+
+              </div>
+            ))}
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }

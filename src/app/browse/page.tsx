@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo } from "react";
-import { mockStories, StoryData } from "@/data/mockStories";
+import { useState, useEffect, useMemo } from "react";
+import { getAllStories } from "@/lib/storyStore";
+import { StoryData } from "@/data/mockStories";
 import {
   Search,
   Filter,
@@ -35,8 +36,15 @@ export default function BrowsePage() {
     "Romance",
   ];
 
-  const storiesList = useMemo(() => {
-    return Object.values(mockStories);
+  const [storiesList, setStoriesList] = useState<StoryData[]>([]);
+
+  useEffect(() => {
+    const load = () => {
+      setStoriesList(Object.values(getAllStories()));
+    };
+    load();
+    window.addEventListener("ficforge_stories_updated", load);
+    return () => window.removeEventListener("ficforge_stories_updated", load);
   }, []);
 
   const filteredStories = useMemo(() => {

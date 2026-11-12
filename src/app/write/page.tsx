@@ -1,19 +1,113 @@
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Start Writing — FicForge",
-  description: "Start Writing on FicForge — Where Stories Are Forged",
-};
+import Link from "next/link";
+import {
+  PenTool,
+  UploadCloud,
+  BookOpen,
+  Sparkles,
+  ShieldCheck,
+  Zap,
+  TrendingUp,
+  ArrowRight,
+  FolderOpen,
+} from "lucide-react";
 
-const rawHtml = "<div class=\"ff-writer-quote\">\n  <p>\n    “Every reader is a writer. Whether we put words to paper or carry stories quietly within ourselves, we are still of the same.”\n  </p>\n</div>\n\n<section class=\"ff-write-gate\">\n  <div class=\"ff-write-gate-card\">\n    <span class=\"ff-write-gate-label\">WRITER PORTAL</span>\n\n    <h1>Welcome to the FicForge Writer Portal</h1>\n\n    <p>\n      Create a FicForge account or sign in to access your writer dashboard, workshop, profile tools, analytics, earnings, and support center.\n    </p>\n\n    <div class=\"ff-write-gate-actions\">\n      <a class=\"ff-write-gate-primary\" href=\"/wp-login.php?action=register&redirect_to=/write/\">\n        Create Writer Account\n      </a>\n\n      <a class=\"ff-write-gate-secondary\" href=\"/wp-login.php?redirect_to=/write/\">\n        Sign In\n      </a>\n    </div>\n\n    <div class=\"ff-write-gate-note\">\n      Writers need a FicForge account before accessing story creation tools.\n    </div>\n  </div>\n\n  <div class=\"ff-write-gate-preview\">\n    <div class=\"ff-preview-item\">\n      <span>Workshop</span>\n      <p>Create stories, format chapters, manage drafts, and prepare releases.</p>\n    </div>\n\n    <div class=\"ff-preview-item\">\n      <span>Writer Profile</span>\n      <p>Build your public author identity, bio, links, and story shelf.</p>\n    </div>\n\n    <div class=\"ff-preview-item\">\n      <span>Analytics</span>\n      <p>Track reader engagement, follows, comments, and chapter activity.</p>\n    </div>\n\n    <div class=\"ff-preview-item\">\n      <span>Earnings</span>\n      <p>View Sparks support, payout status, and creator tools.</p>\n    </div>\n  </div>\n</section>\n\n<section class=\"ff-writer-portal\">\n  <div class=\"ff-portal-hero\">\n    <span class=\"ff-portal-label\">WRITER PORTAL</span>\n    <h1>Your FicForge Writing Space</h1>\n    <p>\n      Manage your stories, build chapters in the Workshop, track reader engagement, and prepare your work for the FicForge library.\n    </p>\n  </div>\n\n  <nav class=\"ff-portal-tabs\">\n    <a href=\"#dashboard\">Dashboard</a>\n    <a href=\"#workshop\">Workshop</a>\n    <a href=\"#profile\">Writer Profile</a>\n    <a href=\"#analytics\">Analytics</a>\n    <a href=\"#earnings\">Earnings</a>\n    <a href=\"#settings\">Settings</a>\n    <a href=\"#support\">Support</a>\n  </nav>\n\n  <div id=\"dashboard\" class=\"ff-portal-section\">\n    <div class=\"ff-section-heading\">\n      <span>DASHBOARD</span>\n      <h2>Writer Command Center</h2>\n      <p>Your central space for drafts, stories, profile tools, reader activity, and creator features.</p>\n    </div>\n\n    <div class=\"ff-dashboard-grid\">\n      <div class=\"ff-dashboard-card\">\n        <span class=\"ff-card-mark\">WS</span>\n        <h3>Workshop</h3>\n        <p>Create stories, manage chapters, import drafts, and prepare releases.</p>\n      </div>\n\n      <div class=\"ff-dashboard-card\">\n        <span class=\"ff-card-mark\">PF</span>\n        <h3>Writer Profile</h3>\n        <p>Build your creator identity, bio, story shelf, and public presence.</p>\n      </div>\n\n      <div class=\"ff-dashboard-card\">\n        <span class=\"ff-card-mark\">AN</span>\n        <h3>Analytics</h3>\n        <p>Track reads, follows, comments, chapter engagement, and reader activity.</p>\n      </div>\n\n      <div class=\"ff-dashboard-card\">\n        <span class=\"ff-card-mark\">EA</span>\n        <h3>Earnings</h3>\n        <p>Review Sparks support, payout status, and creator monetization details.</p>\n      </div>\n    </div>\n  </div>\n<div id=\"workshop\" class=\"ff-workshop-panel refined\">\n  <div class=\"ff-workshop-left\">\n    <span class=\"ff-panel-label\">WORKSHOP</span>\n    <h2>The place where stories are built.</h2>\n    <p>\n      The Workshop is the core writing space for FicForge. Create stories, upload covers, publish chapters, manage your library, and return to your work whenever you need to continue.\n    </p>\n\n    <div class=\"ff-workshop-buttons\">\n      <a href=\"/my-stories/\">Create New Story</a>\n      <a href=\"/my-stories/\">My Stories</a>\n    </div>\n  </div>\n\n  <div class=\"ff-workshop-tools refined-tools\">\n    <a class=\"ff-tool-row\" href=\"/my-stories/\">\n      <strong>Create Story</strong>\n      <span>Start a new story with title, synopsis, genre, fandom, tags, content rating, warnings, cover image, and first chapter.</span>\n    </a>\n\n    <a class=\"ff-tool-row\" href=\"/my-stories/\">\n      <strong>Cover & Image Uploads</strong>\n      <span>Upload your main story cover and prepare visual assets connected to your story listing.</span>\n    </a>\n\n    <a class=\"ff-tool-row\" href=\"/my-stories/\">\n      <strong>Publish Story</strong>\n      <span>Publish your story immediately to FicForge once the required details and first chapter are ready.</span>\n    </a>\n\n    <a class=\"ff-tool-row\" href=\"/my-stories/\">\n      <strong>My Stories</strong>\n      <span>Review your published stories, saved drafts, chapter count, story covers, updates, edits, and future releases.</span>\n    </a>\n\n    <a class=\"ff-tool-row\" href=\"/support/\">\n      <strong>Protection & Rights</strong>\n      <span>Review FicForge’s creator protections, anti-scraping position, copyright support, and platform rules.</span>\n    </a>\n  </div>\n</div>\n\n    <a class=\"ff-tool-row\" href=\"/my-stories/\">\n      <strong>Publish Story</strong>\n      <span>Publish your story \n\n  <div class=\"ff-portal-grid-two\">\n    <div id=\"earnings\" class=\"ff-feature-panel\">\n      <span class=\"ff-panel-label\">EARNINGS</span>\n      <h3>Sparks and creator support.</h3>\n      <p>Review Sparks support, payout eligibility, pending balances, and creator monetization settings.</p>\n    </div>\n\n    <div id=\"settings\" class=\"ff-feature-panel\">\n      <span class=\"ff-panel-label\">SETTINGS</span>\n      <h3>Control your writing space.</h3>\n      <p>Manage account settings, notifications, privacy options, story visibility, and content controls.</p>\n    </div>\n  </div>\n\n  <div id=\"support\" class=\"ff-support-panel\">\n    <div>\n      <span class=\"ff-panel-label\">WRITER SUPPORT</span>\n      <h2>Need help getting started?</h2>\n      <p>Founding writers can request onboarding help and prepare their first stories for the FicForge library.</p>\n    </div>\n\n    <div class=\"ff-support-actions\">\n      <a class=\"ff-portal-primary\" href=\"/contact\">Contact Support</a>\n      <a class=\"ff-portal-secondary\" href=\"/community\">Join Community</a>\n    </div>\n  </div>\n</section>\n\n<style>\n/* Default state: logged-out visitors see the gate, portal hidden */\n.ff-writer-portal {\n  display: none;\n}\n\n/* Logged-in users see the portal, gate hidden */\nbody.logged-in .ff-write-gate {\n  display: none !important;\n}\n\nbody.logged-in .ff-writer-portal {\n  display: block !important;\n}\n\n/* Writer quote */\n.ff-writer-quote {\n  width: 100%;\n  max-width: 1180px;\n  margin: 0 auto 24px auto;\n  padding: 18px 24px;\n  border-radius: 18px;\n  background: rgba(15, 23, 42, 0.76);\n  border: 1px solid rgba(255, 255, 255, 0.10);\n  text-align: center;\n}\n\n.ff-writer-quote p {\n  color: #E2E8F0;\n  font-size: 17px;\n  line-height: 1.65;\n  font-weight: 700;\n  margin: 0;\n}\n\n/* Gate section */\n.ff-write-gate {\n  width: 100%;\n  max-width: 1180px;\n  margin: 0 auto;\n  display: grid;\n  grid-template-columns: 1.15fr 0.85fr;\n  gap: 28px;\n  align-items: center;\n  min-height: 600px;\n}\n\n.ff-write-gate-card {\n  position: relative;\n  overflow: hidden;\n  padding: 58px 42px;\n  border-radius: 28px;\n  background:\n    radial-gradient(circle at 20% 0%, rgba(249, 115, 22, 0.22), transparent 38%),\n    radial-gradient(circle at 80% 0%, rgba(109, 93, 251, 0.24), transparent 36%),\n    linear-gradient(135deg, rgba(17, 24, 39, 0.98), rgba(11, 18, 32, 0.98));\n  border: 1px solid rgba(255, 255, 255, 0.13);\n  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.34);\n}\n\n.ff-write-gate-label,\n.ff-portal-label,\n.ff-section-heading span,\n.ff-panel-label {\n  display: inline-flex;\n  color: #F97316;\n  font-size: 13px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n  text-transform: uppercase;\n}\n\n.ff-write-gate-label,\n.ff-portal-label {\n  background: rgba(249, 115, 22, 0.12);\n  border: 1px solid rgba(249, 115, 22, 0.28);\n  border-radius: 999px;\n  padding: 8px 14px;\n  margin-bottom: 22px;\n}\n\n.ff-write-gate h1,\n.ff-portal-hero h1 {\n  color: #FFFFFF;\n  font-size: 56px;\n  line-height: 1.04;\n  margin: 0 0 20px 0;\n  font-weight: 900;\n  letter-spacing: -0.04em;\n}\n\n.ff-write-gate p,\n.ff-portal-hero p {\n  color: #CBD5E1;\n  font-size: 18px;\n  line-height: 1.65;\n  max-width: 760px;\n  margin: 0 0 30px 0;\n}\n\n.ff-write-gate-actions {\n  display: flex;\n  gap: 14px;\n  flex-wrap: wrap;\n  margin-bottom: 22px;\n}\n\n.ff-write-gate-actions a,\n.ff-workshop-buttons a,\n.ff-support-actions a {\n  min-height: 50px;\n  padding: 14px 22px;\n  border-radius: 10px;\n  text-decoration: none !important;\n  font-size: 15px;\n  font-weight: 900;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n}\n\n.ff-write-gate-primary,\n.ff-portal-primary,\n.ff-workshop-buttons a:first-child {\n  color: #FFFFFF !important;\n  background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n  border: 1px solid rgba(109, 93, 251, 0.72);\n}\n\n.ff-write-gate-secondary,\n.ff-portal-secondary,\n.ff-workshop-buttons a:last-child {\n  color: #FFFFFF !important;\n  background: transparent;\n  border: 1px solid rgba(255, 255, 255, 0.24);\n}\n\n.ff-write-gate-note {\n  color: #94A3B8;\n  font-size: 14px;\n  line-height: 1.5;\n}\n\n.ff-write-gate-preview {\n  display: grid;\n  gap: 14px;\n}\n\n.ff-preview-item,\n.ff-dashboard-card,\n.ff-feature-panel {\n  border-radius: 18px;\n  background: linear-gradient(180deg, rgba(17, 24, 39, 0.94), rgba(11, 18, 32, 0.98));\n  border: 1px solid rgba(255, 255, 255, 0.11);\n}\n\n.ff-preview-item {\n  padding: 22px;\n}\n\n.ff-preview-item span {\n  display: block;\n  color: #FFFFFF;\n  font-size: 18px;\n  font-weight: 900;\n  margin-bottom: 8px;\n}\n\n.ff-preview-item p {\n  color: #94A3B8;\n  font-size: 14px;\n  line-height: 1.55;\n  margin: 0;\n}\n\n/* Portal section */\n.ff-writer-portal {\n  width: 100%;\n  max-width: 1180px;\n  margin: 0 auto;\n}\n\n.ff-portal-hero {\n  text-align: center;\n  max-width: 850px;\n  margin: 0 auto 34px auto;\n}\n\n.ff-portal-hero p {\n  margin-left: auto;\n  margin-right: auto;\n}\n\n.ff-portal-tabs {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 10px;\n  padding: 14px;\n  margin-bottom: 34px;\n  border-radius: 18px;\n  background: rgba(2, 6, 23, 0.50);\n  border: 1px solid rgba(255, 255, 255, 0.10);\n}\n\n.ff-portal-tabs a {\n  color: #CBD5E1 !important;\n  text-decoration: none !important;\n  padding: 10px 13px;\n  border-radius: 999px;\n  font-size: 13px;\n  font-weight: 900;\n  background: rgba(255, 255, 255, 0.05);\n}\n\n.ff-portal-tabs a:hover {\n  color: #F97316 !important;\n}\n\n.ff-portal-section {\n  margin-bottom: 34px;\n}\n\n.ff-section-heading {\n  margin-bottom: 20px;\n}\n\n.ff-section-heading h2,\n.ff-workshop-left h2,\n.ff-support-panel h2 {\n  color: #FFFFFF;\n  font-size: 38px;\n  line-height: 1.1;\n  margin: 8px 0 10px 0;\n  font-weight: 900;\n  letter-spacing: -0.03em;\n}\n\n.ff-section-heading p,\n.ff-workshop-left p,\n.ff-support-panel p,\n.ff-dashboard-card p,\n.ff-feature-panel p {\n  color: #CBD5E1;\n  font-size: 15px;\n  line-height: 1.6;\n  margin: 0;\n}\n\n.ff-dashboard-grid {\n  display: grid;\n  grid-template-columns: repeat(4, 1fr);\n  gap: 14px;\n}\n\n.ff-dashboard-card {\n  min-height: 200px;\n  padding: 22px;\n}\n\n.ff-card-mark {\n  width: 46px;\n  height: 46px;\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 14px;\n  color: #FFFFFF;\n  background: rgba(109, 93, 251, 0.20);\n  border: 1px solid rgba(109, 93, 251, 0.38);\n  font-size: 13px;\n  font-weight: 900;\n  margin-bottom: 18px;\n}\n\n.ff-dashboard-card h3,\n.ff-feature-panel h3 {\n  color: #FFFFFF;\n  font-size: 20px;\n  line-height: 1.2;\n  margin: 0 0 10px 0;\n  font-weight: 900;\n}\n\n.ff-workshop-panel {\n  display: grid;\n  grid-template-columns: 0.9fr 1.1fr;\n  gap: 24px;\n  padding: 30px;\n  border-radius: 26px;\n  background:\n    radial-gradient(circle at 0% 0%, rgba(249, 115, 22, 0.16), transparent 36%),\n    linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(11, 18, 32, 0.98));\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  margin-bottom: 34px;\n}\n\n.ff-workshop-buttons,\n.ff-support-actions {\n  display: flex;\n  gap: 14px;\n  flex-wrap: wrap;\n  margin-top: 24px;\n}\n\n.ff-workshop-tools {\n  display: grid;\n  gap: 12px;\n}\n\n.ff-tool-row {\n  padding: 16px;\n  border-radius: 16px;\n  background: rgba(2, 6, 23, 0.46);\n  border: 1px solid rgba(255, 255, 255, 0.09);\n}\n\n.ff-tool-row strong {\n  display: block;\n  color: #FFFFFF;\n  font-size: 15px;\n  margin-bottom: 6px;\n}\n\n.ff-tool-row span {\n  color: #94A3B8;\n  font-size: 14px;\n  line-height: 1.5;\n}\n\n.ff-portal-grid-two {\n  display: grid;\n  grid-template-columns: repeat(2, 1fr);\n  gap: 18px;\n  margin-bottom: 18px;\n}\n\n.ff-feature-panel {\n  padding: 26px;\n}\n\n.ff-feature-panel h3 {\n  font-size: 25px;\n  margin-top: 10px;\n}\n\n.ff-support-panel {\n  display: grid;\n  grid-template-columns: 1.3fr 0.7fr;\n  gap: 24px;\n  align-items: center;\n  padding: 34px;\n  margin-top: 34px;\n  border-radius: 24px;\n  background: rgba(15, 23, 42, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.11);\n}\n\n@media (max-width: 1000px) {\n  .ff-write-gate,\n  .ff-workshop-panel,\n  .ff-support-panel {\n    grid-template-columns: 1fr;\n  }\n\n  .ff-dashboard-grid {\n    grid-template-columns: repeat(2, 1fr);\n  }\n\n  .ff-portal-grid-two {\n    grid-template-columns: 1fr;\n  }\n}\n\n@media (max-width: 767px) {\n  .ff-write-gate-card {\n    padding: 42px 22px;\n  }\n\n  .ff-write-gate h1,\n  .ff-portal-hero h1 {\n    font-size: 40px;\n  }\n\n  .ff-write-gate p,\n  .ff-portal-hero p {\n    font-size: 16px;\n  }\n\n  .ff-write-gate-actions,\n  .ff-workshop-buttons,\n  .ff-support-actions {\n    flex-direction: column;\n  }\n\n  .ff-write-gate-actions a,\n  .ff-workshop-buttons a,\n  .ff-support-actions a {\n    width: 100%;\n  }\n\n  .ff-dashboard-grid {\n    grid-template-columns: 1fr;\n  }\n\n  .ff-workshop-panel,\n  .ff-support-panel {\n    padding: 22px;\n  }\n\n  .ff-section-heading h2,\n  .ff-workshop-left h2,\n  .ff-support-panel h2 {\n    font-size: 30px;\n  }\n}/* Remove leftover old workshop duplicate rows */\n.ff-writer-portal > .ff-workshop-tools,\n.ff-writer-portal > .ff-tool-row,\n.ff-workshop-panel + .ff-workshop-tools {\n  display: none !important;\n}\n</style>\n    <script>\n(function () {\n  function moveCreateStoryForm() {\n    const slot = document.getElementById(\"create-story-form-slot\");\n    const form = document.querySelector(\".ff-create-story-form\");\n\n    if (slot && form && !slot.contains(form)) {\n      slot.appendChild(form);\n    }\n  }\n\n  document.addEventListener(\"DOMContentLoaded\", moveCreateStoryForm);\n  setTimeout(moveCreateStoryForm, 500);\n  setTimeout(moveCreateStoryForm, 1500);\n})();\n</script>\n<div class=\"ff-page-transition-overlay\"></div>\n\n<style>\n.ff-page-transition-overlay {\n  position: fixed;\n  inset: 0;\n  background:\n    radial-gradient(circle at top left, rgba(109, 93, 251, 0.18), transparent 34%),\n    radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 30%),\n    #050B16;\n  z-index: 999999;\n  opacity: 0;\n  pointer-events: none;\n  transition: opacity 0.18s ease;\n}\n\nbody.ff-transitioning .ff-page-transition-overlay {\n  opacity: 1;\n}\n</style>\n\n<script>\ndocument.addEventListener(\"DOMContentLoaded\", function () {\n  const workroomLinks = document.querySelectorAll('a[href=\"/my-stories/\"], a[href=\"/my-stories\"]');\n\n  workroomLinks.forEach(function(link) {\n    link.addEventListener(\"click\", function () {\n      document.body.classList.add(\"ff-transitioning\");\n    });\n  });\n});\n</script>\n";
-
-export default function Page() {
+export default function WriterPortalPage() {
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
-      <div
-        className="max-w-[1180px] mx-auto"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
+    <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1180px] mx-auto space-y-12">
+        
+        {/* Hero Section */}
+        <div className="text-center max-w-3xl mx-auto">
+          <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-[#F97316] bg-orange-500/10 border border-orange-500/30 rounded-full px-3.5 py-1.5 mb-4">
+            CREATOR STUDIO
+          </span>
+          <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+            Where Worlds Are Built & Stories Are Forged
+          </h1>
+          <p className="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed">
+            Write serialized fiction, batch import full manuscripts without hassle, and share your storytelling with an ad-free community of passionate readers.
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/write/new"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] via-[#7C3AED] to-[#F97316] px-6 py-3.5 text-sm font-black text-white shadow-xl shadow-indigo-600/30 hover:opacity-95 transition-all"
+            >
+              <PenTool className="h-4 w-4" /> Start a New Story
+            </Link>
+
+            <Link
+              href="/write/bulk-import"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-slate-900/80 px-6 py-3.5 text-sm font-bold text-slate-200 hover:border-[#6D5DFB] hover:text-[#A78BFA] transition-all"
+            >
+              <UploadCloud className="h-4 w-4" /> Bulk Import Manuscript
+            </Link>
+
+            <Link
+              href="/my-stories"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all"
+            >
+              <FolderOpen className="h-4 w-4" /> Open My Stories
+            </Link>
+          </div>
+        </div>
+
+        {/* Core Publishing Pillars */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl relative overflow-hidden group hover:border-[#6D5DFB]/40 transition-all">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400 mb-4 border border-indigo-500/20">
+              <UploadCloud className="h-6 w-6" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Smart Bulk Importer</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Upload 5, 10, 25, or 50+ chapters in one click or paste your full manuscript. Our engine splits and indexes each chapter atomically.
+            </p>
+            <Link
+              href="/write/bulk-import"
+              className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 hover:text-indigo-300"
+            >
+              Try Bulk Importer →
+            </Link>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 mb-4 border border-emerald-500/20">
+              <ShieldCheck className="h-6 w-6" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">100% Free Fanfiction</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Transformative fanworks remain strictly free with zero paywalls. Connect with passionate fandom communities in a safe environment.
+            </p>
+            <Link
+              href="/write/new"
+              className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300"
+            >
+              Forge Fanfiction →
+            </Link>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl relative overflow-hidden group hover:border-orange-500/40 transition-all">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-500/10 text-[#F97316] mb-4 border border-orange-500/20">
+              <Zap className="h-6 w-6" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Fast Pass & Tipping</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Monetize original webnovels with early access Fast Pass countdowns and reader Sparks tipping deposited directly into your creator vault.
+            </p>
+            <Link
+              href="/write/new"
+              className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-[#F97316] hover:text-orange-400"
+            >
+              Publish Original Fiction →
+            </Link>
+          </div>
+
+        </div>
+
+      </div>
     </div>
   );
 }

@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useParams, notFound } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
-import { mockStories } from "@/data/mockStories";
+import { getStoryBySlug } from "@/lib/storyStore";
+import { StoryData } from "@/data/mockStories";
 import {
   BookOpen,
   Heart,
@@ -23,10 +24,9 @@ import {
 function StoryDetailsContent() {
   const params = useParams();
   const slug = params?.slug as string;
-  const story = mockStories[slug];
-
+  const [story, setStory] = useState<StoryData | undefined>(undefined);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [likesCount, setLikesCount] = useState(story?.stats.likes ?? 0);
+  const [likesCount, setLikesCount] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [sortAscending, setSortAscending] = useState(true);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -36,11 +36,18 @@ function StoryDetailsContent() {
   const [isAgeVerified, setIsAgeVerified] = useState(true);
 
   useEffect(() => {
-    if (story?.rating === "EXPLICIT") {
-      const verified = localStorage.getItem("ficforge_age_verified") === "true";
-      setIsAgeVerified(verified);
+    if (slug) {
+      const found = getStoryBySlug(slug);
+      setStory(found);
+      if (found) {
+        setLikesCount(found.stats.likes);
+        if (found.rating === "EXPLICIT") {
+          const verified = localStorage.getItem("ficforge_age_verified") === "true";
+          setIsAgeVerified(verified);
+        }
+      }
     }
-  }, [story]);
+  }, [slug]);
 
   const handleAgeConfirm = () => {
     localStorage.setItem("ficforge_age_verified", "true");

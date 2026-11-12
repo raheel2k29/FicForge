@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
-import { mockStories } from "@/data/mockStories";
+import { getStoryBySlug } from "@/lib/storyStore";
+import { StoryData, ChapterData } from "@/data/mockStories";
 import {
   Settings,
   ChevronLeft,
@@ -25,8 +26,19 @@ function ChapterReaderContent() {
   const slug = params?.slug as string;
   const chapterSlug = params?.chapterSlug as string;
 
-  const story = mockStories[slug];
-  const chapter = story?.chapters.find((ch) => ch.slug === chapterSlug);
+  const [story, setStory] = useState<StoryData | undefined>(undefined);
+  const [chapter, setChapter] = useState<ChapterData | undefined>(undefined);
+
+  useEffect(() => {
+    if (slug) {
+      const foundStory = getStoryBySlug(slug);
+      setStory(foundStory);
+      if (foundStory && chapterSlug) {
+        const foundCh = foundStory.chapters.find((ch) => ch.slug === chapterSlug);
+        setChapter(foundCh);
+      }
+    }
+  }, [slug, chapterSlug]);
 
   // Reader Preferences States
   const [fontSize, setFontSize] = useState<number>(18);
