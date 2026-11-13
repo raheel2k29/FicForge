@@ -12,7 +12,10 @@ import {
   getActiveSpotlights,
   endSpotlightCampaign,
   activateSpotlight,
+  getStorySpotlightEligibility,
+  resetTestCooldowns,
   SpotlightCampaign,
+  StorySpotlightStatus,
 } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
 import {
@@ -27,6 +30,9 @@ import {
   Zap,
   Star,
   ExternalLink,
+  AlertTriangle,
+  Clock,
+  RotateCcw,
 } from "lucide-react";
 
 function PromotionDashboardContent() {
@@ -34,10 +40,10 @@ function PromotionDashboardContent() {
   const storySlugParam = searchParams.get("storySlug");
 
   const [stories, setStories] = useState<StoryData[]>([]);
-  const [credits, setCredits] = useState<number>(1);
+  const [credits, setCredits] = useState<number>(2);
   const [campaigns, setCampaigns] = useState<SpotlightCampaign[]>([]);
   const [selectedStorySlug, setSelectedStorySlug] = useState<string>("");
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   useEffect(() => {
     const load = () => {
@@ -66,10 +72,17 @@ function PromotionDashboardContent() {
     return stories.find((s) => s.slug === selectedStorySlug) || stories[0];
   }, [stories, selectedStorySlug]);
 
+  // Real-time eligibility evaluation for selected story
+  const eligibility: StorySpotlightStatus = useMemo(() => {
+    if (!selectedStorySlug) {
+      return { isEligible: false, status: "ELIGIBLE", message: "Select a story" };
+    }
+    return getStorySpotlightEligibility(selectedStorySlug);
+  }, [selectedStorySlug, campaigns]);
+
   const activeSpotlights = useMemo(() => {
-    return campaigns.filter(
-      (c) => c.status === "ACTIVE" || (c.endDate && c.endDate.includes("(Active)"))
-    );
+    const now = Date.now();
+    return campaigns.filter((c) => c.status === "ACTIVE" && now < c.endTimestamp);
   }, [campaigns]);
 
   const totalImpressions = useMemo(() => {
@@ -78,22 +91,30 @@ function PromotionDashboardContent() {
 
   const handleLaunchPromotion = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedStorySlug || credits < 1) return;
+    if (!selectedStorySlug) return;
 
-    const ok = activateSpotlight(selectedStorySlug, 7);
-    if (ok) {
-      setIsSuccess(true);
-      setTimeout(() => setIsSuccess(false), 4000);
+    const result = activateSpotlight(selectedStorySlug, 7);
+    if (result.success) {
+      setFeedback({ type: "success", message: result.message });
+    } else {
+      setFeedback({ type: "error", message: result.message });
     }
+
+    setTimeout(() => setFeedback(null), 5000);
   };
 
   const handleEndCampaign = (campaignId: string) => {
-    if (confirm("Are you sure you want to end this spotlight early?")) {
+    if (confirm("End this spotlight campaign early? Its 7-day fair discovery cooldown will begin now.")) {
       endSpotlightCampaign(campaignId);
     }
   };
 
-  // Add 1 test credit for easy client testing
+  const handleResetCooldowns = () => {
+    resetTestCooldowns();
+    setFeedback({ type: "success", message: "All test cooldowns have been reset! All stories are now eligible." });
+    setTimeout(() => setFeedback(null), 3500);
+  };
+
   const addTestCredit = () => {
     setPromoCredits(credits + 1);
   };
@@ -134,23 +155,30 @@ function PromotionDashboardContent() {
             Homepage Spotlight Promotions
           </h1>
           <p className="mt-2 text-sm text-slate-400 max-w-2xl leading-relaxed">
-            Redeem monthly membership promotion credits to feature your story on the FicForge Homepage & Discovery Showcase for 7 days. Multiple stories can be spotlighted simultaneously.
+            Redeem monthly membership promotion credits to feature your story on the FicForge Homepage & Discovery Showcase for 7 days. Enforced anti-monopoly rules ensure equal visibility for all community writers.
           </p>
         </div>
 
-        {/* Success Alert */}
-        {isSuccess && (
-          <div className="rounded-2xl border border-emerald-500/40 bg-emerald-950/30 p-4 text-sm text-emerald-300 flex items-center gap-3 animate-in fade-in duration-200">
-            <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
-            <div className="flex-1">
-              <strong>Spotlight Activated!</strong> "{selectedStory?.title}" is now live in the Homepage Showcase alongside all active spotlights.
-            </div>
-            <Link
-              href="/"
-              className="text-xs font-black text-amber-300 hover:underline shrink-0"
-            >
-              View on Homepage →
-            </Link>
+        {/* Feedback Alert */}
+        {feedback && (
+          <div
+            className={`rounded-2xl border p-4 text-sm flex items-center gap-3 animate-in fade-in duration-200 ${
+              feedback.type === "success"
+                ? "border-emerald-500/40 bg-emerald-950/40 text-emerald-300"
+                : "border-red-500/40 bg-red-950/40 text-red-300"
+            }`}
+          >
+            {feedback.type === "success" ? (
+              <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
+            ) : (
+              <AlertTriangle className="h-5 w-5 text-red-400 shrink-0" />
+            )}
+            <div className="flex-1 font-medium">{feedback.message}</div>
+            {feedback.type === "success" && (
+              <Link href="/" className="text-xs font-black text-amber-300 hover:underline shrink-0">
+                View on Homepage →
+              </Link>
+            )}
           </div>
         )}
 
@@ -161,14 +189,25 @@ function PromotionDashboardContent() {
               <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
                 Spotlight Credits
               </span>
-              <button
-                type="button"
-                onClick={addTestCredit}
-                className="text-[10px] font-bold text-amber-400/80 hover:text-amber-300 underline"
-                title="Add 1 credit for test"
-              >
-                + Add Test Credit
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={addTestCredit}
+                  className="text-[10px] font-bold text-amber-400/90 hover:text-amber-300 underline"
+                  title="Add 1 credit for test"
+                >
+                  + Add Credit
+                </button>
+                <span className="text-slate-600">|</span>
+                <button
+                  type="button"
+                  onClick={handleResetCooldowns}
+                  className="text-[10px] font-bold text-slate-400 hover:text-white underline flex items-center gap-0.5"
+                  title="Reset 7-day cooldowns for instant testing"
+                >
+                  <RotateCcw className="h-2.5 w-2.5" /> Clear Cooldowns
+                </button>
+              </div>
             </div>
             <p className="text-3xl font-black text-white mt-1">
               {credits} {credits === 1 ? "Credit" : "Credits"}
@@ -203,7 +242,7 @@ function PromotionDashboardContent() {
           </div>
         </div>
 
-        {/* Transparent Compliance Standard Box */}
+        {/* Anti-Monopoly & Fair Discovery Standard Box */}
         <div className="rounded-2xl border border-blue-500/30 bg-blue-950/20 p-5">
           <div className="flex items-start gap-3.5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 mt-0.5">
@@ -211,11 +250,16 @@ function PromotionDashboardContent() {
             </div>
             <div className="text-xs space-y-1">
               <h4 className="font-extrabold text-white text-sm">
-                FicForge Transparent Promotion Guarantee
+                Anti-Monopoly & Fair Discovery Protection
               </h4>
               <p className="text-slate-300 leading-relaxed">
-                Spotlight features are clearly designated with a <strong>✦ CREATOR SPOTLIGHT</strong> badge for full reader transparency. Paid promotions provide visibility through curated homepage slots and do not manipulate organic algorithm ranks. Both 100% Free Fanfiction and Original works are eligible.
+                To guarantee equal exposure for every author on FicForge and avoid pay-to-win saturation:
               </p>
+              <ul className="list-disc list-inside text-slate-400 space-y-0.5 pt-1">
+                <li><strong>No Double-Spotlighting:</strong> A story cannot have overlapping campaigns while actively featured.</li>
+                <li><strong>7-Day Fair Rotation Cooldown:</strong> When a campaign ends, that title enters a 7-day cooldown before it can be featured again, rotating fresh creators onto the homepage.</li>
+                <li><strong>Multi-Story Eligibility:</strong> Authors with multiple stories can spotlight a different title anytime without waiting for another story&apos;s cooldown.</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -231,7 +275,7 @@ function PromotionDashboardContent() {
 
             <form onSubmit={handleLaunchPromotion} className="space-y-6">
               
-              {/* Story Selector */}
+              {/* Story Selector with Real-Time Status Tags */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
                   Select Story to Feature
@@ -241,16 +285,65 @@ function PromotionDashboardContent() {
                   onChange={(e) => setSelectedStorySlug(e.target.value)}
                   className="w-full h-12 rounded-xl border border-white/10 bg-slate-800 px-4 text-sm font-semibold text-white outline-none focus:border-amber-400 transition-colors"
                 >
-                  {stories.map((story) => (
-                    <option key={story.slug} value={story.slug}>
-                      {story.title} ({story.classification === "FANFICTION" ? "Fanfiction" : "Original"})
-                    </option>
-                  ))}
+                  {stories.map((story) => {
+                    const status = getStorySpotlightEligibility(story.slug);
+                    const tag =
+                      status.status === "CURRENTLY_ACTIVE"
+                        ? " • [✦ ACTIVE IN SPOTLIGHT]"
+                        : status.status === "IN_COOLDOWN"
+                        ? ` • [⏳ IN COOLDOWN (${status.daysRemaining}d)]`
+                        : " • [✓ ELIGIBLE]";
+
+                    return (
+                      <option key={story.slug} value={story.slug}>
+                        {story.title} ({story.classification === "FANFICTION" ? "Fanfiction" : "Original"}){tag}
+                      </option>
+                    );
+                  })}
                 </select>
                 <p className="text-[11px] text-slate-400 mt-1.5">
-                  Select any story from your catalog to feature prominently on the Homepage.
+                  Select any story from your catalog to check real-time eligibility.
                 </p>
               </div>
+
+              {/* Dynamic Eligibility & Cooldown Status Banner */}
+              {eligibility.status === "CURRENTLY_ACTIVE" && (
+                <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs space-y-1.5">
+                  <div className="flex items-center gap-2 text-amber-400 font-extrabold text-sm">
+                    <Sparkles className="h-4 w-4" /> Story is Currently Live in Spotlight
+                  </div>
+                  <p className="text-slate-300 leading-relaxed">
+                    This story is currently active on the Homepage & Browse showcase until{" "}
+                    <strong className="text-white">{eligibility.activeCampaign?.endDate}</strong>. Overlapping campaigns for the same story are strictly disallowed to maintain community fairness.
+                  </p>
+                  <div className="pt-1 text-[11px] text-amber-300 font-mono">
+                    ⏳ {eligibility.daysRemaining} {eligibility.daysRemaining === 1 ? "day" : "days"} remaining in active run
+                  </div>
+                </div>
+              )}
+
+              {eligibility.status === "IN_COOLDOWN" && (
+                <div className="rounded-xl border border-blue-500/40 bg-blue-950/20 p-4 text-xs space-y-1.5">
+                  <div className="flex items-center gap-2 text-blue-400 font-extrabold text-sm">
+                    <Clock className="h-4 w-4" /> Fair Discovery Cooldown Active
+                  </div>
+                  <p className="text-slate-300 leading-relaxed">
+                    This story recently finished its spotlight run. To prevent homepage monopolization and allow other creators their turn, this title has a 7-day cooldown.
+                  </p>
+                  <div className="pt-1 text-[11px] text-blue-300 font-mono">
+                    Eligible again on <strong className="text-white">{eligibility.eligibleDate}</strong> ({eligibility.daysRemaining} {eligibility.daysRemaining === 1 ? "day" : "days"} remaining)
+                  </div>
+                </div>
+              )}
+
+              {eligibility.status === "ELIGIBLE" && (
+                <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-3.5 text-xs text-emerald-300 flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  <span>
+                    <strong>Ready to Spotlight:</strong> This title meets all community discovery standards and is eligible for a 7-day feature.
+                  </span>
+                </div>
+              )}
 
               {/* Placement Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -271,7 +364,26 @@ function PromotionDashboardContent() {
                 </div>
               </div>
 
-              {credits > 0 ? (
+              {/* Submit Button Governed by Strict Eligibility */}
+              {eligibility.status === "CURRENTLY_ACTIVE" ? (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full h-12 rounded-xl border border-amber-500/30 bg-amber-500/10 text-sm font-bold text-amber-400/80 cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Currently Active in Spotlight ({eligibility.daysRemaining}d Left)
+                </button>
+              ) : eligibility.status === "IN_COOLDOWN" ? (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full h-12 rounded-xl border border-blue-500/30 bg-blue-500/10 text-sm font-bold text-blue-400/80 cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <Clock className="h-4 w-4" />
+                  In Community Cooldown ({eligibility.daysRemaining}d Remaining)
+                </button>
+              ) : credits > 0 ? (
                 <button
                   type="submit"
                   className="w-full h-12 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-[#F97316] text-sm font-black text-slate-950 shadow-xl shadow-orange-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
@@ -381,7 +493,9 @@ function PromotionDashboardContent() {
               </thead>
               <tbody className="divide-y divide-white/5 text-sm">
                 {campaigns.map((c) => {
-                  const isActive = c.status === "ACTIVE" || (c.endDate && c.endDate.includes("(Active)"));
+                  const now = Date.now();
+                  const isActive = c.status === "ACTIVE" && now < c.endTimestamp;
+                  const isInCooldown = !isActive && c.cooldownTimestamp && now < c.cooldownTimestamp;
 
                   return (
                     <tr key={c.id} className="hover:bg-white/5 transition-colors">
@@ -406,10 +520,12 @@ function PromotionDashboardContent() {
                           className={`rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase ${
                             isActive
                               ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                              : isInCooldown
+                              ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
                               : "bg-white/5 text-slate-400"
                           }`}
                         >
-                          {isActive ? "ACTIVE" : c.status}
+                          {isActive ? "ACTIVE" : isInCooldown ? "IN COOLDOWN" : "EXPIRED"}
                         </span>
                       </td>
                       <td className="py-3 px-3 text-right">

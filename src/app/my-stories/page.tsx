@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getAllStories } from "@/lib/storyStore";
+import { getStorySpotlightEligibility } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import {
@@ -249,13 +250,39 @@ export default function MyStoriesPage() {
 
                 {/* Right: Actions */}
                 <div className="flex items-center gap-2.5 shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-white/5">
-                  <Link
-                    href={`/write/promote?storySlug=${story.slug}`}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3.5 py-2 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all shadow-sm shadow-amber-500/10"
-                    title="Promote this story to Homepage Spotlight"
-                  >
-                    <Sparkles className="h-3.5 w-3.5 text-amber-400" /> Spotlight
-                  </Link>
+                  {(() => {
+                    const eligibility = getStorySpotlightEligibility(story.slug);
+                    if (eligibility.status === "CURRENTLY_ACTIVE") {
+                      return (
+                        <Link
+                          href="/write/promote"
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3.5 py-2 text-xs font-bold text-emerald-300 hover:bg-emerald-500/20 transition-all shadow-sm"
+                          title="Currently active in Homepage Spotlight"
+                        >
+                          <Sparkles className="h-3.5 w-3.5 fill-emerald-400 text-emerald-400" /> In Spotlight
+                        </Link>
+                      );
+                    }
+                    if (eligibility.status === "IN_COOLDOWN") {
+                      return (
+                        <span
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-xs font-bold text-blue-300 cursor-default"
+                          title={`In 7-day fair discovery cooldown (${eligibility.daysRemaining} days remaining)`}
+                        >
+                          <Clock className="h-3.5 w-3.5 text-blue-400" /> Cooldown ({eligibility.daysRemaining}d)
+                        </span>
+                      );
+                    }
+                    return (
+                      <Link
+                        href={`/write/promote?storySlug=${story.slug}`}
+                        className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3.5 py-2 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all shadow-sm shadow-amber-500/10"
+                        title="Promote this story to Homepage Spotlight"
+                      >
+                        <Sparkles className="h-3.5 w-3.5 text-amber-400" /> Spotlight
+                      </Link>
+                    );
+                  })()}
 
                   <Link
                     href={`/write/chapter?storySlug=${story.slug}`}
