@@ -74,6 +74,16 @@ export default function Navbar() {
                 Workshop
               </Link>
 
+              {/* Creator Spotlight Shortcut */}
+              <Link
+                href="/write/promote"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1.5 text-xs font-bold text-amber-300 transition-all"
+                title="Creator Spotlight Promotion"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                Spotlight
+              </Link>
+
               {/* Avatar & Name */}
               <Link
                 href="/account"

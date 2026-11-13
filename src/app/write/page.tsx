@@ -51,6 +51,13 @@ export default function WriterPortalPage() {
             </Link>
 
             <Link
+              href="/write/promote"
+              className="inline-flex items-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 px-6 py-3.5 text-sm font-bold text-amber-300 hover:bg-amber-500/20 transition-all shadow-md shadow-amber-500/10"
+            >
+              <Sparkles className="h-4 w-4 text-amber-400" /> Spotlight Promotion
+            </Link>
+
+            <Link
               href="/my-stories"
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all"
             >
@@ -60,14 +67,14 @@ export default function WriterPortalPage() {
         </div>
 
         {/* Core Publishing Pillars */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl relative overflow-hidden group hover:border-[#6D5DFB]/40 transition-all">
+          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl relative overflow-hidden group hover:border-[#6D5DFB]/40 transition-all flex flex-col">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400 mb-4 border border-indigo-500/20">
               <UploadCloud className="h-6 w-6" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Smart Bulk Importer</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-400 leading-relaxed flex-1">
               Upload 5, 10, 25, or 50+ chapters in one click or paste your full manuscript. Our engine splits and indexes each chapter atomically.
             </p>
             <Link
@@ -78,12 +85,12 @@ export default function WriterPortalPage() {
             </Link>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl relative overflow-hidden group hover:border-emerald-500/40 transition-all">
+          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl relative overflow-hidden group hover:border-emerald-500/40 transition-all flex flex-col">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 mb-4 border border-emerald-500/20">
               <ShieldCheck className="h-6 w-6" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">100% Free Fanfiction</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-400 leading-relaxed flex-1">
               Transformative fanworks remain strictly free with zero paywalls. Connect with passionate fandom communities in a safe environment.
             </p>
             <Link
@@ -94,12 +101,12 @@ export default function WriterPortalPage() {
             </Link>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl relative overflow-hidden group hover:border-orange-500/40 transition-all">
+          <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6 shadow-xl relative overflow-hidden group hover:border-orange-500/40 transition-all flex flex-col">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-500/10 text-[#F97316] mb-4 border border-orange-500/20">
               <Zap className="h-6 w-6" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Fast Pass & Tipping</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-400 leading-relaxed flex-1">
               Monetize original webnovels with early access Fast Pass countdowns and reader Sparks tipping deposited directly into your creator vault.
             </p>
             <Link
@@ -107,6 +114,22 @@ export default function WriterPortalPage() {
               className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-[#F97316] hover:text-orange-400"
             >
               Publish Original Fiction →
+            </Link>
+          </div>
+
+          <div className="rounded-2xl border border-amber-500/30 bg-slate-900/70 p-6 shadow-xl relative overflow-hidden group hover:border-amber-500/50 transition-all flex flex-col">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 mb-4 border border-amber-500/20">
+              <Sparkles className="h-6 w-6" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Homepage Spotlight</h3>
+            <p className="text-xs text-slate-400 leading-relaxed flex-1">
+              Feature your story on the Homepage & Discovery showcase. Redeem your monthly Forge Plus & Elite promotion credits.
+            </p>
+            <Link
+              href="/write/promote"
+              className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-amber-400 hover:text-amber-300"
+            >
+              Launch Spotlight Campaign →
             </Link>
           </div>
 

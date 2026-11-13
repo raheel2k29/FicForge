@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense, useMemo } from "react";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import { getAllStories } from "@/lib/storyStore";
@@ -28,6 +29,9 @@ import {
 } from "lucide-react";
 
 function PromotionDashboardContent() {
+  const searchParams = useSearchParams();
+  const storySlugParam = searchParams.get("storySlug");
+
   const [stories, setStories] = useState<StoryData[]>([]);
   const [credits, setCredits] = useState<number>(1);
   const [campaigns, setCampaigns] = useState<SpotlightCampaign[]>([]);
@@ -41,7 +45,9 @@ function PromotionDashboardContent() {
       setCredits(getPromoCredits());
       setCampaigns(getAllSpotlightCampaigns());
 
-      if (all.length > 0 && !selectedStorySlug) {
+      if (storySlugParam && all.some((s) => s.slug === storySlugParam)) {
+        setSelectedStorySlug(storySlugParam);
+      } else if (all.length > 0 && !selectedStorySlug) {
         setSelectedStorySlug(all[0].slug);
       }
     };
@@ -53,7 +59,7 @@ function PromotionDashboardContent() {
       window.removeEventListener("ficforge_spotlight_updated", load);
       window.removeEventListener("storage", load);
     };
-  }, [selectedStorySlug]);
+  }, [storySlugParam, selectedStorySlug]);
 
   const selectedStory = useMemo(() => {
     return stories.find((s) => s.slug === selectedStorySlug) || stories[0];
