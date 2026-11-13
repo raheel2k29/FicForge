@@ -70,6 +70,12 @@ export default function MyStoriesPage() {
 
           <div className="flex items-center gap-3">
             <Link
+              href="/write/promote"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3.5 py-2.5 text-xs font-black text-amber-300 hover:bg-amber-500/20 transition-all"
+            >
+              <Sparkles className="h-4 w-4 text-amber-400" /> Spotlight
+            </Link>
+            <Link
               href="/write/bulk-import"
               className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-slate-900/80 px-4 py-2.5 text-xs font-extrabold text-white hover:border-[#6D5DFB] hover:text-[#A78BFA] transition-all"
             >

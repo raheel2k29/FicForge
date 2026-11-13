@@ -3,39 +3,179 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getAllStories } from "@/lib/storyStore";
+import { getActiveSpotlight, SpotlightCampaign } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
-import { BookOpen, Sparkles, ArrowRight, Heart, Star, FileText } from "lucide-react";
+import {
+  BookOpen,
+  Sparkles,
+  ArrowRight,
+  Heart,
+  Star,
+  FileText,
+  ShieldCheck,
+  Zap,
+} from "lucide-react";
 
 export default function HomeFeaturedStories() {
   const [stories, setStories] = useState<StoryData[]>([]);
+  const [activeSpotlight, setActiveSpotlight] = useState<SpotlightCampaign | null>(null);
 
   useEffect(() => {
     const load = () => {
       const all = Object.values(getAllStories());
       setStories(all);
+      setActiveSpotlight(getActiveSpotlight());
     };
 
     load();
     window.addEventListener("ficforge_stories_updated", load);
+    window.addEventListener("ficforge_spotlight_updated", load);
     window.addEventListener("storage", load);
     return () => {
       window.removeEventListener("ficforge_stories_updated", load);
+      window.removeEventListener("ficforge_spotlight_updated", load);
       window.removeEventListener("storage", load);
     };
   }, []);
 
+  const spotlightStory = activeSpotlight
+    ? stories.find((s) => s.slug === activeSpotlight.storySlug) || stories[0]
+    : stories[0];
+
   return (
     <section className="w-full py-16 px-4 sm:px-6 lg:px-8 border-t border-b border-white/10 bg-[#050B16]">
-      <div className="max-w-[1180px] mx-auto">
+      <div className="max-w-[1180px] mx-auto space-y-12">
         
-        {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
+        {/* ========================================= */}
+        {/* CREATOR SPOTLIGHT PROMOTION SHOWCASE      */}
+        {/* ========================================= */}
+        {spotlightStory && (
+          <div className="rounded-3xl border-2 border-amber-500/40 bg-gradient-to-br from-slate-900/95 via-[#0A1020] to-slate-950 p-6 sm:p-8 shadow-2xl relative overflow-hidden group">
+            
+            {/* Ambient Spotlight Glow */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-amber-500/15 via-[#F97316]/10 to-transparent blur-3xl pointer-events-none" />
+
+            {/* Spotlight Header Badges */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 relative z-10 border-b border-white/10 pb-4">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-slate-950 shadow-md shadow-amber-500/20">
+                  <Sparkles className="h-3.5 w-3.5 fill-slate-950" />
+                  CREATOR SPOTLIGHT
+                </span>
+                <span className="text-xs text-slate-400 font-semibold hidden sm:inline">
+                  • 7-Day Discovery Feature
+                </span>
+              </div>
+
+              <Link
+                href="/write/promote"
+                className="text-xs font-bold text-amber-300 hover:text-white transition-colors inline-flex items-center gap-1"
+              >
+                Promote Your Story <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+
+            {/* Spotlight Story Body */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center relative z-10">
+              {/* Cover Art (3 cols) */}
+              <div className="md:col-span-3 flex justify-center">
+                <div className="h-64 w-44 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-500/30 bg-slate-950 relative group-hover:scale-105 transition-transform duration-300">
+                  <img
+                    src={spotlightStory.coverImageUrl}
+                    alt={spotlightStory.title}
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                </div>
+              </div>
+
+              {/* Story Details (9 cols) */}
+              <div className="md:col-span-9 space-y-4 text-left">
+                <div className="flex items-center gap-2 flex-wrap">
+                  {spotlightStory.classification === "FANFICTION" ? (
+                    <span className="rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-black uppercase">
+                      100% Free Fanfiction • {spotlightStory.fandom || "Fandom"}
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 px-2.5 py-0.5 text-[10px] font-black uppercase">
+                      Original Webnovel
+                    </span>
+                  )}
+
+                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-slate-300 uppercase">
+                    {spotlightStory.rating || "GENERAL"}
+                  </span>
+                </div>
+
+                <Link href={`/story/${spotlightStory.slug}`}>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white hover:text-amber-300 transition-colors">
+                    {spotlightStory.title}
+                  </h3>
+                </Link>
+
+                <div className="flex items-center gap-2">
+                  <img
+                    src={spotlightStory.author?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"}
+                    alt={spotlightStory.author?.name || "Author"}
+                    className="h-6 w-6 rounded-full object-cover"
+                  />
+                  <span className="text-xs font-bold text-slate-300">
+                    by {spotlightStory.author?.name || "Author"}
+                  </span>
+                  {spotlightStory.author?.isVerified && (
+                    <span className="text-blue-400 text-xs font-bold" title="Verified Creator">
+                      ✓
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl line-clamp-3">
+                  {spotlightStory.synopsis}
+                </p>
+
+                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
+                  <span className="font-semibold text-slate-300">
+                    📖 {(spotlightStory.chapters || []).length} Chapters
+                  </span>
+                  <span>•</span>
+                  <span className="font-semibold text-slate-300">
+                    ✍️ {(spotlightStory.stats?.words || 0).toLocaleString()} Words
+                  </span>
+                  <span>•</span>
+                  <span className="font-semibold text-amber-300">
+                    ⚡ Featured Spotlight Story
+                  </span>
+                </div>
+
+                <div className="pt-2 flex items-center gap-3">
+                  <Link
+                    href={`/story/${spotlightStory.slug}`}
+                    className="rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-[#F97316] px-6 py-2.5 text-xs font-black text-slate-950 shadow-lg shadow-orange-500/20 hover:opacity-95 transition-all inline-flex items-center gap-1.5"
+                  >
+                    Read Spotlight Story <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+
+                  <Link
+                    href="/browse"
+                    className="rounded-xl border border-white/20 bg-slate-800/80 px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-white transition-all"
+                  >
+                    View in Library
+                  </Link>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* Section Header for Trending Stories */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-[#F97316] bg-orange-500/10 border border-orange-500/30 rounded-full px-3.5 py-1 mb-3">
-              ✦ FEATURED STORIES & RELEASES
+              ✦ LIBRARY DISCOVERY
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-              Trending in the Library
+              Trending Stories & Releases
             </h2>
             <p className="mt-2 text-sm text-slate-400 max-w-xl">
               Explore standout fanfiction, original serialized webnovels, and newly forged chapters published by creators across FicForge.
