@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import { getAllStories } from "@/lib/storyStore";
+import { isStorySpotlighted } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
 import {
   Search,
@@ -227,11 +228,16 @@ export default function BrowsePage() {
               const isLiked = likedStories[storyId];
               const isSaved = savedStories[storyId];
               const likeCount = (story.stats?.likes || 0) + (isLiked ? 1 : 0);
+              const isSpotlighted = isStorySpotlighted(story.slug);
 
               return (
                 <div
                   key={storyId}
-                  className="group relative flex flex-col rounded-2xl border border-white/10 bg-gradient-to-b from-slate-900/90 to-[#070E1E] overflow-hidden shadow-xl hover:border-[#6D5DFB]/50 hover:shadow-2xl hover:shadow-indigo-950/40 transition-all duration-300"
+                  className={`group relative flex flex-col rounded-2xl border bg-gradient-to-b from-slate-900/90 to-[#070E1E] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 ${
+                    isSpotlighted
+                      ? "border-amber-500/40 ring-1 ring-amber-500/30 hover:border-amber-400"
+                      : "border-white/10 hover:border-[#6D5DFB]/50 hover:shadow-indigo-950/40"
+                  }`}
                 >
                   {/* Card Cover & Header */}
                   <div className="relative h-56 w-full overflow-hidden bg-slate-950">
@@ -244,15 +250,23 @@ export default function BrowsePage() {
 
                     {/* Top Badges */}
                     <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2 pointer-events-none">
-                      {story.classification === "FANFICTION" ? (
-                        <span className="rounded-full bg-emerald-500/90 backdrop-blur-md px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-950 shadow-md">
-                          100% Free Fanfiction
-                        </span>
-                      ) : (
-                        <span className="rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-950 shadow-md">
-                          Original Webnovel
-                        </span>
-                      )}
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {isSpotlighted && (
+                          <span className="rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-slate-950 shadow-md">
+                            ✦ Spotlight
+                          </span>
+                        )}
+
+                        {story.classification === "FANFICTION" ? (
+                          <span className="rounded-full bg-emerald-500/90 backdrop-blur-md px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-950 shadow-md">
+                            100% Free Fanfiction
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-950 shadow-md">
+                            Original Webnovel
+                          </span>
+                        )}
+                      </div>
 
                       <span
                         className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider backdrop-blur-md ${

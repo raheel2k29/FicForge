@@ -65,15 +65,55 @@ export function getAllSpotlightCampaigns(): SpotlightCampaign[] {
       localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify([DEFAULT_SPOTLIGHT]));
       return [DEFAULT_SPOTLIGHT];
     }
-    return JSON.parse(stored);
+    const list: SpotlightCampaign[] = JSON.parse(stored);
+
+    // Auto-heal: If an item has "(Active)" in endDate, ensure status is ACTIVE
+    const healed = list.map((c) => {
+      if (c.endDate && c.endDate.includes("(Active)") && c.status !== "EXPIRED") {
+        return { ...c, status: "ACTIVE" as const };
+      }
+      return c;
+    });
+
+    return healed;
   } catch {
     return [DEFAULT_SPOTLIGHT];
   }
 }
 
-export function getActiveSpotlight(): SpotlightCampaign | null {
+export function getActiveSpotlights(): SpotlightCampaign[] {
   const campaigns = getAllSpotlightCampaigns();
-  return campaigns.find((c) => c.status === "ACTIVE") || campaigns[0] || null;
+  const active = campaigns.filter((c) => c.status === "ACTIVE" || (c.endDate && c.endDate.includes("(Active)")));
+  if (active.length === 0 && campaigns.length > 0) {
+    return [campaigns[0]];
+  }
+  return active;
+}
+
+export function getActiveSpotlight(): SpotlightCampaign | null {
+  const active = getActiveSpotlights();
+  return active.length > 0 ? active[0] : null;
+}
+
+export function isStorySpotlighted(storySlug: string): boolean {
+  const active = getActiveSpotlights();
+  return active.some((c) => c.storySlug === storySlug);
+}
+
+export function endSpotlightCampaign(campaignId: string): void {
+  if (typeof window === "undefined") return;
+  const campaigns = getAllSpotlightCampaigns().map((c) => {
+    if (c.id === campaignId) {
+      return {
+        ...c,
+        status: "EXPIRED" as const,
+        endDate: `${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} (Ended)`,
+      };
+    }
+    return c;
+  });
+  localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(campaigns));
+  window.dispatchEvent(new Event("ficforge_spotlight_updated"));
 }
 
 export function activateSpotlight(storySlug: string, days: number = 7): boolean {
@@ -100,16 +140,15 @@ export function activateSpotlight(storySlug: string, days: number = 7): boolean 
     startDate: now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
     endDate: `${end.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} (Active)`,
     status: "ACTIVE",
-    impressions: 120,
-    clicks: 14,
+    impressions: 140,
+    clicks: 18,
   };
 
-  const campaigns = getAllSpotlightCampaigns().map((c) => ({
-    ...c,
-    status: "EXPIRED" as const,
-  }));
+  // Keep other active campaigns alive so multiple stories can be spotlighted simultaneously!
+  // If this exact story already had a campaign, replace it with the new active one
+  const otherCampaigns = getAllSpotlightCampaigns().filter((c) => c.storySlug !== story.slug);
+  const updatedCampaigns = [newCampaign, ...otherCampaigns];
 
-  const updatedCampaigns = [newCampaign, ...campaigns];
   localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(updatedCampaigns));
   setPromoCredits(credits - 1);
 

@@ -9,7 +9,8 @@ import {
   getPromoCredits,
   setPromoCredits,
   getAllSpotlightCampaigns,
-  getActiveSpotlight,
+  getActiveSpotlights,
+  endSpotlightCampaign,
   activateSpotlight,
   SpotlightCampaign,
 } from "@/lib/promotionStore";
@@ -65,8 +66,14 @@ function PromotionDashboardContent() {
     return stories.find((s) => s.slug === selectedStorySlug) || stories[0];
   }, [stories, selectedStorySlug]);
 
-  const activeSpotlight = useMemo(() => {
-    return campaigns.find((c) => c.status === "ACTIVE");
+  const activeSpotlights = useMemo(() => {
+    return campaigns.filter(
+      (c) => c.status === "ACTIVE" || (c.endDate && c.endDate.includes("(Active)"))
+    );
+  }, [campaigns]);
+
+  const totalImpressions = useMemo(() => {
+    return campaigns.reduce((acc, c) => acc + (c.impressions || 0), 0);
   }, [campaigns]);
 
   const handleLaunchPromotion = (e: React.FormEvent) => {
@@ -77,6 +84,12 @@ function PromotionDashboardContent() {
     if (ok) {
       setIsSuccess(true);
       setTimeout(() => setIsSuccess(false), 4000);
+    }
+  };
+
+  const handleEndCampaign = (campaignId: string) => {
+    if (confirm("Are you sure you want to end this spotlight early?")) {
+      endSpotlightCampaign(campaignId);
     }
   };
 
@@ -99,6 +112,13 @@ function PromotionDashboardContent() {
           </Link>
 
           <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 px-3 py-1 text-xs font-bold text-slate-300 transition-all"
+            >
+              <ExternalLink className="h-3.5 w-3.5" /> View Homepage Showcase
+            </Link>
+
             <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-3 py-1 text-xs font-bold text-amber-300 flex items-center gap-1.5">
               <Sparkles className="h-3.5 w-3.5" /> Forge Plus Member
             </span>
@@ -114,7 +134,7 @@ function PromotionDashboardContent() {
             Homepage Spotlight Promotions
           </h1>
           <p className="mt-2 text-sm text-slate-400 max-w-2xl leading-relaxed">
-            Redeem monthly membership promotion credits to feature your story on the FicForge Homepage & Discovery Showcase for 7 days.
+            Redeem monthly membership promotion credits to feature your story on the FicForge Homepage & Discovery Showcase for 7 days. Multiple stories can be spotlighted simultaneously.
           </p>
         </div>
 
@@ -122,9 +142,15 @@ function PromotionDashboardContent() {
         {isSuccess && (
           <div className="rounded-2xl border border-emerald-500/40 bg-emerald-950/30 p-4 text-sm text-emerald-300 flex items-center gap-3 animate-in fade-in duration-200">
             <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0" />
-            <span>
-              <strong>Spotlight Activated!</strong> "{selectedStory?.title}" is now live in the Homepage & Discovery Spotlight Showcase.
-            </span>
+            <div className="flex-1">
+              <strong>Spotlight Activated!</strong> "{selectedStory?.title}" is now live in the Homepage Showcase alongside all active spotlights.
+            </div>
+            <Link
+              href="/"
+              className="text-xs font-black text-amber-300 hover:underline shrink-0"
+            >
+              View on Homepage →
+            </Link>
           </div>
         )}
 
@@ -154,89 +180,93 @@ function PromotionDashboardContent() {
 
           <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              Current Active Spotlight
+              Active Spotlights Live
             </span>
-            <p className="text-xl font-black text-white mt-2 truncate">
-              {activeSpotlight ? activeSpotlight.storyTitle : "None active"}
+            <p className="text-3xl font-black text-white mt-1">
+              {activeSpotlights.length} {activeSpotlights.length === 1 ? "Story" : "Stories"}
             </p>
             <span className="text-[11px] text-emerald-400 mt-1 inline-block">
-              ● Active on Homepage & Browse
+              ● Live in Homepage Multi-Spotlight Showcase
             </span>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              Spotlight Reach
+              Total Spotlight Reach
             </span>
             <p className="text-3xl font-black text-white mt-1">
-              {activeSpotlight ? activeSpotlight.impressions.toLocaleString() : "0"}
+              {totalImpressions.toLocaleString()}
             </p>
             <span className="text-[11px] text-indigo-400 mt-1 inline-block">
-              Reader impressions generated
+              Reader impressions across all campaigns
             </span>
           </div>
         </div>
 
         {/* Transparent Compliance Standard Box */}
-        <div className="rounded-2xl border border-white/10 bg-[#020617]/70 p-4 text-xs text-slate-400 space-y-1.5 leading-relaxed">
-          <div className="flex items-center gap-2 text-slate-200 font-bold">
-            <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
-            <span>Transparent Platform Policy</span>
+        <div className="rounded-2xl border border-blue-500/30 bg-blue-950/20 p-5">
+          <div className="flex items-start gap-3.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 mt-0.5">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <div className="text-xs space-y-1">
+              <h4 className="font-extrabold text-white text-sm">
+                FicForge Transparent Promotion Guarantee
+              </h4>
+              <p className="text-slate-300 leading-relaxed">
+                Spotlight features are clearly designated with a <strong>✦ CREATOR SPOTLIGHT</strong> badge for full reader transparency. Paid promotions provide visibility through curated homepage slots and do not manipulate organic algorithm ranks. Both 100% Free Fanfiction and Original works are eligible.
+              </p>
+            </div>
           </div>
-          <p>
-            Creator Spotlights are clearly and honestly labeled with the golden <strong className="text-amber-300">✦ Creator Spotlight</strong> badge. FicForge strictly prohibits buying reviews, fake rating stars, or manipulating algorithmic ranking scores. All reader reviews, comment threads, and organic charts remain 100% independent.
-          </p>
         </div>
 
-        {/* Launch New Spotlight Campaign Form & Live Preview */}
+        {/* Promotion Launcher Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Form (7 cols) */}
-          <div className="lg:col-span-7 rounded-3xl border border-white/10 bg-slate-900/85 p-6 sm:p-8 shadow-2xl space-y-6">
-            <div>
-              <span className="text-xs font-black uppercase tracking-wider text-[#F97316]">
-                NEW CAMPAIGN
-              </span>
-              <h3 className="text-2xl font-black text-white mt-1">
-                Launch a 7-Day Spotlight
-              </h3>
-              <p className="text-xs text-slate-400 mt-1">
-                Select one of your published stories to showcase in the top discovery banner.
-              </p>
-            </div>
+          <div className="lg:col-span-7 rounded-2xl border border-white/10 bg-slate-900/90 p-6 sm:p-8 shadow-xl space-y-6">
+            <h2 className="text-xl font-bold text-white">
+              Launch a 7-Day Spotlight Campaign
+            </h2>
 
-            <form onSubmit={handleLaunchPromotion} className="space-y-5">
+            <form onSubmit={handleLaunchPromotion} className="space-y-6">
+              
+              {/* Story Selector */}
               <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-2">
-                  Select Story to Promote
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                  Select Story to Feature
                 </label>
                 <select
                   value={selectedStorySlug}
                   onChange={(e) => setSelectedStorySlug(e.target.value)}
-                  className="w-full h-12 rounded-xl border border-white/15 bg-[#020617] px-4 text-sm font-bold text-white outline-none focus:border-[#6D5DFB]"
+                  className="w-full h-12 rounded-xl border border-white/10 bg-slate-800 px-4 text-sm font-semibold text-white outline-none focus:border-amber-400 transition-colors"
                 >
-                  {stories.map((s) => (
-                    <option key={s.slug} value={s.slug}>
-                      {s.title} ({s.classification === "FANFICTION" ? "Fanfiction" : "Original"})
+                  {stories.map((story) => (
+                    <option key={story.slug} value={story.slug}>
+                      {story.title} ({story.classification === "FANFICTION" ? "Fanfiction" : "Original"})
                     </option>
                   ))}
                 </select>
+                <p className="text-[11px] text-slate-400 mt-1.5">
+                  Select any story from your catalog to feature prominently on the Homepage.
+                </p>
               </div>
 
+              {/* Placement Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-xl border border-white/10 bg-slate-800/60 p-4">
-                  <span className="block text-xs text-slate-400 font-bold uppercase mb-1">
+                  <span className="text-xs font-bold text-slate-300 block mb-1">
                     Placement
                   </span>
-                  <strong className="text-sm text-white">Homepage & Browse Hero</strong>
-                  <span className="block text-[11px] text-slate-400 mt-0.5">Top prominent showcase</span>
+                  <strong className="text-sm text-white block">Homepage & Discovery Showcase</strong>
+                  <span className="block text-[11px] text-slate-400 mt-0.5">Top of discovery feed with golden badge</span>
                 </div>
 
                 <div className="rounded-xl border border-white/10 bg-slate-800/60 p-4">
-                  <span className="block text-xs text-slate-400 font-bold uppercase mb-1">
-                    Duration
+                  <span className="text-xs font-bold text-slate-300 block mb-1">
+                    Campaign Duration
                   </span>
-                  <strong className="text-sm text-white">7 Days Active</strong>
+                  <strong className="text-sm text-amber-400 block">7 Consecutive Days</strong>
                   <span className="block text-[11px] text-slate-400 mt-0.5">Cost: 1 Spotlight Credit</span>
                 </div>
               </div>
@@ -328,6 +358,12 @@ function PromotionDashboardContent() {
                 Track reader reach, impressions, and duration for all active and past promotions.
               </p>
             </div>
+            <Link
+              href="/"
+              className="text-xs font-bold text-amber-300 hover:text-white transition-colors"
+            >
+              View on Homepage →
+            </Link>
           </div>
 
           <div className="overflow-x-auto">
@@ -339,41 +375,58 @@ function PromotionDashboardContent() {
                   <th className="py-3 px-3">Duration</th>
                   <th className="py-3 px-3">Impressions</th>
                   <th className="py-3 px-3">Clicks</th>
-                  <th className="py-3 px-3 text-right">Status</th>
+                  <th className="py-3 px-3">Status</th>
+                  <th className="py-3 px-3 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 text-sm">
-                {campaigns.map((c) => (
-                  <tr key={c.id} className="hover:bg-white/5 transition-colors">
-                    <td className="py-3 px-3 font-bold text-white flex items-center gap-2.5">
-                      <img src={c.coverImageUrl} alt={c.storyTitle} className="h-8 w-6 rounded object-cover" />
-                      <span className="truncate max-w-[220px]">{c.storyTitle}</span>
-                    </td>
-                    <td className="py-3 px-3 text-xs text-slate-300">
-                      Homepage & Browse Hero
-                    </td>
-                    <td className="py-3 px-3 text-xs text-slate-400 font-mono">
-                      {c.startDate} – {c.endDate}
-                    </td>
-                    <td className="py-3 px-3 text-xs font-mono text-indigo-400">
-                      {c.impressions.toLocaleString()}
-                    </td>
-                    <td className="py-3 px-3 text-xs font-mono text-emerald-400">
-                      {c.clicks.toLocaleString()}
-                    </td>
-                    <td className="py-3 px-3 text-right">
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase ${
-                          c.status === "ACTIVE"
-                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                            : "bg-white/5 text-slate-400"
-                        }`}
-                      >
-                        {c.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {campaigns.map((c) => {
+                  const isActive = c.status === "ACTIVE" || (c.endDate && c.endDate.includes("(Active)"));
+
+                  return (
+                    <tr key={c.id} className="hover:bg-white/5 transition-colors">
+                      <td className="py-3 px-3 font-bold text-white flex items-center gap-2.5">
+                        <img src={c.coverImageUrl} alt={c.storyTitle} className="h-8 w-6 rounded object-cover" />
+                        <span className="truncate max-w-[200px]">{c.storyTitle}</span>
+                      </td>
+                      <td className="py-3 px-3 text-xs text-slate-300">
+                        Homepage & Discovery Hero
+                      </td>
+                      <td className="py-3 px-3 text-xs text-slate-400 font-mono">
+                        {c.startDate} – {c.endDate}
+                      </td>
+                      <td className="py-3 px-3 text-xs font-mono text-indigo-400">
+                        {c.impressions.toLocaleString()}
+                      </td>
+                      <td className="py-3 px-3 text-xs font-mono text-emerald-400">
+                        {c.clicks.toLocaleString()}
+                      </td>
+                      <td className="py-3 px-3">
+                        <span
+                          className={`rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase ${
+                            isActive
+                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                              : "bg-white/5 text-slate-400"
+                          }`}
+                        >
+                          {isActive ? "ACTIVE" : c.status}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-right">
+                        {isActive && (
+                          <button
+                            type="button"
+                            onClick={() => handleEndCampaign(c.id)}
+                            className="text-xs text-red-400 hover:text-red-300 underline font-semibold"
+                            title="End this spotlight campaign early"
+                          >
+                            End Early
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -386,19 +439,10 @@ function PromotionDashboardContent() {
 
 export default function PromotionDashboardPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-[#050B16] flex items-center justify-center text-slate-400">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
-        </div>
-      }
-    >
-      <WriterAuthGate
-        title="Creator Spotlight Promotion"
-        description="Sign in to your creator account to redeem promotion credits and launch Spotlight campaigns on the Homepage and Browse Showcase."
-      >
+    <WriterAuthGate title="Creator Spotlight Promotions">
+      <Suspense fallback={<div className="min-h-screen bg-[#050B16] text-white p-8">Loading promotion dashboard...</div>}>
         <PromotionDashboardContent />
-      </WriterAuthGate>
-    </Suspense>
+      </Suspense>
+    </WriterAuthGate>
   );
 }
