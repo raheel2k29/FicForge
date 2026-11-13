@@ -6,6 +6,7 @@ import { useState, useEffect, Suspense, useMemo } from "react";
 import { getAllStories, bulkSaveChapters } from "@/lib/storyStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
+import CreatorStudioHeader from "@/components/CreatorStudioHeader";
 import {
   UploadCloud,
   FileText,
@@ -215,8 +216,9 @@ function BulkImportContent() {
   const totalBatchWords = detectedChapters.reduce((acc, c) => acc + c.wordCount, 0);
 
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1240px] mx-auto space-y-8">
+    <div className="min-h-screen bg-[#050B16] text-white">
+      <CreatorStudioHeader currentTab="import" />
+      <div className="max-w-[1240px] mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Top Navigation */}
         <div className="flex items-center justify-between">

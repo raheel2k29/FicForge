@@ -6,6 +6,7 @@ import { getAllStories } from "@/lib/storyStore";
 import { getStorySpotlightEligibility } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
+import CreatorStudioHeader from "@/components/CreatorStudioHeader";
 import {
   BookOpen,
   Plus,
@@ -52,8 +53,9 @@ export default function MyStoriesPage() {
       title="Writer Workshop Access"
       description="Sign in to your FicForge creator account to view your stories, review draft manuscripts, and publish new chapters."
     >
-      <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1240px] mx-auto space-y-8">
+      <div className="min-h-screen bg-[#050B16] text-white">
+        <CreatorStudioHeader currentTab="stories" />
+        <div className="max-w-[1240px] mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/10 pb-6">

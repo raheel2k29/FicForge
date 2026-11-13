@@ -65,23 +65,14 @@ export default function Navbar() {
                 <span>{currentUser.sparksBalance} Sparks</span>
               </div>
 
-              {/* Creator Studio Shortcut */}
+              {/* Unified Creator Studio Button */}
               <Link
-                href="/my-stories"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 px-3.5 py-1.5 text-xs font-bold text-white transition-all"
+                href="/write"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#6D5DFB]/40 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-orange-500/15 hover:from-indigo-500/25 hover:to-orange-500/25 px-3.5 py-1.5 text-xs font-black text-white transition-all shadow-sm shadow-indigo-600/10"
+                title="Open Creator Studio Dashboard"
               >
                 <PenTool className="h-3.5 w-3.5 text-[#F97316]" />
-                Workshop
-              </Link>
-
-              {/* Creator Spotlight Shortcut */}
-              <Link
-                href="/write/promote"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1.5 text-xs font-bold text-amber-300 transition-all"
-                title="Creator Spotlight Promotion"
-              >
-                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                Spotlight
+                Creator Studio
               </Link>
 
               {/* Avatar & Name */}

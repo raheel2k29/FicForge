@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense, useMemo } from "react";
 import WriterAuthGate from "@/components/WriterAuthGate";
+import CreatorStudioHeader from "@/components/CreatorStudioHeader";
 import { getAllStories } from "@/lib/storyStore";
 import {
   getPromoCredits,
@@ -120,8 +121,9 @@ function PromotionDashboardContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1180px] mx-auto space-y-8">
+    <div className="min-h-screen bg-[#050B16] text-white">
+      <CreatorStudioHeader currentTab="spotlight" />
+      <div className="max-w-[1240px] mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
         
         {/* Navigation & Header */}
         <div className="flex items-center justify-between">
