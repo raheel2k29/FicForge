@@ -29,7 +29,8 @@ export interface StorySpotlightStatus {
   message: string;
 }
 
-const SPOTLIGHT_STORAGE_KEY = "ficforge_spotlight_campaigns_v2";
+// Bumping to v4 to clear any stale client caches from earlier tests
+const SPOTLIGHT_STORAGE_KEY = "ficforge_spotlight_campaigns_v4";
 const PROMO_CREDITS_KEY = "ficforge_promo_credits_v1";
 
 const NOW = Date.now();
@@ -45,9 +46,9 @@ export const DEFAULT_SPOTLIGHTS: SpotlightCampaign[] = [
     classification: "ORIGINAL",
     startDate: "Nov 10, 2026",
     endDate: "Nov 17, 2026",
-    startTimestamp: NOW - (3 * 24 * 60 * 60 * 1000),
-    endTimestamp: NOW + (4 * 24 * 60 * 60 * 1000),
-    cooldownTimestamp: NOW + (11 * 24 * 60 * 60 * 1000),
+    startTimestamp: NOW - 3 * 24 * 60 * 60 * 1000,
+    endTimestamp: NOW + 4 * 24 * 60 * 60 * 1000,
+    cooldownTimestamp: NOW + 11 * 24 * 60 * 60 * 1000,
     status: "ACTIVE",
     impressions: 48920,
     clicks: 6410,
@@ -61,9 +62,9 @@ export const DEFAULT_SPOTLIGHTS: SpotlightCampaign[] = [
     classification: "FANFICTION",
     startDate: "Nov 12, 2026",
     endDate: "Nov 19, 2026",
-    startTimestamp: NOW - (1 * 24 * 60 * 60 * 1000),
-    endTimestamp: NOW + (6 * 24 * 60 * 60 * 1000),
-    cooldownTimestamp: NOW + (13 * 24 * 60 * 60 * 1000),
+    startTimestamp: NOW - 1 * 24 * 60 * 60 * 1000,
+    endTimestamp: NOW + 6 * 24 * 60 * 60 * 1000,
+    cooldownTimestamp: NOW + 13 * 24 * 60 * 60 * 1000,
     status: "ACTIVE",
     impressions: 31200,
     clicks: 4180,
@@ -77,14 +78,37 @@ export const DEFAULT_SPOTLIGHTS: SpotlightCampaign[] = [
     classification: "ORIGINAL",
     startDate: "Nov 13, 2026",
     endDate: "Nov 20, 2026",
-    startTimestamp: NOW - (12 * 60 * 60 * 1000),
-    endTimestamp: NOW + (6.5 * 24 * 60 * 60 * 1000),
-    cooldownTimestamp: NOW + (13.5 * 24 * 60 * 60 * 1000),
+    startTimestamp: NOW - 12 * 60 * 60 * 1000,
+    endTimestamp: NOW + 6.5 * 24 * 60 * 60 * 1000,
+    cooldownTimestamp: NOW + 13.5 * 24 * 60 * 60 * 1000,
     status: "ACTIVE",
     impressions: 18450,
     clicks: 2890,
   },
 ];
+
+/**
+ * Server Synchronization: Reconciles local client cache with the authoritative server API
+ */
+export async function syncSpotlightsWithServer(): Promise<SpotlightCampaign[]> {
+  if (typeof window === "undefined") return DEFAULT_SPOTLIGHTS;
+
+  try {
+    const res = await fetch("/api/spotlight", { cache: "no-store" });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.campaigns && Array.isArray(data.campaigns)) {
+        localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(data.campaigns));
+        window.dispatchEvent(new Event("ficforge_spotlight_updated"));
+        return data.campaigns;
+      }
+    }
+  } catch (err) {
+    console.warn("Could not sync with /api/spotlight, using client store:", err);
+  }
+
+  return getAllSpotlightCampaigns();
+}
 
 export function getPromoCredits(): number {
   if (typeof window === "undefined") return 1;
@@ -117,11 +141,9 @@ export function getAllSpotlightCampaigns(): SpotlightCampaign[] {
     const stored = localStorage.getItem(SPOTLIGHT_STORAGE_KEY);
     let list: SpotlightCampaign[] = stored ? JSON.parse(stored) : DEFAULT_SPOTLIGHTS;
 
-    // Auto-enrich: If only 1 campaign is present in storage, backfill with default spotlights so the showcase is rich
+    // Auto-enrich if empty or single story
     if (list.length <= 1) {
-      const existingSlugs = new Set(list.map((c) => c.storySlug));
-      const missingDefaults = DEFAULT_SPOTLIGHTS.filter((d) => !existingSlugs.has(d.storySlug));
-      list = [...list, ...missingDefaults];
+      list = DEFAULT_SPOTLIGHTS;
       localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(list));
     }
 
@@ -132,15 +154,13 @@ export function getAllSpotlightCampaigns(): SpotlightCampaign[] {
     const validated = list.map((c) => {
       let camp = { ...c };
 
-      // Ensure timestamps exist
       if (!camp.startTimestamp) {
         camp.startTimestamp = now - 24 * 60 * 60 * 1000;
-        camp.endTimestamp = now + (6 * 24 * 60 * 60 * 1000);
+        camp.endTimestamp = now + 6 * 24 * 60 * 60 * 1000;
         camp.cooldownTimestamp = camp.endTimestamp + SEVEN_DAYS_MS;
         hasChanges = true;
       }
 
-      // Auto-expire if end date reached
       if (camp.status === "ACTIVE" && now >= camp.endTimestamp) {
         camp.status = "EXPIRED";
         hasChanges = true;
@@ -181,8 +201,6 @@ export function isStorySpotlighted(storySlug: string): boolean {
 
 /**
  * Checks story spotlight eligibility enforcing Anti-Monopoly & Fair Discovery Rules:
- * 1. A story CANNOT have overlapping active campaigns (No double-spotlighting the same story).
- * 2. After a 7-day spotlight finishes, a 7-day fair rotation cooldown prevents spamming.
  */
 export function getStorySpotlightEligibility(storySlug: string): StorySpotlightStatus {
   const campaigns = getAllSpotlightCampaigns();
@@ -209,7 +227,6 @@ export function getStorySpotlightEligibility(storySlug: string): StorySpotlightS
   }
 
   // 2. Check if in 7-day anti-monopoly cooldown
-  // Find the most recent expired or ended campaign for this story
   const recentCampaign = storyCampaigns.find((c) => c.cooldownTimestamp && now < c.cooldownTimestamp);
   if (recentCampaign) {
     const cooldownDays = Math.max(1, Math.ceil((recentCampaign.cooldownTimestamp - now) / (1000 * 60 * 60 * 24)));
@@ -237,7 +254,7 @@ export function getStorySpotlightEligibility(storySlug: string): StorySpotlightS
 }
 
 /**
- * Activates a 7-day spotlight campaign with strict eligibility verification.
+ * Activates a 7-day spotlight campaign with strict eligibility verification and server sync.
  */
 export function activateSpotlight(
   storySlug: string,
@@ -247,19 +264,16 @@ export function activateSpotlight(
     return { success: false, message: "Environment unavailable." };
   }
 
-  // 1. Strict Eligibility Check
   const eligibility = getStorySpotlightEligibility(storySlug);
   if (!eligibility.isEligible) {
     return { success: false, message: eligibility.message };
   }
 
-  // 2. Credit check
   const credits = getPromoCredits();
   if (credits < 1) {
-    return { success: false, message: "Insufficient Spotlight Credits. Upgrade your membership or await monthly refresh." };
+    return { success: false, message: "Insufficient Spotlight Credits." };
   }
 
-  // 3. Story existence
   const allStories = getAllStories();
   const story = allStories[storySlug];
   if (!story) {
@@ -286,22 +300,29 @@ export function activateSpotlight(
     endTimestamp: now + durationMs,
     cooldownTimestamp: now + durationMs + cooldownMs,
     status: "ACTIVE",
-    impressions: 160,
-    clicks: 22,
+    impressions: 1,
+    clicks: 0,
   };
 
-  const existingCampaigns = getAllSpotlightCampaigns();
+  const existingCampaigns = getAllSpotlightCampaigns().filter((c) => c.storySlug !== story.slug);
   const updated = [newCampaign, ...existingCampaigns];
 
   localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(updated));
   setPromoCredits(credits - 1);
+
+  // Sync to server API in background
+  fetch("/api/spotlight", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "activate", storySlug, days }),
+  }).catch((err) => console.warn("Background server spotlight activation failed:", err));
 
   window.dispatchEvent(new Event("ficforge_spotlight_updated"));
   return { success: true, message: `Spotlight successfully launched for "${story.title}"!` };
 }
 
 /**
- * Ends an active campaign early. Cooldown begins immediately upon cancellation.
+ * Ends an active campaign early.
  */
 export function endSpotlightCampaign(campaignId: string): void {
   if (typeof window === "undefined") return;
@@ -321,11 +342,19 @@ export function endSpotlightCampaign(campaignId: string): void {
   });
 
   localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(campaigns));
+
+  // Sync to server API
+  fetch("/api/spotlight", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "end", campaignId }),
+  }).catch((err) => console.warn("Background server spotlight end failed:", err));
+
   window.dispatchEvent(new Event("ficforge_spotlight_updated"));
 }
 
 /**
- * Testing tool to reset cooldowns so administrators/testers can test multiple runs without waiting 7 days.
+ * Testing tool to reset cooldowns.
  */
 export function resetTestCooldowns(): void {
   if (typeof window === "undefined") return;
@@ -336,5 +365,13 @@ export function resetTestCooldowns(): void {
   }));
 
   localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(campaigns));
+
+  // Sync to server API
+  fetch("/api/spotlight", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "reset_cooldowns" }),
+  }).catch((err) => console.warn("Background server reset cooldowns failed:", err));
+
   window.dispatchEvent(new Event("ficforge_spotlight_updated"));
 }

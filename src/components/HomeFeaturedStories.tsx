@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import { getAllStories } from "@/lib/storyStore";
-import { getActiveSpotlights, SpotlightCampaign, isStorySpotlighted } from "@/lib/promotionStore";
+import { getActiveSpotlights, SpotlightCampaign, isStorySpotlighted, syncSpotlightsWithServer } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
 import {
   BookOpen,
@@ -35,6 +35,17 @@ export default function HomeFeaturedStories() {
     };
 
     load();
+
+    // Reconcile with authoritative server API so normal tab, incognito, and all devices are 100% synchronized!
+    syncSpotlightsWithServer().then((serverSpotlights) => {
+      if (serverSpotlights && serverSpotlights.length > 0) {
+        const active = serverSpotlights.filter((c) => c.status === "ACTIVE");
+        if (active.length > 0) {
+          setActiveSpotlights(active);
+        }
+      }
+    });
+
     window.addEventListener("ficforge_stories_updated", load);
     window.addEventListener("ficforge_spotlight_updated", load);
     window.addEventListener("storage", load);
