@@ -11,21 +11,30 @@ import {
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding FicForge PostgreSQL database...");
+  console.log("Seeding FicForge PostgreSQL database with unified Creator entity & sample stories...");
 
-  // 1. Seed Users
-  const valerius = await prisma.user.upsert({
-    where: { email: "valerius@ficforge.org" },
-    update: {},
-    create: {
-      email: "valerius@ficforge.org",
+  // Clear existing records to ensure clean relational integrity
+  await prisma.spotlightPromotion.deleteMany();
+  await prisma.chapter.deleteMany();
+  await prisma.story.deleteMany();
+  await prisma.creatorVault.deleteMany();
+  await prisma.sparksWallet.deleteMany();
+  await prisma.platformMembership.deleteMany();
+  await prisma.profile.deleteMany();
+  await prisma.user.deleteMany();
+
+  // 1. Create the unified real creator user (Valerius Frost)
+  const valerius = await prisma.user.create({
+    data: {
+      id: "user-creator-demo",
+      email: "creator@ficforge.org",
       username: "valerius_f",
       role: UserRole.CREATOR,
       isVerified: true,
       profile: {
         create: {
           displayName: "Valerius Frost",
-          bio: "Author of high fantasy & speculative serialized epics.",
+          bio: "Author of high fantasy, space opera & serialized epics. Writing across multiple worlds.",
           avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
         },
       },
@@ -40,88 +49,37 @@ async function main() {
         create: {
           clearedBalanceUsd: 4.50,
           pendingHoldingUsd: 0.00,
-          paypalEmail: "valerius.payouts@gmail.com",
+          paypalEmail: "creator.payouts@ficforge.org",
           isEligibleForPayout: false,
         },
       },
       membership: {
         create: {
           tier: MembershipTier.FORGE_PLUS,
-          promoCreditsBalance: 2,
+          promoCreditsBalance: 3,
           currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         },
       },
     },
   });
 
-  const kincaid = await prisma.user.upsert({
-    where: { email: "kincaid@ficforge.org" },
-    update: {},
-    create: {
-      email: "kincaid@ficforge.org",
-      username: "mkincaid",
-      role: UserRole.CREATOR,
-      isVerified: true,
-      profile: {
-        create: {
-          displayName: "M. Kincaid",
-          bio: "Passionate sci-fi & space opera fanfiction writer.",
-          avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-        },
-      },
-      wallet: {
-        create: {
-          purchasedSparks: 100,
-          bonusSparks: 20,
-          earnedSparks: 0,
-        },
-      },
-    },
-  });
+  console.log(`Created primary Creator User: ${valerius.username} (${valerius.id})`);
 
-  const jax = await prisma.user.upsert({
-    where: { email: "jax@ficforge.org" },
-    update: {},
-    create: {
-      email: "jax@ficforge.org",
-      username: "jaxmercer",
-      role: UserRole.CREATOR,
-      isVerified: true,
-      profile: {
-        create: {
-          displayName: "Jax Mercer",
-          bio: "Cyberpunk & noir serialized fiction author.",
-          avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80",
-        },
-      },
-      wallet: {
-        create: {
-          purchasedSparks: 500,
-          bonusSparks: 100,
-          earnedSparks: 0,
-        },
-      },
-    },
-  });
-
-  console.log("Users seeded successfully.");
-
-  // 2. Seed Stories
-  const emberStory = await prisma.story.upsert({
-    where: { slug: "the-ember-archive" },
-    update: {},
-    create: {
+  // 2. Assign ALL sample stories to this exact user
+  const emberStory = await prisma.story.create({
+    data: {
+      id: "story-ember-archive",
       authorId: valerius.id,
       title: "The Ember Archive",
       slug: "the-ember-archive",
-      synopsis: "In a world where memories are currency and history can be burned for fuel, an archivist uncovers a forgotten lineage of flame-weavers that could reignite civilization or ash it forever.",
+      synopsis: "In a world where memories burn to ash, a lonely cartographer discovers the Ember Spire — a forgotten sanctuary housing the echoes of fallen kingdoms. As the northern frost creeps southward to extinguish the last living fires, she must forge an alliance with an exiled flame-weaver to unlock the ancient script before history itself dissolves into silence.",
       classification: StoryClassification.ORIGINAL,
       status: StoryStatus.ONGOING,
-      rating: ContentRating.MATURE,
+      rating: ContentRating.TEEN,
       coverImageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
-      viewCount: 48920,
-      likeCount: 5820,
-      bookmarkCount: 2310,
+      viewCount: 96240,
+      likeCount: 14850,
+      bookmarkCount: 8420,
       chapters: {
         create: [
           {
@@ -159,21 +117,20 @@ async function main() {
     },
   });
 
-  const starWarsStory = await prisma.story.upsert({
-    where: { slug: "star-wars-the-obsidian-blade" },
-    update: {},
-    create: {
-      authorId: kincaid.id,
+  const starWarsStory = await prisma.story.create({
+    data: {
+      id: "story-obsidian-blade",
+      authorId: valerius.id,
       title: "Star Wars: The Obsidian Blade",
       slug: "star-wars-the-obsidian-blade",
       synopsis: "Centuries before the Skywalker Saga, an ancient dark-side artifact awakens on a forgotten Outer Rim world. A lone Jedi Knight and an exiled scavenger must prevent its obsidian core from fracturing reality.",
       classification: StoryClassification.FANFICTION,
       status: StoryStatus.ONGOING,
-      rating: ContentRating.TEEN,
-      coverImageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80",
-      viewCount: 31200,
-      likeCount: 4210,
-      bookmarkCount: 1840,
+      rating: ContentRating.GENERAL,
+      coverImageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
+      viewCount: 38900,
+      likeCount: 5820,
+      bookmarkCount: 2940,
       chapters: {
         create: [
           {
@@ -201,11 +158,10 @@ async function main() {
     },
   });
 
-  const neonStory = await prisma.story.upsert({
-    where: { slug: "neon-syndicate-blood-chrome" },
-    update: {},
-    create: {
-      authorId: jax.id,
+  const neonStory = await prisma.story.create({
+    data: {
+      id: "story-neon-syndicate",
+      authorId: valerius.id,
       title: "Neon Syndicate: Blood & Chrome",
       slug: "neon-syndicate-blood-chrome",
       synopsis: "In Neo-Shinjuku's underbelly, an aug-runner takes a high-stakes contract to extract a prototype neural cortex from Megacorp headquarters, only to discover the AI inside already knows his true identity.",
@@ -214,10 +170,10 @@ async function main() {
       rating: ContentRating.EXPLICIT,
       isExplicit18Plus: true,
       isMonetizationBlocked: true,
-      coverImageUrl: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=600&q=80",
-      viewCount: 18450,
-      likeCount: 2980,
-      bookmarkCount: 1120,
+      coverImageUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80",
+      viewCount: 41200,
+      likeCount: 6200,
+      bookmarkCount: 3100,
       chapters: {
         create: [
           {
@@ -235,22 +191,27 @@ async function main() {
     },
   });
 
-  console.log("Stories seeded successfully.");
+  console.log("All 3 stories created and linked to Valerius Frost in PostgreSQL!");
 
-  // 3. Seed Active Spotlight Promotions
+  // 3. Seed Spotlight Promotions:
+  // - The Ember Archive: Currently ACTIVE (showing on homepage showcase)
+  // - Star Wars: The Obsidian Blade: EXPIRED (past history, cooldown completed -> ready to test activating!)
+  // - Neon Syndicate: Blood & Chrome: Unpromoted (ready to test activating!)
   const now = new Date();
-  const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-  await prisma.spotlightPromotion.deleteMany(); // Reset promotions table
+  const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+  const fourDaysFromNow = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000);
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const twentyThreeDaysAgo = new Date(Date.now() - 23 * 24 * 60 * 60 * 1000);
 
   await prisma.spotlightPromotion.create({
     data: {
+      id: "spotlight-ember-archive",
       storyId: emberStory.id,
       userId: valerius.id,
       creditsSpent: 1,
       status: PromotionStatus.ACTIVE,
-      startDate: now,
-      endDate: nextWeek,
+      startDate: threeDaysAgo,
+      endDate: fourDaysFromNow,
       impressions: 48920,
       clicks: 6410,
     },
@@ -258,31 +219,19 @@ async function main() {
 
   await prisma.spotlightPromotion.create({
     data: {
+      id: "spotlight-obsidian-blade",
       storyId: starWarsStory.id,
-      userId: kincaid.id,
+      userId: valerius.id,
       creditsSpent: 1,
-      status: PromotionStatus.ACTIVE,
-      startDate: now,
-      endDate: nextWeek,
+      status: PromotionStatus.EXPIRED,
+      startDate: thirtyDaysAgo,
+      endDate: twentyThreeDaysAgo,
       impressions: 31200,
       clicks: 4180,
     },
   });
 
-  await prisma.spotlightPromotion.create({
-    data: {
-      storyId: neonStory.id,
-      userId: jax.id,
-      creditsSpent: 1,
-      status: PromotionStatus.ACTIVE,
-      startDate: now,
-      endDate: nextWeek,
-      impressions: 18450,
-      clicks: 2890,
-    },
-  });
-
-  console.log("All 3 Spotlight Promotions seeded into PostgreSQL!");
+  console.log("Spotlight seeded: 1 active showcase story + 1 historical completed promotion, leaving other titles ready for test activation!");
 }
 
 main()

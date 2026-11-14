@@ -154,11 +154,11 @@ export const mockStories: Record<string, StoryData> = {
     rating: "GENERAL",
     status: "ONGOING",
     author: {
-      name: "Corran Star",
-      username: "corran_s",
-      avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-      isVerified: false,
-      bio: "Lifelong Star Wars lore enthusiast. Writing transformative stories exploring the gray paths of the Force.",
+      name: "Valerius Frost",
+      username: "valerius_f",
+      avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+      isVerified: true,
+      bio: "Forging serialized fiction across high fantasy, space opera, and cyberpunk worlds.",
     },
     stats: {
       words: 42100,
@@ -203,11 +203,11 @@ export const mockStories: Record<string, StoryData> = {
     rating: "EXPLICIT",
     status: "ONGOING",
     author: {
-      name: "Morgan Kincaid",
-      username: "mkincaid",
-      avatarUrl: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80",
+      name: "Valerius Frost",
+      username: "valerius_f",
+      avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
       isVerified: true,
-      bio: "Writing dark cyberpunk fiction and gritty neo-noir narratives. Exploring the neon depths of Neo-Detroit.",
+      bio: "Forging serialized fiction across high fantasy, space opera, and cyberpunk worlds.",
     },
     stats: {
       words: 54300,

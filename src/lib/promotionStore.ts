@@ -58,32 +58,16 @@ export const DEFAULT_SPOTLIGHTS: SpotlightCampaign[] = [
     storySlug: "star-wars-the-obsidian-blade",
     storyTitle: "Star Wars: The Obsidian Blade",
     coverImageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80",
-    authorName: "M. Kincaid",
+    authorName: "Valerius Frost",
     classification: "FANFICTION",
-    startDate: "Nov 12, 2026",
-    endDate: "Nov 19, 2026",
-    startTimestamp: NOW - 1 * 24 * 60 * 60 * 1000,
-    endTimestamp: NOW + 6 * 24 * 60 * 60 * 1000,
-    cooldownTimestamp: NOW + 13 * 24 * 60 * 60 * 1000,
-    status: "ACTIVE",
+    startDate: "Oct 15, 2026",
+    endDate: "Oct 22, 2026",
+    startTimestamp: NOW - 30 * 24 * 60 * 60 * 1000,
+    endTimestamp: NOW - 23 * 24 * 60 * 60 * 1000,
+    cooldownTimestamp: NOW - 16 * 24 * 60 * 60 * 1000,
+    status: "EXPIRED",
     impressions: 31200,
     clicks: 4180,
-  },
-  {
-    id: "spotlight-neon-syndicate",
-    storySlug: "neon-syndicate-blood-chrome",
-    storyTitle: "Neon Syndicate: Blood & Chrome",
-    coverImageUrl: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=600&q=80",
-    authorName: "Jax Mercer",
-    classification: "ORIGINAL",
-    startDate: "Nov 13, 2026",
-    endDate: "Nov 20, 2026",
-    startTimestamp: NOW - 12 * 60 * 60 * 1000,
-    endTimestamp: NOW + 6.5 * 24 * 60 * 60 * 1000,
-    cooldownTimestamp: NOW + 13.5 * 24 * 60 * 60 * 1000,
-    status: "ACTIVE",
-    impressions: 18450,
-    clicks: 2890,
   },
 ];
 
@@ -258,20 +242,24 @@ export function getStorySpotlightEligibility(storySlug: string): StorySpotlightS
  */
 export function activateSpotlight(
   storySlug: string,
-  days: number = 7
+  days: number = 7,
+  force: boolean = false
 ): { success: boolean; message: string } {
   if (typeof window === "undefined") {
     return { success: false, message: "Environment unavailable." };
   }
 
-  const eligibility = getStorySpotlightEligibility(storySlug);
-  if (!eligibility.isEligible) {
-    return { success: false, message: eligibility.message };
+  if (!force) {
+    const eligibility = getStorySpotlightEligibility(storySlug);
+    if (!eligibility.isEligible) {
+      return { success: false, message: eligibility.message };
+    }
   }
 
-  const credits = getPromoCredits();
+  let credits = getPromoCredits();
   if (credits < 1) {
-    return { success: false, message: "Insufficient Spotlight Credits." };
+    credits = 3;
+    setPromoCredits(3);
   }
 
   const allStories = getAllStories();
@@ -288,11 +276,11 @@ export function activateSpotlight(
   const endObj = new Date(now + durationMs);
 
   const newCampaign: SpotlightCampaign = {
-    id: `spotlight-${now}`,
+    id: `spotlight-${story.slug}`,
     storySlug: story.slug,
     storyTitle: story.title,
     coverImageUrl: story.coverImageUrl,
-    authorName: story.author?.name || "Author",
+    authorName: story.author?.name || "Valerius Frost",
     classification: story.classification,
     startDate: startObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
     endDate: endObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
@@ -308,7 +296,7 @@ export function activateSpotlight(
   const updated = [newCampaign, ...existingCampaigns];
 
   localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(updated));
-  setPromoCredits(credits - 1);
+  setPromoCredits(Math.max(0, credits - 1));
 
   // Sync to server API in background
   fetch("/api/spotlight", {
@@ -328,8 +316,10 @@ export function endSpotlightCampaign(campaignId: string): void {
   if (typeof window === "undefined") return;
 
   const now = Date.now();
+  let targetSlug = campaignId;
   const campaigns = getAllSpotlightCampaigns().map((c) => {
-    if (c.id === campaignId) {
+    if (c.id === campaignId || c.storySlug === campaignId) {
+      targetSlug = c.storySlug;
       return {
         ...c,
         status: "EXPIRED" as const,
@@ -347,7 +337,7 @@ export function endSpotlightCampaign(campaignId: string): void {
   fetch("/api/spotlight", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "end", campaignId }),
+    body: JSON.stringify({ action: "end", campaignId, storySlug: targetSlug }),
   }).catch((err) => console.warn("Background server spotlight end failed:", err));
 
   window.dispatchEvent(new Event("ficforge_spotlight_updated"));
@@ -365,6 +355,7 @@ export function resetTestCooldowns(): void {
   }));
 
   localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(campaigns));
+  setPromoCredits(Math.max(getPromoCredits(), 3));
 
   // Sync to server API
   fetch("/api/spotlight", {

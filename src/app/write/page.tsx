@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import CreatorStudioHeader from "@/components/CreatorStudioHeader";
-import { getAllStories } from "@/lib/storyStore";
-import { getActiveSpotlights, getPromoCredits } from "@/lib/promotionStore";
+import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
+import { getActiveSpotlights, getPromoCredits, syncSpotlightsWithServer } from "@/lib/promotionStore";
 import { getCurrentUser, UserSession } from "@/lib/authStore";
 import { StoryData } from "@/data/mockStories";
 import {
@@ -41,6 +41,22 @@ export default function WriterPortalPage() {
     };
 
     load();
+
+    // Reconcile with live PostgreSQL database
+    syncStoriesWithServer().then((serverStories) => {
+      if (serverStories) {
+        setStories(Object.values(serverStories));
+      }
+    });
+
+    syncSpotlightsWithServer().then((serverCampaigns) => {
+      if (serverCampaigns && serverCampaigns.length > 0) {
+        const now = Date.now();
+        const active = serverCampaigns.filter((c) => c.status === "ACTIVE" && now < c.endTimestamp);
+        setActiveSpotlights(active);
+      }
+    });
+
     window.addEventListener("ficforge_stories_updated", load);
     window.addEventListener("ficforge_spotlight_updated", load);
     window.addEventListener("storage", load);

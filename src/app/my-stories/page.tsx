@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getAllStories } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
 import { getStorySpotlightEligibility } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
@@ -33,6 +33,13 @@ export default function MyStoriesPage() {
     };
 
     loadStories();
+
+    // Reconcile with live PostgreSQL database
+    syncStoriesWithServer().then((serverStories) => {
+      if (serverStories) {
+        setStories(Object.values(serverStories));
+      }
+    });
 
     // Listen to updates from other pages
     window.addEventListener("ficforge_stories_updated", loadStories);

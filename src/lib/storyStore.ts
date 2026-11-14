@@ -50,11 +50,45 @@ export function saveStory(story: StoryData): void {
     customStories[story.slug] = story;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(customStories));
     
+    // Background sync to PostgreSQL database
+    fetch("/api/stories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ story }),
+    }).catch((err) => console.warn("Background sync of story to server failed:", err));
+
     // Dispatch storage events
     window.dispatchEvent(new Event("ficforge_stories_updated"));
   } catch (err) {
     console.error("Error saving story to localStorage:", err);
   }
+}
+
+/**
+ * Server Synchronization: Reconciles local client story cache with PostgreSQL via /api/stories
+ */
+export async function syncStoriesWithServer(): Promise<Record<string, StoryData>> {
+  if (typeof window === "undefined") return mockStories;
+
+  try {
+    const res = await fetch("/api/stories", { cache: "no-store" });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.stories && typeof data.stories === "object") {
+        Object.assign(mockStories, data.stories);
+        const stored = localStorage.getItem(STORAGE_KEY);
+        const customStories: Record<string, StoryData> = stored ? JSON.parse(stored) : {};
+        const merged = { ...data.stories, ...customStories };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+        window.dispatchEvent(new Event("ficforge_stories_updated"));
+        return merged;
+      }
+    }
+  } catch (err) {
+    console.warn("Could not sync with /api/stories:", err);
+  }
+
+  return getAllStories();
 }
 
 /**

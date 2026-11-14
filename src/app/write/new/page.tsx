@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { saveStory } from "@/lib/storyStore";
+import { getCurrentUser } from "@/lib/authStore";
 import { StoryData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import {
@@ -128,9 +129,9 @@ export default function NewStoryWizardPage() {
       rating,
       status,
       author: {
-        name: "You (Author)",
-        username: "current_creator",
-        avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+        name: getCurrentUser()?.name || "Valerius Frost",
+        username: getCurrentUser()?.username || "valerius_f",
+        avatarUrl: getCurrentUser()?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
         isVerified: true,
         bio: "Writing and building worlds on FicForge.",
       },

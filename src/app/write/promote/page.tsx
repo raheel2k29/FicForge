@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense, useMemo } from "react";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import CreatorStudioHeader from "@/components/CreatorStudioHeader";
-import { getAllStories } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
 import {
   getPromoCredits,
   setPromoCredits,
@@ -15,6 +15,7 @@ import {
   activateSpotlight,
   getStorySpotlightEligibility,
   resetTestCooldowns,
+  syncSpotlightsWithServer,
   SpotlightCampaign,
   StorySpotlightStatus,
 } from "@/lib/promotionStore";
@@ -61,6 +62,24 @@ function PromotionDashboardContent() {
     };
 
     load();
+
+    // Reconcile with PostgreSQL database
+    syncSpotlightsWithServer().then((serverCampaigns) => {
+      if (serverCampaigns && serverCampaigns.length > 0) {
+        setCampaigns(serverCampaigns);
+      }
+    });
+
+    syncStoriesWithServer().then((serverStories) => {
+      if (serverStories) {
+        const storiesList = Object.values(serverStories);
+        setStories(storiesList);
+        if (!selectedStorySlug && storiesList.length > 0) {
+          setSelectedStorySlug(storiesList[0].slug);
+        }
+      }
+    });
+
     window.addEventListener("ficforge_spotlight_updated", load);
     window.addEventListener("storage", load);
     return () => {
@@ -368,23 +387,41 @@ function PromotionDashboardContent() {
 
               {/* Submit Button Governed by Strict Eligibility */}
               {eligibility.status === "CURRENTLY_ACTIVE" ? (
-                <button
-                  type="button"
-                  disabled
-                  className="w-full h-12 rounded-xl border border-amber-500/30 bg-amber-500/10 text-sm font-bold text-amber-400/80 cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  Currently Active in Spotlight ({eligibility.daysRemaining}d Left)
-                </button>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full h-12 rounded-xl border border-amber-500/30 bg-amber-500/10 text-sm font-bold text-amber-400/80 cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    Currently Active in Spotlight ({eligibility.daysRemaining}d Left)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleEndCampaign(selectedStorySlug)}
+                    className="w-full text-center text-xs font-bold text-slate-400 hover:text-amber-300 underline py-1"
+                  >
+                    End active campaign early & test restarting
+                  </button>
+                </div>
               ) : eligibility.status === "IN_COOLDOWN" ? (
-                <button
-                  type="button"
-                  disabled
-                  className="w-full h-12 rounded-xl border border-blue-500/30 bg-blue-500/10 text-sm font-bold text-blue-400/80 cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  <Clock className="h-4 w-4" />
-                  In Community Cooldown ({eligibility.daysRemaining}d Remaining)
-                </button>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full h-12 rounded-xl border border-blue-500/30 bg-blue-500/10 text-sm font-bold text-blue-400/80 cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <Clock className="h-4 w-4" />
+                    In Community Cooldown ({eligibility.daysRemaining}d Remaining)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResetCooldowns}
+                    className="w-full text-center text-xs font-bold text-slate-400 hover:text-blue-300 underline py-1 flex items-center justify-center gap-1"
+                  >
+                    <RotateCcw className="h-3 w-3" /> Clear cooldown & test this story now
+                  </button>
+                </div>
               ) : credits > 0 ? (
                 <button
                   type="submit"
