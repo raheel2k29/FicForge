@@ -48,6 +48,10 @@ function PromotionDashboardContent() {
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   useEffect(() => {
+    try {
+      localStorage.removeItem("ficforge_custom_stories_v1");
+    } catch {}
+
     const load = () => {
       const all = Object.values(getAllStories());
       setStories(all);

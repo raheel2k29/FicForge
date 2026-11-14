@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
-import { getAllStories } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
 import { isStorySpotlighted } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
 import {
@@ -40,12 +40,23 @@ export default function BrowsePage() {
   const [storiesList, setStoriesList] = useState<StoryData[]>([]);
 
   useEffect(() => {
+    try {
+      localStorage.removeItem("ficforge_custom_stories_v1");
+    } catch {}
+
     const load = () => {
       const all = Object.values(getAllStories());
       setStoriesList(all);
     };
 
-    load();
+    syncStoriesWithServer().then((serverStories) => {
+      if (serverStories) {
+        setStoriesList(Object.values(serverStories));
+      } else {
+        load();
+      }
+    });
+
     window.addEventListener("ficforge_stories_updated", load);
     window.addEventListener("storage", load);
     return () => {

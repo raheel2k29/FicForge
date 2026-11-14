@@ -33,6 +33,10 @@ export default function WriterPortalPage() {
   const [credits, setCredits] = useState(2);
 
   useEffect(() => {
+    try {
+      localStorage.removeItem("ficforge_custom_stories_v1");
+    } catch {}
+
     const load = () => {
       const all = Object.values(getAllStories());
       setStories(all);
@@ -41,12 +45,12 @@ export default function WriterPortalPage() {
       setCredits(getPromoCredits());
     };
 
-    load();
-
-    // Reconcile with live PostgreSQL database
+    // Reconcile with live PostgreSQL database immediately
     syncStoriesWithServer().then((serverStories) => {
       if (serverStories) {
         setStories(Object.values(serverStories));
+      } else {
+        load();
       }
     });
 

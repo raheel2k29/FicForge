@@ -2,27 +2,43 @@
 
 import { mockStories, StoryData, ChapterData } from "@/data/mockStories";
 
-const STORAGE_KEY = "ficforge_custom_stories_v1";
+const STORAGE_KEY = "ficforge_stories_v2";
+const LEGACY_STORAGE_KEY = "ficforge_custom_stories_v1";
 
 /**
- * Get all stories (initial mock stories + custom user-created stories from localStorage)
+ * Wipe legacy stale cache keys on startup
+ */
+export function cleanupLegacyStorage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (localStorage.getItem(LEGACY_STORAGE_KEY)) {
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    }
+  } catch {}
+}
+
+/**
+ * Get all stories
  */
 export function getAllStories(): Record<string, StoryData> {
   if (typeof window === "undefined") {
     return mockStories;
   }
 
+  cleanupLegacyStorage();
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) {
       return mockStories;
     }
-    const customStories: Record<string, StoryData> = JSON.parse(stored);
-    // Sync into in-memory object
-    Object.assign(mockStories, customStories);
-    return { ...mockStories, ...customStories };
+    const parsed: Record<string, StoryData> = JSON.parse(stored);
+    if (parsed && typeof parsed === "object" && Object.keys(parsed).length > 0) {
+      return parsed;
+    }
+    return mockStories;
   } catch (err) {
-    console.error("Error reading custom stories from localStorage:", err);
+    console.error("Error reading stories from localStorage:", err);
     return mockStories;
   }
 }
@@ -45,11 +61,11 @@ export function saveStory(story: StoryData): void {
   if (typeof window === "undefined") return;
 
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    const customStories: Record<string, StoryData> = stored ? JSON.parse(stored) : {};
-    customStories[story.slug] = story;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(customStories));
-    
+    cleanupLegacyStorage();
+    const current = getAllStories();
+    const updated = { ...current, [story.slug]: story };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+
     // Background sync to PostgreSQL database
     fetch("/api/stories", {
       method: "POST",
@@ -57,7 +73,6 @@ export function saveStory(story: StoryData): void {
       body: JSON.stringify({ story }),
     }).catch((err) => console.warn("Background sync of story to server failed:", err));
 
-    // Dispatch storage events
     window.dispatchEvent(new Event("ficforge_stories_updated"));
   } catch (err) {
     console.error("Error saving story to localStorage:", err);
@@ -65,29 +80,30 @@ export function saveStory(story: StoryData): void {
 }
 
 /**
- * Server Synchronization: Reconciles local client story cache with PostgreSQL via /api/stories
+ * Server Synchronization: Authoritatively replaces local cache with live PostgreSQL database stories
  */
 export async function syncStoriesWithServer(): Promise<Record<string, StoryData>> {
   if (typeof window === "undefined") return mockStories;
+
+  cleanupLegacyStorage();
 
   try {
     const res = await fetch("/api/stories", { cache: "no-store" });
     if (res.ok) {
       const data = await res.json();
       if (data.stories && typeof data.stories === "object") {
-        // Clear mockStories keys that no longer exist in data.stories
+        // Clear mockStories keys that no longer exist on server
         for (const k of Object.keys(mockStories)) {
           if (!data.stories[k]) {
             delete mockStories[k];
           }
         }
         Object.assign(mockStories, data.stories);
-        const stored = localStorage.getItem(STORAGE_KEY);
-        const customStories: Record<string, StoryData> = stored ? JSON.parse(stored) : {};
-        const merged = { ...data.stories, ...customStories };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+
+        // Server is authoritative: Replace local storage directly!
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data.stories));
         window.dispatchEvent(new Event("ficforge_stories_updated"));
-        return merged;
+        return data.stories;
       }
     }
   } catch (err) {
@@ -159,12 +175,10 @@ export function deleteStory(slug: string): boolean {
 
   if (typeof window !== "undefined") {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const customStories: Record<string, StoryData> = JSON.parse(stored);
-        delete customStories[slug];
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(customStories));
-      }
+      cleanupLegacyStorage();
+      const current = getAllStories();
+      delete current[slug];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
 
       // Background delete in PostgreSQL
       fetch(`/api/stories?slug=${encodeURIComponent(slug)}`, {
@@ -227,7 +241,11 @@ export function deleteChapter(storySlug: string, chapterSlug: string): boolean {
  * Deletes all custom/stored stories and resets state.
  */
 export function deleteAllStories(): void {
+  for (const k of Object.keys(mockStories)) {
+    delete mockStories[k];
+  }
   if (typeof window !== "undefined") {
+    cleanupLegacyStorage();
     localStorage.removeItem(STORAGE_KEY);
     fetch("/api/stories?action=delete_all", {
       method: "DELETE",

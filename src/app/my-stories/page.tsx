@@ -28,17 +28,22 @@ export default function MyStoriesPage() {
   const [filter, setFilter] = useState<"ALL" | "FANFICTION" | "ORIGINAL">("ALL");
 
   useEffect(() => {
+    // Clean legacy storage key immediately
+    try {
+      localStorage.removeItem("ficforge_custom_stories_v1");
+    } catch {}
+
     const loadStories = () => {
       const all = getAllStories();
       setStories(Object.values(all));
     };
 
-    loadStories();
-
-    // Reconcile with live PostgreSQL database
+    // Reconcile with live PostgreSQL database immediately
     syncStoriesWithServer().then((serverStories) => {
       if (serverStories) {
         setStories(Object.values(serverStories));
+      } else {
+        loadStories();
       }
     });
 

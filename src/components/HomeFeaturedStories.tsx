@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
-import { getAllStories } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
 import { getActiveSpotlights, SpotlightCampaign, isStorySpotlighted, syncSpotlightsWithServer } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
 import {
@@ -25,6 +25,10 @@ export default function HomeFeaturedStories() {
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
+    try {
+      localStorage.removeItem("ficforge_custom_stories_v1");
+    } catch {}
+
     const load = () => {
       const all = Object.values(getAllStories());
       setStories(all);
@@ -34,9 +38,15 @@ export default function HomeFeaturedStories() {
       setCurrentIndex((prev) => (spotlights.length > 0 ? prev % spotlights.length : 0));
     };
 
-    load();
+    // Reconcile with authoritative PostgreSQL database
+    syncStoriesWithServer().then((serverStories) => {
+      if (serverStories) {
+        setStories(Object.values(serverStories));
+      } else {
+        load();
+      }
+    });
 
-    // Reconcile with authoritative server API so normal tab, incognito, and all devices are 100% synchronized!
     syncSpotlightsWithServer().then((serverSpotlights) => {
       if (serverSpotlights && serverSpotlights.length > 0) {
         const active = serverSpotlights.filter((c) => c.status === "ACTIVE");
