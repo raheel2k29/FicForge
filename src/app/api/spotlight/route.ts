@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { INITIAL_CANONICAL_SPOTLIGHTS } from "@/lib/serverStore";
 
 export async function GET() {
   try {
@@ -17,40 +18,56 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
     });
 
-    const campaigns = dbPromotions.map((p) => ({
-      id: p.id,
-      storySlug: p.story.slug,
-      storyTitle: p.story.title,
-      coverImageUrl: p.story.coverImageUrl || "",
-      authorName: p.story.author.profile?.displayName || p.story.author.username,
-      classification: p.story.classification,
-      startDate: p.startDate ? new Date(p.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "",
-      endDate: p.endDate ? new Date(p.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "",
-      startTimestamp: p.startDate ? new Date(p.startDate).getTime() : Date.now(),
-      endTimestamp: p.endDate ? new Date(p.endDate).getTime() : Date.now() + 7 * 24 * 60 * 60 * 1000,
-      cooldownTimestamp: p.endDate ? new Date(p.endDate).getTime() + 7 * 24 * 60 * 60 * 1000 : Date.now() + 14 * 24 * 60 * 60 * 1000,
-      status: p.status,
-      impressions: p.impressions,
-      clicks: p.clicks,
-    }));
+    if (dbPromotions && dbPromotions.length > 0) {
+      const campaigns = dbPromotions.map((p) => ({
+        id: p.id,
+        storySlug: p.story.slug,
+        storyTitle: p.story.title,
+        coverImageUrl: p.story.coverImageUrl || "",
+        authorName: p.story.author.profile?.displayName || p.story.author.username,
+        classification: p.story.classification,
+        startDate: p.startDate ? new Date(p.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "",
+        endDate: p.endDate ? new Date(p.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "",
+        startTimestamp: p.startDate ? new Date(p.startDate).getTime() : Date.now(),
+        endTimestamp: p.endDate ? new Date(p.endDate).getTime() : Date.now() + 7 * 24 * 60 * 60 * 1000,
+        cooldownTimestamp: p.endDate ? new Date(p.endDate).getTime() + 7 * 24 * 60 * 60 * 1000 : Date.now() + 14 * 24 * 60 * 60 * 1000,
+        status: p.status,
+        impressions: p.impressions,
+        clicks: p.clicks,
+      }));
 
-    return NextResponse.json(
-      {
-        campaigns,
-        active: campaigns,
-        source: "postgresql-neon-database",
-        timestamp: Date.now(),
-      },
-      {
-        headers: {
-          "Cache-Control": "no-store, no-cache, must-revalidate",
+      return NextResponse.json(
+        {
+          campaigns,
+          active: campaigns,
+          source: "postgresql-neon-database",
+          timestamp: Date.now(),
         },
-      }
-    );
+        {
+          headers: {
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+          },
+        }
+      );
+    }
   } catch (error: any) {
-    console.error("Prisma error in /api/spotlight:", error);
-    return NextResponse.json({ error: error?.message }, { status: 500 });
+    console.warn("Prisma query in /api/spotlight fell back to canonical:", error?.message);
   }
+
+  // Graceful fallback to canonical spotlights if database is in cold-start awakening
+  return NextResponse.json(
+    {
+      campaigns: INITIAL_CANONICAL_SPOTLIGHTS,
+      active: INITIAL_CANONICAL_SPOTLIGHTS,
+      source: "canonical-baseline",
+      timestamp: Date.now(),
+    },
+    {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
+    }
+  );
 }
 
 export async function POST(request: Request) {
