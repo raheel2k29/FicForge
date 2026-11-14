@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, notFound } from "next/navigation";
+import { useParams, useRouter, notFound } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
-import { getStoryBySlug } from "@/lib/storyStore";
+import { getStoryBySlug, deleteStory, deleteChapter } from "@/lib/storyStore";
 import { StoryData } from "@/data/mockStories";
 import {
   BookOpen,
@@ -19,6 +19,7 @@ import {
   Sparkles,
   ShieldCheck,
   AlertTriangle,
+  Trash2,
 } from "lucide-react";
 
 function StoryDetailsContent() {
@@ -33,7 +34,36 @@ function StoryDetailsContent() {
   const [tipModalOpen, setTipModalOpen] = useState(false);
   const [tipAmount, setTipAmount] = useState(50);
   const [tipSuccess, setTipSuccess] = useState(false);
+  const router = useRouter();
   const [isAgeVerified, setIsAgeVerified] = useState(true);
+
+  const handleDeleteStory = () => {
+    if (!story) return;
+    if (window.confirm(`Permanently delete "${story.title}" and all its chapters? This cannot be undone.`)) {
+      deleteStory(story.slug);
+      router.push("/my-stories");
+    }
+  };
+
+  const handleDeleteChapter = (chapterSlug: string, chapterTitle: string) => {
+    if (!story) return;
+    if (window.confirm(`Permanently delete "${chapterTitle}"? This cannot be undone.`)) {
+      deleteChapter(story.slug, chapterSlug);
+      setStory((prev) => {
+        if (!prev) return prev;
+        const remaining = prev.chapters.filter((c) => c.slug !== chapterSlug);
+        return {
+          ...prev,
+          chapters: remaining.map((c, i) => ({ ...c, number: i + 1 })),
+          stats: {
+            ...prev.stats,
+            chapterCount: remaining.length,
+            words: remaining.reduce((a, b) => a + (b.wordCount || 0), 0),
+          },
+        };
+      });
+    }
+  };
 
   useEffect(() => {
     if (slug) {
@@ -246,6 +276,24 @@ function StoryDetailsContent() {
                   {copiedLink ? "Link Copied!" : "Share Story"}
                 </button>
               </div>
+
+              {/* Author Actions: Add Chapter & Delete Story */}
+              <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
+                <Link
+                  href={`/write/chapter?storySlug=${story.slug}`}
+                  className="flex-1 text-center py-2 px-3 text-xs font-bold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/10"
+                >
+                  + Add Chapter
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleDeleteStory}
+                  className="py-2 px-3 text-xs font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                  title="Delete this story"
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> Delete
+                </button>
+              </div>
             </div>
           </div>
 
@@ -439,6 +487,16 @@ function StoryDetailsContent() {
                   >
                     Read
                   </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteChapter(ch.slug, ch.title)}
+                    className="rounded-lg bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 text-xs font-bold text-red-400 hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-300 transition-all cursor-pointer flex items-center gap-1"
+                    title={`Delete chapter "${ch.title}"`}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    <span className="hidden sm:inline">Delete</span>
+                  </button>
                 </div>
               </div>
             ))}

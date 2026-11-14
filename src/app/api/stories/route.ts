@@ -158,3 +158,67 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, message: error?.message || "Server error" }, { status: 500 });
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const slug = searchParams.get("slug");
+    const storySlug = searchParams.get("storySlug");
+    const chapterSlug = searchParams.get("chapterSlug");
+    const action = searchParams.get("action");
+
+    // 1. DELETE ALL STORIES (Requested by user)
+    if (action === "delete_all") {
+      await prisma.spotlightPromotion.deleteMany();
+      await prisma.chapter.deleteMany();
+      await prisma.story.deleteMany();
+      return NextResponse.json({ success: true, message: "All stories deleted from PostgreSQL database." });
+    }
+
+    // 2. DELETE SINGLE CHAPTER
+    if (chapterSlug && (storySlug || slug)) {
+      const targetStorySlug = (storySlug || slug)!;
+      const story = await prisma.story.findUnique({
+        where: { slug: targetStorySlug },
+      });
+
+      if (!story) {
+        return NextResponse.json({ success: false, message: "Story not found in database." }, { status: 404 });
+      }
+
+      await prisma.chapter.deleteMany({
+        where: {
+          storyId: story.id,
+          slug: chapterSlug,
+        },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: `Chapter "${chapterSlug}" deleted successfully.`,
+      });
+    }
+
+    // 3. DELETE SINGLE STORY
+    if (slug) {
+      await prisma.spotlightPromotion.deleteMany({
+        where: { story: { slug } },
+      });
+      await prisma.chapter.deleteMany({
+        where: { story: { slug } },
+      });
+      await prisma.story.deleteMany({
+        where: { slug },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: `Story "${slug}" permanently deleted from PostgreSQL.`,
+      });
+    }
+
+    return NextResponse.json({ success: false, message: "Invalid parameters for deletion." }, { status: 400 });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, message: error?.message || "Failed to delete" }, { status: 500 });
+  }
+}

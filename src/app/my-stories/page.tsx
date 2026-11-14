@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer, deleteStory } from "@/lib/storyStore";
 import { getStorySpotlightEligibility } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
@@ -20,6 +20,7 @@ import {
   Settings,
   ShieldCheck,
   CheckCircle2,
+  Trash2,
 } from "lucide-react";
 
 export default function MyStoriesPage() {
@@ -54,6 +55,13 @@ export default function MyStoriesPage() {
     if (filter === "ALL") return true;
     return s.classification === filter;
   });
+
+  const handleDeleteStory = (story: StoryData) => {
+    if (window.confirm(`Permanently delete "${story.title}" and all its chapters? This cannot be undone.`)) {
+      deleteStory(story.slug);
+      setStories((prev) => prev.filter((s) => s.slug !== story.slug));
+    }
+  };
 
   return (
     <WriterAuthGate
@@ -313,6 +321,15 @@ export default function MyStoriesPage() {
                   >
                     View <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteStory(story)}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-bold text-red-400 hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-300 transition-all cursor-pointer"
+                    title={`Delete story "${story.title}"`}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" /> Delete
+                  </button>
                 </div>
 
               </div>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense, useMemo } from "react";
-import { getAllStories, saveChapter } from "@/lib/storyStore";
+import { getAllStories, saveChapter, deleteChapter, syncStoriesWithServer } from "@/lib/storyStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import {
@@ -17,6 +17,7 @@ import {
   Save,
   Send,
   HelpCircle,
+  Trash2,
 } from "lucide-react";
 
 function ChapterEditorContent() {
@@ -47,7 +48,26 @@ function ChapterEditorContent() {
     } else if (list.length > 0) {
       setSelectedStorySlug(list[0].slug);
     }
-  }, [storySlugParam]);
+
+    syncStoriesWithServer().then((serverStories) => {
+      if (serverStories) {
+        const updatedList = Object.values(serverStories);
+        setStories(updatedList);
+        if (!selectedStorySlug && updatedList.length > 0) {
+          setSelectedStorySlug(updatedList[0].slug);
+        }
+      }
+    });
+  }, [storySlugParam, selectedStorySlug]);
+
+  const handleDeleteExistingChapter = (chapterSlug: string, chapterTitle: string) => {
+    if (!selectedStory) return;
+    if (window.confirm(`Delete chapter "${chapterTitle}"? This cannot be undone.`)) {
+      deleteChapter(selectedStory.slug, chapterSlug);
+      const all = getAllStories();
+      setStories(Object.values(all));
+    }
+  };
 
   const selectedStory = useMemo(() => {
     return stories.find((s) => s.slug === selectedStorySlug);
@@ -321,6 +341,67 @@ function ChapterEditorContent() {
           </div>
 
         </form>
+
+        {/* Existing Chapters Management */}
+        {selectedStory && selectedStory.chapters && selectedStory.chapters.length > 0 && (
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-6 space-y-4 shadow-xl">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <h3 className="text-base font-black text-white">
+                  Published Chapters in &ldquo;{selectedStory.title}&rdquo; ({selectedStory.chapters.length})
+                </h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Review or permanently delete existing chapters from this story.
+                </p>
+              </div>
+              <Link
+                href={`/story/${selectedStory.slug}`}
+                className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
+              >
+                View Story Page →
+              </Link>
+            </div>
+
+            <div className="divide-y divide-white/5">
+              {selectedStory.chapters.map((ch) => (
+                <div
+                  key={ch.slug}
+                  className="py-3 flex items-center justify-between gap-4 hover:bg-slate-800/30 px-2 rounded-xl transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800 border border-white/10 text-xs font-black text-slate-300">
+                      {ch.number}
+                    </span>
+                    <div className="truncate">
+                      <span className="text-sm font-bold text-white truncate block">{ch.title}</span>
+                      <span className="text-xs text-slate-400">
+                        {ch.wordCount.toLocaleString()} words · Published {ch.publishedAt}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Link
+                      href={`/story/${selectedStory.slug}/${ch.slug}`}
+                      className="text-xs font-bold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 px-3 py-1.5 rounded-lg transition-all"
+                    >
+                      Read
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteExistingChapter(ch.slug, ch.title)}
+                      className="text-xs font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer"
+                      title={`Delete chapter "${ch.title}"`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
     </div>

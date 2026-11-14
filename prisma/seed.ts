@@ -11,7 +11,7 @@ import {
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding FicForge PostgreSQL database with unified Creator entity & sample stories...");
+  console.log("Seeding FicForge PostgreSQL database with exactly 2 curated stories for Valerius Frost...");
 
   // Clear existing records to ensure clean relational integrity
   await prisma.spotlightPromotion.deleteMany();
@@ -65,7 +65,8 @@ async function main() {
 
   console.log(`Created primary Creator User: ${valerius.username} (${valerius.id})`);
 
-  // 2. Assign ALL sample stories to this exact user
+  // 2. Assign exactly 2 sample stories to this user
+  // Story 1: Original Fiction - The Ember Archive
   const emberStory = await prisma.story.create({
     data: {
       id: "story-ember-archive",
@@ -87,8 +88,8 @@ async function main() {
             orderIndex: 1,
             title: "Ashes of the Spire",
             slug: "chapter-1",
-            content: "The smoke had settled over the Upper Archives like a shroud of black velvet. Valerius brushed ash from the leather-bound ledger, his fingers trembling not from fear, but from the cold that seeped through the shattered stained-glass windows.",
-            wordCount: 1420,
+            content: "The smoke had settled over the Upper Archives like a shroud of black velvet. Saria brushed ash from the leather-bound ledger, her fingers trembling not from fear, but from the cold that seeped through the shattered stained-glass windows.",
+            wordCount: 3820,
             isPublished: true,
             publishedAt: new Date(),
           },
@@ -98,7 +99,7 @@ async function main() {
             title: "The Flame-Weaver's Oath",
             slug: "chapter-2",
             content: "The underground forge hummed with heat so intense it distorted the silhouettes of the elders standing around the stone crucible. To weave flame was not merely an art; it was a pact signed in blood and breath.",
-            wordCount: 1850,
+            wordCount: 4150,
             isPublished: true,
             publishedAt: new Date(),
           },
@@ -108,7 +109,7 @@ async function main() {
             title: "The Salt Flats at Midnight",
             slug: "chapter-3",
             content: "Across the shimmering crystalline plains of the Great Desolation, silence was absolute. Only the crunch of salt beneath heavy boots betrayed the caravan's desperate march toward the Spire.",
-            wordCount: 2100,
+            wordCount: 4620,
             isPublished: true,
             publishedAt: new Date(),
           },
@@ -117,6 +118,7 @@ async function main() {
     },
   });
 
+  // Story 2: Fanfiction - Star Wars: The Obsidian Blade
   const starWarsStory = await prisma.story.create({
     data: {
       id: "story-obsidian-blade",
@@ -139,7 +141,7 @@ async function main() {
             title: "Echoes in the Vapor",
             slug: "chapter-1",
             content: "The twin suns of the frontier system hung low over the rusted junk canyons of Kintan-4. Mara watched the dust devils twist through the canyon floor through the cracked scope of her macrobinoculars.",
-            wordCount: 1650,
+            wordCount: 3100,
             isPublished: true,
             publishedAt: new Date(),
           },
@@ -148,8 +150,8 @@ async function main() {
             orderIndex: 2,
             title: "The Obsidian Chamber",
             slug: "chapter-2",
-            content: "The door groaned on ancient hinges. Inside, the obsidian monolith pulsed with a rhythmic indigo heartbeat that resonated directly through Mara's teeth.",
-            wordCount: 1980,
+            content: "The door groaned on ancient hinges. Inside, the obsidian monolith pulsed with a rhythmic indigo heartbeat that resonated directly through Joran's teeth.",
+            wordCount: 3500,
             isPublished: true,
             publishedAt: new Date(),
           },
@@ -158,50 +160,13 @@ async function main() {
     },
   });
 
-  const neonStory = await prisma.story.create({
-    data: {
-      id: "story-neon-syndicate",
-      authorId: valerius.id,
-      title: "Neon Syndicate: Blood & Chrome",
-      slug: "neon-syndicate-blood-chrome",
-      synopsis: "In Neo-Shinjuku's underbelly, an aug-runner takes a high-stakes contract to extract a prototype neural cortex from Megacorp headquarters, only to discover the AI inside already knows his true identity.",
-      classification: StoryClassification.ORIGINAL,
-      status: StoryStatus.ONGOING,
-      rating: ContentRating.EXPLICIT,
-      isExplicit18Plus: true,
-      isMonetizationBlocked: true,
-      coverImageUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80",
-      viewCount: 41200,
-      likeCount: 6200,
-      bookmarkCount: 3100,
-      chapters: {
-        create: [
-          {
-            chapterNumber: 1,
-            orderIndex: 1,
-            title: "Sub-Level Zero",
-            slug: "chapter-1",
-            content: "Rain hissed against the reinforced acrylic visor of Jax's combat helmet. Forty floors below, the neon lights of District 9 bled into the smog like open wounds.",
-            wordCount: 2200,
-            isPublished: true,
-            publishedAt: new Date(),
-          },
-        ],
-      },
-    },
-  });
+  console.log("Exactly 2 stories created and linked to Valerius Frost in PostgreSQL!");
 
-  console.log("All 3 stories created and linked to Valerius Frost in PostgreSQL!");
-
-  // 3. Seed Spotlight Promotions:
-  // - The Ember Archive: Currently ACTIVE (showing on homepage showcase)
-  // - Star Wars: The Obsidian Blade: EXPIRED (past history, cooldown completed -> ready to test activating!)
-  // - Neon Syndicate: Blood & Chrome: Unpromoted (ready to test activating!)
+  // 3. Seed Active Spotlight Promotion for The Ember Archive
+  // Leaving Star Wars: The Obsidian Blade completely eligible for testing promotion
   const now = new Date();
   const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
   const fourDaysFromNow = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000);
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  const twentyThreeDaysAgo = new Date(Date.now() - 23 * 24 * 60 * 60 * 1000);
 
   await prisma.spotlightPromotion.create({
     data: {
@@ -217,21 +182,7 @@ async function main() {
     },
   });
 
-  await prisma.spotlightPromotion.create({
-    data: {
-      id: "spotlight-obsidian-blade",
-      storyId: starWarsStory.id,
-      userId: valerius.id,
-      creditsSpent: 1,
-      status: PromotionStatus.EXPIRED,
-      startDate: thirtyDaysAgo,
-      endDate: twentyThreeDaysAgo,
-      impressions: 31200,
-      clicks: 4180,
-    },
-  });
-
-  console.log("Spotlight seeded: 1 active showcase story + 1 historical completed promotion, leaving other titles ready for test activation!");
+  console.log("Spotlight seeded: 1 active showcase story (The Ember Archive), leaving Star Wars eligible for test activation!");
 }
 
 main()

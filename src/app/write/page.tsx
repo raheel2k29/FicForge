@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import CreatorStudioHeader from "@/components/CreatorStudioHeader";
-import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer, deleteStory } from "@/lib/storyStore";
 import { getActiveSpotlights, getPromoCredits, syncSpotlightsWithServer } from "@/lib/promotionStore";
 import { getCurrentUser, UserSession } from "@/lib/authStore";
 import { StoryData } from "@/data/mockStories";
@@ -23,6 +23,7 @@ import {
   Clock,
   CheckCircle2,
   ExternalLink,
+  Trash2,
 } from "lucide-react";
 
 export default function WriterPortalPage() {
@@ -72,6 +73,13 @@ export default function WriterPortalPage() {
   const totalViews = stories.reduce((acc, s) => acc + (s.stats?.views || 0), 0);
   const totalChapters = stories.reduce((acc, s) => acc + (s.chapters?.length || 0), 0);
   const totalLikes = stories.reduce((acc, s) => acc + (s.stats?.likes || 0), 0);
+
+  const handleDeleteStory = (slug: string, title: string) => {
+    if (window.confirm(`Permanently delete "${title}" and all its chapters? This cannot be undone.`)) {
+      deleteStory(slug);
+      setStories((prev) => prev.filter((s) => s.slug !== slug));
+    }
+  };
 
   return (
     <WriterAuthGate
@@ -322,6 +330,15 @@ export default function WriterPortalPage() {
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                         </Link>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteStory(story.slug, story.title)}
+                          className="px-2.5 py-1.5 rounded-xl text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-all cursor-pointer"
+                          title={`Delete "${story.title}"`}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
                       </div>
                     </div>
                   );

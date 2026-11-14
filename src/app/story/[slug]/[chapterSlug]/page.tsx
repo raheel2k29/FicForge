@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
-import { getStoryBySlug } from "@/lib/storyStore";
+import { getStoryBySlug, deleteChapter } from "@/lib/storyStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
 import {
   Settings,
@@ -19,15 +19,25 @@ import {
   ArrowLeft,
   Check,
   Eye,
+  Trash2,
 } from "lucide-react";
 
 function ChapterReaderContent() {
+  const router = useRouter();
   const params = useParams();
   const slug = params?.slug as string;
   const chapterSlug = params?.chapterSlug as string;
 
   const [story, setStory] = useState<StoryData | undefined>(undefined);
   const [chapter, setChapter] = useState<ChapterData | undefined>(undefined);
+
+  const handleDeleteThisChapter = () => {
+    if (!story || !chapter) return;
+    if (window.confirm(`Permanently delete Chapter ${chapter.number}: "${chapter.title}"? This cannot be undone.`)) {
+      deleteChapter(story.slug, chapter.slug);
+      router.push(`/story/${story.slug}`);
+    }
+  };
 
   useEffect(() => {
     if (slug) {
@@ -223,6 +233,15 @@ function ChapterReaderContent() {
             >
               <Settings className="h-3.5 w-3.5" />
               <span>Aa</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleDeleteThisChapter}
+              className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+              title="Delete this chapter"
+            >
+              <Trash2 className="h-4 w-4" />
             </button>
           </div>
         </div>
