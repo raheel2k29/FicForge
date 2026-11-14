@@ -35,22 +35,56 @@ const PROMO_CREDITS_KEY = "ficforge_promo_credits_v1";
 const NOW = Date.now();
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-const DEFAULT_SPOTLIGHT: SpotlightCampaign = {
-  id: "spotlight-ember-archive",
-  storySlug: "the-ember-archive",
-  storyTitle: "The Ember Archive",
-  coverImageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
-  authorName: "Valerius Frost",
-  classification: "ORIGINAL",
-  startDate: "Nov 10, 2026",
-  endDate: "Nov 17, 2026",
-  startTimestamp: NOW - (3 * 24 * 60 * 60 * 1000),
-  endTimestamp: NOW + (4 * 24 * 60 * 60 * 1000),
-  cooldownTimestamp: NOW + (11 * 24 * 60 * 60 * 1000),
-  status: "ACTIVE",
-  impressions: 48920,
-  clicks: 6410,
-};
+export const DEFAULT_SPOTLIGHTS: SpotlightCampaign[] = [
+  {
+    id: "spotlight-ember-archive",
+    storySlug: "the-ember-archive",
+    storyTitle: "The Ember Archive",
+    coverImageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
+    authorName: "Valerius Frost",
+    classification: "ORIGINAL",
+    startDate: "Nov 10, 2026",
+    endDate: "Nov 17, 2026",
+    startTimestamp: NOW - (3 * 24 * 60 * 60 * 1000),
+    endTimestamp: NOW + (4 * 24 * 60 * 60 * 1000),
+    cooldownTimestamp: NOW + (11 * 24 * 60 * 60 * 1000),
+    status: "ACTIVE",
+    impressions: 48920,
+    clicks: 6410,
+  },
+  {
+    id: "spotlight-obsidian-blade",
+    storySlug: "star-wars-the-obsidian-blade",
+    storyTitle: "Star Wars: The Obsidian Blade",
+    coverImageUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80",
+    authorName: "M. Kincaid",
+    classification: "FANFICTION",
+    startDate: "Nov 12, 2026",
+    endDate: "Nov 19, 2026",
+    startTimestamp: NOW - (1 * 24 * 60 * 60 * 1000),
+    endTimestamp: NOW + (6 * 24 * 60 * 60 * 1000),
+    cooldownTimestamp: NOW + (13 * 24 * 60 * 60 * 1000),
+    status: "ACTIVE",
+    impressions: 31200,
+    clicks: 4180,
+  },
+  {
+    id: "spotlight-neon-syndicate",
+    storySlug: "neon-syndicate-blood-chrome",
+    storyTitle: "Neon Syndicate: Blood & Chrome",
+    coverImageUrl: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=600&q=80",
+    authorName: "Jax Mercer",
+    classification: "ORIGINAL",
+    startDate: "Nov 13, 2026",
+    endDate: "Nov 20, 2026",
+    startTimestamp: NOW - (12 * 60 * 60 * 1000),
+    endTimestamp: NOW + (6.5 * 24 * 60 * 60 * 1000),
+    cooldownTimestamp: NOW + (13.5 * 24 * 60 * 60 * 1000),
+    status: "ACTIVE",
+    impressions: 18450,
+    clicks: 2890,
+  },
+];
 
 export function getPromoCredits(): number {
   if (typeof window === "undefined") return 1;
@@ -77,11 +111,19 @@ export function setPromoCredits(amount: number): void {
  * Retrieves all campaigns, automatically checking expiration dates against current time.
  */
 export function getAllSpotlightCampaigns(): SpotlightCampaign[] {
-  if (typeof window === "undefined") return [DEFAULT_SPOTLIGHT];
+  if (typeof window === "undefined") return DEFAULT_SPOTLIGHTS;
 
   try {
     const stored = localStorage.getItem(SPOTLIGHT_STORAGE_KEY);
-    let list: SpotlightCampaign[] = stored ? JSON.parse(stored) : [DEFAULT_SPOTLIGHT];
+    let list: SpotlightCampaign[] = stored ? JSON.parse(stored) : DEFAULT_SPOTLIGHTS;
+
+    // Auto-enrich: If only 1 campaign is present in storage, backfill with default spotlights so the showcase is rich
+    if (list.length <= 1) {
+      const existingSlugs = new Set(list.map((c) => c.storySlug));
+      const missingDefaults = DEFAULT_SPOTLIGHTS.filter((d) => !existingSlugs.has(d.storySlug));
+      list = [...list, ...missingDefaults];
+      localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(list));
+    }
 
     const now = Date.now();
     let hasChanges = false;
@@ -113,7 +155,7 @@ export function getAllSpotlightCampaigns(): SpotlightCampaign[] {
 
     return validated;
   } catch {
-    return [DEFAULT_SPOTLIGHT];
+    return DEFAULT_SPOTLIGHTS;
   }
 }
 
