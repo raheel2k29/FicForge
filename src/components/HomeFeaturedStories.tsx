@@ -71,29 +71,20 @@ export default function HomeFeaturedStories() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  // Compute items to display in the 3-4 card carousel
+  // Compute items to display in the Creator Spotlight Showcase
+  // STRICT RULE: ONLY stories with an ACTIVE verified spotlight campaign are included!
+  // Unpromoted stories must NEVER be falsely labeled or displayed as spotlight!
   const carouselItems = useMemo(() => {
-    // If active spotlights exist, prioritize them
-    if (activeSpotlights.length > 0) {
-      const matched = activeSpotlights
-        .map((c) => {
-          const s = stories.find((item) => item.slug === c.storySlug);
-          return s ? { story: s, campaign: c } : null;
-        })
-        .filter(Boolean) as { story: StoryData; campaign: SpotlightCampaign }[];
+    if (!activeSpotlights || activeSpotlights.length === 0) return [];
 
-      // If fewer than 4 spotlights, supplement with remaining stories
-      if (matched.length < 4) {
-        const remaining = stories
-          .filter((s) => !matched.some((m) => m.story.slug === s.slug))
-          .map((s) => ({ story: s, campaign: null }));
-        return [...matched, ...remaining].slice(0, 8);
-      }
-      return matched;
-    }
-
-    // Default to first 4-8 stories
-    return stories.slice(0, 8).map((s) => ({ story: s, campaign: null }));
+    const now = Date.now();
+    return activeSpotlights
+      .filter((c) => c.status === "ACTIVE" && now < c.endTimestamp)
+      .map((c) => {
+        const s = stories.find((item) => item.slug === c.storySlug);
+        return s ? { story: s, campaign: c } : null;
+      })
+      .filter(Boolean) as { story: StoryData; campaign: SpotlightCampaign }[];
   }, [activeSpotlights, stories]);
 
   const updateScrollButtons = () => {
@@ -305,6 +296,33 @@ export default function HomeFeaturedStories() {
                   </div>
                 );
               })}
+
+              {/* Open Spotlight Slot Invitation Card (if slots open) */}
+              {carouselItems.length < 4 && (
+                <div className="w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] xl:w-[calc(25%-15px)] shrink-0 snap-start">
+                  <div className="h-full rounded-2xl border-2 border-dashed border-amber-500/30 bg-gradient-to-b from-slate-900/60 to-slate-950/80 p-5 shadow-lg flex flex-col justify-between items-center text-center hover:border-amber-400 hover:bg-slate-900/80 transition-all min-h-[380px]">
+                    <div className="my-auto space-y-3">
+                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-md">
+                        <Sparkles className="h-7 w-7" />
+                      </div>
+                      <span className="inline-block text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-full px-3 py-1">
+                        Open Spotlight Slot
+                      </span>
+                      <h4 className="text-base font-black text-white">Promote Your Story</h4>
+                      <p className="text-xs text-slate-400 max-w-[200px] leading-relaxed mx-auto">
+                        Feature your serialized story on the homepage for maximum reader discovery.
+                      </p>
+                    </div>
+
+                    <Link
+                      href="/write/promote"
+                      className="w-full rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 py-2.5 text-xs font-black text-amber-300 shadow-md shadow-amber-500/10 transition-all flex items-center justify-center gap-1.5"
+                    >
+                      Claim Spotlight Slot <ArrowRight className="h-3 w-3" />
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
