@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { saveStory } from "@/lib/storyStore";
 import { getCurrentUser } from "@/lib/authStore";
 import { StoryData } from "@/data/mockStories";
@@ -18,6 +18,11 @@ import {
   Tag,
   Shield,
   Layers,
+  Upload,
+  Link2,
+  FileImage,
+  Check,
+  X,
 } from "lucide-react";
 
 export default function NewStoryWizardPage() {
@@ -33,6 +38,61 @@ export default function NewStoryWizardPage() {
   const [coverImageUrl, setCoverImageUrl] = useState(
     "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"
   );
+  const [coverMode, setCoverMode] = useState<"UPLOAD" | "URL" | "PRESET">("UPLOAD");
+  const [uploadedFileName, setUploadedFileName] = useState<string>("");
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadError, setUploadError] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const processImageFile = (file: File) => {
+    setUploadError("");
+    if (!file.type.startsWith("image/")) {
+      setUploadError("Please select a valid image file (PNG, JPG, or WebP).");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError("Image file size should be less than 10MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new window.Image();
+      img.onload = () => {
+        // Resize to standard book cover dimensions (max 600w x 900h, 2:3 ratio)
+        const canvas = document.createElement("canvas");
+        const maxW = 600;
+        const maxH = 900;
+        let width = img.width;
+        let height = img.height;
+
+        if (width / height > maxW / maxH) {
+          if (width > maxW) {
+            height = Math.round((height * maxW) / width);
+            width = maxW;
+          }
+        } else {
+          if (height > maxH) {
+            width = Math.round((width * maxH) / height);
+            height = maxH;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const optimizedDataUrl = canvas.toDataURL("image/jpeg", 0.85);
+          setCoverImageUrl(optimizedDataUrl);
+          setUploadedFileName(file.name);
+          setCoverMode("UPLOAD");
+        }
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  };
   const [status, setStatus] = useState<"ONGOING" | "COMPLETED" | "HIATUS">("ONGOING");
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>(["Adventure", "Magic"]);
@@ -414,41 +474,162 @@ export default function NewStoryWizardPage() {
                 </div>
               </div>
 
-              {/* Cover URL Input */}
-              <div className="mt-4 text-left">
-                <label className="block text-[11px] font-bold text-slate-400 mb-1">
-                  Cover Image URL
-                </label>
-                <input
-                  type="url"
-                  value={coverImageUrl}
-                  onChange={(e) => setCoverImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full h-9 rounded-lg border border-white/10 bg-[#020617] px-3 text-xs text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB]"
-                />
-              </div>
+              {/* Cover Upload / Selection Tabs */}
+              <div className="mt-5 border-t border-white/10 pt-4 text-left">
+                <div className="flex rounded-lg bg-slate-950 p-1 border border-white/5 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => setCoverMode("UPLOAD")}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-bold rounded-md transition-all ${
+                      coverMode === "UPLOAD"
+                        ? "bg-[#6D5DFB] text-white shadow-md shadow-indigo-600/30"
+                        : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    <Upload className="h-3.5 w-3.5" /> Upload File
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCoverMode("URL")}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-bold rounded-md transition-all ${
+                      coverMode === "URL"
+                        ? "bg-[#6D5DFB] text-white shadow-md shadow-indigo-600/30"
+                        : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    <Link2 className="h-3.5 w-3.5" /> Image Link
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCoverMode("PRESET")}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-bold rounded-md transition-all ${
+                      coverMode === "PRESET"
+                        ? "bg-[#6D5DFB] text-white shadow-md shadow-indigo-600/30"
+                        : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    <Layers className="h-3.5 w-3.5" /> Presets
+                  </button>
+                </div>
 
-              {/* Preset Selector */}
-              <div className="mt-4 text-left">
-                <span className="block text-[11px] font-bold text-slate-400 mb-2">
-                  Or select a preset:
-                </span>
-                <div className="grid grid-cols-2 gap-2">
-                  {coverPresets.map((preset) => (
-                    <button
-                      key={preset.name}
-                      type="button"
-                      onClick={() => setCoverImageUrl(preset.url)}
-                      className={`text-left text-xs p-2 rounded-lg border transition-all truncate ${
-                        coverImageUrl === preset.url
-                          ? "border-[#6D5DFB] bg-[#6D5DFB]/20 text-white font-bold"
-                          : "border-white/10 bg-slate-800/60 text-slate-400 hover:text-white"
+                {/* MODE 1: Direct File Upload */}
+                {coverMode === "UPLOAD" && (
+                  <div className="space-y-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg,image/webp"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) processImageFile(file);
+                      }}
+                      className="hidden"
+                    />
+
+                    <div
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDragging(true);
+                      }}
+                      onDragLeave={() => setIsDragging(false)}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        setIsDragging(false);
+                        const file = e.dataTransfer.files?.[0];
+                        if (file) processImageFile(file);
+                      }}
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`cursor-pointer rounded-xl border-2 border-dashed p-4 text-center transition-all ${
+                        isDragging
+                          ? "border-[#6D5DFB] bg-[#6D5DFB]/15 scale-[1.02]"
+                          : "border-white/15 bg-slate-950/60 hover:border-white/30 hover:bg-slate-950"
                       }`}
                     >
-                      {preset.name}
-                    </button>
-                  ))}
-                </div>
+                      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-[#6D5DFB] mb-2">
+                        <Upload className="h-5 w-5" />
+                      </div>
+                      <p className="text-xs font-bold text-white">
+                        Click to browse or drag & drop
+                      </p>
+                      <p className="text-[10px] text-slate-400 mt-1">
+                        PNG, JPG, WebP (up to 10MB) • Auto-scaled 2:3 ratio
+                      </p>
+                    </div>
+
+                    {uploadedFileName && (
+                      <div className="flex items-center justify-between rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 text-xs text-emerald-400">
+                        <div className="flex items-center gap-1.5 truncate max-w-[200px]">
+                          <Check className="h-3.5 w-3.5 shrink-0" />
+                          <span className="truncate font-semibold">{uploadedFileName}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="text-[11px] underline hover:text-white shrink-0 ml-2"
+                        >
+                          Change
+                        </button>
+                      </div>
+                    )}
+
+                    {uploadError && (
+                      <p className="text-xs text-rose-400 flex items-center gap-1 mt-1">
+                        <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                        {uploadError}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* MODE 2: External Image URL */}
+                {coverMode === "URL" && (
+                  <div className="space-y-2">
+                    <label className="block text-[11px] font-bold text-slate-400">
+                      Paste External Image URL
+                    </label>
+                    <input
+                      type="url"
+                      value={coverImageUrl.startsWith("data:") ? "" : coverImageUrl}
+                      onChange={(e) => {
+                        setCoverImageUrl(e.target.value);
+                        setUploadedFileName("");
+                      }}
+                      placeholder="https://images.unsplash.com/..."
+                      className="w-full h-10 rounded-lg border border-white/10 bg-[#020617] px-3 text-xs text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB]"
+                    />
+                    <p className="text-[10px] text-slate-400">
+                      Direct links to hosted cover artwork (.jpg, .png, .webp).
+                    </p>
+                  </div>
+                )}
+
+                {/* MODE 3: Stock Presets */}
+                {coverMode === "PRESET" && (
+                  <div>
+                    <span className="block text-[11px] font-bold text-slate-400 mb-2">
+                      Choose a Stock Fantasy/Sci-Fi Cover:
+                    </span>
+                    <div className="grid grid-cols-2 gap-2">
+                      {coverPresets.map((preset) => (
+                        <button
+                          key={preset.name}
+                          type="button"
+                          onClick={() => {
+                            setCoverImageUrl(preset.url);
+                            setUploadedFileName("");
+                          }}
+                          className={`text-left text-xs p-2 rounded-lg border transition-all truncate ${
+                            coverImageUrl === preset.url
+                              ? "border-[#6D5DFB] bg-[#6D5DFB]/20 text-white font-bold"
+                              : "border-white/10 bg-slate-800/60 text-slate-400 hover:text-white"
+                          }`}
+                        >
+                          {preset.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
             </div>
