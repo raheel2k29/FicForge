@@ -10,8 +10,7 @@ import {
 import {
   getCurrentUser,
   UserSession,
-  loginAsDemoReader,
-  loginAsDemoCreator,
+  loginAsDemoUser,
 } from "@/lib/authStore";
 import { StoryData } from "@/data/mockStories";
 import {
@@ -218,31 +217,16 @@ export default function SavedLibraryPage() {
 
             {/* Instant Testing Helper */}
             <div className="mt-6 pt-5 border-t border-white/10">
-              <span className="block text-[11px] font-bold text-slate-400 mb-2.5">
-                🧪 1-Click Role Testing Shortcuts:
-              </span>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    loginAsDemoReader();
-                    window.location.reload();
-                  }}
-                  className="py-2.5 px-3 rounded-xl border border-blue-500/30 bg-blue-500/10 text-xs font-bold text-blue-300 hover:bg-blue-500/20 transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                  <span>📖 Sign In (Reader)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    loginAsDemoCreator();
-                    window.location.reload();
-                  }}
-                  className="py-2.5 px-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                  <span>✍️ Sign In (Creator)</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  loginAsDemoUser();
+                  window.location.reload();
+                }}
+                className="w-full py-2.5 px-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+              >
+                <span>⚡ 1-Click Test Sign In (Valerius Frost)</span>
+              </button>
             </div>
 
             <div className="mt-5 text-center">

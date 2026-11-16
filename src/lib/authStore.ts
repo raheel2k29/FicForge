@@ -1,12 +1,13 @@
 "use client";
 
 export type UserRole =
-  | "READER"
-  | "CREATOR"
-  | "MODERATOR"
-  | "SUPPORT"
+  | "USER"
   | "ADMIN"
-  | "SUPER_ADMIN";
+  | "SUPER_ADMIN"
+  | "MODERATOR"
+  // Legacy backward-compat aliases:
+  | "CREATOR"
+  | "READER";
 
 export interface UserSession {
   id: string;
@@ -20,32 +21,33 @@ export interface UserSession {
 }
 
 const AUTH_STORAGE_KEY = "ficforge_user_session_v1";
+const ADMIN_STORAGE_KEY = "ficforge_admin_session_v1";
 
-export const DEMO_CREATOR: UserSession = {
+/**
+ * Standard Demo User: Valerius Frost (Author & Reader in ONE Account)
+ * Every FicForge account can both read and write!
+ */
+export const DEMO_USER: UserSession = {
   id: "user-creator-demo",
   name: "Valerius Frost",
   username: "valerius_f",
-  email: "creator@ficforge.org",
-  role: "CREATOR",
+  email: "valerius@ficforge.org",
+  role: "USER",
   avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
   sparksBalance: 450,
   membershipTier: "PLUS",
 };
 
-export const DEMO_READER: UserSession = {
-  id: "user-reader-demo",
-  name: "Elena Rostova",
-  username: "elena_reader",
-  email: "reader@ficforge.org",
-  role: "READER",
-  avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
-  sparksBalance: 120,
-  membershipTier: "SUPPORTER",
-};
+// Aliases for any legacy import compatibility
+export const DEMO_CREATOR = DEMO_USER;
+export const DEMO_READER = DEMO_USER;
 
+/**
+ * Dedicated Admin User: Platform Administrator for /admin
+ */
 export const DEMO_ADMIN: UserSession = {
-  id: "user-admin-demo",
-  name: "FicForge Staff",
+  id: "admin-master-01",
+  name: "FicForge Staff Admin",
   username: "admin_forge",
   email: "admin@ficforge.org",
   role: "SUPER_ADMIN",
@@ -71,7 +73,7 @@ export function isAuthenticated(): boolean {
 }
 
 /**
- * RBAC Helper: Check if user is an administrator or platform moderator
+ * Check if a session has administrative / moderation privileges
  */
 export function isUserAdmin(user: UserSession | null): boolean {
   if (!user) return false;
@@ -79,23 +81,19 @@ export function isUserAdmin(user: UserSession | null): boolean {
 }
 
 /**
- * RBAC Helper: Check if user has permission to create new stories
+ * Any authenticated user can create stories and manuscripts (Universal Account)
  */
 export function canCreateStories(user: UserSession | null): boolean {
-  if (!user) return false;
-  return user.role === "CREATOR" || isUserAdmin(user);
+  return user !== null;
 }
 
 /**
- * RBAC Helper: Authoritative check if user has permission to edit, add chapters to,
- * or delete a specific story.
- *
- * ONLY granted if:
- * 1. User is logged in AND
- * 2. User is the author (by username or ID), OR
- * 3. User is an Administrator / Moderator
- *
- * Anonymous guests and other readers will ALWAYS return false!
+ * Authoritative check if user can edit, add chapters to, or delete a story.
+ * Only granted if:
+ * 1. User is the author of this story (username or id match), OR
+ * 2. User is an Administrator
+ * 
+ * Non-authors and logged-out guests ALWAYS return false!
  */
 export function canManageStory(
   user: UserSession | null,
@@ -116,9 +114,6 @@ export function canManageStory(
   return false;
 }
 
-/**
- * RBAC Helper: Check if user can delete/manage a chapter
- */
 export function canManageChapter(
   user: UserSession | null,
   storyAuthorUsername?: string,
@@ -127,14 +122,17 @@ export function canManageChapter(
   return canManageStory(user, storyAuthorUsername, storyAuthorId);
 }
 
-export function loginUser(email: string, name?: string, role: UserRole = "CREATOR"): UserSession {
+/**
+ * Standard user login (Universal Account - Readers are Creators, Creators are Readers)
+ */
+export function loginUser(email: string, name?: string): UserSession {
   const username = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
   const session: UserSession = {
     id: `user-${Date.now()}`,
     name: name || username,
     username,
     email,
-    role,
+    role: "USER",
     avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
     sparksBalance: 250,
     membershipTier: "FREE",
@@ -148,33 +146,35 @@ export function loginUser(email: string, name?: string, role: UserRole = "CREATO
   return session;
 }
 
-export function loginAsDemoCreator(): UserSession {
+export function loginAsDemoUser(): UserSession {
   if (typeof window !== "undefined") {
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(DEMO_CREATOR));
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(DEMO_USER));
     window.dispatchEvent(new Event("ficforge_auth_changed"));
   }
-  return DEMO_CREATOR;
+  return DEMO_USER;
 }
 
-export function loginAsDemoReader(): UserSession {
-  if (typeof window !== "undefined") {
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(DEMO_READER));
-    window.dispatchEvent(new Event("ficforge_auth_changed"));
-  }
-  return DEMO_READER;
-}
+export const loginAsDemoCreator = loginAsDemoUser;
+export const loginAsDemoReader = loginAsDemoUser;
 
-export function loginAsDemoAdmin(): UserSession {
+/**
+ * Dedicated Admin Portal Login for /admin
+ */
+export function loginAsAdmin(): UserSession {
   if (typeof window !== "undefined") {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(DEMO_ADMIN));
+    localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(DEMO_ADMIN));
     window.dispatchEvent(new Event("ficforge_auth_changed"));
   }
   return DEMO_ADMIN;
 }
 
+export const loginAsDemoAdmin = loginAsAdmin;
+
 export function logoutUser(): void {
   if (typeof window !== "undefined") {
     localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.removeItem(ADMIN_STORAGE_KEY);
     window.dispatchEvent(new Event("ficforge_auth_changed"));
   }
 }

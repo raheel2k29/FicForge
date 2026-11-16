@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getCurrentUser, logoutUser, UserSession } from "@/lib/authStore";
+import { getCurrentUser, logoutUser, UserSession, isUserAdmin } from "@/lib/authStore";
 import { getBookmarkCount } from "@/lib/bookmarkStore";
-import { Menu, X, Sparkles, User, LogOut, PenTool, Bookmark } from "lucide-react";
+import { Menu, X, Sparkles, User, LogOut, PenTool, Bookmark, ShieldCheck } from "lucide-react";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -99,28 +99,29 @@ export default function Navbar() {
                 <span>{currentUser.sparksBalance} Sparks</span>
               </div>
 
-              {/* Role-Aware Creator Studio or Become Writer Button */}
-              {currentUser.role === "READER" ? (
+              {/* Creator Studio Shortcut for all users (Readers are Creators & Creators are Readers) */}
+              <Link
+                href="/write"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-[#6D5DFB]/40 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-orange-500/15 hover:from-indigo-500/25 hover:to-orange-500/25 px-3.5 py-1.5 text-xs font-black text-white transition-all shadow-sm shadow-indigo-600/10"
+                title="Open Creator Studio & Manuscripts"
+              >
+                <PenTool className="h-3.5 w-3.5 text-[#F97316]" />
+                Creator Studio
+              </Link>
+
+              {/* Admin Portal Shortcut (Only visible if user has admin privileges) */}
+              {isUserAdmin(currentUser) && (
                 <Link
-                  href="/write"
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-slate-800/80 hover:bg-slate-700/80 px-3 py-1.5 text-xs font-bold text-slate-200 transition-all"
-                  title="Activate Writer Profile"
+                  href="/admin"
+                  className="inline-flex items-center gap-1 rounded-xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 px-2.5 py-1 text-[11px] font-black text-red-400 transition-all"
+                  title="Access Administrative Control Console"
                 >
-                  <PenTool className="h-3.5 w-3.5 text-[#F97316]" />
-                  Become a Writer
-                </Link>
-              ) : (
-                <Link
-                  href="/write"
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-[#6D5DFB]/40 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-orange-500/15 hover:from-indigo-500/25 hover:to-orange-500/25 px-3.5 py-1.5 text-xs font-black text-white transition-all shadow-sm shadow-indigo-600/10"
-                  title="Open Creator Studio Dashboard"
-                >
-                  <PenTool className="h-3.5 w-3.5 text-[#F97316]" />
-                  Creator Studio
+                  <ShieldCheck className="h-3.5 w-3.5 text-red-400" />
+                  Admin
                 </Link>
               )}
 
-              {/* Avatar, Name & Role Badge */}
+              {/* Avatar, Name & Membership Badge */}
               <Link
                 href="/account"
                 className="flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/80 px-2.5 py-1 hover:border-white/30 transition-all"
@@ -133,7 +134,7 @@ export default function Navbar() {
                 <div className="flex flex-col text-left">
                   <span className="text-xs font-bold text-white leading-tight">{currentUser.name}</span>
                   <span className="text-[9px] font-black uppercase tracking-wider text-amber-400 leading-tight">
-                    {currentUser.role}
+                    {currentUser.membershipTier || "Member"}
                   </span>
                 </div>
               </Link>

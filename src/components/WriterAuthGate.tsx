@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { getCurrentUser, loginAsDemoCreator, loginUser, UserSession } from "@/lib/authStore";
+import { getCurrentUser, loginAsDemoUser, UserSession } from "@/lib/authStore";
 import {
   Lock,
   Sparkles,
@@ -23,8 +23,8 @@ interface WriterAuthGateProps {
 
 export default function WriterAuthGate({
   children,
-  title = "Welcome to the FicForge Writer Portal",
-  description = "Create a FicForge account or sign in to access your writer dashboard, workshop, story editor, and bulk chapter importer.",
+  title = "Welcome to the FicForge Creator Workshop",
+  description = "Create a FicForge account or sign in to access your author workshop, write chapters, and batch import manuscripts.",
 }: WriterAuthGateProps) {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
@@ -43,10 +43,10 @@ export default function WriterAuthGate({
   }, []);
 
   const handleQuickDemoLogin = () => {
-    loginAsDemoCreator();
+    loginAsDemoUser();
   };
 
-  // Prevent flash of unauthenticated gate before reading localStorage
+  // Prevent flash before reading auth session
   if (!hasChecked) {
     return (
       <div className="min-h-[60vh] bg-[#050B16] flex items-center justify-center text-slate-500">
@@ -55,45 +55,12 @@ export default function WriterAuthGate({
     );
   }
 
-  // If user is a Reader, require Creator upgrade
-  if (currentUser && currentUser.role === "READER") {
-    const handleUpgradeToCreator = () => {
-      loginUser(currentUser.email, currentUser.name, "CREATOR");
-    };
-
-    return (
-      <div className="min-h-[80vh] bg-[#050B16] text-white py-14 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-        <div className="max-w-md w-full rounded-3xl border border-white/10 bg-slate-900/95 p-8 shadow-2xl text-center space-y-5">
-          <div className="h-14 w-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto text-2xl">
-            ✍️
-          </div>
-          <div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30">
-              Reader Account Detected
-            </span>
-            <h2 className="text-2xl font-black text-white mt-3">Activate Writer Profile</h2>
-            <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-              You are signed in as <strong>{currentUser.name}</strong> (@{currentUser.username}) with a Reader account. To publish stories, manage chapters, or import manuscripts, activate your Creator Workshop privileges.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={handleUpgradeToCreator}
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] text-xs font-extrabold text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all cursor-pointer"
-          >
-            Activate Creator Workshop Privileges →
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // If user is authenticated as Creator or Admin, render the writer tools directly!
+  // Any authenticated user has full access to the Creator Workshop!
   if (currentUser) {
     return <>{children}</>;
   }
 
-  // Unauthenticated: Show the Writer Portal Gate
+  // Unauthenticated: Show the Creator Workshop Gate
   return (
     <div className="min-h-[80vh] bg-[#050B16] text-white py-14 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
       <div className="max-w-[1080px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -105,7 +72,7 @@ export default function WriterAuthGate({
           <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-[#6D5DFB]/15 to-[#F97316]/10 blur-3xl pointer-events-none" />
 
           <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-[#F97316] bg-orange-500/10 border border-orange-500/30 rounded-full px-3.5 py-1.5 mb-5">
-            WRITER AUTHENTICATION REQUIRED
+            AUTHENTICATION REQUIRED
           </span>
 
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight leading-tight">
@@ -136,59 +103,45 @@ export default function WriterAuthGate({
           <div className="mt-6 pt-6 border-t border-white/10">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <span className="text-xs text-slate-400 font-semibold">
-                Client / Review Testing:
+                Instant Testing:
               </span>
               <button
                 type="button"
                 onClick={handleQuickDemoLogin}
-                className="inline-flex items-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-xs font-black text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer shadow-md shadow-amber-500/10"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer"
               >
-                <Sparkles className="h-3.5 w-3.5 text-amber-400" />
-                1-Click Sign In as Creator (Test)
+                <span>✍️ 1-Click Test Sign In (Valerius Frost)</span>
               </button>
             </div>
-          </div>
-
-          <div className="mt-4 text-[11px] text-slate-500">
-            🔒 Authors retain 100% intellectual rights to their original works. FicForge complies strictly with Safe Harbor protections for fanfiction.
           </div>
         </div>
 
         {/* Right: Feature Highlights (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5">
-            <div className="flex items-center gap-3 mb-1.5">
-              <div className="h-8 w-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">
-                <BookOpen className="h-4 w-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white">Creator Workshop</h3>
+          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 space-y-2">
+            <div className="flex items-center gap-2 text-indigo-400 text-sm font-bold">
+              <BookOpen className="h-4 w-4" /> Serialized Story Editor
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Create stories, organize drafts, format individual chapters, and manage releases from one central dashboard.
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Rich metadata tagging, multi-fandom support, content warnings, and author notes for every published chapter.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5">
-            <div className="flex items-center gap-3 mb-1.5">
-              <div className="h-8 w-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
-                <UploadCloud className="h-4 w-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white">Smart Bulk Importer</h3>
+          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 space-y-2">
+            <div className="flex items-center gap-2 text-orange-400 text-sm font-bold">
+              <UploadCloud className="h-4 w-4" /> Batch Manuscript Importer
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Upload 5, 10, 25, or 50+ chapters in one click or paste your full manuscript. Auto-splits without merging.
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Drop full manuscript files (.docx, .txt, .md). Our parser splits chapters, extracts titles, and drafts them in seconds.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5">
-            <div className="flex items-center gap-3 mb-1.5">
-              <div className="h-8 w-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
-                <TrendingUp className="h-4 w-4" />
-              </div>
-              <h3 className="text-sm font-bold text-white">Reader Engagement & Tipping</h3>
+          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 space-y-2">
+            <div className="flex items-center gap-2 text-emerald-400 text-sm font-bold">
+              <TrendingUp className="h-4 w-4" /> Discovery & Creator Spotlight
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Build a dedicated following with comment discussions, reaction emojis, and optional Fast Pass monetization.
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Promote your serialized works to the homepage with fair discovery cooldowns and real reader analytics.
             </p>
           </div>
         </div>

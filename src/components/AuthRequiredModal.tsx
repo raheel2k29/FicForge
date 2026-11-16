@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Bookmark, Heart, Zap, Sparkles, X, ArrowRight, Lock, UserPlus } from "lucide-react";
-import { loginAsDemoReader, loginAsDemoCreator } from "@/lib/authStore";
+import { loginAsDemoUser } from "@/lib/authStore";
 
 interface AuthRequiredModalProps {
   isOpen: boolean;
@@ -26,14 +26,8 @@ export default function AuthRequiredModal({
 
   if (!isOpen) return null;
 
-  const handleQuickReader = () => {
-    loginAsDemoReader();
-    onClose();
-    window.location.reload();
-  };
-
-  const handleQuickCreator = () => {
-    loginAsDemoCreator();
+  const handleQuickTestLogin = () => {
+    loginAsDemoUser();
     onClose();
     window.location.reload();
   };
@@ -96,27 +90,15 @@ export default function AuthRequiredModal({
           </Link>
         </div>
 
-        {/* Review Testing Helper */}
+        {/* 1-Click Fast Testing Shortcut */}
         <div className="mt-6 pt-5 border-t border-white/10 text-center">
-          <span className="block text-[11px] font-bold text-slate-400 mb-2">
-            🧪 Fast Testing Shortcut:
-          </span>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={handleQuickReader}
-              className="py-2 px-2.5 rounded-xl border border-blue-500/30 bg-blue-500/10 text-[11px] font-bold text-blue-300 hover:bg-blue-500/20 transition-all cursor-pointer flex items-center justify-center gap-1.5"
-            >
-              <span>📖 Sign In (Reader)</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleQuickCreator}
-              className="py-2 px-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-[11px] font-bold text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-1.5"
-            >
-              <span>✍️ Sign In (Creator)</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={handleQuickTestLogin}
+            className="w-full py-2.5 px-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-2"
+          >
+            <span>⚡ 1-Click Test Sign In (Valerius Frost)</span>
+          </button>
         </div>
 
       </div>

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { loginUser, loginAsDemoCreator } from "@/lib/authStore";
+import { loginUser } from "@/lib/authStore";
 import { Sparkles, ArrowRight, Lock, Mail, User, ShieldCheck, Check } from "lucide-react";
 
 export default function RegisterPage() {
