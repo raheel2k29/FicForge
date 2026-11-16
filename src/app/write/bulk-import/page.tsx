@@ -301,9 +301,14 @@ function BulkImportContent() {
         year: "numeric",
       });
 
+      let isScheduled = false;
+      let scheduledPublishAt: string | undefined = undefined;
+
       if (enableScheduling && idx > 0) {
+        isScheduled = true;
         const futureDate = new Date(now);
         futureDate.setDate(futureDate.getDate() + idx * scheduleIntervalDays);
+        scheduledPublishAt = futureDate.toISOString();
         publishDateStr = `Scheduled for ${futureDate.toLocaleDateString("en-US", {
           month: "short",
           day: "numeric",
@@ -316,6 +321,9 @@ function BulkImportContent() {
         slug: `chapter-${idx + 1}`,
         title: ch.title,
         wordCount: ch.wordCount,
+        isPublished: !isScheduled,
+        isScheduled,
+        scheduledPublishAt,
         publishedAt: publishDateStr,
         topAuthorNote: ch.topAuthorNote,
         bottomAuthorNote: ch.bottomAuthorNote,

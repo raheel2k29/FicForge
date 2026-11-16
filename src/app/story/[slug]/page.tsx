@@ -613,13 +613,23 @@ function StoryDetailsContent() {
                       <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
                         <span>{ch.wordCount.toLocaleString()} words</span>
                         <span>•</span>
-                        <span>Published {ch.publishedAt}</span>
+                        <span>
+                          {ch.isScheduled ? (
+                            <strong className="text-amber-400">{ch.publishedAt}</strong>
+                          ) : (
+                            `Published ${ch.publishedAt}`
+                          )}
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 self-end sm:self-auto">
-                    {ch.isFastPass ? (
+                    {ch.isScheduled ? (
+                      <span className="text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/40 rounded-full px-2.5 py-0.5 flex items-center gap-1">
+                        <Lock className="h-3 w-3" /> Scheduled
+                      </span>
+                    ) : ch.isFastPass ? (
                       <div className="flex items-center gap-2">
                         <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/15 px-3 py-1 text-xs font-black text-amber-300">
                           <Lock className="h-3 w-3" /> Fast Pass · {ch.fastPassPriceSparks} Sparks
@@ -634,12 +644,33 @@ function StoryDetailsContent() {
                       </span>
                     )}
 
-                    <Link
-                      href={`/story/${story.slug}/${ch.slug}`}
-                      className="rounded-lg bg-white/5 border border-white/10 px-3 py-1.5 text-xs font-bold text-slate-200 hover:bg-[#6D5DFB] hover:border-[#6D5DFB] hover:text-white transition-all"
-                    >
-                      Read
-                    </Link>
+                    {ch.isScheduled && !isAuthor ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="rounded-lg bg-white/5 border border-white/10 px-3 py-1.5 text-xs font-bold text-slate-500 cursor-not-allowed flex items-center gap-1.5 opacity-60"
+                        title="This chapter is scheduled and not yet released to the public."
+                      >
+                        <Lock className="h-3 w-3" /> Locked
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/story/${story.slug}/${ch.slug}`}
+                        className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1 ${
+                          ch.isScheduled && isAuthor
+                            ? "bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500/30"
+                            : "bg-white/5 border border-white/10 text-slate-200 hover:bg-[#6D5DFB] hover:border-[#6D5DFB] hover:text-white"
+                        }`}
+                      >
+                        {ch.isScheduled && isAuthor ? (
+                          <>
+                            <Eye className="h-3 w-3" /> Author Preview
+                          </>
+                        ) : (
+                          "Read"
+                        )}
+                      </Link>
+                    )}
 
                     {/* Author Only: Delete Chapter Button */}
                     {isAuthor && (

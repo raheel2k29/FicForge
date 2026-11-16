@@ -2,6 +2,42 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { mockStories, StoryData } from "@/data/mockStories";
 
+function mapDbChapter(ch: any) {
+  const now = new Date();
+  const isSched = !ch.isPublished && Boolean(ch.scheduledPublishAt && new Date(ch.scheduledPublishAt) > now);
+  let pubDateFormatted = "Recently";
+  if (isSched && ch.scheduledPublishAt) {
+    pubDateFormatted = `Scheduled for ${new Date(ch.scheduledPublishAt).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })}`;
+  } else if (ch.publishedAt) {
+    pubDateFormatted = new Date(ch.publishedAt).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
+  return {
+    number: ch.chapterNumber,
+    slug: ch.slug,
+    title: ch.title,
+    wordCount: ch.wordCount,
+    isPublished: ch.isPublished,
+    isScheduled: isSched,
+    scheduledPublishAt: ch.scheduledPublishAt ? new Date(ch.scheduledPublishAt).toISOString() : undefined,
+    publishedAt: pubDateFormatted,
+    isFastPass: ch.isFastPass,
+    fastPassPriceSparks: ch.fastPassPriceSparks,
+    fastPassUnlockAt: ch.fastPassUnlockAt ? new Date(ch.fastPassUnlockAt).toLocaleDateString() : undefined,
+    topAuthorNote: ch.topAuthorNote || undefined,
+    bottomAuthorNote: ch.bottomAuthorNote || undefined,
+    content: [ch.content],
+  };
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -49,14 +85,7 @@ export async function GET(request: Request) {
             general: ["Serialized", "Popular"],
           },
           updatedAt: s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : "Recently",
-          chapters: s.chapters.map((ch) => ({
-            number: ch.chapterNumber,
-            slug: ch.slug,
-            title: ch.title,
-            wordCount: ch.wordCount,
-            publishedAt: ch.publishedAt ? new Date(ch.publishedAt).toLocaleDateString() : "Recently",
-            content: [ch.content],
-          })),
+          chapters: s.chapters.map(mapDbChapter),
         };
 
         return NextResponse.json({ story: storyData, source: "postgresql-neon-database" });
@@ -116,14 +145,7 @@ export async function GET(request: Request) {
             general: ["Serialized", "Popular"],
           },
           updatedAt: s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : "Recently",
-          chapters: s.chapters.map((ch) => ({
-            number: ch.chapterNumber,
-            slug: ch.slug,
-            title: ch.title,
-            wordCount: ch.wordCount,
-            publishedAt: ch.publishedAt ? new Date(ch.publishedAt).toLocaleDateString() : "Recently",
-            content: [ch.content],
-          })),
+          chapters: s.chapters.map(mapDbChapter),
         };
       }
 
@@ -220,6 +242,17 @@ export async function POST(request: Request) {
     if (story.chapters && Array.isArray(story.chapters)) {
       for (const ch of story.chapters) {
         const chNum = Number(ch.number) || 1;
+        const isSched = Boolean(ch.isScheduled || (ch.publishedAt && String(ch.publishedAt).startsWith("Scheduled")));
+        const isPub = isSched ? false : (ch.isPublished !== undefined ? ch.isPublished : true);
+        const schedDate = ch.scheduledPublishAt
+          ? new Date(ch.scheduledPublishAt)
+          : isSched
+          ? new Date(Date.now() + 86400000 * 2)
+          : null;
+        const pubDate = isPub
+          ? (ch.publishedAt && !String(ch.publishedAt).startsWith("Scheduled") ? new Date(ch.publishedAt) : new Date())
+          : null;
+
         await prisma.chapter.upsert({
           where: {
             storyId_chapterNumber: {
@@ -233,7 +266,9 @@ export async function POST(request: Request) {
             content: Array.isArray(ch.content) ? ch.content.join("\n\n") : (ch.content || ""),
             wordCount: ch.wordCount || 0,
             orderIndex: chNum,
-            isPublished: true,
+            isPublished: isPub,
+            publishedAt: pubDate,
+            scheduledPublishAt: schedDate,
           },
           create: {
             storyId: dbStory.id,
@@ -243,7 +278,9 @@ export async function POST(request: Request) {
             wordCount: ch.wordCount || 0,
             chapterNumber: chNum,
             orderIndex: chNum,
-            isPublished: true,
+            isPublished: isPub,
+            publishedAt: pubDate,
+            scheduledPublishAt: schedDate,
           },
         });
       }

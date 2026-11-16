@@ -4,6 +4,9 @@ export interface ChapterData {
   title: string;
   wordCount: number;
   publishedAt: string;
+  isPublished?: boolean;
+  isScheduled?: boolean;
+  scheduledPublishAt?: string;
   isFastPass?: boolean;
   fastPassPriceSparks?: number;
   fastPassUnlockAt?: string; // countdown

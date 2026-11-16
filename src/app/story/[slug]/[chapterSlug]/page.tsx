@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
-import { getStoryBySlug, deleteChapter } from "@/lib/storyStore";
+import { getStoryBySlug, deleteChapter, syncStoriesWithServer } from "@/lib/storyStore";
 import { isStoryBookmarked, toggleStoryBookmark } from "@/lib/bookmarkStore";
 import { getCurrentUser, UserSession, canManageChapter } from "@/lib/authStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
@@ -69,14 +69,23 @@ function ChapterReaderContent() {
   };
 
   useEffect(() => {
-    if (slug) {
-      const foundStory = getStoryBySlug(slug);
+    const applyFound = (foundStory: StoryData | undefined) => {
+      if (!foundStory) return;
       setStory(foundStory);
       setIsBookmarked(isStoryBookmarked(slug));
-      if (foundStory && chapterSlug) {
+      if (chapterSlug) {
         const foundCh = foundStory.chapters.find((ch) => ch.slug === chapterSlug);
         setChapter(foundCh);
       }
+    };
+
+    if (slug) {
+      applyFound(getStoryBySlug(slug));
+      syncStoriesWithServer().then((serverStories) => {
+        if (serverStories && serverStories[slug]) {
+          applyFound(serverStories[slug]);
+        }
+      });
     }
 
     const handleBookmarksChange = () => {
@@ -143,6 +152,45 @@ function ChapterReaderContent() {
         >
           Return to Story
         </Link>
+      </div>
+    );
+  }
+
+  // Scheduled Chapter Lock Gate (Enforces scheduled release: ONLY author/admin can preview)
+  if (chapter.isScheduled && !isAuthor) {
+    return (
+      <div className="min-h-screen bg-[#050B16] text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="max-w-md w-full rounded-3xl border border-amber-500/30 bg-slate-900/95 p-8 shadow-2xl backdrop-blur-xl">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-5">
+            <Lock className="h-8 w-8" />
+          </div>
+          <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-amber-400 bg-amber-500/10 border border-amber-500/30 rounded-full px-3 py-1 mb-3">
+            SCHEDULED RELEASE
+          </span>
+          <h1 className="text-2xl font-black text-white">
+            Chapter {chapter.number}: {chapter.title}
+          </h1>
+          <p className="mt-3 text-sm text-slate-300 leading-relaxed">
+            This chapter is locked and has not been publicly released yet. It is scheduled to automatically unlock on <strong className="text-amber-400">{chapter.publishedAt}</strong>.
+          </p>
+
+          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+            <Link
+              href={`/story/${slug}`}
+              className="flex-1 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] py-3 text-xs font-black text-white shadow-lg shadow-indigo-600/30 hover:opacity-95 transition-all text-center flex items-center justify-center"
+            >
+              Return to Story
+            </Link>
+            {story.chapters.length > 0 && (
+              <Link
+                href={`/story/${slug}/${story.chapters[0].slug}`}
+                className="flex-1 rounded-xl border border-white/20 bg-slate-800/80 py-3 text-xs font-bold text-slate-200 hover:text-white transition-all text-center flex items-center justify-center"
+              >
+                Read Chapter 1
+              </Link>
+            )}
+          </div>
+        </div>
       </div>
     );
   }
@@ -449,6 +497,26 @@ function ChapterReaderContent() {
       {/* Main Chapter Sanctuary Body (Distraction Free, ZERO in-text ads) */}
       <main className={`mx-auto px-4 sm:px-6 py-12 ${widthStyles[readerWidth]}`}>
         
+        {/* Author Scheduled Preview Alert */}
+        {chapter.isScheduled && (
+          <div className="mb-8 rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-xs text-amber-200 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400 font-bold shrink-0">
+                🔒
+              </span>
+              <div>
+                <strong className="block text-amber-300 font-bold">Author Preview Mode</strong>
+                <span>
+                  This chapter is scheduled to publish publicly on <strong>{chapter.publishedAt}</strong>. Readers currently see a locked countdown screen.
+                </span>
+              </div>
+            </div>
+            <span className="shrink-0 text-[10px] font-black uppercase tracking-wider text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-full bg-amber-500/10">
+              Scheduled Draft
+            </span>
+          </div>
+        )}
+
         {/* Chapter Title Heading */}
         <div className="mb-10 text-center">
           <span className="text-xs font-black uppercase tracking-widest text-[#F97316]">
