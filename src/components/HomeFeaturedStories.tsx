@@ -132,7 +132,7 @@ export default function HomeFeaturedStories() {
             onMouseLeave={() => setIsPaused(false)}
             className="space-y-6"
           >
-            {/* Carousel Header & Controls */}
+            {/* Showcase Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/10 pb-5">
               <div>
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -148,13 +148,13 @@ export default function HomeFeaturedStories() {
                   Creator Spotlight Showcase
                 </h2>
                 <p className="mt-1 text-sm text-slate-400">
-                  Featured community works backed by creator spotlight promotions.
+                  Handpicked community highlights and top serialized stories on FicForge.
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 self-start sm:self-auto">
-                {/* Carousel Slider Controls (< and >) */}
-                <div className="flex items-center gap-1.5 bg-slate-800/80 border border-white/10 rounded-xl p-1">
+              {/* Slider Controls (Only visible if more than 1 spotlight) */}
+              {carouselItems.length > 1 && (
+                <div className="flex items-center gap-1.5 bg-slate-800/80 border border-white/10 rounded-xl p-1 self-start sm:self-auto">
                   <button
                     type="button"
                     onClick={() => handleScroll("left")}
@@ -182,37 +182,118 @@ export default function HomeFeaturedStories() {
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
-
-                <Link
-                  href="/write/promote"
-                  className="rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-xs font-black text-amber-300 px-4 py-2.5 transition-all inline-flex items-center gap-1.5 shrink-0"
-                >
-                  Promote Your Story <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
+              )}
             </div>
 
-            {/* 3 to 4 Card Carousel Track */}
-            <div
-              ref={carouselRef}
-              onScroll={updateScrollButtons}
-              className="flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar pb-3 pt-1"
-            >
-              {carouselItems.map(({ story, campaign }) => {
-                const isSpotlightActive = !!campaign || isStorySpotlighted(story.slug);
-                const storyId = story.id || story.slug;
-
+            {/* Layout Case A: SINGLE SPOTLIGHT STORY -> FULL-WIDTH HERO SHOWCASE */}
+            {carouselItems.length === 1 ? (
+              (() => {
+                const single = carouselItems[0].story;
                 return (
+                  <div className="relative rounded-3xl border-2 border-amber-500/30 bg-gradient-to-r from-slate-950 via-[#0A1020] to-slate-900 p-6 sm:p-8 shadow-2xl overflow-hidden group hover:border-amber-400/80 transition-all duration-300">
+                    {/* Golden Ambient Glow */}
+                    <div className="absolute -top-24 -right-24 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/20 transition-all" />
+
+                    <div className="relative z-10 flex flex-col md:flex-row items-center md:items-stretch gap-6 sm:gap-8">
+                      {/* Left: Book Cover Presentation */}
+                      <Link href={`/story/${single.slug}`} className="shrink-0 group/cover relative">
+                        <div className="relative w-48 sm:w-56 h-72 sm:h-80 rounded-2xl overflow-hidden bg-slate-950 shadow-2xl border border-white/15">
+                          <img
+                            src={single.coverImageUrl || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"}
+                            alt={single.title}
+                            className="h-full w-full object-cover group-hover/cover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/40" />
+                          <div className="absolute top-3 left-3">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-950 shadow-md">
+                              <Sparkles className="h-3 w-3 fill-slate-950" />
+                              Spotlight
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+
+                      {/* Right: Story Details & Read CTA */}
+                      <div className="flex flex-col justify-between flex-1 text-center md:text-left">
+                        <div>
+                          {/* Tags & Rating */}
+                          <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap mb-3">
+                            {single.classification === "FANFICTION" ? (
+                              <span className="rounded-full bg-emerald-500/20 border border-emerald-500/40 px-3 py-1 text-[11px] font-black uppercase text-emerald-300">
+                                Free Fanfiction • {single.fandom || "Fandom"}
+                              </span>
+                            ) : (
+                              <span className="rounded-full bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-amber-500/40 px-3 py-1 text-[11px] font-black uppercase text-amber-300">
+                                Original Webnovel
+                              </span>
+                            )}
+                            <span className="rounded-full bg-white/10 border border-white/15 px-2.5 py-0.5 text-xs font-bold text-white uppercase">
+                              {single.rating || "TEEN"}
+                            </span>
+                          </div>
+
+                          <Link href={`/story/${single.slug}`}>
+                            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white hover:text-amber-300 transition-colors tracking-tight leading-tight">
+                              {single.title}
+                            </h3>
+                          </Link>
+
+                          {/* Author Info */}
+                          <div className="mt-3 flex items-center justify-center md:justify-start gap-2.5">
+                            <img
+                              src={single.author?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"}
+                              alt={single.author?.name || "Author"}
+                              className="h-7 w-7 rounded-full object-cover border border-white/20"
+                            />
+                            <span className="text-sm font-bold text-slate-200">
+                              {single.author?.name || "Author"}
+                            </span>
+                            {single.author?.isVerified && (
+                              <span className="text-blue-400 text-xs font-bold">✓</span>
+                            )}
+                          </div>
+
+                          <p className="mt-4 text-sm text-slate-300 leading-relaxed max-w-2xl line-clamp-3">
+                            {single.synopsis}
+                          </p>
+                        </div>
+
+                        {/* Bottom Stats & CTA */}
+                        <div className="mt-6 pt-5 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                          <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
+                            <span>📖 {single.chapters?.length || 0} Chapters</span>
+                            <span>•</span>
+                            <span>✍️ {(single.stats?.words || 0).toLocaleString()} words</span>
+                          </div>
+
+                          <Link
+                            href={`/story/${single.slug}`}
+                            className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-[#F97316] px-8 py-3 text-sm font-black text-slate-950 shadow-lg shadow-orange-500/25 hover:opacity-95 transition-all flex items-center justify-center gap-2"
+                          >
+                            Read Spotlight Story <ArrowRight className="h-4 w-4" />
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()
+            ) : (
+              /* Layout Case B: MULTIPLE SPOTLIGHT STORIES -> SMOOTH CAROUSEL */
+              <div
+                ref={carouselRef}
+                onScroll={updateScrollButtons}
+                className="flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar pb-3 pt-1"
+              >
+                {carouselItems.map(({ story }) => (
                   <div
-                    key={storyId}
+                    key={story.id || story.slug}
                     className="w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] xl:w-[calc(25%-15px)] shrink-0 snap-start"
                   >
                     <div className="h-full rounded-2xl border-2 border-amber-500/30 bg-gradient-to-b from-slate-900 via-[#0A1020] to-slate-950 p-4 shadow-xl hover:border-amber-400 hover:shadow-2xl hover:shadow-amber-500/15 transition-all duration-300 flex flex-col justify-between group relative overflow-hidden">
-                      {/* Ambient Golden Glow Accent */}
                       <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-amber-500/20 transition-all" />
 
                       <div>
-                        {/* Cover Presentation (2:3 Book Ratio) */}
                         <Link href={`/story/${story.slug}`} className="block relative">
                           <div className="relative h-64 w-full rounded-xl overflow-hidden bg-slate-950 shadow-md border border-white/10">
                             <img
@@ -222,7 +303,6 @@ export default function HomeFeaturedStories() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/60" />
 
-                            {/* Top Badges */}
                             <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
                               <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-slate-950 shadow-md">
                                 <Sparkles className="h-2.5 w-2.5 fill-slate-950" />
@@ -234,7 +314,6 @@ export default function HomeFeaturedStories() {
                               </span>
                             </div>
 
-                            {/* Bottom Classification on Cover */}
                             <div className="absolute bottom-2.5 left-2.5 right-2.5 pointer-events-none">
                               {story.classification === "FANFICTION" ? (
                                 <span className="inline-block rounded-md bg-emerald-500/90 backdrop-blur-md px-2 py-0.5 text-[9px] font-black uppercase text-slate-950 shadow-md">
@@ -249,7 +328,6 @@ export default function HomeFeaturedStories() {
                           </div>
                         </Link>
 
-                        {/* Title & Author */}
                         <div className="mt-3">
                           <Link href={`/story/${story.slug}`}>
                             <h3 className="text-base font-black text-white hover:text-amber-300 transition-colors line-clamp-1 leading-snug">
@@ -277,7 +355,6 @@ export default function HomeFeaturedStories() {
                         </div>
                       </div>
 
-                      {/* Footer & CTA */}
                       <div className="mt-4 pt-3 border-t border-white/10 space-y-3">
                         <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400">
                           <span>📖 {story.chapters?.length || 0} Chapters</span>
@@ -294,36 +371,9 @@ export default function HomeFeaturedStories() {
 
                     </div>
                   </div>
-                );
-              })}
-
-              {/* Open Spotlight Slot Invitation Card (if slots open) */}
-              {carouselItems.length < 4 && (
-                <div className="w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] xl:w-[calc(25%-15px)] shrink-0 snap-start">
-                  <div className="h-full rounded-2xl border-2 border-dashed border-amber-500/30 bg-gradient-to-b from-slate-900/60 to-slate-950/80 p-5 shadow-lg flex flex-col justify-between items-center text-center hover:border-amber-400 hover:bg-slate-900/80 transition-all min-h-[380px]">
-                    <div className="my-auto space-y-3">
-                      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-md">
-                        <Sparkles className="h-7 w-7" />
-                      </div>
-                      <span className="inline-block text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-full px-3 py-1">
-                        Open Spotlight Slot
-                      </span>
-                      <h4 className="text-base font-black text-white">Promote Your Story</h4>
-                      <p className="text-xs text-slate-400 max-w-[200px] leading-relaxed mx-auto">
-                        Feature your serialized story on the homepage for maximum reader discovery.
-                      </p>
-                    </div>
-
-                    <Link
-                      href="/write/promote"
-                      className="w-full rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 py-2.5 text-xs font-black text-amber-300 shadow-md shadow-amber-500/10 transition-all flex items-center justify-center gap-1.5"
-                    >
-                      Claim Spotlight Slot <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
