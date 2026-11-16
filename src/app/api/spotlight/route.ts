@@ -83,7 +83,8 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { action, storySlug, days = 7, campaignId } = body;
+    const { action, storySlug, days = 1, creditsSpent, campaignId } = body;
+    const finalCredits = creditsSpent ? Number(creditsSpent) : Math.max(2, Number(days) * 2);
 
     // Ensure default creator exists in database
     let creator = await prisma.user.findFirst({
@@ -152,6 +153,7 @@ export async function POST(request: Request) {
           where: { id: existing.id },
           data: {
             status: "ACTIVE",
+            creditsSpent: finalCredits,
             startDate: now,
             endDate: end,
             impressions: existing.impressions + 1,
@@ -163,7 +165,7 @@ export async function POST(request: Request) {
             id: `spotlight-${story.slug}`,
             storyId: story.id,
             userId: creator.id,
-            creditsSpent: 1,
+            creditsSpent: finalCredits,
             status: "ACTIVE",
             startDate: now,
             endDate: end,

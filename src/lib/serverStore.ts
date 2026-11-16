@@ -96,7 +96,7 @@ export function getServerActiveSpotlights(): SpotlightCampaign[] {
   return spotlights.filter((c) => c.status === "ACTIVE" && now < c.endTimestamp);
 }
 
-export function activateServerSpotlight(storySlug: string, days: number = 7): { success: boolean; message: string; campaigns: SpotlightCampaign[] } {
+export function activateServerSpotlight(storySlug: string, days: number = 1): { success: boolean; message: string; campaigns: SpotlightCampaign[] } {
   const store = getServerStore();
   const now = Date.now();
   const durationMs = days * 24 * 60 * 60 * 1000;

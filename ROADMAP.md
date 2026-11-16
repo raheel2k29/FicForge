@@ -128,9 +128,11 @@ FicForge strictly separates user capabilities across 5 distinct system roles def
     - Bulk renumbering and title reindexing.
 
 - [x] **2.3 Homepage & Discovery Spotlight Promotion Engine**
-  - [x] Creator promotion dashboard (`/write/promote`) to redeem monthly membership credits (1 for Plus, 3 for Elite).
+  - [x] Creator promotion dashboard (`/write/promote`) with calibrated **2 Credits per Day** rate (replaces legacy 1 credit/7 days to prevent platform monopolization and runaway abuse).
+  - [x] Multi-tier duration selector: 1 Day (2 Credits), 2 Days (4 Credits), 3 Days (6 Credits), 7 Days (14 Credits), and custom 1–14 day range slider.
   - [x] Transparent public "✦ CREATOR SPOTLIGHT" gold showcase badge on homepage and discovery views.
   - [x] Strict compliance: Algorithmic rankings, reader reviews, and organic charts remain 100% uninfluenced.
+  - [x] Anti-monopoly protection: 7-day fair rotation cooldown between campaigns and multi-story creator eligibility.
   - [x] Real-time campaign tracking: dates, reader reach, impressions, and status.
 
 - [ ] **2.4 Sparks Storefront & Membership Subscriptions** *(Current Focus)*

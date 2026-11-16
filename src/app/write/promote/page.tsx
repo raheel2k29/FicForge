@@ -42,10 +42,13 @@ function PromotionDashboardContent() {
   const storySlugParam = searchParams.get("storySlug");
 
   const [stories, setStories] = useState<StoryData[]>([]);
-  const [credits, setCredits] = useState<number>(2);
+  const [credits, setCredits] = useState<number>(10);
+  const [selectedDays, setSelectedDays] = useState<number>(1);
   const [campaigns, setCampaigns] = useState<SpotlightCampaign[]>([]);
   const [selectedStorySlug, setSelectedStorySlug] = useState<string>("");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  const creditsCost = useMemo(() => Math.max(2, selectedDays * 2), [selectedDays]);
 
   useEffect(() => {
     try {
@@ -117,7 +120,7 @@ function PromotionDashboardContent() {
     e.preventDefault();
     if (!selectedStorySlug) return;
 
-    const result = activateSpotlight(selectedStorySlug, 7);
+    const result = activateSpotlight(selectedStorySlug, selectedDays);
     if (result.success) {
       setFeedback({ type: "success", message: result.message });
     } else {
@@ -139,8 +142,8 @@ function PromotionDashboardContent() {
     setTimeout(() => setFeedback(null), 3500);
   };
 
-  const addTestCredit = () => {
-    setPromoCredits(credits + 1);
+  const addTestCredits = (amount: number = 2) => {
+    setPromoCredits(credits + amount);
   };
 
   return (
@@ -180,7 +183,7 @@ function PromotionDashboardContent() {
             Homepage Spotlight Promotions
           </h1>
           <p className="mt-2 text-sm text-slate-400 max-w-2xl leading-relaxed">
-            Redeem monthly membership promotion credits to feature your story on the FicForge Homepage & Discovery Showcase for 7 days. Enforced anti-monopoly rules ensure equal visibility for all community writers.
+            Redeem monthly membership promotion credits to feature your story on the FicForge Homepage & Discovery Showcase at <strong className="text-amber-300">2 credits per day</strong>. Flexible durations and anti-monopoly cooldowns ensure equal, fair visibility for all community writers.
           </p>
         </div>
 
@@ -214,14 +217,23 @@ function PromotionDashboardContent() {
               <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
                 Spotlight Credits
               </span>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <button
                   type="button"
-                  onClick={addTestCredit}
+                  onClick={() => addTestCredits(2)}
                   className="text-[10px] font-bold text-amber-400/90 hover:text-amber-300 underline"
-                  title="Add 1 credit for test"
+                  title="Add 2 credits (1 day) for test"
                 >
-                  + Add Credit
+                  +2 (1 Day)
+                </button>
+                <span className="text-slate-600">|</span>
+                <button
+                  type="button"
+                  onClick={() => addTestCredits(10)}
+                  className="text-[10px] font-bold text-amber-400/90 hover:text-amber-300 underline"
+                  title="Add 10 credits for test"
+                >
+                  +10
                 </button>
                 <span className="text-slate-600">|</span>
                 <button
@@ -238,7 +250,7 @@ function PromotionDashboardContent() {
               {credits} {credits === 1 ? "Credit" : "Credits"}
             </p>
             <span className="text-[11px] text-slate-400 mt-1 inline-block">
-              Monthly allocation: 1 for Plus, 3 for Elite
+              Rate: <strong className="text-amber-300">2 Credits per Day</strong> of spotlight
             </span>
           </div>
 
@@ -281,6 +293,7 @@ function PromotionDashboardContent() {
                 To guarantee equal exposure for every author on FicForge and avoid pay-to-win saturation:
               </p>
               <ul className="list-disc list-inside text-slate-400 space-y-0.5 pt-1">
+                <li><strong>2 Credits / Day Standard:</strong> Calibrated pricing discourages runaway monopolization and ensures creators strategically feature their key release windows.</li>
                 <li><strong>No Double-Spotlighting:</strong> A story cannot have overlapping campaigns while actively featured.</li>
                 <li><strong>7-Day Fair Rotation Cooldown:</strong> When a campaign ends, that title enters a 7-day cooldown before it can be featured again, rotating fresh creators onto the homepage.</li>
                 <li><strong>Multi-Story Eligibility:</strong> Authors with multiple stories can spotlight a different title anytime without waiting for another story&apos;s cooldown.</li>
@@ -294,9 +307,14 @@ function PromotionDashboardContent() {
           
           {/* Form (7 cols) */}
           <div className="lg:col-span-7 rounded-2xl border border-white/10 bg-slate-900/90 p-6 sm:p-8 shadow-xl space-y-6">
-            <h2 className="text-xl font-bold text-white">
-              Launch a 7-Day Spotlight Campaign
-            </h2>
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <h2 className="text-xl font-bold text-white">
+                Launch a Spotlight Campaign
+              </h2>
+              <span className="text-xs font-black text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full">
+                Rate: 2 Credits / Day
+              </span>
+            </div>
 
             <form onSubmit={handleLaunchPromotion} className="space-y-6">
               
@@ -329,6 +347,73 @@ function PromotionDashboardContent() {
                 <p className="text-[11px] text-slate-400 mt-1.5">
                   Select any story from your catalog to check real-time eligibility.
                 </p>
+              </div>
+
+              {/* Step 2: Duration Selector (2 Credits Per Day) */}
+              <div className="space-y-3 pt-2 border-t border-white/5">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                    Campaign Duration
+                  </label>
+                  <span className="text-xs font-mono font-bold text-amber-300">
+                    {creditsCost} Credits ({selectedDays} {selectedDays === 1 ? "day" : "days"})
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {[
+                    { days: 1, label: "1 Day", tag: "Flash" },
+                    { days: 2, label: "2 Days", tag: "Sprint" },
+                    { days: 3, label: "3 Days", tag: "Weekend" },
+                    { days: 7, label: "7 Days", tag: "Full Week" },
+                  ].map((opt) => {
+                    const cost = opt.days * 2;
+                    const isSelected = selectedDays === opt.days;
+                    return (
+                      <button
+                        key={opt.days}
+                        type="button"
+                        onClick={() => setSelectedDays(opt.days)}
+                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                          isSelected
+                            ? "border-amber-400 bg-amber-500/20 shadow-md shadow-amber-500/10"
+                            : "border-white/10 bg-slate-800/60 hover:border-white/20 hover:bg-slate-800"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between text-xs mb-1">
+                          <span className={`font-black ${isSelected ? "text-white" : "text-slate-300"}`}>
+                            {opt.label}
+                          </span>
+                          <span className="text-[10px] text-amber-400 font-bold uppercase">
+                            {opt.tag}
+                          </span>
+                        </div>
+                        <p className={`text-xs font-extrabold ${isSelected ? "text-amber-300" : "text-slate-400"}`}>
+                          {cost} Credits
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl bg-slate-950/60 border border-white/5 p-3 text-xs">
+                  <span className="text-slate-400">
+                    Or custom duration (1 to 14 days):
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="1"
+                      max="14"
+                      value={selectedDays}
+                      onChange={(e) => setSelectedDays(parseInt(e.target.value, 10))}
+                      className="w-32 accent-amber-500 cursor-pointer"
+                    />
+                    <span className="font-mono font-bold text-amber-300 w-14 text-right">
+                      {selectedDays} {selectedDays === 1 ? "day" : "days"}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               {/* Dynamic Eligibility & Cooldown Status Banner */}
@@ -365,7 +450,7 @@ function PromotionDashboardContent() {
                 <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-3.5 text-xs text-emerald-300 flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                   <span>
-                    <strong>Ready to Spotlight:</strong> This title meets all community discovery standards and is eligible for a 7-day feature.
+                    <strong>Ready to Spotlight:</strong> This title meets all discovery standards and is eligible for a {selectedDays}-day feature ({creditsCost} credits).
                   </span>
                 </div>
               )}
@@ -382,10 +467,10 @@ function PromotionDashboardContent() {
 
                 <div className="rounded-xl border border-white/10 bg-slate-800/60 p-4">
                   <span className="text-xs font-bold text-slate-300 block mb-1">
-                    Campaign Duration
+                    Campaign Duration & Cost
                   </span>
-                  <strong className="text-sm text-amber-400 block">7 Consecutive Days</strong>
-                  <span className="block text-[11px] text-slate-400 mt-0.5">Cost: 1 Spotlight Credit</span>
+                  <strong className="text-sm text-amber-400 block">{selectedDays} Consecutive {selectedDays === 1 ? "Day" : "Days"}</strong>
+                  <span className="block text-[11px] text-slate-400 mt-0.5">Cost: {creditsCost} Spotlight Credits (2 / day)</span>
                 </div>
               </div>
 
@@ -426,25 +511,35 @@ function PromotionDashboardContent() {
                     <RotateCcw className="h-3 w-3" /> Clear cooldown & test this story now
                   </button>
                 </div>
-              ) : credits > 0 ? (
+              ) : credits >= creditsCost ? (
                 <button
                   type="submit"
                   className="w-full h-12 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-[#F97316] text-sm font-black text-slate-950 shadow-xl shadow-orange-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Sparkles className="h-4 w-4" />
-                  Redeem 1 Credit & Activate Spotlight
+                  Redeem {creditsCost} Credits & Activate Spotlight ({selectedDays} {selectedDays === 1 ? "Day" : "Days"})
                 </button>
               ) : (
-                <div className="rounded-xl border border-white/10 bg-slate-800/80 p-4 text-center space-y-2">
-                  <p className="text-xs text-slate-300">
-                    You have 0 Spotlight Credits remaining this month.
+                <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-4 text-center space-y-2">
+                  <p className="text-xs text-amber-200">
+                    <strong>Insufficient Credits:</strong> This {selectedDays}-day campaign requires {creditsCost} credits (at 2 credits/day), but you have {credits} {credits === 1 ? "credit" : "credits"}.
                   </p>
-                  <Link
-                    href="/premium"
-                    className="inline-flex items-center gap-1.5 text-xs font-black text-[#F97316] hover:underline"
-                  >
-                    Upgrade to Forge Plus / Elite for Monthly Credits →
-                  </Link>
+                  <div className="flex items-center justify-center gap-3 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => addTestCredits(creditsCost - credits)}
+                      className="text-xs font-bold text-amber-400 hover:text-amber-300 underline cursor-pointer"
+                    >
+                      + Add {creditsCost - credits} Test Credits
+                    </button>
+                    <span className="text-slate-600">•</span>
+                    <Link
+                      href="/premium"
+                      className="text-xs font-black text-[#F97316] hover:underline"
+                    >
+                      Upgrade Membership →
+                    </Link>
+                  </div>
                 </div>
               )}
             </form>
@@ -496,7 +591,9 @@ function PromotionDashboardContent() {
 
                 <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
                   <span>{(selectedStory.chapters || []).length} Chapters</span>
-                  <span className="text-amber-400 font-bold">Featured 7 Days</span>
+                  <span className="text-amber-400 font-bold">
+                    Featured {selectedDays} {selectedDays === 1 ? "Day" : "Days"} ({creditsCost} Credits)
+                  </span>
                 </div>
               </div>
             )}

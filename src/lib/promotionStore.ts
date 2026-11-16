@@ -95,17 +95,17 @@ export async function syncSpotlightsWithServer(): Promise<SpotlightCampaign[]> {
 }
 
 export function getPromoCredits(): number {
-  if (typeof window === "undefined") return 1;
+  if (typeof window === "undefined") return 10;
 
   try {
     const stored = localStorage.getItem(PROMO_CREDITS_KEY);
     if (stored === null) {
-      localStorage.setItem(PROMO_CREDITS_KEY, "2");
-      return 2;
+      localStorage.setItem(PROMO_CREDITS_KEY, "10");
+      return 10;
     }
     return parseInt(stored, 10) || 0;
   } catch {
-    return 2;
+    return 10;
   }
 }
 
@@ -233,16 +233,17 @@ export function getStorySpotlightEligibility(storySlug: string): StorySpotlightS
   return {
     isEligible: true,
     status: "ELIGIBLE",
-    message: "Eligible for 7-day Homepage & Discovery Spotlight.",
+    message: "Eligible for Homepage & Discovery Spotlight (Rate: 2 credits / day).",
   };
 }
 
 /**
- * Activates a 7-day spotlight campaign with strict eligibility verification and server sync.
+ * Activates a spotlight campaign with strict eligibility verification and server sync.
+ * Rate: 2 Spotlight Credits per day.
  */
 export function activateSpotlight(
   storySlug: string,
-  days: number = 7,
+  days: number = 1,
   force: boolean = false
 ): { success: boolean; message: string } {
   if (typeof window === "undefined") {
@@ -256,10 +257,13 @@ export function activateSpotlight(
     }
   }
 
+  const creditsCost = Math.max(2, days * 2);
   let credits = getPromoCredits();
-  if (credits < 1) {
-    credits = 3;
-    setPromoCredits(3);
+  if (credits < creditsCost) {
+    return {
+      success: false,
+      message: `Insufficient credits. A ${days}-day spotlight requires ${creditsCost} credits (at 2 credits/day), but you have ${credits} credits.`,
+    };
   }
 
   const allStories = getAllStories();
@@ -296,17 +300,20 @@ export function activateSpotlight(
   const updated = [newCampaign, ...existingCampaigns];
 
   localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(updated));
-  setPromoCredits(Math.max(0, credits - 1));
+  setPromoCredits(Math.max(0, credits - creditsCost));
 
   // Sync to server API in background
   fetch("/api/spotlight", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "activate", storySlug, days }),
+    body: JSON.stringify({ action: "activate", storySlug, days, creditsSpent: creditsCost }),
   }).catch((err) => console.warn("Background server spotlight activation failed:", err));
 
   window.dispatchEvent(new Event("ficforge_spotlight_updated"));
-  return { success: true, message: `Spotlight successfully launched for "${story.title}"!` };
+  return {
+    success: true,
+    message: `Spotlight successfully launched for "${story.title}" for ${days} ${days === 1 ? "day" : "days"} (${creditsCost} credits redeemed)!`,
+  };
 }
 
 /**
