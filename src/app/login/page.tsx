@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
-import { loginUser, loginAsDemoUser } from "@/lib/authStore";
+import { loginUserAsync, loginAsDemoUserAsync } from "@/lib/authStore";
 import { Sparkles, ArrowRight, Lock, Mail, CheckCircle2, Shield } from "lucide-react";
 
 function LoginContent() {
@@ -16,17 +16,18 @@ function LoginContent() {
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
 
     setIsLoading(true);
-    loginUser(email.trim());
+    await loginUserAsync(email.trim());
     router.push(redirectUrl);
   };
 
-  const handleDemoUserLogin = () => {
-    loginAsDemoUser();
+  const handleDemoUserLogin = async () => {
+    setIsLoading(true);
+    await loginAsDemoUserAsync();
     router.push(redirectUrl);
   };
 

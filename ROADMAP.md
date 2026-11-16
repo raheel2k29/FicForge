@@ -96,9 +96,11 @@ FicForge uses a **Unified Consumer Model** (Readers are Creators & Creators are 
 - [x] **3.2 Dedicated Secure Admin Portal**
   - [x] Staff login gateway at `/admin/login`.
   - [x] Protected Admin Console at `/admin` with PostgreSQL KPI monitoring, story moderation, spotlight overrides, and DMCA tracking.
-- [ ] **3.3 Production Auth.js / NextAuth Session Cookies**
-  - [ ] Implement encrypted, HTTP-only session cookies with PostgreSQL session store.
-  - [ ] Role middleware (`middleware.ts`) enforcing server-level route guards.
+- [x] **3.3 Production Auth & Encrypted Session Cookies**
+  - [x] Implement encrypted, HTTP-only session cookies (`ficforge_session` via `jose` HS256).
+  - [x] PostgreSQL database integration for user session upsert and identity verification.
+  - [x] Server-side route middleware (`src/middleware.ts`) enforcing zero-trust guards on `/write`, `/my-stories`, and `/admin`.
+  - [x] Secure authentication API endpoints (`/api/auth/login`, `/api/auth/session`, `/api/auth/logout`).
 - [ ] **3.4 TOTP Two-Factor Authentication (2FA)**
   - [ ] Mandatory TOTP for staff accessing `/admin`.
 

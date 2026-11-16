@@ -145,8 +145,38 @@ export function loginUser(email: string, name?: string): UserSession {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
     localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(session));
     window.dispatchEvent(new Event("ficforge_auth_changed"));
+
+    // Server-side HTTP-only session cookie sync
+    fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, username, role: "USER" }),
+    }).catch(console.error);
   }
 
+  return session;
+}
+
+export async function loginUserAsync(email: string, name?: string): Promise<UserSession> {
+  const session = loginUser(email, name);
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, username: session.username, role: "USER" }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.user) {
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(data.user));
+        localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(data.user));
+        window.dispatchEvent(new Event("ficforge_auth_changed"));
+        return data.user;
+      }
+    }
+  } catch (err) {
+    console.warn("Async server cookie sync warning:", err);
+  }
   return session;
 }
 
@@ -155,8 +185,38 @@ export function loginAsDemoUser(): UserSession {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(DEMO_USER));
     localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(DEMO_USER));
     window.dispatchEvent(new Event("ficforge_auth_changed"));
+
+    // Server-side HTTP-only session cookie sync
+    fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isDemo: true }),
+    }).catch(console.error);
   }
   return DEMO_USER;
+}
+
+export async function loginAsDemoUserAsync(): Promise<UserSession> {
+  const session = loginAsDemoUser();
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isDemo: true }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.user) {
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(data.user));
+        localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(data.user));
+        window.dispatchEvent(new Event("ficforge_auth_changed"));
+        return data.user;
+      }
+    }
+  } catch (err) {
+    console.warn("Async demo server cookie sync warning:", err);
+  }
+  return session;
 }
 
 export const loginAsDemoCreator = loginAsDemoUser;
@@ -171,8 +231,39 @@ export function loginAsAdmin(): UserSession {
     localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(DEMO_ADMIN));
     localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(DEMO_ADMIN));
     window.dispatchEvent(new Event("ficforge_auth_changed"));
+
+    // Server-side HTTP-only session cookie sync
+    fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isAdmin: true }),
+    }).catch(console.error);
   }
   return DEMO_ADMIN;
+}
+
+export async function loginAsAdminAsync(): Promise<UserSession> {
+  const session = loginAsAdmin();
+  try {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isAdmin: true }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.user) {
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(data.user));
+        localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(data.user));
+        localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(data.user));
+        window.dispatchEvent(new Event("ficforge_auth_changed"));
+        return data.user;
+      }
+    }
+  } catch (err) {
+    console.warn("Async admin server cookie sync warning:", err);
+  }
+  return session;
 }
 
 export const loginAsDemoAdmin = loginAsAdmin;
@@ -183,5 +274,45 @@ export function logoutUser(): void {
     localStorage.removeItem(LEGACY_AUTH_STORAGE_KEY);
     localStorage.removeItem(ADMIN_STORAGE_KEY);
     window.dispatchEvent(new Event("ficforge_auth_changed"));
+
+    // Server-side cookie clearance
+    fetch("/api/auth/logout", { method: "POST" }).catch(console.error);
   }
+}
+
+export async function logoutUserAsync(): Promise<void> {
+  logoutUser();
+  try {
+    await fetch("/api/auth/logout", { method: "POST" });
+  } catch (err) {
+    console.warn("Async logout cookie clearance warning:", err);
+  }
+}
+
+/**
+ * Reconciles the local user session from the server's HTTP-only cookie
+ */
+export async function syncServerSession(): Promise<UserSession | null> {
+  if (typeof window === "undefined") return null;
+  try {
+    const res = await fetch("/api/auth/session", { cache: "no-store" });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.authenticated && data?.user) {
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(data.user));
+        localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(data.user));
+        window.dispatchEvent(new Event("ficforge_auth_changed"));
+        return data.user;
+      } else if (!data?.authenticated) {
+        // If server says logged out, clean up local
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+        localStorage.removeItem(LEGACY_AUTH_STORAGE_KEY);
+        localStorage.removeItem(ADMIN_STORAGE_KEY);
+        window.dispatchEvent(new Event("ficforge_auth_changed"));
+      }
+    }
+  } catch (err) {
+    console.warn("Could not sync session with server:", err);
+  }
+  return getCurrentUser();
 }

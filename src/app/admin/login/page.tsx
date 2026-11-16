@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { getCurrentUser, isUserAdmin, loginAsAdmin } from "@/lib/authStore";
+import { getCurrentUser, isUserAdmin, loginAsAdminAsync } from "@/lib/authStore";
 import { ShieldCheck, Lock, Key, ArrowRight, ArrowLeft, AlertTriangle } from "lucide-react";
 
 export default function AdminLoginPage() {
@@ -20,21 +20,18 @@ export default function AdminLoginPage() {
     }
   }, [router]);
 
-  const handleAdminAuth = (e: React.FormEvent) => {
+  const handleAdminAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    // Secure authentication handler for administrator credentials
-    setTimeout(() => {
-      loginAsAdmin();
-      router.push("/admin");
-    }, 400);
+    await loginAsAdminAsync();
+    router.push("/admin");
   };
 
-  const handleQuickAdminAccess = () => {
+  const handleQuickAdminAccess = async () => {
     setIsLoading(true);
-    loginAsAdmin();
+    await loginAsAdminAsync();
     router.push("/admin");
   };
 
