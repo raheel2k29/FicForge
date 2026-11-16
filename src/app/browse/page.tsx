@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
 import { isStorySpotlighted } from "@/lib/promotionStore";
+import { isStoryBookmarked, toggleStoryBookmark, getBookmarkedSlugs } from "@/lib/bookmarkStore";
 import { StoryData } from "@/data/mockStories";
 import {
   Search,
@@ -47,7 +48,15 @@ export default function BrowsePage() {
     const load = () => {
       const all = Object.values(getAllStories());
       setStoriesList(all);
+      const bookmarked = getBookmarkedSlugs();
+      const map: Record<string, boolean> = {};
+      bookmarked.forEach((slug) => {
+        map[slug] = true;
+      });
+      setSavedStories(map);
     };
+
+    load();
 
     syncStoriesWithServer().then((serverStories) => {
       if (serverStories) {
@@ -58,9 +67,11 @@ export default function BrowsePage() {
     });
 
     window.addEventListener("ficforge_stories_updated", load);
+    window.addEventListener("ficforge_bookmarks_updated", load);
     window.addEventListener("storage", load);
     return () => {
       window.removeEventListener("ficforge_stories_updated", load);
+      window.removeEventListener("ficforge_bookmarks_updated", load);
       window.removeEventListener("storage", load);
     };
   }, []);
@@ -103,18 +114,16 @@ export default function BrowsePage() {
     });
   };
 
-  const toggleSave = (storyId: string, title: string, e: React.MouseEvent) => {
+  const toggleSave = (storySlug: string, title: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setSavedStories((prev) => {
-      const isSaved = !prev[storyId];
-      showToast(
-        isSaved
-          ? `Saved "${title}" to your Library 📚`
-          : `Removed "${title}" from your Library`
-      );
-      return { ...prev, [storyId]: isSaved };
-    });
+    const isSaved = toggleStoryBookmark(storySlug);
+    setSavedStories((prev) => ({ ...prev, [storySlug]: isSaved }));
+    showToast(
+      isSaved
+        ? `Saved "${title}" to your Library 📚`
+        : `Removed "${title}" from your Library`
+    );
   };
 
   const showToast = (msg: string) => {
@@ -237,7 +246,7 @@ export default function BrowsePage() {
             {filteredStories.map((story) => {
               const storyId = story.id || story.slug;
               const isLiked = likedStories[storyId];
-              const isSaved = savedStories[storyId];
+              const isSaved = Boolean(savedStories[story.slug] || (story.id && savedStories[story.id]));
               const likeCount = (story.stats?.likes || 0) + (isLiked ? 1 : 0);
               const isSpotlighted = isStorySpotlighted(story.slug);
 
@@ -373,7 +382,7 @@ export default function BrowsePage() {
                       {/* Middle: Save to Library toggle */}
                       <button
                         type="button"
-                        onClick={(e) => toggleSave(storyId, story.title, e)}
+                        onClick={(e) => toggleSave(story.slug, story.title, e)}
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           isSaved
                             ? "border-[#6D5DFB]/50 bg-[#6D5DFB]/20 text-[#A594FD]"

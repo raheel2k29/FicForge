@@ -62,11 +62,9 @@ export async function GET() {
         };
       }
 
-      // Merge with any mock baseline stories that might not yet be in db
-      const merged = { ...mockStories, ...storiesMap };
-
+      // Database is authoritative: Return PostgreSQL stories directly
       return NextResponse.json(
-        { stories: merged, source: "postgresql-neon-database" },
+        { stories: storiesMap, source: "postgresql-neon-database" },
         {
           headers: {
             "Cache-Control": "no-store, no-cache, must-revalidate",

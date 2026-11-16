@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 import { getStoryBySlug, deleteChapter } from "@/lib/storyStore";
+import { isStoryBookmarked, toggleStoryBookmark } from "@/lib/bookmarkStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
 import {
   Settings,
@@ -43,11 +44,19 @@ function ChapterReaderContent() {
     if (slug) {
       const foundStory = getStoryBySlug(slug);
       setStory(foundStory);
+      setIsBookmarked(isStoryBookmarked(slug));
       if (foundStory && chapterSlug) {
         const foundCh = foundStory.chapters.find((ch) => ch.slug === chapterSlug);
         setChapter(foundCh);
       }
     }
+
+    const handleBookmarksChange = () => {
+      if (slug) setIsBookmarked(isStoryBookmarked(slug));
+    };
+
+    window.addEventListener("ficforge_bookmarks_updated", handleBookmarksChange);
+    return () => window.removeEventListener("ficforge_bookmarks_updated", handleBookmarksChange);
   }, [slug, chapterSlug]);
 
   // Reader Preferences States
@@ -216,11 +225,16 @@ function ChapterReaderContent() {
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setIsBookmarked(!isBookmarked)}
-              className={`p-2 rounded-lg transition-colors ${
+              onClick={() => {
+                if (slug) {
+                  const next = toggleStoryBookmark(slug);
+                  setIsBookmarked(next);
+                }
+              }}
+              className={`p-2 rounded-lg transition-colors cursor-pointer ${
                 isBookmarked ? "text-[#F97316]" : "opacity-75 hover:opacity-100"
               }`}
-              title="Bookmark Chapter"
+              title={isBookmarked ? "Story Saved in Library" : "Bookmark Story to Library"}
             >
               <Bookmark className={`h-4 w-4 ${isBookmarked ? "fill-[#F97316]" : ""}`} />
             </button>

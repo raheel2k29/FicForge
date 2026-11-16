@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter, notFound } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 import { getStoryBySlug, deleteStory, deleteChapter } from "@/lib/storyStore";
+import { isStoryBookmarked, toggleStoryBookmark } from "@/lib/bookmarkStore";
 import { StoryData } from "@/data/mockStories";
 import {
   BookOpen,
@@ -27,6 +28,7 @@ function StoryDetailsContent() {
   const slug = params?.slug as string;
   const [story, setStory] = useState<StoryData | undefined>(undefined);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [bookmarkToast, setBookmarkToast] = useState<string | null>(null);
   const [likesCount, setLikesCount] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [sortAscending, setSortAscending] = useState(true);
@@ -69,6 +71,7 @@ function StoryDetailsContent() {
     if (slug) {
       const found = getStoryBySlug(slug);
       setStory(found);
+      setIsBookmarked(isStoryBookmarked(slug));
       if (found) {
         setLikesCount(found.stats.likes);
         if (found.rating === "EXPLICIT") {
@@ -77,7 +80,22 @@ function StoryDetailsContent() {
         }
       }
     }
+
+    const handleBookmarksChange = () => {
+      if (slug) setIsBookmarked(isStoryBookmarked(slug));
+    };
+
+    window.addEventListener("ficforge_bookmarks_updated", handleBookmarksChange);
+    return () => window.removeEventListener("ficforge_bookmarks_updated", handleBookmarksChange);
   }, [slug]);
+
+  const handleBookmarkToggle = () => {
+    if (!story) return;
+    const next = toggleStoryBookmark(story.slug);
+    setIsBookmarked(next);
+    setBookmarkToast(next ? `Saved "${story.title}" to your Library 📚` : `Removed "${story.title}" from Library`);
+    setTimeout(() => setBookmarkToast(null), 3500);
+  };
 
   const handleAgeConfirm = () => {
     localStorage.setItem("ficforge_age_verified", "true");
@@ -169,6 +187,17 @@ function StoryDetailsContent() {
 
   return (
     <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
+      {/* Toast Notification */}
+      {bookmarkToast && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl border border-indigo-500/40 bg-[#070E1E]/95 px-5 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur-md flex items-center gap-3 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+          <span>{bookmarkToast}</span>
+          <Link href="/library" className="text-xs text-[#A594FD] hover:underline font-extrabold shrink-0 ml-1">
+            View Library →
+          </Link>
+        </div>
+      )}
+
       <div className="max-w-[1180px] mx-auto">
         
         {/* Breadcrumb Navigation */}
@@ -232,14 +261,14 @@ function StoryDetailsContent() {
               <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
-                  onClick={() => setIsBookmarked(!isBookmarked)}
-                  className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 px-3 text-xs font-bold transition-all ${
+                  onClick={handleBookmarkToggle}
+                  className={`flex items-center justify-center gap-1.5 rounded-xl border py-2.5 px-3 text-xs font-bold transition-all cursor-pointer ${
                     isBookmarked
-                      ? "border-emerald-500/60 bg-emerald-500/20 text-emerald-300"
+                      ? "border-[#6D5DFB]/60 bg-[#6D5DFB]/20 text-[#A594FD] shadow-sm shadow-indigo-600/20"
                       : "border-white/10 bg-slate-900/80 text-slate-300 hover:text-white hover:border-white/20"
                   }`}
                 >
-                  <Bookmark className={`h-4 w-4 ${isBookmarked ? "fill-emerald-400 text-emerald-400" : ""}`} />
+                  <Bookmark className={`h-4 w-4 ${isBookmarked ? "fill-[#6D5DFB] text-[#6D5DFB]" : ""}`} />
                   {isBookmarked ? "In Library" : "Add to Library"}
                 </button>
 

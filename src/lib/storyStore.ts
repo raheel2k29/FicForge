@@ -2,8 +2,8 @@
 
 import { mockStories, StoryData, ChapterData } from "@/data/mockStories";
 
-const STORAGE_KEY = "ficforge_stories_v2";
-const LEGACY_STORAGE_KEY = "ficforge_custom_stories_v1";
+const STORAGE_KEY = "ficforge_stories_v3";
+const LEGACY_STORAGE_KEYS = ["ficforge_custom_stories_v1", "ficforge_stories_v2"];
 
 /**
  * Wipe legacy stale cache keys on startup
@@ -11,8 +11,8 @@ const LEGACY_STORAGE_KEY = "ficforge_custom_stories_v1";
 export function cleanupLegacyStorage(): void {
   if (typeof window === "undefined") return;
   try {
-    if (localStorage.getItem(LEGACY_STORAGE_KEY)) {
-      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    for (const key of LEGACY_STORAGE_KEYS) {
+      localStorage.removeItem(key);
     }
   } catch {}
 }

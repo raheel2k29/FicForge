@@ -1,19 +1,402 @@
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Saved Library — FicForge",
-  description: "Saved Library on FicForge — Where Stories Are Forged",
-};
+import Link from "next/link";
+import { useState, useEffect, useMemo } from "react";
+import {
+  getBookmarkedStories,
+  removeStoryBookmark,
+  addStoryBookmark,
+  getBookmarkCount,
+  getBookmarkedSlugs,
+} from "@/lib/bookmarkStore";
+import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
+import { StoryData } from "@/data/mockStories";
+import {
+  Bookmark,
+  BookOpen,
+  Search,
+  Trash2,
+  ArrowRight,
+  Sparkles,
+  CheckCircle2,
+  Compass,
+  Layers,
+  Star,
+  Eye,
+} from "lucide-react";
 
-const rawHtml = "<section class=\"ff-library-page\">\n  <style>\n    .ff-library-page {\n      width: 100%;\n      max-width: 1180px;\n      margin: 0 auto;\n      color: #FFFFFF;\n      font-family: inherit;\n    }\n\n    .ff-library-hero,\n    .ff-library-card,\n    .ff-library-filter,\n    .ff-story-card,\n    .ff-library-note {\n      background: rgba(15, 23, 42, 0.84);\n      border: 1px solid rgba(255, 255, 255, 0.11);\n      border-radius: 24px;\n      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);\n    }\n\n    .ff-library-hero {\n      padding: 36px;\n      margin-bottom: 18px;\n      background:\n        radial-gradient(circle at top left, rgba(109, 93, 251, 0.24), transparent 34%),\n        radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.16), transparent 34%),\n        rgba(15, 23, 42, 0.84);\n    }\n\n    .ff-label {\n      display: inline-flex;\n      width: fit-content;\n      color: #F97316;\n      background: rgba(249, 115, 22, 0.12);\n      border: 1px solid rgba(249, 115, 22, 0.28);\n      border-radius: 999px;\n      padding: 8px 14px;\n      margin-bottom: 16px;\n      font-size: 13px;\n      font-weight: 900;\n      letter-spacing: 0.08em;\n      text-transform: uppercase;\n    }\n\n    .ff-library-hero h1 {\n      color: #FFFFFF;\n      font-size: 58px;\n      line-height: 1.04;\n      margin: 0 0 14px 0;\n      font-weight: 900;\n      letter-spacing: -0.05em;\n      max-width: 880px;\n    }\n\n    .ff-library-hero p {\n      color: #CBD5E1;\n      font-size: 18px;\n      line-height: 1.7;\n      margin: 0;\n      max-width: 850px;\n    }\n\n    .ff-library-actions {\n      display: flex;\n      gap: 10px;\n      flex-wrap: wrap;\n      margin-top: 24px;\n    }\n\n    .ff-btn {\n      display: inline-flex;\n      align-items: center;\n      justify-content: center;\n      color: #FFFFFF !important;\n      text-decoration: none !important;\n      background: rgba(15, 23, 42, 0.86);\n      border: 1px solid rgba(255, 255, 255, 0.13);\n      border-radius: 14px;\n      padding: 13px 16px;\n      font-size: 14px;\n      font-weight: 900;\n      transition: 0.18s ease;\n      white-space: nowrap;\n      cursor: pointer;\n    }\n\n    .ff-btn.primary {\n      background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n      border-color: rgba(109, 93, 251, 0.78);\n      box-shadow: 0 0 26px rgba(109, 93, 251, 0.20);\n    }\n\n    .ff-btn.orange {\n      background: linear-gradient(135deg, #F97316, #EA580C);\n      border-color: rgba(249, 115, 22, 0.76);\n      box-shadow: 0 0 22px rgba(249, 115, 22, 0.15);\n    }\n\n    .ff-btn:hover {\n      color: #FFFFFF !important;\n      transform: translateY(-1px);\n      border-color: rgba(249, 115, 22, 0.50);\n    }\n\n    .ff-library-stats {\n      display: grid;\n      grid-template-columns: repeat(4, 1fr);\n      gap: 14px;\n      margin-bottom: 18px;\n    }\n\n    .ff-library-card {\n      padding: 22px;\n    }\n\n    .ff-library-card strong {\n      display: block;\n      color: #FFFFFF;\n      font-size: 34px;\n      font-weight: 900;\n      margin-bottom: 7px;\n      letter-spacing: -0.04em;\n    }\n\n    .ff-library-card span {\n      color: #94A3B8;\n      font-size: 14px;\n      font-weight: 850;\n    }\n\n    .ff-library-filter {\n      padding: 22px;\n      margin-bottom: 18px;\n    }\n\n    .ff-library-filter h2,\n    .ff-library-section h2,\n    .ff-library-note h2 {\n      color: #FFFFFF;\n      font-size: 34px;\n      line-height: 1.1;\n      margin: 0 0 10px 0;\n      font-weight: 900;\n      letter-spacing: -0.035em;\n    }\n\n    .ff-library-filter p,\n    .ff-library-note p {\n      color: #94A3B8;\n      font-size: 15px;\n      line-height: 1.65;\n      margin: 0;\n    }\n\n    .ff-search-row {\n      display: grid;\n      grid-template-columns: 1fr auto;\n      gap: 12px;\n      margin-top: 18px;\n    }\n\n    .ff-search-row input {\n      width: 100%;\n      color: #FFFFFF;\n      background: rgba(2, 6, 23, 0.62);\n      border: 1px solid rgba(255, 255, 255, 0.12);\n      border-radius: 15px;\n      padding: 15px;\n      font-size: 15px;\n      outline: none;\n      box-sizing: border-box;\n      font-family: inherit;\n    }\n\n    .ff-search-row input::placeholder {\n      color: #64748B;\n    }\n\n    .ff-library-tabs {\n      display: flex;\n      gap: 9px;\n      flex-wrap: wrap;\n      margin-top: 16px;\n    }\n\n    .ff-tab {\n      color: #CBD5E1;\n      background: rgba(2, 6, 23, 0.38);\n      border: 1px solid rgba(255, 255, 255, 0.10);\n      border-radius: 999px;\n      padding: 10px 13px;\n      font-size: 13px;\n      font-weight: 900;\n    }\n\n    .ff-tab.active {\n      color: #FFFFFF;\n      background: rgba(109, 93, 251, 0.26);\n      border-color: rgba(109, 93, 251, 0.48);\n    }\n\n    .ff-library-section {\n      margin-top: 18px;\n    }\n\n    .ff-library-section-header {\n      display: flex;\n      justify-content: space-between;\n      align-items: flex-end;\n      gap: 12px;\n      margin-bottom: 14px;\n    }\n\n    .ff-library-section-header p {\n      color: #94A3B8;\n      font-size: 15px;\n      line-height: 1.65;\n      margin: 0;\n      max-width: 720px;\n    }\n\n    .ff-story-grid {\n      display: grid;\n      grid-template-columns: repeat(3, 1fr);\n      gap: 14px;\n    }\n\n    .ff-story-card {\n      padding: 18px;\n      min-height: 300px;\n      display: flex;\n      flex-direction: column;\n      overflow: hidden;\n    }\n\n    .ff-cover {\n      height: 150px;\n      border-radius: 18px;\n      margin-bottom: 14px;\n      background:\n        radial-gradient(circle at top left, rgba(249, 115, 22, 0.36), transparent 36%),\n        radial-gradient(circle at bottom right, rgba(109, 93, 251, 0.44), transparent 38%),\n        linear-gradient(135deg, #111827, #020617);\n      border: 1px solid rgba(255, 255, 255, 0.10);\n      position: relative;\n    }\n\n    .ff-cover::after {\n      content: \"Saved\";\n      position: absolute;\n      right: 12px;\n      bottom: 12px;\n      color: #FFFFFF;\n      background: rgba(2, 6, 23, 0.62);\n      border: 1px solid rgba(255, 255, 255, 0.14);\n      border-radius: 999px;\n      padding: 7px 10px;\n      font-size: 12px;\n      font-weight: 900;\n    }\n\n    .ff-cover.reading {\n      background:\n        radial-gradient(circle at top left, rgba(56, 189, 248, 0.38), transparent 36%),\n        linear-gradient(135deg, #082F49, #020617);\n    }\n\n    .ff-cover.favorite {\n      background:\n        radial-gradient(circle at top left, rgba(250, 204, 21, 0.38), transparent 36%),\n        linear-gradient(135deg, #78350F, #020617);\n    }\n\n    .ff-cover.later {\n      background:\n        radial-gradient(circle at top left, rgba(168, 85, 247, 0.38), transparent 36%),\n        linear-gradient(135deg, #3B0764, #020617);\n    }\n\n    .ff-story-card span {\n      color: #F97316;\n      font-size: 12px;\n      font-weight: 900;\n      letter-spacing: 0.08em;\n      text-transform: uppercase;\n      margin-bottom: 8px;\n    }\n\n    .ff-story-card h3 {\n      color: #FFFFFF;\n      font-size: 24px;\n      line-height: 1.15;\n      margin: 0 0 8px 0;\n      font-weight: 900;\n      letter-spacing: -0.03em;\n    }\n\n    .ff-story-card p {\n      color: #94A3B8;\n      font-size: 13.5px;\n      line-height: 1.6;\n      margin: 0 0 16px 0;\n    }\n\n    .ff-story-meta {\n      display: flex;\n      gap: 8px;\n      flex-wrap: wrap;\n      margin: 0 0 16px 0;\n    }\n\n    .ff-pill {\n      color: #CBD5E1;\n      background: rgba(2, 6, 23, 0.44);\n      border: 1px solid rgba(255, 255, 255, 0.10);\n      border-radius: 999px;\n      padding: 7px 10px;\n      font-size: 12px;\n      font-weight: 900;\n    }\n\n    .ff-story-card .ff-btn {\n      width: 100%;\n      margin-top: auto;\n    }\n\n    .ff-empty-panel {\n      background:\n        radial-gradient(circle at top right, rgba(109, 93, 251, 0.16), transparent 34%),\n        rgba(15, 23, 42, 0.84);\n      border: 1px dashed rgba(255, 255, 255, 0.18);\n      border-radius: 24px;\n      padding: 28px;\n      margin-top: 14px;\n      text-align: center;\n    }\n\n    .ff-empty-panel h3 {\n      color: #FFFFFF;\n      font-size: 28px;\n      margin: 0 0 10px 0;\n      font-weight: 900;\n      letter-spacing: -0.035em;\n    }\n\n    .ff-empty-panel p {\n      color: #94A3B8;\n      font-size: 15px;\n      line-height: 1.65;\n      margin: 0 auto;\n      max-width: 700px;\n    }\n\n    .ff-library-note {\n      padding: 22px;\n      margin-top: 18px;\n      border-color: rgba(249, 115, 22, 0.24);\n      background:\n        radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 30%),\n        rgba(15, 23, 42, 0.82);\n    }\n\n    .ff-library-note strong {\n      display: block;\n      color: #FDBA74;\n      font-size: 16px;\n      font-weight: 900;\n      margin-bottom: 7px;\n    }\n\n    @media (max-width: 1100px) {\n      .ff-library-stats,\n      .ff-story-grid {\n        grid-template-columns: repeat(2, 1fr);\n      }\n    }\n\n    @media (max-width: 767px) {\n      .ff-library-hero,\n      .ff-library-filter,\n      .ff-library-card,\n      .ff-library-note {\n        padding: 22px 18px;\n      }\n\n      .ff-library-hero h1 {\n        font-size: 38px;\n      }\n\n      .ff-library-hero p {\n        font-size: 16px;\n      }\n\n      .ff-library-stats,\n      .ff-story-grid,\n      .ff-search-row {\n        grid-template-columns: 1fr;\n      }\n\n      .ff-library-section-header {\n        flex-direction: column;\n        align-items: flex-start;\n      }\n\n      .ff-btn {\n        width: 100%;\n      }\n    }\n  </style>\n\n  <section class=\"ff-library-hero\">\n    <span class=\"ff-label\">Saved Library</span>\n    <h1>Your personal FicForge reading shelf.</h1>\n    <p>\n      Save stories you like, keep track of what you are reading, organize favorites, follow updates, and return to your reading list from your Account Hub.\n    </p>\n\n    <div class=\"ff-library-actions\">\n      <a class=\"ff-btn primary\" href=\"/browse/\">Browse Stories</a>\n      <a class=\"ff-btn\" href=\"/account/\">Back to Account</a>\n      <a class=\"ff-btn orange\" href=\"/write/\">Start Writing</a>\n    </div>\n  </section>\n\n  <div class=\"ff-library-stats\">\n    <section class=\"ff-library-card\">\n      <strong>0</strong>\n      <span>Saved Stories</span>\n    </section>\n\n    <section class=\"ff-library-card\">\n      <strong>0</strong>\n      <span>Currently Reading</span>\n    </section>\n\n    <section class=\"ff-library-card\">\n      <strong>0</strong>\n      <span>Favorites</span>\n    </section>\n\n    <section class=\"ff-library-card\">\n      <strong>0</strong>\n      <span>Followed Authors</span>\n    </section>\n  </div>\n\n  <section class=\"ff-library-filter\">\n    <span class=\"ff-label\">Reading Manager</span>\n    <h2>Organize your saved stories</h2>\n    <p>\n      This page will eventually show stories saved by the logged-in user. For launch, this is the front-end library structure until story-saving and reading-history logic are connected.\n    </p>\n\n    <div class=\"ff-search-row\">\n      <input type=\"text\" placeholder=\"Search your saved stories, authors, fandoms, or tags...\">\n      <a class=\"ff-btn primary\" href=\"#\">Search Library</a>\n    </div>\n\n    <div class=\"ff-library-tabs\">\n      <span class=\"ff-tab active\">All Saved</span>\n      <span class=\"ff-tab\">Currently Reading</span>\n      <span class=\"ff-tab\">Reading Later</span>\n      <span class=\"ff-tab\">Favorites</span>\n      <span class=\"ff-tab\">Completed</span>\n      <span class=\"ff-tab\">Followed Authors</span>\n      <span class=\"ff-tab\">Recently Viewed</span>\n    </div>\n  </section>\n\n  <section class=\"ff-library-section\">\n    <div class=\"ff-library-section-header\">\n      <div>\n        <span class=\"ff-label\">Library Preview</span>\n        <h2>Saved stories</h2>\n        <p>\n          Once saving is connected, story cards will appear here with reading progress, latest chapter status, author updates, and quick actions.\n        </p>\n      </div>\n\n      <a class=\"ff-btn\" href=\"/browse/\">Find Stories</a>\n    </div>\n\n    <div class=\"ff-story-grid\">\n      <article class=\"ff-story-card\">\n        <div class=\"ff-cover reading\"></div>\n        <span>Currently Reading</span>\n        <h3>Story Slot One</h3>\n        <p>\n          A saved story preview will appear here once readers begin adding stories to their personal library.\n        </p>\n\n        <div class=\"ff-story-meta\">\n          <span class=\"ff-pill\">Progress</span>\n          <span class=\"ff-pill\">Latest Chapter</span>\n          <span class=\"ff-pill\">Updates</span>\n        </div>\n\n        <a class=\"ff-btn primary\" href=\"/browse/\">Continue Reading</a>\n      </article>\n\n      <article class=\"ff-story-card\">\n        <div class=\"ff-cover favorite\"></div>\n        <span>Favorite</span>\n        <h3>Story Slot Two</h3>\n        <p>\n          Favorites will let users keep their most-loved stories separate from their general saved list.\n        </p>\n\n        <div class=\"ff-story-meta\">\n          <span class=\"ff-pill\">Favorite</span>\n          <span class=\"ff-pill\">Author</span>\n          <span class=\"ff-pill\">Fandom</span>\n        </div>\n\n        <a class=\"ff-btn\" href=\"/browse/\">View Story</a>\n      </article>\n\n      <article class=\"ff-story-card\">\n        <div class=\"ff-cover later\"></div>\n        <span>Reading Later</span>\n        <h3>Story Slot Three</h3>\n        <p>\n          Reading Later will help readers save interesting stories without losing track of them.\n        </p>\n\n        <div class=\"ff-story-meta\">\n          <span class=\"ff-pill\">Later</span>\n          <span class=\"ff-pill\">Unread</span>\n          <span class=\"ff-pill\">Saved</span>\n        </div>\n\n        <a class=\"ff-btn orange\" href=\"/browse/\">Open Story</a>\n      </article>\n    </div>\n\n    <div class=\"ff-empty-panel\">\n      <h3>Your saved library is waiting.</h3>\n      <p>\n        When the save-story system is connected, this page will automatically show the stories each user saves, follows, favorites, completes, or returns to later.\n      </p>\n    </div>\n  </section>\n\n  <section class=\"ff-library-note\">\n    <strong>Backend status</strong>\n    <p>\n      This page is the front-end Saved Library structure. Story saving, followed authors, reading progress, recently viewed stories, and user-specific library data still need backend connection.\n    </p>\n  </section>\n</section>\n";
+export default function SavedLibraryPage() {
+  const [savedStories, setSavedStories] = useState<StoryData[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState<"ALL" | "ORIGINAL" | "FANFICTION">("ALL");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-export default function Page() {
+  const loadBookmarks = () => {
+    const list = getBookmarkedStories();
+    setSavedStories(list);
+  };
+
+  useEffect(() => {
+    loadBookmarks();
+
+    // Reconcile with PostgreSQL server
+    syncStoriesWithServer().then(() => {
+      loadBookmarks();
+    });
+
+    window.addEventListener("ficforge_bookmarks_updated", loadBookmarks);
+    window.addEventListener("ficforge_stories_updated", loadBookmarks);
+    window.addEventListener("storage", loadBookmarks);
+    return () => {
+      window.removeEventListener("ficforge_bookmarks_updated", loadBookmarks);
+      window.removeEventListener("ficforge_stories_updated", loadBookmarks);
+      window.removeEventListener("storage", loadBookmarks);
+    };
+  }, []);
+
+  const handleRemove = (slug: string, title: string) => {
+    removeStoryBookmark(slug);
+    loadBookmarks();
+    showToast(`Removed "${title}" from your Library`);
+  };
+
+  const handleAddSampleStories = () => {
+    addStoryBookmark("the-ember-archive");
+    addStoryBookmark("star-wars-the-obsidian-blade");
+    loadBookmarks();
+    showToast("Added curated stories to your Library 📚");
+  };
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((curr) => (curr === msg ? null : curr));
+    }, 3000);
+  };
+
+  // Filtered stories based on tab and search query
+  const filteredStories = useMemo(() => {
+    return savedStories.filter((story) => {
+      if (!story) return false;
+
+      // Tab filter
+      if (activeTab === "ORIGINAL" && story.classification !== "ORIGINAL") return false;
+      if (activeTab === "FANFICTION" && story.classification !== "FANFICTION") return false;
+
+      // Search query
+      const q = searchQuery.toLowerCase().trim();
+      if (!q) return true;
+
+      return (
+        story.title.toLowerCase().includes(q) ||
+        (story.author?.name || "").toLowerCase().includes(q) ||
+        (story.fandom && story.fandom.toLowerCase().includes(q)) ||
+        (story.genres || []).some((g) => g.toLowerCase().includes(q))
+      );
+    });
+  }, [savedStories, activeTab, searchQuery]);
+
+  // Aggregate Stats
+  const totalChapters = useMemo(() => {
+    return savedStories.reduce((acc, s) => acc + (s.chapters?.length || 0), 0);
+  }, [savedStories]);
+
+  const totalWords = useMemo(() => {
+    return savedStories.reduce((acc, s) => acc + (s.stats?.words || 0), 0);
+  }, [savedStories]);
+
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
-      <div
-        className="max-w-[1180px] mx-auto"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
+    <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl border border-indigo-500/40 bg-[#070E1E]/95 px-5 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur-md flex items-center gap-2.5 animate-in fade-in slide-in-from-bottom-3 duration-200">
+          <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      <div className="max-w-[1240px] mx-auto space-y-10">
+        
+        {/* ========================================= */}
+        {/* HERO HEADER                               */}
+        {/* ========================================= */}
+        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-950/30 via-slate-900 to-slate-950 p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-[#6D5DFB]/15 via-[#F97316]/10 to-transparent blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#6D5DFB]/20 to-[#F97316]/20 border border-[#6D5DFB]/30 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#A594FD]">
+                <Bookmark className="h-3.5 w-3.5 fill-[#6D5DFB]" />
+                READER COMPANION
+              </span>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
+                My Saved Library
+              </h1>
+              <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+                Your personal reading sanctuary. Access all bookmarked fanfiction, original webnovels, and ongoing chapters whenever you return.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                href="/browse"
+                className="rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-3 text-xs font-black text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all inline-flex items-center gap-2"
+              >
+                <Compass className="h-4 w-4" />
+                Browse Catalog
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick Stats Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-8 border-t border-white/10">
+            <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                Saved Stories
+              </span>
+              <p className="text-2xl sm:text-3xl font-black text-white">
+                {savedStories.length}
+              </p>
+              <span className="text-[11px] text-[#A594FD] mt-0.5 block">
+                Active in Library
+              </span>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                Total Chapters
+              </span>
+              <p className="text-2xl sm:text-3xl font-black text-white">
+                {totalChapters}
+              </p>
+              <span className="text-[11px] text-emerald-400 mt-0.5 block">
+                Across all titles
+              </span>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                Total Words
+              </span>
+              <p className="text-2xl sm:text-3xl font-black text-white">
+                {totalWords.toLocaleString()}
+              </p>
+              <span className="text-[11px] text-amber-400 mt-0.5 block">
+                Bookmarked content
+              </span>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                Sanctuary Status
+              </span>
+              <p className="text-2xl sm:text-3xl font-black text-emerald-400">
+                100% Free
+              </p>
+              <span className="text-[11px] text-slate-400 mt-0.5 block">
+                No subscription needed
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* ========================================= */}
+        {/* SEARCH & TAB FILTERS                      */}
+        {/* ========================================= */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Tabs */}
+          <div className="flex items-center gap-2 p-1 rounded-xl bg-slate-900/90 border border-white/10 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => setActiveTab("ALL")}
+              className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                activeTab === "ALL"
+                  ? "bg-[#6D5DFB] text-white shadow-md shadow-indigo-600/30"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              All Saved ({savedStories.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("ORIGINAL")}
+              className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                activeTab === "ORIGINAL"
+                  ? "bg-[#F97316] text-white shadow-md shadow-orange-500/30"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Originals ({savedStories.filter((s) => s.classification === "ORIGINAL").length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("FANFICTION")}
+              className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                activeTab === "FANFICTION"
+                  ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/30"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Fanfiction ({savedStories.filter((s) => s.classification === "FANFICTION").length})
+            </button>
+          </div>
+
+          {/* Search Input */}
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search saved stories..."
+              className="w-full h-11 rounded-xl border border-white/10 bg-slate-900/80 pl-10 pr-4 text-xs text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB] transition-colors"
+            />
+          </div>
+        </div>
+
+        {/* ========================================= */}
+        {/* SAVED STORIES GRID                        */}
+        {/* ========================================= */}
+        {filteredStories.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredStories.map((story) => {
+              const storyId = story.id || story.slug;
+
+              return (
+                <div
+                  key={storyId}
+                  className="rounded-2xl border border-white/10 bg-slate-900/80 overflow-hidden shadow-xl hover:border-[#6D5DFB]/40 hover:bg-slate-900 transition-all duration-300 flex flex-col justify-between group"
+                >
+                  <div>
+                    {/* Cover Art */}
+                    <div className="relative h-60 w-full overflow-hidden bg-slate-950">
+                      <Link href={`/story/${story.slug}`} className="block h-full w-full">
+                        <img
+                          src={story.coverImageUrl || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"}
+                          alt={story.title}
+                          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/60" />
+                      </Link>
+
+                      {/* Top Badges */}
+                      <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+                        <span className="rounded-full bg-[#6D5DFB]/90 backdrop-blur-md px-2 py-0.5 text-[9px] font-black uppercase text-white shadow-md">
+                          In Library
+                        </span>
+
+                        <span className="rounded-full bg-black/60 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-white uppercase border border-white/10">
+                          {story.rating || "TEEN"}
+                        </span>
+                      </div>
+
+                      {/* Bottom Classification on Cover */}
+                      <div className="absolute bottom-2.5 left-2.5 right-2.5 pointer-events-none">
+                        {story.classification === "FANFICTION" ? (
+                          <span className="inline-block rounded-md bg-emerald-500/90 backdrop-blur-md px-2 py-0.5 text-[9px] font-black uppercase text-slate-950 shadow-md">
+                            Free Fanfiction • {story.fandom || "Fandom"}
+                          </span>
+                        ) : (
+                          <span className="inline-block rounded-md bg-gradient-to-r from-orange-500 to-amber-500 px-2 py-0.5 text-[9px] font-black uppercase text-slate-950 shadow-md">
+                            Original Webnovel
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="p-4 space-y-2">
+                      <Link href={`/story/${story.slug}`}>
+                        <h3 className="text-base font-black text-white hover:text-[#F97316] transition-colors line-clamp-1 leading-snug">
+                          {story.title}
+                        </h3>
+                      </Link>
+
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={story.author?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"}
+                          alt={story.author?.name || "Author"}
+                          className="h-5 w-5 rounded-full object-cover border border-white/10"
+                        />
+                        <span className="text-xs font-semibold text-slate-300 truncate">
+                          {story.author?.name || "Author"}
+                        </span>
+                        {story.author?.isVerified && (
+                          <span className="text-blue-400 text-xs font-bold">✓</span>
+                        )}
+                      </div>
+
+                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                        {story.synopsis}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Card Footer Actions */}
+                  <div className="p-4 pt-0 space-y-3">
+                    <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[11px] font-semibold text-slate-400">
+                      <span>📖 {story.chapters?.length || 0} Chapters</span>
+                      <span>✍️ {(story.stats?.words || 0).toLocaleString()} words</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/story/${story.slug}`}
+                        className="flex-1 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] py-2 text-xs font-black text-white shadow-md shadow-indigo-600/20 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all text-center flex items-center justify-center gap-1.5"
+                      >
+                        Read Now <ArrowRight className="h-3 w-3" />
+                      </Link>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemove(story.slug, story.title)}
+                        className="p-2 rounded-xl border border-white/10 bg-slate-800/80 text-slate-400 hover:text-red-400 hover:border-red-500/30 transition-all cursor-pointer"
+                        title="Remove from Saved Library"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          /* Empty State */
+          <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-12 text-center max-w-lg mx-auto space-y-4">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-3xl">
+              📚
+            </div>
+            <h3 className="text-xl font-black text-white">
+              {searchQuery ? "No matching saved stories found" : "Your Saved Library is Empty"}
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              {searchQuery
+                ? `No bookmarked stories matched "${searchQuery}". Try a different keyword or reset filters.`
+                : "Browse our catalog of fanfiction and original webnovels, and click 'Add to Library' to save stories here."}
+            </p>
+
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/browse"
+                className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-2.5 text-xs font-black text-white shadow-md shadow-indigo-600/30 hover:opacity-95 transition-all"
+              >
+                Browse Stories Catalog →
+              </Link>
+              {!searchQuery && (
+                <button
+                  type="button"
+                  onClick={handleAddSampleStories}
+                  className="w-full sm:w-auto rounded-xl border border-white/15 bg-slate-800 px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-white transition-all cursor-pointer"
+                >
+                  + Add Sample Stories
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
 }

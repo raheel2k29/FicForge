@@ -3,19 +3,28 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getCurrentUser, logoutUser, UserSession } from "@/lib/authStore";
-import { Menu, X, Sparkles, User, LogOut, PenTool } from "lucide-react";
+import { getBookmarkCount } from "@/lib/bookmarkStore";
+import { Menu, X, Sparkles, User, LogOut, PenTool, Bookmark } from "lucide-react";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+  const [bookmarkCount, setBookmarkCount] = useState(0);
 
   useEffect(() => {
     const check = () => {
       setCurrentUser(getCurrentUser());
+      setBookmarkCount(getBookmarkCount());
     };
     check();
     window.addEventListener("ficforge_auth_changed", check);
-    return () => window.removeEventListener("ficforge_auth_changed", check);
+    window.addEventListener("ficforge_bookmarks_updated", check);
+    window.addEventListener("storage", check);
+    return () => {
+      window.removeEventListener("ficforge_auth_changed", check);
+      window.removeEventListener("ficforge_bookmarks_updated", check);
+      window.removeEventListener("storage", check);
+    };
   }, []);
 
   const handleLogout = () => {
@@ -44,6 +53,17 @@ export default function Navbar() {
           <Link href="/browse" className="hover:text-white transition-colors">
             Browse
           </Link>
+          <Link
+            href="/library"
+            className="hover:text-white transition-colors flex items-center gap-1.5 relative group"
+          >
+            <span>Library</span>
+            {bookmarkCount > 0 && (
+              <span className="rounded-full bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-1.5 py-0.5 text-[10px] font-black text-white shadow-sm shadow-indigo-600/30">
+                {bookmarkCount}
+              </span>
+            )}
+          </Link>
           <Link href="/write" className="hover:text-white transition-colors">
             Write
           </Link>
@@ -55,8 +75,22 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Right Action: Auth Session */}
+        {/* Right Action: Auth Session & Library Shortcut */}
         <div className="hidden md:flex items-center gap-3">
+          {/* Quick Library Button */}
+          <Link
+            href="/library"
+            className="relative flex items-center justify-center p-2 rounded-xl border border-white/10 bg-slate-900/80 hover:border-white/30 text-slate-300 hover:text-white transition-all"
+            title={`Saved Library (${bookmarkCount} saved)`}
+          >
+            <Bookmark className={`h-4 w-4 ${bookmarkCount > 0 ? "fill-[#6D5DFB] text-[#6D5DFB]" : ""}`} />
+            {bookmarkCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#6D5DFB] text-[9px] font-black text-white ring-2 ring-[#050B16]">
+                {bookmarkCount}
+              </span>
+            )}
+          </Link>
+
           {currentUser ? (
             <div className="flex items-center gap-3">
               {/* Sparks pill */}
@@ -146,6 +180,21 @@ export default function Navbar() {
               className="px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg"
             >
               Browse
+            </Link>
+            <Link
+              href="/library"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg flex items-center justify-between"
+            >
+              <span className="flex items-center gap-2">
+                <Bookmark className="h-4 w-4 text-[#6D5DFB]" />
+                Saved Library
+              </span>
+              {bookmarkCount > 0 && (
+                <span className="rounded-full bg-[#6D5DFB] px-2 py-0.5 text-[10px] font-black text-white">
+                  {bookmarkCount}
+                </span>
+              )}
             </Link>
             <Link
               href="/write"

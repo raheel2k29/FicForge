@@ -27,6 +27,7 @@ export default function HomeFeaturedStories() {
   useEffect(() => {
     try {
       localStorage.removeItem("ficforge_custom_stories_v1");
+      localStorage.removeItem("ficforge_stories_v2");
     } catch {}
 
     const load = () => {
