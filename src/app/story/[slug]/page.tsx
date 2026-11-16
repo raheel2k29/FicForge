@@ -6,6 +6,7 @@ import { useState, useEffect, Suspense } from "react";
 import { getStoryBySlug, deleteStory, deleteChapter } from "@/lib/storyStore";
 import { isStoryBookmarked, toggleStoryBookmark } from "@/lib/bookmarkStore";
 import { getCurrentUser, UserSession, canManageStory } from "@/lib/authStore";
+import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { StoryData } from "@/data/mockStories";
 import {
   BookOpen,
@@ -40,6 +41,8 @@ function StoryDetailsContent() {
   const router = useRouter();
   const [isAgeVerified, setIsAgeVerified] = useState(true);
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalType, setAuthModalType] = useState<"bookmark" | "like" | "tip">("bookmark");
 
   useEffect(() => {
     const updateAuth = () => {
@@ -120,6 +123,11 @@ function StoryDetailsContent() {
 
   const handleBookmarkToggle = () => {
     if (!story) return;
+    if (!currentUser) {
+      setAuthModalType("bookmark");
+      setAuthModalOpen(true);
+      return;
+    }
     const next = toggleStoryBookmark(story.slug);
     setIsBookmarked(next);
     setBookmarkToast(next ? `Saved "${story.title}" to your Library 📚` : `Removed "${story.title}" from Library`);
@@ -185,6 +193,11 @@ function StoryDetailsContent() {
   }
 
   const handleLikeToggle = () => {
+    if (!currentUser) {
+      setAuthModalType("like");
+      setAuthModalOpen(true);
+      return;
+    }
     if (hasLiked) {
       setLikesCount((prev) => prev - 1);
       setHasLiked(false);
@@ -318,8 +331,15 @@ function StoryDetailsContent() {
               <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
-                  onClick={() => setTipModalOpen(true)}
-                  className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 py-2.5 px-3 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all"
+                  onClick={() => {
+                    if (!currentUser) {
+                      setAuthModalType("tip");
+                      setAuthModalOpen(true);
+                      return;
+                    }
+                    setTipModalOpen(true);
+                  }}
+                  className="flex items-center justify-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 py-2.5 px-3 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer"
                 >
                   <Zap className="h-4 w-4 text-amber-400 fill-amber-400" />
                   Tip Sparks
@@ -646,6 +666,28 @@ function StoryDetailsContent() {
           </div>
         </div>
       )}
+
+      {/* Authentication Required Modal (Prevents unauthenticated guests from bookmarking/tipping) */}
+      <AuthRequiredModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        actionType={authModalType}
+        title={
+          authModalType === "bookmark"
+            ? "Sign In to Save Story"
+            : authModalType === "like"
+            ? "Sign In to Like Story"
+            : "Sign In to Tip Sparks"
+        }
+        description={
+          authModalType === "bookmark"
+            ? "You must have a FicForge account to save stories to your personal library, track your reading progress, and receive chapter updates."
+            : authModalType === "like"
+            ? "Sign in to add this story to your favorites and support the author."
+            : "Sign in to tip Sparks to this author and support their writing."
+        }
+        redirectUrl={`/story/${story.slug}`}
+      />
 
     </div>
   );

@@ -5,11 +5,14 @@ import { useState, useEffect, useMemo } from "react";
 import {
   getBookmarkedStories,
   removeStoryBookmark,
-  addStoryBookmark,
-  getBookmarkCount,
-  getBookmarkedSlugs,
+  syncUserBookmarksWithServer,
 } from "@/lib/bookmarkStore";
-import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
+import {
+  getCurrentUser,
+  UserSession,
+  loginAsDemoReader,
+  loginAsDemoCreator,
+} from "@/lib/authStore";
 import { StoryData } from "@/data/mockStories";
 import {
   Bookmark,
@@ -19,14 +22,17 @@ import {
   ArrowRight,
   Sparkles,
   CheckCircle2,
+  Lock,
+  UserPlus,
+  RefreshCw,
   Compass,
-  Layers,
-  Star,
-  Eye,
 } from "lucide-react";
 
 export default function SavedLibraryPage() {
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
   const [savedStories, setSavedStories] = useState<StoryData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"ALL" | "ORIGINAL" | "FANFICTION">("ALL");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -37,20 +43,40 @@ export default function SavedLibraryPage() {
   };
 
   useEffect(() => {
-    loadBookmarks();
+    const user = getCurrentUser();
+    setCurrentUser(user);
+    setHasCheckedAuth(true);
 
-    // Reconcile with PostgreSQL server
-    syncStoriesWithServer().then(() => {
+    if (user) {
       loadBookmarks();
-    });
+      setIsLoading(true);
+      // Synchronize authoritatively with Neon PostgreSQL database
+      syncUserBookmarksWithServer()
+        .then(() => {
+          loadBookmarks();
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
 
+    const handleAuthChange = () => {
+      const updatedUser = getCurrentUser();
+      setCurrentUser(updatedUser);
+      if (updatedUser) {
+        loadBookmarks();
+      } else {
+        setSavedStories([]);
+      }
+    };
+
+    window.addEventListener("ficforge_auth_changed", handleAuthChange);
     window.addEventListener("ficforge_bookmarks_updated", loadBookmarks);
-    window.addEventListener("ficforge_stories_updated", loadBookmarks);
-    window.addEventListener("storage", loadBookmarks);
+    window.addEventListener("storage", handleAuthChange);
     return () => {
+      window.removeEventListener("ficforge_auth_changed", handleAuthChange);
       window.removeEventListener("ficforge_bookmarks_updated", loadBookmarks);
-      window.removeEventListener("ficforge_stories_updated", loadBookmarks);
-      window.removeEventListener("storage", loadBookmarks);
+      window.removeEventListener("storage", handleAuthChange);
     };
   }, []);
 
@@ -58,13 +84,6 @@ export default function SavedLibraryPage() {
     removeStoryBookmark(slug);
     loadBookmarks();
     showToast(`Removed "${title}" from your Library`);
-  };
-
-  const handleAddSampleStories = () => {
-    addStoryBookmark("the-ember-archive");
-    addStoryBookmark("star-wars-the-obsidian-blade");
-    loadBookmarks();
-    showToast("Added curated stories to your Library 📚");
   };
 
   const showToast = (msg: string) => {
@@ -105,107 +124,243 @@ export default function SavedLibraryPage() {
     return savedStories.reduce((acc, s) => acc + (s.stats?.words || 0), 0);
   }, [savedStories]);
 
+  // Loading state while checking local storage on initial mount
+  if (!hasCheckedAuth) {
+    return (
+      <div className="min-h-[70vh] bg-[#050B16] flex items-center justify-center text-slate-500">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+      </div>
+    );
+  }
+
+  // ========================================================
+  // UNATHENTICATED STATE: Strict Reader Library Gate
+  // Logged-out guests CANNOT view or access a saved library
+  // ========================================================
+  if (!currentUser) {
+    return (
+      <div className="min-h-[85vh] bg-[#050B16] text-white py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="max-w-[1040px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          {/* Left Column: Platform Pitch */}
+          <div className="lg:col-span-6 space-y-6">
+            <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-[#F97316] bg-orange-500/10 border border-orange-500/30 rounded-full px-3.5 py-1.5">
+              READER ACCOUNT REQUIRED
+            </span>
+
+            <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+              Your Personal <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#6D5DFB] via-[#A855F7] to-[#F97316]">
+                Reading Library
+              </span>
+            </h1>
+
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-lg">
+              Sign in to FicForge to access your saved library, sync reading progress across all devices, receive new chapter alerts, and bookmark your favorite serialized webnovels and fanfiction.
+            </p>
+
+            <div className="space-y-3 pt-2">
+              <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+                <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#6D5DFB] to-[#F97316] flex items-center justify-center text-white font-black text-sm shrink-0">
+                  ☁️
+                </div>
+                <div>
+                  <strong className="text-sm font-bold text-white block">PostgreSQL Cloud Sync</strong>
+                  <span className="text-xs text-slate-400">
+                    Your saved manuscripts, reading bookmarks, and history are backed up to our server database.
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+                <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#6D5DFB] to-[#F97316] flex items-center justify-center text-white font-black text-sm shrink-0">
+                  🔔
+                </div>
+                <div>
+                  <strong className="text-sm font-bold text-white block">Instant Chapter Updates</strong>
+                  <span className="text-xs text-slate-400">
+                    Never lose your place. Get notified immediately when authors publish new chapter releases.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Sign In Card */}
+          <div className="lg:col-span-6 rounded-3xl border border-white/10 bg-slate-900/95 p-8 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+            <div className="mb-6 text-center sm:text-left">
+              <div className="h-12 w-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mb-4">
+                <Bookmark className="h-6 w-6 fill-indigo-400/20" />
+              </div>
+              <h2 className="text-2xl font-black text-white">Sign In to View Library</h2>
+              <p className="text-xs text-slate-400 mt-1">
+                Access your bookmarked stories and personal bookshelf.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Link
+                href="/login?redirect=/library"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] py-3.5 px-6 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all text-center"
+              >
+                <span>Sign In to FicForge</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+
+              <Link
+                href="/register?redirect=/library"
+                className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-slate-800/80 hover:bg-slate-700/80 py-3.5 px-6 text-sm font-bold text-slate-200 hover:text-white transition-all text-center"
+              >
+                <UserPlus className="h-4 w-4 text-[#F97316]" />
+                <span>Create Free Reader Account</span>
+              </Link>
+            </div>
+
+            {/* Instant Testing Helper */}
+            <div className="mt-6 pt-5 border-t border-white/10">
+              <span className="block text-[11px] font-bold text-slate-400 mb-2.5">
+                🧪 1-Click Role Testing Shortcuts:
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    loginAsDemoReader();
+                    window.location.reload();
+                  }}
+                  className="py-2.5 px-3 rounded-xl border border-blue-500/30 bg-blue-500/10 text-xs font-bold text-blue-300 hover:bg-blue-500/20 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <span>📖 Sign In (Reader)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    loginAsDemoCreator();
+                    window.location.reload();
+                  }}
+                  className="py-2.5 px-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <span>✍️ Sign In (Creator)</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-5 text-center">
+              <Link href="/browse" className="text-xs text-slate-400 hover:text-white transition-colors">
+                ← Return to Public Story Catalog
+              </Link>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
+  // ========================================================
+  // AUTHENTICATED STATE: Real Saved Library
+  // ========================================================
   return (
     <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
-      {/* Toast Notification */}
+      {/* Toast Feedback */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 rounded-2xl border border-indigo-500/40 bg-[#070E1E]/95 px-5 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur-md flex items-center gap-2.5 animate-in fade-in slide-in-from-bottom-3 duration-200">
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl border border-indigo-500/40 bg-[#070E1E]/95 px-5 py-3 text-sm font-bold text-white shadow-2xl backdrop-blur-md flex items-center gap-3 animate-in fade-in slide-in-from-bottom-3 duration-200">
           <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      <div className="max-w-[1240px] mx-auto space-y-10">
+      <div className="max-w-[1240px] mx-auto space-y-8">
         
-        {/* ========================================= */}
-        {/* HERO HEADER                               */}
-        {/* ========================================= */}
-        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-950/30 via-slate-900 to-slate-950 p-6 sm:p-10 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-[#6D5DFB]/15 via-[#F97316]/10 to-transparent blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-3 max-w-2xl">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#6D5DFB]/20 to-[#F97316]/20 border border-[#6D5DFB]/30 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-[#A594FD]">
-                <Bookmark className="h-3.5 w-3.5 fill-[#6D5DFB]" />
-                READER COMPANION
+        {/* Top Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/10 pb-6">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black tracking-widest uppercase text-[#F97316]">
+                MY BOOKSHELF
               </span>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
-                My Saved Library
-              </h1>
-              <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                Your personal reading sanctuary. Access all bookmarked fanfiction, original webnovels, and ongoing chapters whenever you return.
-              </p>
+              <span className="text-xs text-slate-500">•</span>
+              <span className="text-xs text-slate-400 font-semibold">
+                @{currentUser.username}
+              </span>
             </div>
-
-            <div className="flex items-center gap-3 shrink-0">
-              <Link
-                href="/browse"
-                className="rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-3 text-xs font-black text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all inline-flex items-center gap-2"
-              >
-                <Compass className="h-4 w-4" />
-                Browse Catalog
-              </Link>
-            </div>
+            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight mt-1 flex items-center gap-3">
+              <span>Saved Library</span>
+              <span className="text-xs font-black px-2.5 py-1 rounded-full bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] text-white">
+                {savedStories.length} {savedStories.length === 1 ? "Story" : "Stories"}
+              </span>
+            </h1>
+            <p className="mt-1 text-sm text-slate-400">
+              Your personalized reading collection synchronized with your FicForge account.
+            </p>
           </div>
 
-          {/* Quick Stats Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-8 border-t border-white/10">
-            <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                Saved Stories
-              </span>
-              <p className="text-2xl sm:text-3xl font-black text-white">
-                {savedStories.length}
-              </p>
-              <span className="text-[11px] text-[#A594FD] mt-0.5 block">
-                Active in Library
-              </span>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                Total Chapters
-              </span>
-              <p className="text-2xl sm:text-3xl font-black text-white">
-                {totalChapters}
-              </p>
-              <span className="text-[11px] text-emerald-400 mt-0.5 block">
-                Across all titles
-              </span>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                Total Words
-              </span>
-              <p className="text-2xl sm:text-3xl font-black text-white">
-                {totalWords.toLocaleString()}
-              </p>
-              <span className="text-[11px] text-amber-400 mt-0.5 block">
-                Bookmarked content
-              </span>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">
-                Sanctuary Status
-              </span>
-              <p className="text-2xl sm:text-3xl font-black text-emerald-400">
-                100% Free
-              </p>
-              <span className="text-[11px] text-slate-400 mt-0.5 block">
-                No subscription needed
-              </span>
-            </div>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/browse"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-2.5 text-xs font-extrabold text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all"
+            >
+              <Compass className="h-4 w-4" /> Browse More Stories
+            </Link>
           </div>
         </div>
 
-        {/* ========================================= */}
-        {/* SEARCH & TAB FILTERS                      */}
-        {/* ========================================= */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Tabs */}
-          <div className="flex items-center gap-2 p-1 rounded-xl bg-slate-900/90 border border-white/10 w-full sm:w-auto">
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Saved Stories
+            </span>
+            <p className="text-2xl sm:text-3xl font-black text-white mt-1">
+              {savedStories.length}
+            </p>
+            <span className="text-[11px] text-emerald-400 font-semibold mt-1 inline-block">
+              ● In your collection
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Total Chapters
+            </span>
+            <p className="text-2xl sm:text-3xl font-black text-white mt-1">
+              {totalChapters}
+            </p>
+            <span className="text-[11px] text-indigo-400 font-semibold mt-1 inline-block">
+              Ready to read
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Words in Library
+            </span>
+            <p className="text-2xl sm:text-3xl font-black text-white mt-1">
+              {totalWords.toLocaleString()}
+            </p>
+            <span className="text-[11px] text-amber-400 font-semibold mt-1 inline-block">
+              Total manuscript content
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Database Sync
+            </span>
+            <p className="text-2xl sm:text-3xl font-black text-emerald-400 mt-1 flex items-center gap-1.5">
+              <span>Online</span>
+            </p>
+            <span className="text-[11px] text-slate-400 font-semibold mt-1 inline-block">
+              PostgreSQL Connected
+            </span>
+          </div>
+        </div>
+
+        {/* Filters and Search Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          {/* Classification Tabs */}
+          <div className="flex items-center gap-1 rounded-xl bg-slate-900/90 p-1 border border-white/10">
             <button
               type="button"
               onClick={() => setActiveTab("ALL")}
@@ -222,7 +377,7 @@ export default function SavedLibraryPage() {
               onClick={() => setActiveTab("ORIGINAL")}
               className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg text-xs font-bold transition-all ${
                 activeTab === "ORIGINAL"
-                  ? "bg-[#F97316] text-white shadow-md shadow-orange-500/30"
+                  ? "bg-orange-600 text-white shadow-md shadow-orange-600/30"
                   : "text-slate-400 hover:text-white"
               }`}
             >
@@ -248,15 +403,13 @@ export default function SavedLibraryPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search saved stories..."
+              placeholder="Search your library..."
               className="w-full h-11 rounded-xl border border-white/10 bg-slate-900/80 pl-10 pr-4 text-xs text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB] transition-colors"
             />
           </div>
         </div>
 
-        {/* ========================================= */}
-        {/* SAVED STORIES GRID                        */}
-        {/* ========================================= */}
+        {/* Stories Grid */}
         {filteredStories.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredStories.map((story) => {
@@ -344,7 +497,7 @@ export default function SavedLibraryPage() {
                         href={`/story/${story.slug}`}
                         className="flex-1 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] py-2 text-xs font-black text-white shadow-md shadow-indigo-600/20 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all text-center flex items-center justify-center gap-1.5"
                       >
-                        Read Now <ArrowRight className="h-3 w-3" />
+                        Continue Reading <ArrowRight className="h-3 w-3" />
                       </Link>
 
                       <button
@@ -368,30 +521,22 @@ export default function SavedLibraryPage() {
               📚
             </div>
             <h3 className="text-xl font-black text-white">
-              {searchQuery ? "No matching saved stories found" : "Your Saved Library is Empty"}
+              {searchQuery ? "No matching saved stories found" : "Your Library is Empty"}
             </h3>
             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
               {searchQuery
                 ? `No bookmarked stories matched "${searchQuery}". Try a different keyword or reset filters.`
-                : "Browse our catalog of fanfiction and original webnovels, and click 'Add to Library' to save stories here."}
+                : "You haven't added any stories to your bookshelf yet. Browse original webnovels and fanfiction across FicForge to start building your personal library."}
             </p>
 
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="pt-2 flex items-center justify-center">
               <Link
                 href="/browse"
-                className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-2.5 text-xs font-black text-white shadow-md shadow-indigo-600/30 hover:opacity-95 transition-all"
+                className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-6 py-3 text-xs font-black text-white shadow-md shadow-indigo-600/30 hover:opacity-95 transition-all flex items-center justify-center gap-2"
               >
-                Browse Stories Catalog →
+                <Compass className="h-4 w-4" />
+                <span>Explore Stories Catalog</span>
               </Link>
-              {!searchQuery && (
-                <button
-                  type="button"
-                  onClick={handleAddSampleStories}
-                  className="w-full sm:w-auto rounded-xl border border-white/15 bg-slate-800 px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-white transition-all cursor-pointer"
-                >
-                  + Add Sample Stories
-                </button>
-              )}
             </div>
           </div>
         )}

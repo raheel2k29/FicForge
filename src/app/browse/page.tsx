@@ -5,6 +5,8 @@ import { useState, useEffect, useMemo } from "react";
 import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
 import { isStorySpotlighted } from "@/lib/promotionStore";
 import { isStoryBookmarked, toggleStoryBookmark, getBookmarkedSlugs } from "@/lib/bookmarkStore";
+import { getCurrentUser } from "@/lib/authStore";
+import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { StoryData } from "@/data/mockStories";
 import {
   Search,
@@ -25,6 +27,8 @@ export default function BrowsePage() {
   const [likedStories, setLikedStories] = useState<Record<string, boolean>>({});
   const [savedStories, setSavedStories] = useState<Record<string, boolean>>({});
   const [notification, setNotification] = useState<string | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalType, setAuthModalType] = useState<"bookmark" | "like">("bookmark");
 
   const filters = [
     "All",
@@ -107,6 +111,12 @@ export default function BrowsePage() {
   const toggleLike = (storyId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const user = getCurrentUser();
+    if (!user) {
+      setAuthModalType("like");
+      setAuthModalOpen(true);
+      return;
+    }
     setLikedStories((prev) => {
       const isLiked = !prev[storyId];
       showToast(isLiked ? "Added to your Liked Stories ❤️" : "Removed like");
@@ -117,6 +127,12 @@ export default function BrowsePage() {
   const toggleSave = (storySlug: string, title: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const user = getCurrentUser();
+    if (!user) {
+      setAuthModalType("bookmark");
+      setAuthModalOpen(true);
+      return;
+    }
     const isSaved = toggleStoryBookmark(storySlug);
     setSavedStories((prev) => ({ ...prev, [storySlug]: isSaved }));
     showToast(
@@ -415,6 +431,20 @@ export default function BrowsePage() {
         )}
 
       </div>
+
+      {/* Authentication Required Modal */}
+      <AuthRequiredModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        actionType={authModalType}
+        title={authModalType === "bookmark" ? "Sign In to Save Story" : "Sign In to Like Story"}
+        description={
+          authModalType === "bookmark"
+            ? "You must have a FicForge account to save stories to your personal library, track your reading progress, and receive chapter updates."
+            : "Sign in to add this story to your favorites and support the author."
+        }
+        redirectUrl="/browse"
+      />
     </div>
   );
 }
