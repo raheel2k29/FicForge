@@ -29,10 +29,6 @@ export interface StorySpotlightStatus {
   message: string;
 }
 
-// Bumping to v4 to clear any stale client caches from earlier tests
-const SPOTLIGHT_STORAGE_KEY = "ficforge_spotlight_campaigns_v4";
-const PROMO_CREDITS_KEY = "ficforge_promo_credits_v1";
-
 const NOW = Date.now();
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -71,150 +67,136 @@ export const DEFAULT_SPOTLIGHTS: SpotlightCampaign[] = [
   },
 ];
 
+// In-memory runtime state authoritatively synchronized with Neon PostgreSQL
+let cachedCampaigns: SpotlightCampaign[] = [...DEFAULT_SPOTLIGHTS];
+let cachedPromoCredits: number = 11;
+
 /**
- * Server Synchronization: Reconciles local client cache with the authoritative server API
+ * Wipe all legacy browser storage keys on startup (Universal Purge)
+ * Neon PostgreSQL is the sole authoritative persistence layer.
+ */
+export function cleanupLegacyStorage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (
+        key &&
+        key.startsWith("ficforge_") &&
+        key !== "ficforge_auth_session_v1" &&
+        key !== "ficforge_age_verified"
+      ) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((k) => localStorage.removeItem(k));
+  } catch {}
+}
+
+/**
+ * Server Synchronization: Reconciles in-memory state directly from Neon PostgreSQL
  */
 export async function syncSpotlightsWithServer(): Promise<SpotlightCampaign[]> {
-  if (typeof window === "undefined") return DEFAULT_SPOTLIGHTS;
+  cleanupLegacyStorage();
+
+  if (typeof window === "undefined") return cachedCampaigns;
 
   try {
     const res = await fetch("/api/spotlight", { cache: "no-store" });
     if (res.ok) {
       const data = await res.json();
       if (data.campaigns && Array.isArray(data.campaigns)) {
-        localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(data.campaigns));
+        cachedCampaigns = data.campaigns;
+        if (typeof data.promoCredits === "number") {
+          cachedPromoCredits = data.promoCredits;
+        }
         window.dispatchEvent(new Event("ficforge_spotlight_updated"));
-        return data.campaigns;
+        return cachedCampaigns;
       }
     }
   } catch (err) {
-    console.warn("Could not sync with /api/spotlight, using client store:", err);
+    console.warn("Could not sync with PostgreSQL /api/spotlight:", err);
   }
 
-  return getAllSpotlightCampaigns();
+  return cachedCampaigns;
 }
 
 export function getPromoCredits(): number {
-  if (typeof window === "undefined") return 10;
-
-  try {
-    const stored = localStorage.getItem(PROMO_CREDITS_KEY);
-    if (stored === null) {
-      localStorage.setItem(PROMO_CREDITS_KEY, "10");
-      return 10;
-    }
-    return parseInt(stored, 10) || 0;
-  } catch {
-    return 10;
-  }
+  cleanupLegacyStorage();
+  return cachedPromoCredits;
 }
 
 export function setPromoCredits(amount: number): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(PROMO_CREDITS_KEY, Math.max(0, amount).toString());
-  window.dispatchEvent(new Event("ficforge_spotlight_updated"));
-}
-
-/**
- * Retrieves all campaigns, automatically checking expiration dates against current time.
- */
-export function getAllSpotlightCampaigns(): SpotlightCampaign[] {
-  if (typeof window === "undefined") return DEFAULT_SPOTLIGHTS;
-
-  try {
-    const stored = localStorage.getItem(SPOTLIGHT_STORAGE_KEY);
-    let list: SpotlightCampaign[] = stored ? JSON.parse(stored) : DEFAULT_SPOTLIGHTS;
-
-    // Auto-enrich if empty or single story
-    if (list.length <= 1) {
-      list = DEFAULT_SPOTLIGHTS;
-      localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(list));
-    }
-
-    const now = Date.now();
-    let hasChanges = false;
-
-    // Validate timestamps & auto-expire campaigns that completed their 7-day run
-    const validated = list.map((c) => {
-      let camp = { ...c };
-
-      if (!camp.startTimestamp) {
-        camp.startTimestamp = now - 24 * 60 * 60 * 1000;
-        camp.endTimestamp = now + 6 * 24 * 60 * 60 * 1000;
-        camp.cooldownTimestamp = camp.endTimestamp + SEVEN_DAYS_MS;
-        hasChanges = true;
-      }
-
-      if (camp.status === "ACTIVE" && now >= camp.endTimestamp) {
-        camp.status = "EXPIRED";
-        hasChanges = true;
-      }
-
-      return camp;
-    });
-
-    if (hasChanges || !stored) {
-      localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(validated));
-    }
-
-    return validated;
-  } catch {
-    return DEFAULT_SPOTLIGHTS;
+  cachedPromoCredits = Math.max(0, amount);
+  if (typeof window !== "undefined") {
+    fetch("/api/spotlight", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "set_credits", credits: amount }),
+    }).catch(console.error);
+    window.dispatchEvent(new Event("ficforge_spotlight_updated"));
   }
 }
 
 /**
- * Returns all currently ACTIVE campaigns that have not expired.
+ * Retrieves all campaigns directly from server-synced memory.
+ */
+export function getAllSpotlightCampaigns(): SpotlightCampaign[] {
+  cleanupLegacyStorage();
+  return cachedCampaigns;
+}
+
+/**
+ * Returns currently active campaigns.
  */
 export function getActiveSpotlights(): SpotlightCampaign[] {
   const campaigns = getAllSpotlightCampaigns();
   const now = Date.now();
-
   return campaigns.filter((c) => c.status === "ACTIVE" && now < c.endTimestamp);
 }
 
-export function getActiveSpotlight(): SpotlightCampaign | null {
-  const active = getActiveSpotlights();
-  return active.length > 0 ? active[0] : null;
-}
-
+/**
+ * Checks if a specific story is currently active in spotlight.
+ */
 export function isStorySpotlighted(storySlug: string): boolean {
   const active = getActiveSpotlights();
   return active.some((c) => c.storySlug === storySlug);
 }
 
 /**
- * Checks story spotlight eligibility enforcing Anti-Monopoly & Fair Discovery Rules:
+ * Checks story spotlight eligibility and cooldown rules.
  */
 export function getStorySpotlightEligibility(storySlug: string): StorySpotlightStatus {
   const campaigns = getAllSpotlightCampaigns();
   const now = Date.now();
 
   const storyCampaigns = campaigns.filter((c) => c.storySlug === storySlug);
+  if (storyCampaigns.length === 0) {
+    return {
+      isEligible: true,
+      status: "ELIGIBLE",
+      message: "This story is ready to be featured in Creator Spotlight.",
+    };
+  }
 
-  // 1. Check if currently active in spotlight
   const active = storyCampaigns.find((c) => c.status === "ACTIVE" && now < c.endTimestamp);
   if (active) {
-    const daysLeft = Math.max(1, Math.ceil((active.endTimestamp - now) / (1000 * 60 * 60 * 24)));
+    const daysLeft = Math.max(1, Math.ceil((active.endTimestamp - now) / (24 * 60 * 60 * 1000)));
     return {
       isEligible: false,
       status: "CURRENTLY_ACTIVE",
       activeCampaign: active,
       daysRemaining: daysLeft,
-      eligibleDate: new Date(active.endTimestamp + SEVEN_DAYS_MS).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
-      message: `Already active in Creator Spotlight (${daysLeft} ${daysLeft === 1 ? "day" : "days"} remaining). Overlapping campaigns for the same story are strictly prohibited to maintain fair discovery.`,
+      message: `Currently featured in Creator Spotlight (${daysLeft} ${daysLeft === 1 ? "day" : "days"} remaining).`,
     };
   }
 
-  // 2. Check if in 7-day anti-monopoly cooldown
-  const recentCampaign = storyCampaigns.find((c) => c.cooldownTimestamp && now < c.cooldownTimestamp);
-  if (recentCampaign) {
-    const cooldownDays = Math.max(1, Math.ceil((recentCampaign.cooldownTimestamp - now) / (1000 * 60 * 60 * 24)));
-    const eligibleDateStr = new Date(recentCampaign.cooldownTimestamp).toLocaleDateString("en-US", {
+  const inCooldown = storyCampaigns.find((c) => now < c.cooldownTimestamp);
+  if (inCooldown) {
+    const msRemaining = inCooldown.cooldownTimestamp - now;
+    const daysRemaining = Math.max(1, Math.ceil(msRemaining / (24 * 60 * 60 * 1000)));
+    const eligibleDate = new Date(inCooldown.cooldownTimestamp).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
@@ -223,153 +205,98 @@ export function getStorySpotlightEligibility(storySlug: string): StorySpotlightS
     return {
       isEligible: false,
       status: "IN_COOLDOWN",
-      daysRemaining: cooldownDays,
-      eligibleDate: eligibleDateStr,
-      message: `Community Discovery Cooldown: This story completed its spotlight run recently. A ${cooldownDays}-day cooldown applies before it can be featured again, ensuring equal homepage visibility across all creators.`,
+      daysRemaining,
+      eligibleDate,
+      message: `In 7-day fair discovery cooldown. Eligible again on ${eligibleDate} (${daysRemaining} ${daysRemaining === 1 ? "day" : "days"} remaining).`,
     };
   }
 
-  // 3. Otherwise completely eligible!
   return {
     isEligible: true,
     status: "ELIGIBLE",
-    message: "Eligible for Homepage & Discovery Spotlight (Rate: 2 credits / day).",
+    message: "This story has completed its previous cooldown and is eligible for Spotlight promotion.",
   };
 }
 
 /**
- * Activates a spotlight campaign with strict eligibility verification and server sync.
- * Rate: 2 Spotlight Credits per day.
+ * Activates a new spotlight campaign directly in Neon PostgreSQL.
  */
-export function activateSpotlight(
+export async function activateSpotlight(
   storySlug: string,
-  days: number = 1,
-  force: boolean = false
-): { success: boolean; message: string } {
-  if (typeof window === "undefined") {
-    return { success: false, message: "Environment unavailable." };
-  }
-
-  if (!force) {
-    const eligibility = getStorySpotlightEligibility(storySlug);
-    if (!eligibility.isEligible) {
-      return { success: false, message: eligibility.message };
-    }
-  }
-
-  const creditsCost = Math.max(2, days * 2);
-  let credits = getPromoCredits();
-  if (credits < creditsCost) {
-    return {
-      success: false,
-      message: `Insufficient credits. A ${days}-day spotlight requires ${creditsCost} credits (at 2 credits/day), but you have ${credits} credits.`,
-    };
+  days: number = 7
+): Promise<{ success: boolean; message: string }> {
+  const eligibility = getStorySpotlightEligibility(storySlug);
+  if (!eligibility.isEligible) {
+    return { success: false, message: eligibility.message };
   }
 
   const allStories = getAllStories();
   const story = allStories[storySlug];
   if (!story) {
-    return { success: false, message: "Story could not be located in platform catalog." };
+    return { success: false, message: "Story not found." };
   }
 
-  const now = Date.now();
-  const durationMs = days * 24 * 60 * 60 * 1000;
-  const cooldownMs = SEVEN_DAYS_MS;
+  const creditsCost = days * 2;
+  const credits = getPromoCredits();
+  if (credits < creditsCost) {
+    return {
+      success: false,
+      message: `Insufficient Promo Credits. You need ${creditsCost} credits for a ${days}-day spotlight, but have ${credits} available.`,
+    };
+  }
 
-  const startObj = new Date(now);
-  const endObj = new Date(now + durationMs);
+  try {
+    const res = await fetch("/api/spotlight", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "activate", storySlug, days, creditsSpent: creditsCost }),
+    });
 
-  const newCampaign: SpotlightCampaign = {
-    id: `spotlight-${story.slug}`,
-    storySlug: story.slug,
-    storyTitle: story.title,
-    coverImageUrl: story.coverImageUrl,
-    authorName: story.author?.name || "Valerius Frost",
-    classification: story.classification,
-    startDate: startObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-    endDate: endObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-    startTimestamp: now,
-    endTimestamp: now + durationMs,
-    cooldownTimestamp: now + durationMs + cooldownMs,
-    status: "ACTIVE",
-    impressions: 1,
-    clicks: 0,
-  };
-
-  const existingCampaigns = getAllSpotlightCampaigns().filter((c) => c.storySlug !== story.slug);
-  const updated = [newCampaign, ...existingCampaigns];
-
-  localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(updated));
-  setPromoCredits(Math.max(0, credits - creditsCost));
-
-  // Sync to server API in background
-  fetch("/api/spotlight", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "activate", storySlug, days, creditsSpent: creditsCost }),
-  }).catch((err) => console.warn("Background server spotlight activation failed:", err));
-
-  window.dispatchEvent(new Event("ficforge_spotlight_updated"));
-  return {
-    success: true,
-    message: `Spotlight successfully launched for "${story.title}" for ${days} ${days === 1 ? "day" : "days"} (${creditsCost} credits redeemed)!`,
-  };
-}
-
-/**
- * Ends an active campaign early.
- */
-export function endSpotlightCampaign(campaignId: string): void {
-  if (typeof window === "undefined") return;
-
-  const now = Date.now();
-  let targetSlug = campaignId;
-  const campaigns = getAllSpotlightCampaigns().map((c) => {
-    if (c.id === campaignId || c.storySlug === campaignId) {
-      targetSlug = c.storySlug;
+    if (res.ok) {
+      await syncSpotlightsWithServer();
       return {
-        ...c,
-        status: "EXPIRED" as const,
-        endTimestamp: now,
-        cooldownTimestamp: now + SEVEN_DAYS_MS,
-        endDate: `${new Date(now).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} (Ended Early)`,
+        success: true,
+        message: `Spotlight successfully launched in PostgreSQL for "${story.title}" for ${days} days (${creditsCost} credits redeemed)!`,
       };
     }
-    return c;
-  });
+  } catch (err) {
+    console.error("Failed to activate spotlight in PostgreSQL:", err);
+  }
 
-  localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(campaigns));
-
-  // Sync to server API
-  fetch("/api/spotlight", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "end", campaignId, storySlug: targetSlug }),
-  }).catch((err) => console.warn("Background server spotlight end failed:", err));
-
-  window.dispatchEvent(new Event("ficforge_spotlight_updated"));
+  return {
+    success: false,
+    message: "Failed to activate spotlight on server. Please try again.",
+  };
 }
 
 /**
- * Testing tool to reset cooldowns.
+ * Ends an active campaign early in Neon PostgreSQL.
  */
-export function resetTestCooldowns(): void {
-  if (typeof window === "undefined") return;
+export async function endSpotlightCampaign(campaignId: string): Promise<void> {
+  try {
+    await fetch("/api/spotlight", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "end", campaignId }),
+    });
+    await syncSpotlightsWithServer();
+  } catch (err) {
+    console.error("Failed to end spotlight on server:", err);
+  }
+}
 
-  const campaigns = getAllSpotlightCampaigns().map((c) => ({
-    ...c,
-    cooldownTimestamp: 0,
-  }));
-
-  localStorage.setItem(SPOTLIGHT_STORAGE_KEY, JSON.stringify(campaigns));
-  setPromoCredits(Math.max(getPromoCredits(), 3));
-
-  // Sync to server API
-  fetch("/api/spotlight", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "reset_cooldowns" }),
-  }).catch((err) => console.warn("Background server reset cooldowns failed:", err));
-
-  window.dispatchEvent(new Event("ficforge_spotlight_updated"));
+/**
+ * Testing tool to reset cooldowns in PostgreSQL.
+ */
+export async function resetTestCooldowns(): Promise<void> {
+  try {
+    await fetch("/api/spotlight", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "reset_cooldowns" }),
+    });
+    await syncSpotlightsWithServer();
+  } catch (err) {
+    console.error("Failed to reset cooldowns on server:", err);
+  }
 }

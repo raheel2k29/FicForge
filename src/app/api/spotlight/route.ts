@@ -45,10 +45,17 @@ export async function GET() {
 
       const active = campaigns.filter((c) => c.status === "ACTIVE");
 
+      // Fetch live promo credits from PostgreSQL
+      const membership = await prisma.platformMembership.findFirst({
+        where: { user: { username: "valerius_f" } },
+      });
+      const promoCredits = membership?.promoCreditsBalance ?? 11;
+
       return NextResponse.json(
         {
           campaigns,
           active,
+          promoCredits,
           source: "postgresql-neon-database",
           timestamp: Date.now(),
         },
@@ -175,10 +182,25 @@ export async function POST(request: Request) {
         });
       }
 
+      // Deduct promo credits in PostgreSQL
+      let updatedCredits = 11;
+      const membership = await prisma.platformMembership.findFirst({
+        where: { userId: creator.id },
+      });
+      if (membership) {
+        const nextCredits = Math.max(0, membership.promoCreditsBalance - finalCredits);
+        await prisma.platformMembership.update({
+          where: { id: membership.id },
+          data: { promoCreditsBalance: nextCredits },
+        });
+        updatedCredits = nextCredits;
+      }
+
       return NextResponse.json({
         success: true,
         message: `Spotlight successfully activated for "${story.title}" in PostgreSQL!`,
         promotion,
+        promoCredits: updatedCredits,
       });
     }
 

@@ -7,6 +7,7 @@ import { getStoryBySlug, deleteChapter } from "@/lib/storyStore";
 import { isStoryBookmarked, toggleStoryBookmark } from "@/lib/bookmarkStore";
 import { getCurrentUser, UserSession, canManageChapter } from "@/lib/authStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
+import AuthRequiredModal from "@/components/AuthRequiredModal";
 import {
   Settings,
   ChevronLeft,
@@ -33,6 +34,8 @@ function ChapterReaderContent() {
   const [story, setStory] = useState<StoryData | undefined>(undefined);
   const [chapter, setChapter] = useState<ChapterData | undefined>(undefined);
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalType, setAuthModalType] = useState<"bookmark" | "like" | "tip" | "fastpass" | "comment">("bookmark");
 
   useEffect(() => {
     const updateAuth = () => {
@@ -171,12 +174,17 @@ function ChapterReaderContent() {
 
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentUser) {
+      setAuthModalType("comment");
+      setAuthModalOpen(true);
+      return;
+    }
     if (!commentText.trim()) return;
     setCommentsList((prev) => [
       {
         id: "c-" + Date.now(),
-        user: "You",
-        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
+        user: currentUser.name || `@${currentUser.username}`,
+        avatar: currentUser.avatarUrl || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80",
         content: commentText.trim(),
         createdAt: "Just now",
         isSpoiler: isSpoiler,
@@ -251,6 +259,11 @@ function ChapterReaderContent() {
             <button
               type="button"
               onClick={() => {
+                if (!currentUser) {
+                  setAuthModalType("bookmark");
+                  setAuthModalOpen(true);
+                  return;
+                }
                 if (slug) {
                   const next = toggleStoryBookmark(slug);
                   setIsBookmarked(next);
@@ -259,7 +272,7 @@ function ChapterReaderContent() {
               className={`p-2 rounded-lg transition-colors cursor-pointer ${
                 isBookmarked ? "text-[#F97316]" : "opacity-75 hover:opacity-100"
               }`}
-              title={isBookmarked ? "Story Saved in Library" : "Bookmark Story to Library"}
+              title={isBookmarked ? "Story Saved in Library" : "Bookmark Story to Library (Requires Login)"}
             >
               <Bookmark className={`h-4 w-4 ${isBookmarked ? "fill-[#F97316]" : ""}`} />
             </button>
@@ -481,8 +494,15 @@ function ChapterReaderContent() {
             <div className="max-w-xs mx-auto space-y-3">
               <button
                 type="button"
-                onClick={handleUnlockFastPass}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 py-3.5 px-6 text-sm font-black text-slate-950 shadow-lg shadow-amber-500/20 hover:from-amber-400 hover:to-orange-400 transition-all"
+                onClick={() => {
+                  if (!currentUser) {
+                    setAuthModalType("fastpass");
+                    setAuthModalOpen(true);
+                    return;
+                  }
+                  handleUnlockFastPass();
+                }}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 py-3.5 px-6 text-sm font-black text-slate-950 shadow-lg shadow-amber-500/20 hover:from-amber-400 hover:to-orange-400 transition-all cursor-pointer"
               >
                 <Zap className="h-4 w-4 fill-slate-950" />
                 Unlock for {chapter.fastPassPriceSparks} Sparks
@@ -646,6 +666,31 @@ function ChapterReaderContent() {
         </section>
 
       </main>
+
+      {/* Account Required Auth Modal */}
+      <AuthRequiredModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        actionType={authModalType}
+        title={
+          authModalType === "bookmark"
+            ? "Sign In to Save to Library"
+            : authModalType === "fastpass"
+            ? "Sign In to Unlock Fast Pass"
+            : authModalType === "comment"
+            ? "Sign In to Join the Discussion"
+            : "Sign In Required"
+        }
+        description={
+          authModalType === "bookmark"
+            ? "You must have a FicForge account to bookmark serialized stories and access your reading library across devices."
+            : authModalType === "fastpass"
+            ? "Sign in or create an account to use Sparks to read early-access Fast Pass chapters."
+            : authModalType === "comment"
+            ? "Sign in to share your thoughts, leave constructive feedback, and discuss chapters with other readers."
+            : "Sign in to FicForge to unlock full reader and creator features."
+        }
+      />
     </div>
   );
 }

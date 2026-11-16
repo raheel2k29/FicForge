@@ -189,7 +189,7 @@ function BulkImportContent() {
   };
 
   // Commit and Atomic Publish
-  const handlePublishBatch = () => {
+  const handlePublishBatch = async () => {
     if (!selectedStorySlug || detectedChapters.length === 0) return;
 
     const chaptersToSave: ChapterData[] = detectedChapters.map((ch, idx) => {
@@ -207,7 +207,7 @@ function BulkImportContent() {
       };
     });
 
-    const success = bulkSaveChapters(selectedStorySlug, chaptersToSave);
+    const success = await bulkSaveChapters(selectedStorySlug, chaptersToSave);
     if (success) {
       router.push(`/story/${selectedStorySlug}`);
     }

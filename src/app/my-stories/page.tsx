@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getAllStories, syncStoriesWithServer, deleteStory, deleteChapter } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer, deleteStory, deleteChapter, cleanupLegacyStorage } from "@/lib/storyStore";
 import { getStorySpotlightEligibility } from "@/lib/promotionStore";
+import { getCurrentUser, UserSession } from "@/lib/authStore";
 import { StoryData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import CreatorStudioHeader from "@/components/CreatorStudioHeader";
@@ -27,33 +28,55 @@ import {
 } from "lucide-react";
 
 export default function MyStoriesPage() {
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
   const [stories, setStories] = useState<StoryData[]>([]);
   const [filter, setFilter] = useState<"ALL" | "FANFICTION" | "ORIGINAL">("ALL");
 
   useEffect(() => {
-    // Clean legacy storage keys immediately
-    try {
-      localStorage.removeItem("ficforge_custom_stories_v1");
-      localStorage.removeItem("ficforge_stories_v2");
-    } catch {}
+    // Universal purge of legacy browser keys
+    cleanupLegacyStorage();
+
+    const user = getCurrentUser();
+    setCurrentUser(user);
+
+    const filterForUser = (allStoriesMap: Record<string, StoryData>, u: UserSession | null) => {
+      const allList = Object.values(allStoriesMap);
+      if (!u || u.role === "SUPER_ADMIN") {
+        return allList;
+      }
+      const myWorks = allList.filter(
+        (s) => s.author?.username?.toLowerCase() === u.username?.toLowerCase()
+      );
+      return myWorks.length > 0 ? myWorks : allList;
+    };
 
     const loadStories = () => {
       const all = getAllStories();
-      setStories(Object.values(all));
+      setStories(filterForUser(all, getCurrentUser()));
     };
 
     // Reconcile with live PostgreSQL database immediately
     syncStoriesWithServer().then((serverStories) => {
       if (serverStories) {
-        setStories(Object.values(serverStories));
+        setStories(filterForUser(serverStories, getCurrentUser()));
       } else {
         loadStories();
       }
     });
 
-    // Listen to updates from other pages
+    const handleAuthChange = () => {
+      const updatedUser = getCurrentUser();
+      setCurrentUser(updatedUser);
+      loadStories();
+    };
+
+    // Listen to updates from other pages and auth changes
     window.addEventListener("ficforge_stories_updated", loadStories);
-    return () => window.removeEventListener("ficforge_stories_updated", loadStories);
+    window.addEventListener("ficforge_auth_changed", handleAuthChange);
+    return () => {
+      window.removeEventListener("ficforge_stories_updated", loadStories);
+      window.removeEventListener("ficforge_auth_changed", handleAuthChange);
+    };
   }, []);
 
   const totalWords = stories.reduce((acc, s) => acc + (s.stats.words || 0), 0);

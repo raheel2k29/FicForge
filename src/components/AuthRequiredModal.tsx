@@ -10,7 +10,7 @@ interface AuthRequiredModalProps {
   onClose: () => void;
   title?: string;
   description?: string;
-  actionType?: "bookmark" | "like" | "tip" | "general";
+  actionType?: "bookmark" | "like" | "tip" | "general" | "fastpass" | "comment";
   redirectUrl?: string;
 }
 
@@ -57,7 +57,7 @@ export default function AuthRequiredModal({
             <Bookmark className="h-7 w-7 text-[#A78BFA] fill-[#A78BFA]/30" />
           ) : actionType === "like" ? (
             <Heart className="h-7 w-7 text-rose-400 fill-rose-400/30" />
-          ) : actionType === "tip" ? (
+          ) : actionType === "tip" || actionType === "fastpass" ? (
             <Zap className="h-7 w-7 text-amber-400 fill-amber-400" />
           ) : (
             <Lock className="h-7 w-7 text-[#F97316]" />

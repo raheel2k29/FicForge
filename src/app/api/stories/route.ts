@@ -2,9 +2,74 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { mockStories, StoryData } from "@/data/mockStories";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const slug = searchParams.get("slug");
+    const authorUsername = searchParams.get("authorUsername");
+
+    if (slug) {
+      const s = await prisma.story.findUnique({
+        where: { slug },
+        include: {
+          author: { include: { profile: true } },
+          chapters: { orderBy: { chapterNumber: "asc" } },
+        },
+      });
+
+      if (s) {
+        const storyData: StoryData = {
+          id: s.id,
+          title: s.title,
+          slug: s.slug,
+          synopsis: s.synopsis,
+          coverImageUrl: s.coverImageUrl || "",
+          classification: s.classification as any,
+          genres: s.classification === "FANFICTION" ? ["Sci-Fi", "Adventure"] : ["Fantasy", "Adventure"],
+          rating: s.rating as any,
+          status: s.status as any,
+          author: {
+            name: s.author.profile?.displayName || s.author.username || "Valerius Frost",
+            username: s.author.username,
+            avatarUrl: s.author.profile?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+            isVerified: s.author.isVerified,
+            bio: s.author.profile?.bio || "Author on FicForge.",
+          },
+          stats: {
+            words: s.chapters.reduce((acc, c) => acc + (c.wordCount || 0), 0) || 45000,
+            views: s.viewCount,
+            likes: s.likeCount,
+            bookmarks: s.bookmarkCount,
+            chapterCount: s.chapters.length,
+          },
+          tags: {
+            warnings: s.isExplicit18Plus ? ["Explicit Content"] : [],
+            pairings: [],
+            characters: [],
+            general: ["Serialized", "Popular"],
+          },
+          updatedAt: s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : "Recently",
+          chapters: s.chapters.map((ch) => ({
+            number: ch.chapterNumber,
+            slug: ch.slug,
+            title: ch.title,
+            wordCount: ch.wordCount,
+            publishedAt: ch.publishedAt ? new Date(ch.publishedAt).toLocaleDateString() : "Recently",
+            content: [ch.content],
+          })),
+        };
+
+        return NextResponse.json({ story: storyData, source: "postgresql-neon-database" });
+      }
+    }
+
+    const whereClause: any = {};
+    if (authorUsername) {
+      whereClause.author = { username: authorUsername };
+    }
+
     const dbStories = await prisma.story.findMany({
+      where: whereClause,
       include: {
         author: {
           include: { profile: true },
@@ -151,6 +216,39 @@ export async function POST(request: Request) {
       },
     });
 
+    // Save/sync chapters directly to PostgreSQL
+    if (story.chapters && Array.isArray(story.chapters)) {
+      for (const ch of story.chapters) {
+        const chNum = Number(ch.number) || 1;
+        await prisma.chapter.upsert({
+          where: {
+            storyId_chapterNumber: {
+              storyId: dbStory.id,
+              chapterNumber: chNum,
+            },
+          },
+          update: {
+            slug: ch.slug || `chapter-${chNum}`,
+            title: ch.title || `Chapter ${chNum}`,
+            content: Array.isArray(ch.content) ? ch.content.join("\n\n") : (ch.content || ""),
+            wordCount: ch.wordCount || 0,
+            orderIndex: chNum,
+            isPublished: true,
+          },
+          create: {
+            storyId: dbStory.id,
+            slug: ch.slug || `chapter-${chNum}`,
+            title: ch.title || `Chapter ${chNum}`,
+            content: Array.isArray(ch.content) ? ch.content.join("\n\n") : (ch.content || ""),
+            wordCount: ch.wordCount || 0,
+            chapterNumber: chNum,
+            orderIndex: chNum,
+            isPublished: true,
+          },
+        });
+      }
+    }
+
     return NextResponse.json({ success: true, story: dbStory });
   } catch (error: any) {
     return NextResponse.json({ success: false, message: error?.message || "Server error" }, { status: 500 });
@@ -161,6 +259,7 @@ export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get("slug");
+    const authorUsername = searchParams.get("authorUsername");
     const storySlug = searchParams.get("storySlug");
     const chapterSlug = searchParams.get("chapterSlug");
     const action = searchParams.get("action");
@@ -199,15 +298,28 @@ export async function DELETE(request: Request) {
 
     // 3. DELETE SINGLE STORY
     if (slug) {
-      await prisma.spotlightPromotion.deleteMany({
-        where: { story: { slug } },
-      });
-      await prisma.chapter.deleteMany({
-        where: { story: { slug } },
-      });
-      await prisma.story.deleteMany({
+      const existing = await prisma.story.findUnique({
         where: { slug },
+        select: { id: true },
       });
+
+      if (existing) {
+        await prisma.bookmark.deleteMany({
+          where: { storyId: existing.id },
+        });
+        await prisma.spotlightPromotion.deleteMany({
+          where: { storyId: existing.id },
+        });
+        await prisma.chapter.deleteMany({
+          where: { storyId: existing.id },
+        });
+        await prisma.readingHistory.deleteMany({
+          where: { storyId: existing.id },
+        });
+        await prisma.story.delete({
+          where: { id: existing.id },
+        });
+      }
 
       return NextResponse.json({
         success: true,

@@ -1,42 +1,44 @@
 import { getAllStories } from "./storyStore";
-import { getCurrentUser, UserSession } from "./authStore";
+import { getCurrentUser } from "./authStore";
 import { StoryData } from "@/data/mockStories";
 
-const LEGACY_STORAGE_KEY = "ficforge_saved_library_v1";
+// In-memory runtime cache for authenticated user bookmarks, synchronized with PostgreSQL
+const userBookmarksCache: Record<string, string[]> = {};
 
-function getUserStorageKey(userId: string): string {
-  return `ficforge_user_bookmarks_v2_${userId}`;
-}
-
+/**
+ * Wipe all legacy browser storage keys (Universal Purge)
+ * Neon PostgreSQL is the sole authoritative persistence layer.
+ */
 export function cleanupLegacyBookmarks(): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.removeItem(LEGACY_STORAGE_KEY);
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (
+        key &&
+        key.startsWith("ficforge_") &&
+        key !== "ficforge_auth_session_v1" &&
+        key !== "ficforge_age_verified"
+      ) {
+        keysToRemove.push(key);
+      }
+    }
+    keysToRemove.forEach((k) => localStorage.removeItem(k));
   } catch {}
 }
 
 /**
- * Retrieves all bookmarked story slugs for the currently authenticated user.
+ * Retrieves all bookmarked story slugs for the currently authenticated user from PostgreSQL cache.
  * Logged-out guests ALWAYS return empty array (0 bookmarks).
  */
 export function getBookmarkedSlugs(): string[] {
-  if (typeof window === "undefined") return [];
-
   cleanupLegacyBookmarks();
 
   const user = getCurrentUser();
-  if (!user || !user.id) {
-    return [];
-  }
+  if (!user || !user.id) return [];
 
-  try {
-    const raw = localStorage.getItem(getUserStorageKey(user.id));
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+  return userBookmarksCache[user.id] || [];
 }
 
 /**
@@ -45,18 +47,19 @@ export function getBookmarkedSlugs(): string[] {
 export function isStoryBookmarked(slug: string): boolean {
   if (!slug) return false;
   const user = getCurrentUser();
-  if (!user) return false;
-  const bookmarks = getBookmarkedSlugs();
-  return bookmarks.includes(slug);
+  if (!user || !user.id) return false;
+
+  const slugs = getBookmarkedSlugs();
+  return slugs.includes(slug);
 }
 
 /**
- * Synchronizes user bookmarks with the PostgreSQL Neon database.
+ * Synchronizes user bookmarks with the Neon PostgreSQL database.
  */
 export async function syncUserBookmarksWithServer(): Promise<string[]> {
-  if (typeof window === "undefined") return [];
-
   cleanupLegacyBookmarks();
+
+  if (typeof window === "undefined") return [];
 
   const user = getCurrentUser();
   if (!user || !user.id) return [];
@@ -69,23 +72,21 @@ export async function syncUserBookmarksWithServer(): Promise<string[]> {
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data.slugs)) {
-        localStorage.setItem(getUserStorageKey(user.id), JSON.stringify(data.slugs));
+        userBookmarksCache[user.id] = data.slugs;
         window.dispatchEvent(new Event("ficforge_bookmarks_updated"));
         return data.slugs;
       }
     }
   } catch (err) {
-    console.warn("Could not sync bookmarks with server:", err);
+    console.warn("Could not sync bookmarks with PostgreSQL:", err);
   }
 
-  return getBookmarkedSlugs();
+  return userBookmarksCache[user.id] || [];
 }
 
 /**
- * Toggles bookmark status for a story slug.
+ * Toggles bookmark status for a story directly in Neon PostgreSQL.
  * Requires an authenticated user session.
- *
- * @returns { success: boolean, isBookmarked: boolean, requiresAuth?: boolean }
  */
 export async function toggleStoryBookmarkAuth(
   slug: string
@@ -99,19 +100,16 @@ export async function toggleStoryBookmarkAuth(
     return { success: false, isBookmarked: false, requiresAuth: true };
   }
 
-  const current = getBookmarkedSlugs();
+  const current = userBookmarksCache[user.id] || [];
   const exists = current.includes(slug);
   const nextState = !exists;
 
-  // Optimistic client update
-  const updated = nextState ? [slug, ...current] : current.filter((s) => s !== slug);
-  try {
-    localStorage.setItem(getUserStorageKey(user.id), JSON.stringify(updated));
-    window.dispatchEvent(new Event("ficforge_bookmarks_updated"));
-    window.dispatchEvent(new Event("storage"));
-  } catch (err) {
-    console.warn("Failed to update local bookmarks cache:", err);
-  }
+  // Optimistic in-memory update
+  userBookmarksCache[user.id] = nextState
+    ? [slug, ...current]
+    : current.filter((s) => s !== slug);
+
+  window.dispatchEvent(new Event("ficforge_bookmarks_updated"));
 
   // Server PostgreSQL Persistence
   try {
@@ -133,7 +131,7 @@ export async function toggleStoryBookmarkAuth(
       );
     }
   } catch (err) {
-    console.error("Failed to sync bookmark mutation with server:", err);
+    console.error("Failed to sync bookmark mutation with PostgreSQL:", err);
   }
 
   return { success: true, isBookmarked: nextState };
@@ -146,63 +144,53 @@ export function toggleStoryBookmark(slug: string): boolean {
   const user = getCurrentUser();
   if (!user || !user.id) return false;
 
-  const current = getBookmarkedSlugs();
+  const current = userBookmarksCache[user.id] || [];
   const exists = current.includes(slug);
   const nextState = !exists;
 
-  const updated = nextState ? [slug, ...current] : current.filter((s) => s !== slug);
-  try {
-    localStorage.setItem(getUserStorageKey(user.id), JSON.stringify(updated));
-    window.dispatchEvent(new Event("ficforge_bookmarks_updated"));
-    window.dispatchEvent(new Event("storage"));
+  userBookmarksCache[user.id] = nextState
+    ? [slug, ...current]
+    : current.filter((s) => s !== slug);
 
-    // Async DB update
-    if (nextState) {
-      fetch("/api/library", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.id,
-          userEmail: user.email,
-          userName: user.name,
-          storySlug: slug,
-        }),
-      }).catch(console.error);
-    } else {
-      fetch(
-        `/api/library?userId=${encodeURIComponent(user.id)}&storySlug=${encodeURIComponent(slug)}`,
-        { method: "DELETE" }
-      ).catch(console.error);
-    }
-  } catch (err) {
-    console.warn("Storage error in toggleStoryBookmark:", err);
+  window.dispatchEvent(new Event("ficforge_bookmarks_updated"));
+
+  // Async DB update in Neon PostgreSQL
+  if (nextState) {
+    fetch("/api/library", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user.id,
+        userEmail: user.email,
+        userName: user.name,
+        storySlug: slug,
+      }),
+    }).catch(console.error);
+  } else {
+    fetch(
+      `/api/library?userId=${encodeURIComponent(user.id)}&storySlug=${encodeURIComponent(slug)}`,
+      { method: "DELETE" }
+    ).catch(console.error);
   }
 
   return nextState;
 }
 
 /**
- * Explicitly removes a story from the current user's library.
+ * Explicitly removes a story from the current user's library in PostgreSQL.
  */
 export function removeStoryBookmark(slug: string): void {
   const user = getCurrentUser();
   if (!user || !user.id || !slug) return;
 
-  const current = getBookmarkedSlugs();
-  const updated = current.filter((s) => s !== slug);
+  const current = userBookmarksCache[user.id] || [];
+  userBookmarksCache[user.id] = current.filter((s) => s !== slug);
+  window.dispatchEvent(new Event("ficforge_bookmarks_updated"));
 
-  try {
-    localStorage.setItem(getUserStorageKey(user.id), JSON.stringify(updated));
-    window.dispatchEvent(new Event("ficforge_bookmarks_updated"));
-    window.dispatchEvent(new Event("storage"));
-
-    fetch(
-      `/api/library?userId=${encodeURIComponent(user.id)}&storySlug=${encodeURIComponent(slug)}`,
-      { method: "DELETE" }
-    ).catch(console.error);
-  } catch (err) {
-    console.warn("Failed to remove bookmark:", err);
-  }
+  fetch(
+    `/api/library?userId=${encodeURIComponent(user.id)}&storySlug=${encodeURIComponent(slug)}`,
+    { method: "DELETE" }
+  ).catch(console.error);
 }
 
 /**

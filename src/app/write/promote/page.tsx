@@ -116,11 +116,11 @@ function PromotionDashboardContent() {
     return campaigns.reduce((acc, c) => acc + (c.impressions || 0), 0);
   }, [campaigns]);
 
-  const handleLaunchPromotion = (e: React.FormEvent) => {
+  const handleLaunchPromotion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedStorySlug) return;
 
-    const result = activateSpotlight(selectedStorySlug, selectedDays);
+    const result = await activateSpotlight(selectedStorySlug, selectedDays);
     if (result.success) {
       setFeedback({ type: "success", message: result.message });
     } else {
@@ -130,9 +130,9 @@ function PromotionDashboardContent() {
     setTimeout(() => setFeedback(null), 5000);
   };
 
-  const handleEndCampaign = (campaignId: string) => {
+  const handleEndCampaign = async (campaignId: string) => {
     if (confirm("End this spotlight campaign early? Its 7-day fair discovery cooldown will begin now.")) {
-      endSpotlightCampaign(campaignId);
+      await endSpotlightCampaign(campaignId);
     }
   };
 
