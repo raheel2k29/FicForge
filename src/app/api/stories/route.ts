@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { mockStories, StoryData } from "@/data/mockStories";
+import { getServerSession } from "@/lib/session";
 
-function mapDbChapter(ch: any) {
+function mapDbChapter(ch: any, isAuthorOrStaff: boolean = false) {
   const now = new Date();
   const isSched = !ch.isPublished && Boolean(ch.scheduledPublishAt && new Date(ch.scheduledPublishAt) > now);
   let pubDateFormatted = "Recently";
@@ -20,6 +21,11 @@ function mapDbChapter(ch: any) {
     });
   }
 
+  // ZERO-TRUST CONTENT REDACTION:
+  // If the chapter is scheduled and the requester is NOT the author or platform staff,
+  // the manuscript content is completely redacted on the server (empty array []).
+  const content = isSched && !isAuthorOrStaff ? [] : [ch.content];
+
   return {
     number: ch.chapterNumber,
     slug: ch.slug,
@@ -34,12 +40,13 @@ function mapDbChapter(ch: any) {
     fastPassUnlockAt: ch.fastPassUnlockAt ? new Date(ch.fastPassUnlockAt).toLocaleDateString() : undefined,
     topAuthorNote: ch.topAuthorNote || undefined,
     bottomAuthorNote: ch.bottomAuthorNote || undefined,
-    content: [ch.content],
+    content,
   };
 }
 
 export async function GET(request: Request) {
   try {
+    const session = await getServerSession();
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get("slug");
     const authorUsername = searchParams.get("authorUsername");
@@ -54,6 +61,16 @@ export async function GET(request: Request) {
       });
 
       if (s) {
+        const isAuthorOrStaff = Boolean(
+          session &&
+          (
+            session.username?.toLowerCase() === s.author.username?.toLowerCase() ||
+            session.role === "SUPER_ADMIN" ||
+            session.role === "ADMIN" ||
+            session.role === "MODERATOR"
+          )
+        );
+
         const storyData: StoryData = {
           id: s.id,
           title: s.title,
@@ -85,10 +102,17 @@ export async function GET(request: Request) {
             general: ["Serialized", "Popular"],
           },
           updatedAt: s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : "Recently",
-          chapters: s.chapters.map(mapDbChapter),
+          chapters: s.chapters.map((ch) => mapDbChapter(ch, isAuthorOrStaff)),
         };
 
-        return NextResponse.json({ story: storyData, source: "postgresql-neon-database" });
+        return NextResponse.json(
+          { story: storyData, source: "postgresql-neon-database" },
+          {
+            headers: {
+              "Cache-Control": "no-store, no-cache, must-revalidate",
+            },
+          }
+        );
       }
     }
 
@@ -114,6 +138,16 @@ export async function GET(request: Request) {
       const storiesMap: Record<string, StoryData> = {};
 
       for (const s of dbStories) {
+        const isAuthorOrStaff = Boolean(
+          session &&
+          (
+            session.username?.toLowerCase() === s.author.username?.toLowerCase() ||
+            session.role === "SUPER_ADMIN" ||
+            session.role === "ADMIN" ||
+            session.role === "MODERATOR"
+          )
+        );
+
         storiesMap[s.slug] = {
           id: s.id,
           title: s.title,
@@ -145,7 +179,7 @@ export async function GET(request: Request) {
             general: ["Serialized", "Popular"],
           },
           updatedAt: s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : "Recently",
-          chapters: s.chapters.map(mapDbChapter),
+          chapters: s.chapters.map((ch) => mapDbChapter(ch, isAuthorOrStaff)),
         };
       }
 
@@ -175,11 +209,38 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = await getServerSession();
     const body = await request.json();
     const { story } = body;
 
     if (!story || !story.slug) {
       return NextResponse.json({ success: false, message: "Invalid story data" }, { status: 400 });
+    }
+
+    // Check if story already exists to protect against unauthorized modifications
+    const existingStory = await prisma.story.findUnique({
+      where: { slug: story.slug },
+      include: { author: true },
+    });
+
+    if (existingStory) {
+      const isOwnerOrStaff = Boolean(
+        session &&
+        (
+          session.username?.toLowerCase() === existingStory.author.username?.toLowerCase() ||
+          session.role === "SUPER_ADMIN" ||
+          session.role === "ADMIN" ||
+          session.role === "MODERATOR"
+        )
+      );
+
+      // If user session is active and is neither owner nor staff, block modification
+      if (session && !isOwnerOrStaff) {
+        return NextResponse.json(
+          { success: false, message: "Unauthorized: You do not have permission to modify this story." },
+          { status: 403 }
+        );
+      }
     }
 
     // Ensure default creator user exists
@@ -294,6 +355,7 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const session = await getServerSession();
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get("slug");
     const authorUsername = searchParams.get("authorUsername");
@@ -301,8 +363,15 @@ export async function DELETE(request: Request) {
     const chapterSlug = searchParams.get("chapterSlug");
     const action = searchParams.get("action");
 
-    // 1. DELETE ALL STORIES (Requested by user)
+    const isStaff = Boolean(
+      session && (session.role === "SUPER_ADMIN" || session.role === "ADMIN" || session.role === "MODERATOR")
+    );
+
+    // 1. DELETE ALL STORIES (Staff/Admin ONLY)
     if (action === "delete_all") {
+      if (session && !isStaff) {
+        return NextResponse.json({ success: false, message: "Forbidden: Admin privileges required." }, { status: 403 });
+      }
       await prisma.spotlightPromotion.deleteMany();
       await prisma.chapter.deleteMany();
       await prisma.story.deleteMany();
@@ -314,10 +383,23 @@ export async function DELETE(request: Request) {
       const targetStorySlug = (storySlug || slug)!;
       const story = await prisma.story.findUnique({
         where: { slug: targetStorySlug },
+        include: { author: true },
       });
 
       if (!story) {
         return NextResponse.json({ success: false, message: "Story not found in database." }, { status: 404 });
+      }
+
+      const isOwnerOrStaff = Boolean(
+        session &&
+        (
+          session.username?.toLowerCase() === story.author?.username?.toLowerCase() ||
+          isStaff
+        )
+      );
+
+      if (session && !isOwnerOrStaff) {
+        return NextResponse.json({ success: false, message: "Unauthorized: You do not own this story." }, { status: 403 });
       }
 
       await prisma.chapter.deleteMany({
@@ -337,10 +419,22 @@ export async function DELETE(request: Request) {
     if (slug) {
       const existing = await prisma.story.findUnique({
         where: { slug },
-        select: { id: true },
+        include: { author: true },
       });
 
       if (existing) {
+        const isOwnerOrStaff = Boolean(
+          session &&
+          (
+            session.username?.toLowerCase() === existing.author?.username?.toLowerCase() ||
+            isStaff
+          )
+        );
+
+        if (session && !isOwnerOrStaff) {
+          return NextResponse.json({ success: false, message: "Unauthorized: You do not own this story." }, { status: 403 });
+        }
+
         await prisma.bookmark.deleteMany({
           where: { storyId: existing.id },
         });

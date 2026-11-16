@@ -34,14 +34,20 @@ function formatStory(s: any): StoryData {
       general: ["Serialized", "Library"],
     },
     updatedAt: s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : "Recently",
-    chapters: (s.chapters || []).map((ch: any) => ({
-      number: ch.chapterNumber,
-      slug: ch.slug,
-      title: ch.title,
-      wordCount: ch.wordCount,
-      publishedAt: ch.publishedAt ? new Date(ch.publishedAt).toLocaleDateString() : "Recently",
-      content: [ch.content],
-    })),
+    chapters: (s.chapters || []).map((ch: any) => {
+      const now = new Date();
+      const isSched = !ch.isPublished && Boolean(ch.scheduledPublishAt && new Date(ch.scheduledPublishAt) > now);
+      return {
+        number: ch.chapterNumber,
+        slug: ch.slug,
+        title: ch.title,
+        wordCount: ch.wordCount,
+        isPublished: ch.isPublished,
+        isScheduled: isSched,
+        publishedAt: ch.publishedAt ? new Date(ch.publishedAt).toLocaleDateString() : "Recently",
+        content: [], // Redacted for security & zero-trust protection
+      };
+    }),
   };
 }
 

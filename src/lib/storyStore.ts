@@ -52,6 +52,7 @@ export async function saveStory(story: StoryData): Promise<void> {
       await fetch("/api/stories", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ story }),
       });
       // Re-sync with database
@@ -71,7 +72,7 @@ export async function syncStoriesWithServer(): Promise<Record<string, StoryData>
   if (typeof window === "undefined") return activeStoriesCache;
 
   try {
-    const res = await fetch("/api/stories", { cache: "no-store" });
+    const res = await fetch("/api/stories", { cache: "no-store", credentials: "include" });
     if (res.ok) {
       const data = await res.json();
       if (data.stories && typeof data.stories === "object" && Object.keys(data.stories).length > 0) {
@@ -122,7 +123,10 @@ export async function bulkSaveChapters(storySlug: string, newChapters: ChapterDa
   }
   if (!story && typeof window !== "undefined") {
     try {
-      const res = await fetch(`/api/stories?slug=${encodeURIComponent(storySlug)}`);
+      const res = await fetch(`/api/stories?slug=${encodeURIComponent(storySlug)}`, {
+        cache: "no-store",
+        credentials: "include",
+      });
       if (res.ok) {
         const json = await res.json();
         if (json.story) {
@@ -165,6 +169,7 @@ export async function deleteStory(slug: string): Promise<boolean> {
     try {
       await fetch(`/api/stories?slug=${encodeURIComponent(slug)}`, {
         method: "DELETE",
+        credentials: "include",
       });
       await syncStoriesWithServer();
     } catch (err) {
@@ -197,7 +202,7 @@ export async function deleteChapter(storySlug: string, chapterSlug: string): Pro
     try {
       await fetch(
         `/api/stories?storySlug=${encodeURIComponent(storySlug)}&chapterSlug=${encodeURIComponent(chapterSlug)}`,
-        { method: "DELETE" }
+        { method: "DELETE", credentials: "include" }
       );
       await syncStoriesWithServer();
     } catch (err) {
