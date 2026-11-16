@@ -142,7 +142,6 @@ function BulkImportContent() {
         .split("\n")
         .map((l) => l.trim())
         .filter((l) => l.length > 0);
-      const words = fullText.split(/\s+/).filter(Boolean).length;
 
       let detectedTitle = fallbackTitle || "Chapter 1";
       let bodyLines = lines;
@@ -169,6 +168,7 @@ function BulkImportContent() {
       }
 
       const rawBody = bodyLines.length > 0 ? bodyLines.join("\n\n") : fullText;
+      const words = rawBody.split(/\s+/).filter(Boolean).length;
 
       return [
         {
@@ -176,7 +176,7 @@ function BulkImportContent() {
           title: detectedTitle.length > 80 ? detectedTitle.substring(0, 80) : detectedTitle,
           rawText: rawBody,
           content: bodyLines.length > 0 ? bodyLines : [fullText],
-          wordCount: Math.max(words, 15),
+          wordCount: words,
         },
       ];
     }
@@ -203,14 +203,14 @@ function BulkImportContent() {
       }
 
       const rawText = chapterBodyLines.join("\n\n");
-      const words = block.split(/\s+/).filter(Boolean).length;
+      const words = rawText.split(/\s+/).filter(Boolean).length;
 
       return {
         id: `${prefix}-${idx + 1}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         title: firstLine.length > 80 ? firstLine.substring(0, 80) : firstLine,
         rawText: rawText || block,
         content: chapterBodyLines.length > 0 ? chapterBodyLines : [firstLine],
-        wordCount: Math.max(words, 15),
+        wordCount: words,
       };
     });
   };
