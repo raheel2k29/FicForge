@@ -53,17 +53,6 @@ export default function Navbar() {
           <Link href="/browse" className="hover:text-white transition-colors">
             Browse
           </Link>
-          <Link
-            href="/library"
-            className="hover:text-white transition-colors flex items-center gap-1.5 relative group"
-          >
-            <span>Library</span>
-            {currentUser && bookmarkCount > 0 && (
-              <span className="rounded-full bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-1.5 py-0.5 text-[10px] font-black text-white shadow-sm shadow-indigo-600/30">
-                {bookmarkCount}
-              </span>
-            )}
-          </Link>
           <Link href="/write" className="hover:text-white transition-colors">
             Write
           </Link>
