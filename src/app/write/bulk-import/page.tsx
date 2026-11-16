@@ -21,11 +21,17 @@ import {
   Eye,
   Calendar,
   AlertCircle,
+  Plus,
+  HelpCircle,
+  BookOpen,
+  Copy,
+  Check,
 } from "lucide-react";
 
 interface ImportedChapterItem {
   id: string;
   title: string;
+  rawText: string;
   content: string[];
   wordCount: number;
   topAuthorNote?: string;
@@ -40,13 +46,14 @@ function BulkImportContent() {
 
   const [stories, setStories] = useState<StoryData[]>([]);
   const [selectedStorySlug, setSelectedStorySlug] = useState<string>("");
-  const [activeTab, setActiveTab] = useState<"SPLITTER" | "MULTI_FILE">("SPLITTER");
+  const [activeTab, setActiveTab] = useState<"SPLITTER" | "MULTI_FILE" | "MANUAL">("SPLITTER");
   const [manuscriptText, setManuscriptText] = useState("");
   const [detectedChapters, setDetectedChapters] = useState<ImportedChapterItem[]>([]);
-  const [previewChapter, setPreviewChapter] = useState<ImportedChapterItem | null>(null);
+  const [expandedBoxes, setExpandedBoxes] = useState<Record<string, boolean>>({});
   const [isProcessing, setIsProcessing] = useState(false);
   const [enableScheduling, setEnableScheduling] = useState(false);
   const [scheduleIntervalDays, setScheduleIntervalDays] = useState(2); // every 2 days
+  const [showFormatGuide, setShowFormatGuide] = useState(true);
 
   useEffect(() => {
     const all = getAllStories();
@@ -64,57 +71,75 @@ function BulkImportContent() {
     return stories.find((s) => s.slug === selectedStorySlug);
   }, [stories, selectedStorySlug]);
 
-  // Demo 25-Chapter Sample Generator for effortless client testing!
-  const load25ChapterSample = () => {
+  // Demo 10-Chapter Sample Generator for effortless client testing!
+  const load10ChapterSample = () => {
     let sample = "";
-    for (let i = 1; i <= 25; i++) {
+    for (let i = 1; i <= 10; i++) {
       sample += `Chapter ${i}: The Chronicles of the Forge - Part ${i}\n\n`;
       sample += `The ancient bells of the Citadel rang across the frosty valleys as dawn broke over the horizon. Chapter ${i} marks a pivotal turning point in the journey through uncharted realms.\n\n`;
       sample += `Courage was not the absence of fear, but the mastery of it. With each passing milestone, the party forged stronger bonds, unraveling the hidden secrets left behind by the founders of the realm.\n\n`;
-      sample += `***\n\n`;
+      if (i < 10) {
+        sample += `***\n\n`;
+      }
     }
     setManuscriptText(sample);
     parseManuscript(sample);
   };
 
   // Smart Chapter Auto-Splitter Regex Engine
+  // Supports: Chapter X, Ch. X, Act X, Part X, Episode X, Prologue, Epilogue, Markdown headings (# Chapter X), and Divider lines (***, ---)
   const parseManuscript = (textToParse: string) => {
     if (!textToParse.trim()) {
       setDetectedChapters([]);
       return;
     }
 
-    // Split on Chapter delimiters: e.g. "Chapter 1", "CHAPTER 1", "Ch. 1", "Act I", "Prologue", etc.
-    const delimiterRegex = /(?:^|\n)(?=(?:Chapter|CHAPTER|Ch\.|Act|ACT|Prologue|Epilogue)\s*[\dIVXLCDM]*[:\.\s\-]?)/gi;
-    const rawBlocks = textToParse.split(delimiterRegex).filter((b) => b.trim().length > 0);
+    const delimiterRegex =
+      /(?:^|\n)(?=(?:#{1,3}\s*)?(?:Chapter|CHAPTER|Ch\.|Ch\s|Act|ACT|Part|PART|Episode|EPISODE|Prologue|PROLOGUE|Epilogue|EPILOGUE|Interlude|INTERLUDE)\s*[\dIVXLCDM]*[:\.\s\-]?|(?:\*\*\*|---|___)\s*(?:\n|$))/gi;
+
+    const rawBlocks = textToParse
+      .split(delimiterRegex)
+      .map((b) => b.trim().replace(/^(\*\*\*|---|___)\s*/, "").trim())
+      .filter((b) => b.length > 0);
 
     const parsed: ImportedChapterItem[] = rawBlocks.map((block, idx) => {
       const lines = block
-        .trim()
         .split("\n")
         .map((l) => l.trim())
         .filter((l) => l.length > 0);
 
-      const firstLine = lines[0] || `Chapter ${idx + 1}`;
-      const chapterContent = lines.slice(1);
-      const fullText = chapterContent.join(" ");
-      const words = fullText.split(/\s+/).filter(Boolean).length;
+      let firstLine = lines[0] || `Chapter ${idx + 1}`;
+      firstLine = firstLine.replace(/^#+\s*/, "").trim();
+
+      const chapterBodyLines = lines.slice(1);
+      const rawText = chapterBodyLines.join("\n\n");
+      const words = block.split(/\s+/).filter(Boolean).length;
 
       return {
-        id: `import-${idx + 1}-${Date.now()}`,
+        id: `ch-box-${idx + 1}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         title: firstLine.length > 80 ? firstLine.substring(0, 80) : firstLine,
-        content: chapterContent.length > 0 ? chapterContent : [firstLine],
+        rawText: rawText || block,
+        content: chapterBodyLines.length > 0 ? chapterBodyLines : [firstLine],
         wordCount: Math.max(words, 15),
       };
     });
 
     setDetectedChapters(parsed);
+    // Expand the first 2 boxes by default, collapse remainder for tidy overview
+    const initExpanded: Record<string, boolean> = {};
+    parsed.forEach((ch, idx) => {
+      initExpanded[ch.id] = idx < 2;
+    });
+    setExpandedBoxes(initExpanded);
   };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value;
     setManuscriptText(val);
-    parseManuscript(val);
+  };
+
+  const handleTriggerConvert = () => {
+    parseManuscript(manuscriptText);
   };
 
   // Multi-file batch upload handler
@@ -136,10 +161,11 @@ function BulkImportContent() {
           const fileNameClean = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
 
           resolve({
-            id: `file-${idx}-${Date.now()}`,
-            title: fileNameClean,
+            id: `file-${idx + 1}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+            title: fileNameClean.length > 80 ? fileNameClean.substring(0, 80) : fileNameClean,
+            rawText: text,
             content: lines.length > 0 ? lines : [text],
-            wordCount: words,
+            wordCount: Math.max(words, 15),
           });
         };
         reader.readAsText(file);
@@ -148,15 +174,65 @@ function BulkImportContent() {
 
     Promise.all(readers).then((results) => {
       setDetectedChapters(results);
+      const initExp: Record<string, boolean> = {};
+      results.forEach((ch, idx) => {
+        initExp[ch.id] = idx < 2;
+      });
+      setExpandedBoxes(initExp);
       setIsProcessing(false);
     });
   };
 
-  // Reordering & Editing Actions
+  // Individual Chapter Box Handlers
   const updateChapterTitle = (id: string, newTitle: string) => {
     setDetectedChapters((prev) =>
       prev.map((ch) => (ch.id === id ? { ...ch, title: newTitle } : ch))
     );
+  };
+
+  const updateChapterContent = (id: string, newText: string) => {
+    setDetectedChapters((prev) =>
+      prev.map((ch) => {
+        if (ch.id !== id) return ch;
+        const paragraphs = newText
+          .split(/\n\n+/)
+          .map((p) => p.trim())
+          .filter(Boolean);
+        const words = newText.split(/\s+/).filter(Boolean).length;
+        return {
+          ...ch,
+          rawText: newText,
+          content: paragraphs.length > 0 ? paragraphs : (newText ? [newText] : []),
+          wordCount: words,
+        };
+      })
+    );
+  };
+
+  const addEmptyChapter = () => {
+    const nextNum = detectedChapters.length + 1;
+    const newId = `ch-box-${nextNum}-${Date.now()}`;
+    const newChapter: ImportedChapterItem = {
+      id: newId,
+      title: `Chapter ${nextNum}: New Chapter`,
+      rawText: "",
+      content: [],
+      wordCount: 0,
+    };
+    setDetectedChapters((prev) => [...prev, newChapter]);
+    setExpandedBoxes((prev) => ({ ...prev, [newId]: true }));
+  };
+
+  const toggleBox = (id: string) => {
+    setExpandedBoxes((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleAllBoxes = (expand: boolean) => {
+    const updated: Record<string, boolean> = {};
+    detectedChapters.forEach((ch) => {
+      updated[ch.id] = expand;
+    });
+    setExpandedBoxes(updated);
   };
 
   const moveChapter = (index: number, direction: "UP" | "DOWN") => {
@@ -183,7 +259,7 @@ function BulkImportContent() {
     setDetectedChapters((prev) =>
       prev.map((ch, idx) => ({
         ...ch,
-        title: `Chapter ${idx + 1}: ${ch.title.replace(/^Chapter\s*\d+[:\s\-]*/i, "")}`,
+        title: `Chapter ${idx + 1}: ${ch.title.replace(/^Chapter\s*\d+[:\s\-]*/i, "").trim() || "Untitled"}`,
       }))
     );
   };
@@ -193,6 +269,9 @@ function BulkImportContent() {
     if (!selectedStorySlug || detectedChapters.length === 0) return;
 
     const chaptersToSave: ChapterData[] = detectedChapters.map((ch, idx) => {
+      const paragraphs = ch.rawText
+        ? ch.rawText.split(/\n\n+/).map((p) => p.trim()).filter(Boolean)
+        : ch.content;
       return {
         number: idx + 1,
         slug: `chapter-${idx + 1}`,
@@ -203,7 +282,9 @@ function BulkImportContent() {
           day: "numeric",
           year: "numeric",
         }),
-        content: ch.content,
+        topAuthorNote: ch.topAuthorNote,
+        bottomAuthorNote: ch.bottomAuthorNote,
+        content: paragraphs.length > 0 ? paragraphs : [ch.title],
       };
     });
 
@@ -237,13 +318,13 @@ function BulkImportContent() {
         {/* Header */}
         <div className="border-b border-white/10 pb-6">
           <span className="text-xs font-black tracking-widest uppercase text-[#F97316]">
-            BULK MANUSCRIPT IMPORTER
+            CREATOR STUDIO · BULK MANUSCRIPT SUITE
           </span>
           <h1 className="text-3xl sm:text-4xl font-black text-white mt-1">
-            Batch Import & Auto-Splitter
+            Batch Import & Individual Chapter Boxes
           </h1>
-          <p className="mt-2 text-sm text-slate-400 max-w-2xl leading-relaxed">
-            Upload or paste full manuscripts (up to 25, 50+ chapters). FicForge detects chapter boundaries and commits each chapter atomically without merging.
+          <p className="mt-2 text-sm text-slate-400 max-w-3xl leading-relaxed">
+            Upload or paste full manuscripts with 10, 25, or 50+ chapters. FicForge divides your manuscript into <strong>individual, editable chapter boxes</strong> so you can review, edit, reorder, and publish them with complete control.
           </p>
         </div>
 
@@ -280,7 +361,92 @@ function BulkImportContent() {
           </div>
         </div>
 
-        {/* Input Modes: Splitter vs Multi-File */}
+        {/* Format Guidance Banner */}
+        <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/40 via-slate-900/90 to-slate-950 p-6 shadow-xl space-y-4">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="h-8 w-8 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center shrink-0 text-indigo-400">
+                <HelpCircle className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-white uppercase tracking-wider">
+                  Bulk Chapters Format Guide (How to structure 10+ chapters)
+                </h3>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  When you paste or import 10 chapters, the studio converts them into <strong>10 individual chapter boxes</strong>. Follow any of these simple formatting rules:
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowFormatGuide(!showFormatGuide)}
+              className="text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors shrink-0"
+            >
+              {showFormatGuide ? "Hide Examples" : "View Examples"}
+            </button>
+          </div>
+
+          {showFormatGuide && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              
+              {/* Format 1 */}
+              <div className="rounded-xl border border-white/10 bg-[#020617]/70 p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
+                  <strong className="text-xs font-bold text-white">1. Standard Headings (Best)</strong>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-normal">
+                  Put <code className="text-amber-300 font-mono">Chapter 1: Title</code>, <code className="text-amber-300 font-mono">Chapter 2: Title</code> before each chapter.
+                </p>
+                <div className="rounded-lg bg-black/40 p-2.5 font-mono text-[10px] text-slate-300 leading-relaxed border border-white/5">
+                  Chapter 1: The Dark Woods<br />
+                  First paragraph of story...<br /><br />
+                  Chapter 2: The Hidden Keep<br />
+                  Second chapter starts...
+                </div>
+              </div>
+
+              {/* Format 2 */}
+              <div className="rounded-xl border border-white/10 bg-[#020617]/70 p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-indigo-400" />
+                  <strong className="text-xs font-bold text-white">2. Divider Lines (*** or ---)</strong>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-normal">
+                  Separate each chapter with 3 asterisks (<code className="text-indigo-300 font-mono">***</code>) or dashes (<code className="text-indigo-300 font-mono">---</code>).
+                </p>
+                <div className="rounded-lg bg-black/40 p-2.5 font-mono text-[10px] text-slate-300 leading-relaxed border border-white/5">
+                  Chapter 1: The Awakening<br />
+                  Story content here...<br />
+                  ***<br />
+                  Chapter 2: Shadows Rise<br />
+                  Next chapter begins...
+                </div>
+              </div>
+
+              {/* Format 3 */}
+              <div className="rounded-xl border border-white/10 bg-[#020617]/70 p-4 space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-orange-400" />
+                  <strong className="text-xs font-bold text-white">3. Multi-File Batch Drop</strong>
+                </div>
+                <p className="text-[11px] text-slate-400 leading-normal">
+                  Save 10 separate <code className="text-orange-300 font-mono">.txt</code> or <code className="text-orange-300 font-mono">.md</code> files on your computer and upload them together.
+                </p>
+                <div className="rounded-lg bg-black/40 p-2.5 font-mono text-[10px] text-slate-300 leading-relaxed border border-white/5">
+                  • 01-chapter-one.txt<br />
+                  • 02-chapter-two.txt<br />
+                  • 03-chapter-three.txt<br />
+                  (Each file = 1 chapter box)
+                </div>
+              </div>
+
+            </div>
+          )}
+        </div>
+
+        {/* Import Input Workspace */}
         <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-6 shadow-xl space-y-6">
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
@@ -294,7 +460,7 @@ function BulkImportContent() {
                     : "bg-white/5 text-slate-400 hover:text-white"
                 }`}
               >
-                Manuscript Auto-Splitter
+                Paste Manuscript & Convert
               </button>
               <button
                 type="button"
@@ -305,42 +471,63 @@ function BulkImportContent() {
                     : "bg-white/5 text-slate-400 hover:text-white"
                 }`}
               >
-                Batch File Upload (.docx / .txt / .md)
+                Batch File Upload (.txt / .md)
               </button>
             </div>
 
-            {/* Quick 25-Chapter Sample Loader for Instant Testing */}
+            {/* Quick 10-Chapter Sample Loader for Instant Testing */}
             <button
               type="button"
-              onClick={load25ChapterSample}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all"
+              onClick={load10ChapterSample}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer"
             >
-              <Sparkles className="h-3.5 w-3.5" /> Load 25-Chapter Test Batch
+              <Sparkles className="h-3.5 w-3.5" /> Load 10-Chapter Test Sample
             </button>
           </div>
 
           {activeTab === "SPLITTER" ? (
-            <div>
-              <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-2">
-                Paste Entire Manuscript Text
-              </label>
-              <p className="text-xs text-slate-400 mb-3">
-                Paste your manuscript below. The engine will instantly split chapters on headings like <em>Chapter 1</em>, <em>Chapter 2</em>, <em>Act I</em>, etc.
-              </p>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-300">
+                    Paste Entire Manuscript
+                  </label>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Paste your 10 chapters below. Click <strong>"Convert into Chapter Boxes"</strong> to generate individual boxes for each chapter.
+                  </p>
+                </div>
+              </div>
+
               <textarea
-                rows={10}
+                rows={9}
                 value={manuscriptText}
                 onChange={handleTextChange}
-                placeholder="Chapter 1: The Beginning...&#10;&#10;Your story begins here...&#10;&#10;***&#10;&#10;Chapter 2: The Journey Continues...&#10;&#10;The next chapter starts..."
+                placeholder="Chapter 1: The Dark Forest&#10;&#10;The path was shrouded in thick mist...&#10;&#10;***&#10;&#10;Chapter 2: The Hidden Keep&#10;&#10;At the end of the valley stood an ancient fortress..."
                 className="w-full rounded-2xl border border-white/10 bg-[#020617] p-4 text-xs font-mono text-slate-200 placeholder-slate-600 outline-none focus:border-[#6D5DFB] leading-relaxed"
               />
+
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                <span className="text-xs text-slate-400 font-mono">
+                  {manuscriptText.split(/\s+/).filter(Boolean).length.toLocaleString()} words in manuscript
+                </span>
+
+                <button
+                  type="button"
+                  onClick={handleTriggerConvert}
+                  disabled={!manuscriptText.trim()}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] text-xs font-black text-white shadow-lg shadow-indigo-600/30 hover:opacity-95 disabled:opacity-40 transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  ✨ Convert into Individual Chapter Boxes
+                </button>
+              </div>
             </div>
           ) : (
             <div className="border-2 border-dashed border-white/15 rounded-2xl p-10 text-center bg-[#020617]/50">
               <UploadCloud className="mx-auto h-12 w-12 text-[#6D5DFB] mb-3" />
               <h3 className="text-base font-bold text-white">Upload Multiple Chapter Files</h3>
               <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                Select 5, 10, 25, or 50+ individual `.txt`, `.md`, or manuscript files from your computer.
+                Select 5, 10, 25, or 50+ individual `.txt` or `.md` files. Each file automatically becomes an individual chapter box.
               </p>
               <label className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-2.5 text-xs font-extrabold text-white cursor-pointer shadow-lg shadow-indigo-600/30 hover:opacity-95">
                 Browse Files
@@ -357,119 +544,102 @@ function BulkImportContent() {
 
         </div>
 
-        {/* Pre-Publish Review Table */}
+        {/* INDIVIDUAL CHAPTER BOXES WORKSPACE */}
         {detectedChapters.length > 0 && (
-          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-6 shadow-xl space-y-6">
+          <div className="space-y-6">
             
-            {/* Table Header Summary & Batch Tools */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+            {/* Toolbar Card */}
+            <div className="rounded-2xl border border-white/10 bg-slate-900/90 p-5 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <span className="text-xs font-black uppercase tracking-wider text-emerald-400">
-                  READY TO IMPORT
-                </span>
-                <h3 className="text-xl font-black text-white mt-0.5">
-                  {detectedChapters.length} Chapters Detected ({totalBatchWords.toLocaleString()} Words)
-                </h3>
+                <div className="flex items-center gap-2">
+                  <span className="rounded-full bg-emerald-500/20 border border-emerald-500/40 px-2.5 py-0.5 text-xs font-black text-emerald-400">
+                    Ready
+                  </span>
+                  <h3 className="text-xl font-black text-white">
+                    {detectedChapters.length} Individual Chapter Boxes
+                  </h3>
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Total: {totalBatchWords.toLocaleString()} words · Each box is an independent chapter editor.
+                </p>
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
                 <button
                   type="button"
+                  onClick={() => toggleAllBoxes(true)}
+                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white transition-colors cursor-pointer"
+                >
+                  Expand All
+                </button>
+                <button
+                  type="button"
+                  onClick={() => toggleAllBoxes(false)}
+                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white transition-colors cursor-pointer"
+                >
+                  Collapse All
+                </button>
+                <button
+                  type="button"
                   onClick={reindexTitles}
-                  className="rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white"
+                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white transition-colors cursor-pointer"
                 >
                   Bulk Renumber (1 to {detectedChapters.length})
                 </button>
-
+                <button
+                  type="button"
+                  onClick={addEmptyChapter}
+                  className="rounded-xl bg-[#6D5DFB] hover:bg-[#5B4BE0] px-3.5 py-1.5 text-xs font-bold text-white shadow-md shadow-indigo-600/30 transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add Chapter Box
+                </button>
                 <button
                   type="button"
                   onClick={() => setDetectedChapters([])}
-                  className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-400 hover:bg-red-500/20"
+                  className="rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-400 hover:bg-red-500/20 transition-colors cursor-pointer"
                 >
                   Clear All
                 </button>
               </div>
             </div>
 
-            {/* Forge Plus / Elite Staggered Release Scheduler Preview */}
-            <div className="rounded-xl border border-indigo-500/30 bg-indigo-950/20 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-start gap-3">
-                <Calendar className="h-5 w-5 text-indigo-400 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-xs font-black text-white uppercase tracking-wider">
-                    Automated Release Scheduling (Creator Studio Tool)
-                  </h4>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Stagger chapter publication across days (e.g. 1 chapter every {scheduleIntervalDays} days) to keep readership engaged.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <label className="flex items-center gap-2 text-xs font-bold text-slate-300 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={enableScheduling}
-                    onChange={(e) => setEnableScheduling(e.target.checked)}
-                    className="rounded border-white/20 bg-slate-900 text-[#6D5DFB] h-4 w-4"
-                  />
-                  <span>Enable Staggered Release</span>
-                </label>
-
-                {enableScheduling && (
-                  <select
-                    value={scheduleIntervalDays}
-                    onChange={(e) => setScheduleIntervalDays(Number(e.target.value))}
-                    className="h-8 rounded-lg border border-white/10 bg-[#020617] px-2 text-xs text-white outline-none"
+            {/* Individual Chapter Boxes List */}
+            <div className="space-y-4">
+              {detectedChapters.map((ch, idx) => {
+                const isExpanded = !!expandedBoxes[ch.id];
+                return (
+                  <div
+                    key={ch.id}
+                    className="rounded-2xl border border-white/10 bg-slate-900/90 shadow-xl overflow-hidden transition-all hover:border-white/20"
                   >
-                    <option value={1}>Every 24 Hours</option>
-                    <option value={2}>Every 2 Days</option>
-                    <option value={3}>Every 3 Days</option>
-                    <option value={7}>Weekly</option>
-                  </select>
-                )}
-              </div>
-            </div>
-
-            {/* Chapters Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="border-b border-white/10 text-xs font-black text-slate-400 uppercase tracking-wider">
-                    <th className="py-3 px-3 w-16">#</th>
-                    <th className="py-3 px-3">Chapter Title (Editable)</th>
-                    <th className="py-3 px-3 w-28">Word Count</th>
-                    <th className="py-3 px-3 w-28">Order</th>
-                    <th className="py-3 px-3 w-24 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5 text-sm">
-                  {detectedChapters.map((ch, idx) => (
-                    <tr key={ch.id} className="hover:bg-white/5 transition-colors">
-                      <td className="py-3 px-3 font-mono text-xs font-bold text-slate-500">
-                        {idx + 1}
-                      </td>
-
-                      <td className="py-3 px-3">
+                    {/* Box Header Bar */}
+                    <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/70 border-b border-white/5">
+                      <div className="flex items-center gap-3 flex-1">
+                        <span className="shrink-0 rounded-lg bg-indigo-500/20 border border-indigo-500/40 px-2.5 py-1 text-xs font-black text-indigo-300 font-mono">
+                          Chapter {idx + 1}
+                        </span>
                         <input
                           type="text"
                           value={ch.title}
                           onChange={(e) => updateChapterTitle(ch.id, e.target.value)}
-                          className="w-full h-8 rounded-lg border border-transparent bg-transparent hover:border-white/10 focus:border-[#6D5DFB] focus:bg-[#020617] px-2 text-xs font-bold text-white outline-none transition-all"
+                          placeholder="Chapter Title..."
+                          className="w-full max-w-md h-9 rounded-lg border border-white/10 bg-[#020617] px-3 text-xs sm:text-sm font-bold text-white outline-none focus:border-[#6D5DFB] transition-all"
                         />
-                      </td>
+                      </div>
 
-                      <td className="py-3 px-3 text-xs font-mono text-amber-300">
-                        {ch.wordCount.toLocaleString()} words
-                      </td>
+                      <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                        <span className="rounded-lg bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 text-xs font-bold text-amber-300 font-mono">
+                          {ch.wordCount.toLocaleString()} words
+                        </span>
 
-                      <td className="py-3 px-3">
-                        <div className="flex items-center gap-1">
+                        {/* Move Up / Down */}
+                        <div className="flex items-center gap-1 border border-white/10 rounded-lg p-0.5 bg-white/5">
                           <button
                             type="button"
                             disabled={idx === 0}
                             onClick={() => moveChapter(idx, "UP")}
-                            className="p-1 rounded hover:bg-white/10 disabled:opacity-30 text-slate-400 hover:text-white"
+                            className="p-1 rounded text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer"
+                            title="Move Up"
                           >
                             <ChevronUp className="h-4 w-4" />
                           </button>
@@ -477,92 +647,136 @@ function BulkImportContent() {
                             type="button"
                             disabled={idx === detectedChapters.length - 1}
                             onClick={() => moveChapter(idx, "DOWN")}
-                            className="p-1 rounded hover:bg-white/10 disabled:opacity-30 text-slate-400 hover:text-white"
+                            className="p-1 rounded text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer"
+                            title="Move Down"
                           >
                             <ChevronDown className="h-4 w-4" />
                           </button>
                         </div>
-                      </td>
 
-                      <td className="py-3 px-3 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setPreviewChapter(ch)}
-                            className="text-xs font-bold text-indigo-400 hover:underline"
-                          >
-                            Preview
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => removeChapter(ch.id)}
-                            className="p-1 text-slate-500 hover:text-red-400"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
+                        {/* Expand / Collapse Button */}
+                        <button
+                          type="button"
+                          onClick={() => toggleBox(ch.id)}
+                          className="px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 text-xs font-bold text-slate-300 hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                          {isExpanded ? "Collapse" : "Edit Content"}
+                          {isExpanded ? (
+                            <ChevronUp className="h-3.5 w-3.5 text-slate-400" />
+                          ) : (
+                            <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+                          )}
+                        </button>
+
+                        {/* Delete Chapter Box */}
+                        <button
+                          type="button"
+                          onClick={() => removeChapter(ch.id)}
+                          className="p-1.5 rounded-lg border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500/20 cursor-pointer transition-colors"
+                          title="Delete Box"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Box Content Editor (Body) */}
+                    {isExpanded && (
+                      <div className="p-4 sm:p-5 bg-[#020617]/50 space-y-4 animate-in fade-in duration-150">
+                        <div>
+                          <label className="block text-[11px] font-black uppercase tracking-wider text-slate-400 mb-2">
+                            Chapter Content (Edit Paragraphs Directly)
+                          </label>
+                          <textarea
+                            rows={8}
+                            value={ch.rawText}
+                            onChange={(e) => updateChapterContent(ch.id, e.target.value)}
+                            placeholder="Write or edit this chapter's text here..."
+                            className="w-full rounded-xl border border-white/10 bg-[#020617] p-4 text-xs sm:text-sm font-serif text-slate-200 placeholder-slate-600 outline-none focus:border-[#6D5DFB] leading-relaxed"
+                          />
+                          <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                            <span>Paragraphs: {ch.content.length}</span>
+                            <span>Characters: {ch.rawText?.length || 0}</span>
+                          </div>
                         </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Confirm & Publish Button */}
-            <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="text-xs text-slate-400">
-                <strong className="text-slate-200">Atomic Commitment:</strong> Each chapter will be published as an independent, readable chapter inside <strong>{selectedStory?.title || "your selected story"}</strong>.
-              </div>
+            {/* Add Chapter Box Button at Bottom */}
+            <button
+              type="button"
+              onClick={addEmptyChapter}
+              className="w-full py-4 rounded-2xl border-2 border-dashed border-white/15 bg-slate-900/40 text-xs font-bold text-slate-300 hover:text-white hover:border-[#6D5DFB] hover:bg-slate-900/80 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Plus className="h-4 w-4 text-[#6D5DFB]" />
+              + Add Another Chapter Box
+            </button>
 
-              <button
-                type="button"
-                onClick={handlePublishBatch}
-                className="w-full sm:w-auto h-12 px-8 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-sm font-black text-slate-950 shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all cursor-pointer flex items-center justify-center gap-2"
-              >
-                <CheckCircle2 className="h-4 w-4" />
-                Commit & Publish {detectedChapters.length} Chapters
-              </button>
-            </div>
-
-          </div>
-        )}
-
-        {/* Modal: Chapter Content Preview */}
-        {previewChapter && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="w-full max-w-2xl rounded-2xl border border-white/15 bg-slate-900 p-6 shadow-2xl max-h-[80vh] flex flex-col">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
-                <div>
-                  <h3 className="text-base font-black text-white">{previewChapter.title}</h3>
-                  <span className="text-xs text-slate-400 font-mono">
-                    {previewChapter.wordCount.toLocaleString()} words
-                  </span>
+            {/* Release Staggering & Commit Toolbar */}
+            <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-6 shadow-xl space-y-6">
+              
+              {/* Staggered Release Scheduling */}
+              <div className="rounded-xl border border-indigo-500/30 bg-indigo-950/20 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <Calendar className="h-5 w-5 text-indigo-400 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-xs font-black text-white uppercase tracking-wider">
+                      Automated Release Scheduling (Creator Studio Tool)
+                    </h4>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Stagger chapter publication across days (e.g. 1 chapter every {scheduleIntervalDays} days) to keep readership engaged.
+                    </p>
+                  </div>
                 </div>
+
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center gap-2 text-xs font-bold text-slate-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={enableScheduling}
+                      onChange={(e) => setEnableScheduling(e.target.checked)}
+                      className="rounded border-white/20 bg-slate-900 text-[#6D5DFB] h-4 w-4"
+                    />
+                    <span>Enable Staggered Release</span>
+                  </label>
+
+                  {enableScheduling && (
+                    <select
+                      value={scheduleIntervalDays}
+                      onChange={(e) => setScheduleIntervalDays(Number(e.target.value))}
+                      className="h-8 rounded-lg border border-white/10 bg-[#020617] px-2 text-xs text-white outline-none"
+                    >
+                      <option value={1}>Every 24 Hours</option>
+                      <option value={2}>Every 2 Days</option>
+                      <option value={3}>Every 3 Days</option>
+                      <option value={7}>Weekly</option>
+                    </select>
+                  )}
+                </div>
+              </div>
+
+              {/* Confirm & Publish */}
+              <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-xs text-slate-400">
+                  <strong className="text-slate-200">Atomic Commitment:</strong> Each box will be published as an independent, readable chapter inside <strong>{selectedStory?.title || "your selected story"}</strong>.
+                </div>
+
                 <button
                   type="button"
-                  onClick={() => setPreviewChapter(null)}
-                  className="text-slate-400 hover:text-white text-lg font-bold"
+                  onClick={handlePublishBatch}
+                  className="w-full sm:w-auto h-12 px-8 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-sm font-black text-slate-950 shadow-xl shadow-emerald-500/20 hover:opacity-95 transition-all cursor-pointer flex items-center justify-center gap-2"
                 >
-                  ✕
+                  <CheckCircle2 className="h-4 w-4" />
+                  Commit & Publish {detectedChapters.length} Chapters
                 </button>
               </div>
 
-              <div className="overflow-y-auto space-y-3 flex-1 pr-2 text-xs leading-relaxed text-slate-300 font-serif">
-                {previewChapter.content.map((p, i) => (
-                  <p key={i}>{p}</p>
-                ))}
-              </div>
-
-              <div className="pt-4 border-t border-white/10 text-right">
-                <button
-                  type="button"
-                  onClick={() => setPreviewChapter(null)}
-                  className="rounded-xl bg-white/10 px-4 py-2 text-xs font-bold text-white hover:bg-white/20"
-                >
-                  Close Preview
-                </button>
-              </div>
             </div>
+
           </div>
         )}
 
