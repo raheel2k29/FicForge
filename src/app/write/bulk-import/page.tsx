@@ -324,7 +324,7 @@ function BulkImportContent() {
             Batch Import & Individual Chapter Boxes
           </h1>
           <p className="mt-2 text-sm text-slate-400 max-w-3xl leading-relaxed">
-            Upload or paste full manuscripts with 10, 25, or 50+ chapters. FicForge divides your manuscript into <strong>individual, editable chapter boxes</strong> so you can review, edit, reorder, and publish them with complete control.
+            Upload or paste your manuscript (any number of chapters). FicForge divides your story into <strong>individual, editable chapter boxes</strong> so you can review, edit, reorder, and publish them with complete control.
           </p>
         </div>
 
@@ -370,10 +370,10 @@ function BulkImportContent() {
               </div>
               <div>
                 <h3 className="text-sm font-black text-white uppercase tracking-wider">
-                  Bulk Chapters Format Guide (How to structure 10+ chapters)
+                  Bulk Chapters Format Guide (How to structure your chapters)
                 </h3>
                 <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                  When you paste or import 10 chapters, the studio converts them into <strong>10 individual chapter boxes</strong>. Follow any of these simple formatting rules:
+                  When you paste or import your manuscript, the studio automatically splits it and converts every chapter into its own <strong>individual chapter box</strong>. Follow any of these simple formatting rules:
                 </p>
               </div>
             </div>
@@ -432,7 +432,7 @@ function BulkImportContent() {
                   <strong className="text-xs font-bold text-white">3. Multi-File Batch Drop</strong>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-normal">
-                  Save 10 separate <code className="text-orange-300 font-mono">.txt</code> or <code className="text-orange-300 font-mono">.md</code> files on your computer and upload them together.
+                  Save your chapters as separate <code className="text-orange-300 font-mono">.txt</code> or <code className="text-orange-300 font-mono">.md</code> files on your computer and upload them together.
                 </p>
                 <div className="rounded-lg bg-black/40 p-2.5 font-mono text-[10px] text-slate-300 leading-relaxed border border-white/5">
                   • 01-chapter-one.txt<br />
@@ -475,13 +475,13 @@ function BulkImportContent() {
               </button>
             </div>
 
-            {/* Quick 10-Chapter Sample Loader for Instant Testing */}
+            {/* Quick Demo Sample Loader for Instant Testing */}
             <button
               type="button"
               onClick={load10ChapterSample}
               className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3.5 py-1.5 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer"
             >
-              <Sparkles className="h-3.5 w-3.5" /> Load 10-Chapter Test Sample
+              <Sparkles className="h-3.5 w-3.5" /> Load Demo Sample (Test Run)
             </button>
           </div>
 
@@ -493,7 +493,7 @@ function BulkImportContent() {
                     Paste Entire Manuscript
                   </label>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Paste your 10 chapters below. Click <strong>"Convert into Chapter Boxes"</strong> to generate individual boxes for each chapter.
+                    Paste your manuscript or chapters below. Click <strong>"Convert into Chapter Boxes"</strong> to generate individual boxes for each chapter.
                   </p>
                 </div>
               </div>
@@ -527,7 +527,7 @@ function BulkImportContent() {
               <UploadCloud className="mx-auto h-12 w-12 text-[#6D5DFB] mb-3" />
               <h3 className="text-base font-bold text-white">Upload Multiple Chapter Files</h3>
               <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                Select 5, 10, 25, or 50+ individual `.txt` or `.md` files. Each file automatically becomes an individual chapter box.
+                Select multiple individual `.txt` or `.md` files. Each file automatically becomes an individual chapter box.
               </p>
               <label className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-2.5 text-xs font-extrabold text-white cursor-pointer shadow-lg shadow-indigo-600/30 hover:opacity-95">
                 Browse Files
