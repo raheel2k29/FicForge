@@ -36,7 +36,7 @@ export async function GET(request: Request) {
             bio: s.author.profile?.bio || "Author on FicForge.",
           },
           stats: {
-            words: s.chapters.reduce((acc, c) => acc + (c.wordCount || 0), 0) || 45000,
+            words: s.chapters.reduce((acc, c) => acc + (c.wordCount || 0), 0),
             views: s.viewCount,
             likes: s.likeCount,
             bookmarks: s.bookmarkCount,
@@ -103,7 +103,7 @@ export async function GET(request: Request) {
             bio: s.author.profile?.bio || "Author on FicForge.",
           },
           stats: {
-            words: s.chapters.reduce((acc, c) => acc + (c.wordCount || 0), 0) || 45000,
+            words: s.chapters.reduce((acc, c) => acc + (c.wordCount || 0), 0),
             views: s.viewCount,
             likes: s.likeCount,
             bookmarks: s.bookmarkCount,

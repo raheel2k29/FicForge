@@ -166,7 +166,7 @@ export default function NewStoryWizardPage() {
     setWarnings(warnings.filter((item) => item !== w));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
 
@@ -212,7 +212,7 @@ export default function NewStoryWizardPage() {
       chapters: [],
     };
 
-    saveStory(newStory);
+    await saveStory(newStory);
     router.push(`/write/bulk-import?storySlug=${newStory.slug}`);
   };
 

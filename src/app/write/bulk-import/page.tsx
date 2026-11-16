@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense, useMemo } from "react";
-import { getAllStories, bulkSaveChapters } from "@/lib/storyStore";
+import { getAllStories, bulkSaveChapters, syncStoriesWithServer } from "@/lib/storyStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import CreatorStudioHeader from "@/components/CreatorStudioHeader";
@@ -56,15 +56,34 @@ function BulkImportContent() {
   const [showFormatGuide, setShowFormatGuide] = useState(true);
 
   useEffect(() => {
-    const all = getAllStories();
-    const list = Object.values(all);
-    setStories(list);
-
-    if (storySlugParam && all[storySlugParam]) {
+    if (storySlugParam) {
       setSelectedStorySlug(storySlugParam);
-    } else if (list.length > 0) {
-      setSelectedStorySlug(list[0].slug);
     }
+
+    const init = (all: Record<string, StoryData>) => {
+      const list = Object.values(all);
+      setStories(list);
+
+      if (storySlugParam && all[storySlugParam]) {
+        setSelectedStorySlug(storySlugParam);
+      } else if (!storySlugParam && list.length > 0 && !selectedStorySlug) {
+        setSelectedStorySlug(list[0].slug);
+      }
+    };
+
+    init(getAllStories());
+
+    syncStoriesWithServer().then((serverStories) => {
+      if (serverStories) {
+        init(serverStories);
+      }
+    });
+
+    const handleStoriesUpdated = () => {
+      init(getAllStories());
+    };
+    window.addEventListener("ficforge_stories_updated", handleStoriesUpdated);
+    return () => window.removeEventListener("ficforge_stories_updated", handleStoriesUpdated);
   }, [storySlugParam]);
 
   const selectedStory = useMemo(() => {
@@ -268,20 +287,36 @@ function BulkImportContent() {
   const handlePublishBatch = async () => {
     if (!selectedStorySlug || detectedChapters.length === 0) return;
 
+    setIsProcessing(true);
+    const now = new Date();
+
     const chaptersToSave: ChapterData[] = detectedChapters.map((ch, idx) => {
       const paragraphs = ch.rawText
         ? ch.rawText.split(/\n\n+/).map((p) => p.trim()).filter(Boolean)
         : ch.content;
+
+      let publishDateStr = now.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+
+      if (enableScheduling && idx > 0) {
+        const futureDate = new Date(now);
+        futureDate.setDate(futureDate.getDate() + idx * scheduleIntervalDays);
+        publishDateStr = `Scheduled for ${futureDate.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })}`;
+      }
+
       return {
         number: idx + 1,
         slug: `chapter-${idx + 1}`,
         title: ch.title,
         wordCount: ch.wordCount,
-        publishedAt: new Date().toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        }),
+        publishedAt: publishDateStr,
         topAuthorNote: ch.topAuthorNote,
         bottomAuthorNote: ch.bottomAuthorNote,
         content: paragraphs.length > 0 ? paragraphs : [ch.title],
@@ -289,8 +324,11 @@ function BulkImportContent() {
     });
 
     const success = await bulkSaveChapters(selectedStorySlug, chaptersToSave);
+    setIsProcessing(false);
     if (success) {
       router.push(`/story/${selectedStorySlug}`);
+    } else {
+      alert("Failed to commit chapters. Please ensure a story is selected.");
     }
   };
 
@@ -733,7 +771,7 @@ function BulkImportContent() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   <label className="flex items-center gap-2 text-xs font-bold text-slate-300 cursor-pointer">
                     <input
                       type="checkbox"
@@ -758,6 +796,15 @@ function BulkImportContent() {
                   )}
                 </div>
               </div>
+
+              {enableScheduling && (
+                <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-200 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-amber-400 shrink-0" />
+                  <span>
+                    <strong>Release Schedule:</strong> <strong>Chapter 1</strong> publishes <strong>immediately today</strong> so readers can start reading your story right away! Chapters 2–{detectedChapters.length} will be scheduled to unlock every {scheduleIntervalDays} days.
+                  </span>
+                </div>
+              )}
 
               {/* Confirm & Publish */}
               <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">

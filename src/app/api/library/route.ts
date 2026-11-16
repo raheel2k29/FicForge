@@ -21,7 +21,7 @@ function formatStory(s: any): StoryData {
       bio: s.author?.profile?.bio || "FicForge Creator",
     },
     stats: {
-      words: s.chapters?.reduce((acc: number, c: any) => acc + (c.wordCount || 0), 0) || 45000,
+      words: s.chapters?.reduce((acc: number, c: any) => acc + (c.wordCount || 0), 0) || 0,
       views: s.viewCount,
       likes: s.likeCount,
       bookmarks: s.bookmarkCount,

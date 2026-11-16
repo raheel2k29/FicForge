@@ -115,7 +115,23 @@ export async function saveChapter(storySlug: string, chapter: ChapterData): Prom
  * Bulk save chapters directly to Neon PostgreSQL
  */
 export async function bulkSaveChapters(storySlug: string, newChapters: ChapterData[]): Promise<boolean> {
-  const story = activeStoriesCache[storySlug];
+  let story = activeStoriesCache[storySlug];
+  if (!story) {
+    const synced = await syncStoriesWithServer();
+    story = synced[storySlug];
+  }
+  if (!story && typeof window !== "undefined") {
+    try {
+      const res = await fetch(`/api/stories?slug=${encodeURIComponent(storySlug)}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.story) {
+          story = json.story;
+          activeStoriesCache[storySlug] = story;
+        }
+      }
+    } catch {}
+  }
   if (!story) return false;
 
   story.chapters = story.chapters || [];

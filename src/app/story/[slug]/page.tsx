@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter, notFound } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
-import { getStoryBySlug, deleteStory, deleteChapter } from "@/lib/storyStore";
+import { getStoryBySlug, deleteStory, deleteChapter, syncStoriesWithServer } from "@/lib/storyStore";
 import { isStoryBookmarked, toggleStoryBookmark } from "@/lib/bookmarkStore";
 import { getCurrentUser, UserSession, canManageStory } from "@/lib/authStore";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
@@ -100,25 +100,46 @@ function StoryDetailsContent() {
   };
 
   useEffect(() => {
-    if (slug) {
-      const found = getStoryBySlug(slug);
+    const applyFound = (found: StoryData | undefined) => {
+      if (!found) return;
       setStory(found);
       setIsBookmarked(isStoryBookmarked(slug));
-      if (found) {
-        setLikesCount(found.stats.likes);
-        if (found.rating === "EXPLICIT") {
-          const verified = localStorage.getItem("ficforge_age_verified") === "true";
-          setIsAgeVerified(verified);
-        }
+      setLikesCount(found.stats.likes);
+      if (found.rating === "EXPLICIT") {
+        const verified = localStorage.getItem("ficforge_age_verified") === "true";
+        setIsAgeVerified(verified);
       }
+    };
+
+    if (slug) {
+      const found = getStoryBySlug(slug);
+      applyFound(found);
+
+      // Reconcile with PostgreSQL server
+      syncStoriesWithServer().then((serverStories) => {
+        if (serverStories && serverStories[slug]) {
+          applyFound(serverStories[slug]);
+        }
+      });
     }
 
     const handleBookmarksChange = () => {
       if (slug) setIsBookmarked(isStoryBookmarked(slug));
     };
 
+    const handleStoriesChange = () => {
+      if (slug) {
+        const found = getStoryBySlug(slug);
+        if (found) applyFound(found);
+      }
+    };
+
     window.addEventListener("ficforge_bookmarks_updated", handleBookmarksChange);
-    return () => window.removeEventListener("ficforge_bookmarks_updated", handleBookmarksChange);
+    window.addEventListener("ficforge_stories_updated", handleStoriesChange);
+    return () => {
+      window.removeEventListener("ficforge_bookmarks_updated", handleBookmarksChange);
+      window.removeEventListener("ficforge_stories_updated", handleStoriesChange);
+    };
   }, [slug]);
 
   const handleBookmarkToggle = () => {
@@ -293,12 +314,29 @@ function StoryDetailsContent() {
 
             {/* Main Action Buttons */}
             <div className="w-full max-w-xs mt-6 space-y-3">
-              <Link
-                href={`/story/${story.slug}/chapter-1`}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] py-3.5 px-6 text-base font-extrabold text-white shadow-xl shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all active:scale-[0.98]"
-              >
-                <BookOpen className="h-5 w-5" /> Start Reading (Ch. 1)
-              </Link>
+              {story.chapters.length > 0 ? (
+                <Link
+                  href={`/story/${story.slug}/${story.chapters[0].slug}`}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] py-3.5 px-6 text-base font-extrabold text-white shadow-xl shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all active:scale-[0.98]"
+                >
+                  <BookOpen className="h-5 w-5" /> Start Reading (Ch. 1)
+                </Link>
+              ) : isAuthor ? (
+                <Link
+                  href={`/write/bulk-import?storySlug=${story.slug}`}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] py-3.5 px-6 text-base font-extrabold text-white shadow-xl shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all active:scale-[0.98]"
+                >
+                  <BookOpen className="h-5 w-5" /> + Add Chapters in Studio
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-slate-800/50 py-3.5 px-6 text-sm font-bold text-slate-400 cursor-not-allowed"
+                >
+                  <BookOpen className="h-4 w-4" /> Chapters Coming Soon
+                </button>
+              )}
 
               <div className="grid grid-cols-2 gap-2.5">
                 <button
@@ -530,70 +568,96 @@ function StoryDetailsContent() {
             </button>
           </div>
 
-          <div className="divide-y divide-white/5 rounded-2xl border border-white/10 bg-slate-900/50 overflow-hidden shadow-xl">
-            {sortedChapters.map((ch) => (
-              <div
-                key={ch.number}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:px-6 hover:bg-slate-800/40 transition-colors"
-              >
-                <div className="flex items-start sm:items-center gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800 border border-white/10 text-xs font-black text-slate-300">
-                    {ch.number}
-                  </span>
-                  <div>
-                    <Link
-                      href={`/story/${story.slug}/${ch.slug}`}
-                      className="text-sm sm:text-base font-bold text-white hover:text-[#F97316] transition-colors"
-                    >
-                      {ch.title}
-                    </Link>
-                    <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
-                      <span>{ch.wordCount.toLocaleString()} words</span>
-                      <span>•</span>
-                      <span>Published {ch.publishedAt}</span>
+          {sortedChapters.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-white/15 bg-slate-900/30 p-10 text-center space-y-3">
+              <BookOpen className="h-10 w-10 text-slate-500 mx-auto" />
+              <h3 className="text-base font-bold text-white">No chapters published yet</h3>
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                This story is freshly forged and doesn&apos;t have any chapters published yet.
+              </p>
+              {isAuthor && (
+                <div className="pt-2 flex items-center justify-center gap-3">
+                  <Link
+                    href={`/write/bulk-import?storySlug=${story.slug}`}
+                    className="rounded-xl bg-[#6D5DFB] hover:bg-[#5B4BE0] px-4 py-2 text-xs font-bold text-white shadow-md transition-all inline-flex items-center gap-1.5"
+                  >
+                    Batch Import Chapters
+                  </Link>
+                  <Link
+                    href={`/write/chapter?storySlug=${story.slug}`}
+                    className="rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 px-4 py-2 text-xs font-bold text-slate-200 transition-all inline-flex items-center gap-1.5"
+                  >
+                    + Write Chapter 1
+                  </Link>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="divide-y divide-white/5 rounded-2xl border border-white/10 bg-slate-900/50 overflow-hidden shadow-xl">
+              {sortedChapters.map((ch) => (
+                <div
+                  key={ch.number}
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:px-6 hover:bg-slate-800/40 transition-colors"
+                >
+                  <div className="flex items-start sm:items-center gap-3">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800 border border-white/10 text-xs font-black text-slate-300">
+                      {ch.number}
+                    </span>
+                    <div>
+                      <Link
+                        href={`/story/${story.slug}/${ch.slug}`}
+                        className="text-sm sm:text-base font-bold text-white hover:text-[#F97316] transition-colors"
+                      >
+                        {ch.title}
+                      </Link>
+                      <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
+                        <span>{ch.wordCount.toLocaleString()} words</span>
+                        <span>•</span>
+                        <span>Published {ch.publishedAt}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-3 self-end sm:self-auto">
-                  {ch.isFastPass ? (
-                    <div className="flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/15 px-3 py-1 text-xs font-black text-amber-300">
-                        <Lock className="h-3 w-3" /> Fast Pass · {ch.fastPassPriceSparks} Sparks
+                  <div className="flex items-center gap-3 self-end sm:self-auto">
+                    {ch.isFastPass ? (
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/40 bg-amber-500/15 px-3 py-1 text-xs font-black text-amber-300">
+                          <Lock className="h-3 w-3" /> Fast Pass · {ch.fastPassPriceSparks} Sparks
+                        </span>
+                        <span className="hidden md:inline text-[11px] text-slate-400">
+                          {ch.fastPassUnlockAt}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-2.5 py-0.5">
+                        Free Chapter
                       </span>
-                      <span className="hidden md:inline text-[11px] text-slate-400">
-                        {ch.fastPassUnlockAt}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-2.5 py-0.5">
-                      Free Chapter
-                    </span>
-                  )}
+                    )}
 
-                  <Link
-                    href={`/story/${story.slug}/${ch.slug}`}
-                    className="rounded-lg bg-white/5 border border-white/10 px-3 py-1.5 text-xs font-bold text-slate-200 hover:bg-[#6D5DFB] hover:border-[#6D5DFB] hover:text-white transition-all"
-                  >
-                    Read
-                  </Link>
-
-                  {/* Author Only: Delete Chapter Button */}
-                  {isAuthor && (
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteChapter(ch.slug, ch.title)}
-                      className="rounded-lg bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 text-xs font-bold text-red-400 hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-300 transition-all cursor-pointer flex items-center gap-1"
-                      title={`Delete chapter "${ch.title}"`}
+                    <Link
+                      href={`/story/${story.slug}/${ch.slug}`}
+                      className="rounded-lg bg-white/5 border border-white/10 px-3 py-1.5 text-xs font-bold text-slate-200 hover:bg-[#6D5DFB] hover:border-[#6D5DFB] hover:text-white transition-all"
                     >
-                      <Trash2 className="h-3 w-3" />
-                      <span className="hidden sm:inline">Delete</span>
-                    </button>
-                  )}
+                      Read
+                    </Link>
+
+                    {/* Author Only: Delete Chapter Button */}
+                    {isAuthor && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteChapter(ch.slug, ch.title)}
+                        className="rounded-lg bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 text-xs font-bold text-red-400 hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-300 transition-all cursor-pointer flex items-center gap-1"
+                        title={`Delete chapter "${ch.title}"`}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        <span className="hidden sm:inline">Delete</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
 
       </div>
