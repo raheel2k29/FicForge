@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
-import { loginUser, loginAsDemoCreator } from "@/lib/authStore";
+import { loginUser, loginAsDemoCreator, loginAsDemoReader, loginAsDemoAdmin } from "@/lib/authStore";
 import { Sparkles, ArrowRight, Lock, Mail, CheckCircle2, Shield } from "lucide-react";
 
 function LoginContent() {
@@ -27,6 +27,16 @@ function LoginContent() {
 
   const handleDemoCreatorLogin = () => {
     loginAsDemoCreator();
+    router.push(redirectUrl);
+  };
+
+  const handleDemoReaderLogin = () => {
+    loginAsDemoReader();
+    router.push("/browse");
+  };
+
+  const handleDemoAdminLogin = () => {
+    loginAsDemoAdmin();
     router.push(redirectUrl);
   };
 
@@ -146,19 +156,42 @@ function LoginContent() {
             </button>
           </form>
 
-          {/* Quick Demo Login Button for Testing */}
-          <div className="mt-6 pt-6 border-t border-white/10 text-center">
-            <span className="block text-xs text-slate-400 mb-3 font-semibold">
-              Or test writing immediately without creating an account:
+          {/* Quick RBAC Role Testing Accounts */}
+          <div className="mt-6 pt-5 border-t border-white/10 text-center space-y-2">
+            <span className="block text-[11px] uppercase tracking-wider text-slate-400 font-bold mb-2">
+              🧪 Instant Role Testing Shortcuts:
             </span>
-            <button
-              type="button"
-              onClick={handleDemoCreatorLogin}
-              className="w-full h-11 rounded-xl border border-amber-500/40 bg-amber-500/10 text-xs font-black text-amber-300 hover:bg-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Sparkles className="h-4 w-4 text-amber-400" />
-              1-Click Sign In as Demo Creator
-            </button>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={handleDemoCreatorLogin}
+                className="py-2.5 px-3 rounded-xl border border-amber-500/40 bg-amber-500/10 text-[11px] font-black text-amber-300 hover:bg-amber-500/20 transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5"
+                title="Sign in as author Valerius Frost (owns 2 stories, has edit/delete permissions)"
+              >
+                <span>✍️ Creator</span>
+                <span className="text-[9px] text-amber-400/80 font-normal">Valerius Frost</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDemoReaderLogin}
+                className="py-2.5 px-3 rounded-xl border border-blue-500/40 bg-blue-500/10 text-[11px] font-black text-blue-300 hover:bg-blue-500/20 transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5"
+                title="Sign in as reader Elena (read-only, no story delete/edit permissions)"
+              >
+                <span>📖 Reader</span>
+                <span className="text-[9px] text-blue-400/80 font-normal">Elena Rostova</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDemoAdminLogin}
+                className="py-2.5 px-3 rounded-xl border border-purple-500/40 bg-purple-500/10 text-[11px] font-black text-purple-300 hover:bg-purple-500/20 transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5"
+                title="Sign in as administrator (moderation & platform oversight)"
+              >
+                <span>🛡️ Admin</span>
+                <span className="text-[9px] text-purple-400/80 font-normal">Staff Admin</span>
+              </button>
+            </div>
           </div>
 
           <div className="mt-6 text-center text-xs text-slate-400">

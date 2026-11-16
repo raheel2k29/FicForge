@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 import { getStoryBySlug, deleteChapter } from "@/lib/storyStore";
 import { isStoryBookmarked, toggleStoryBookmark } from "@/lib/bookmarkStore";
+import { getCurrentUser, UserSession, canManageChapter } from "@/lib/authStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
 import {
   Settings,
@@ -31,9 +32,33 @@ function ChapterReaderContent() {
 
   const [story, setStory] = useState<StoryData | undefined>(undefined);
   const [chapter, setChapter] = useState<ChapterData | undefined>(undefined);
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+
+  useEffect(() => {
+    const updateAuth = () => {
+      setCurrentUser(getCurrentUser());
+    };
+    updateAuth();
+    window.addEventListener("ficforge_auth_changed", updateAuth);
+    window.addEventListener("storage", updateAuth);
+    return () => {
+      window.removeEventListener("ficforge_auth_changed", updateAuth);
+      window.removeEventListener("storage", updateAuth);
+    };
+  }, []);
+
+  const isAuthor = canManageChapter(
+    currentUser,
+    story?.author?.username,
+    story?.author?.name
+  );
 
   const handleDeleteThisChapter = () => {
     if (!story || !chapter) return;
+    if (!isAuthor) {
+      alert("Unauthorized: You must be signed in as the author or an administrator to delete this chapter.");
+      return;
+    }
     if (window.confirm(`Permanently delete Chapter ${chapter.number}: "${chapter.title}"? This cannot be undone.`)) {
       deleteChapter(story.slug, chapter.slug);
       router.push(`/story/${story.slug}`);
@@ -249,14 +274,17 @@ function ChapterReaderContent() {
               <span>Aa</span>
             </button>
 
-            <button
-              type="button"
-              onClick={handleDeleteThisChapter}
-              className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
-              title="Delete this chapter"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+            {/* Author Only: Delete Chapter button */}
+            {isAuthor && (
+              <button
+                type="button"
+                onClick={handleDeleteThisChapter}
+                className="p-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+                title="Delete this chapter (Author Only)"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
           </div>
         </div>
 

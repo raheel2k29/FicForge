@@ -5,6 +5,7 @@ import { useParams, useRouter, notFound } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 import { getStoryBySlug, deleteStory, deleteChapter } from "@/lib/storyStore";
 import { isStoryBookmarked, toggleStoryBookmark } from "@/lib/bookmarkStore";
+import { getCurrentUser, UserSession, canManageStory } from "@/lib/authStore";
 import { StoryData } from "@/data/mockStories";
 import {
   BookOpen,
@@ -38,9 +39,33 @@ function StoryDetailsContent() {
   const [tipSuccess, setTipSuccess] = useState(false);
   const router = useRouter();
   const [isAgeVerified, setIsAgeVerified] = useState(true);
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+
+  useEffect(() => {
+    const updateAuth = () => {
+      setCurrentUser(getCurrentUser());
+    };
+    updateAuth();
+    window.addEventListener("ficforge_auth_changed", updateAuth);
+    window.addEventListener("storage", updateAuth);
+    return () => {
+      window.removeEventListener("ficforge_auth_changed", updateAuth);
+      window.removeEventListener("storage", updateAuth);
+    };
+  }, []);
+
+  const isAuthor = canManageStory(
+    currentUser,
+    story?.author?.username,
+    story?.author?.name
+  );
 
   const handleDeleteStory = () => {
     if (!story) return;
+    if (!isAuthor) {
+      alert("Unauthorized: You must be signed in as the author or an administrator to delete this story.");
+      return;
+    }
     if (window.confirm(`Permanently delete "${story.title}" and all its chapters? This cannot be undone.`)) {
       deleteStory(story.slug);
       router.push("/my-stories");
@@ -49,6 +74,10 @@ function StoryDetailsContent() {
 
   const handleDeleteChapter = (chapterSlug: string, chapterTitle: string) => {
     if (!story) return;
+    if (!isAuthor) {
+      alert("Unauthorized: You must be signed in as the author or an administrator to delete this chapter.");
+      return;
+    }
     if (window.confirm(`Permanently delete "${chapterTitle}"? This cannot be undone.`)) {
       deleteChapter(story.slug, chapterSlug);
       setStory((prev) => {
@@ -306,23 +335,35 @@ function StoryDetailsContent() {
                 </button>
               </div>
 
-              {/* Author Actions: Add Chapter & Delete Story */}
-              <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-2">
-                <Link
-                  href={`/write/chapter?storySlug=${story.slug}`}
-                  className="flex-1 text-center py-2 px-3 text-xs font-bold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/10"
-                >
-                  + Add Chapter
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleDeleteStory}
-                  className="py-2 px-3 text-xs font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-                  title="Delete this story"
-                >
-                  <Trash2 className="h-3.5 w-3.5" /> Delete
-                </button>
-              </div>
+              {/* Author Actions: Add Chapter & Delete Story (STRICT RBAC: ONLY visible to story author or administrator) */}
+              {isAuthor && (
+                <div className="pt-3 border-t border-amber-500/30 bg-amber-500/5 -mx-1 px-3 py-2.5 rounded-xl border border-amber-500/20 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black tracking-widest uppercase text-amber-400 flex items-center gap-1">
+                      <span>⚙️</span> Author Controls
+                    </span>
+                    <span className="text-[10px] font-semibold text-slate-400">
+                      @{currentUser?.username}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <Link
+                      href={`/write/chapter?storySlug=${story.slug}`}
+                      className="flex-1 text-center py-2 px-3 text-xs font-bold text-slate-200 hover:text-white bg-slate-800/90 hover:bg-slate-700/90 rounded-xl transition-all border border-white/10"
+                    >
+                      + Add Chapter
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleDeleteStory}
+                      className="py-2 px-3 text-xs font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                      title="Delete this story"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> Delete
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -517,15 +558,18 @@ function StoryDetailsContent() {
                     Read
                   </Link>
 
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteChapter(ch.slug, ch.title)}
-                    className="rounded-lg bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 text-xs font-bold text-red-400 hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-300 transition-all cursor-pointer flex items-center gap-1"
-                    title={`Delete chapter "${ch.title}"`}
-                  >
-                    <Trash2 className="h-3 w-3" />
-                    <span className="hidden sm:inline">Delete</span>
-                  </button>
+                  {/* Author Only: Delete Chapter Button */}
+                  {isAuthor && (
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteChapter(ch.slug, ch.title)}
+                      className="rounded-lg bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 text-xs font-bold text-red-400 hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-300 transition-all cursor-pointer flex items-center gap-1"
+                      title={`Delete chapter "${ch.title}"`}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                      <span className="hidden sm:inline">Delete</span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

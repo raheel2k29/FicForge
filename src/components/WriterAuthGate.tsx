@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { getCurrentUser, loginAsDemoCreator, UserSession } from "@/lib/authStore";
+import { getCurrentUser, loginAsDemoCreator, loginUser, UserSession } from "@/lib/authStore";
 import {
   Lock,
   Sparkles,
@@ -55,7 +55,40 @@ export default function WriterAuthGate({
     );
   }
 
-  // If user is authenticated, render the writer tools directly!
+  // If user is a Reader, require Creator upgrade
+  if (currentUser && currentUser.role === "READER") {
+    const handleUpgradeToCreator = () => {
+      loginUser(currentUser.email, currentUser.name, "CREATOR");
+    };
+
+    return (
+      <div className="min-h-[80vh] bg-[#050B16] text-white py-14 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="max-w-md w-full rounded-3xl border border-white/10 bg-slate-900/95 p-8 shadow-2xl text-center space-y-5">
+          <div className="h-14 w-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mx-auto text-2xl">
+            ✍️
+          </div>
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/30">
+              Reader Account Detected
+            </span>
+            <h2 className="text-2xl font-black text-white mt-3">Activate Writer Profile</h2>
+            <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+              You are signed in as <strong>{currentUser.name}</strong> (@{currentUser.username}) with a Reader account. To publish stories, manage chapters, or import manuscripts, activate your Creator Workshop privileges.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleUpgradeToCreator}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] text-xs font-extrabold text-white shadow-lg shadow-indigo-600/30 hover:from-[#5B4BE0] hover:to-[#6D5DFB] transition-all cursor-pointer"
+          >
+            Activate Creator Workshop Privileges →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is authenticated as Creator or Admin, render the writer tools directly!
   if (currentUser) {
     return <>{children}</>;
   }

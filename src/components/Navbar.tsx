@@ -99,17 +99,28 @@ export default function Navbar() {
                 <span>{currentUser.sparksBalance} Sparks</span>
               </div>
 
-              {/* Unified Creator Studio Button */}
-              <Link
-                href="/write"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#6D5DFB]/40 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-orange-500/15 hover:from-indigo-500/25 hover:to-orange-500/25 px-3.5 py-1.5 text-xs font-black text-white transition-all shadow-sm shadow-indigo-600/10"
-                title="Open Creator Studio Dashboard"
-              >
-                <PenTool className="h-3.5 w-3.5 text-[#F97316]" />
-                Creator Studio
-              </Link>
+              {/* Role-Aware Creator Studio or Become Writer Button */}
+              {currentUser.role === "READER" ? (
+                <Link
+                  href="/write"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-slate-800/80 hover:bg-slate-700/80 px-3 py-1.5 text-xs font-bold text-slate-200 transition-all"
+                  title="Activate Writer Profile"
+                >
+                  <PenTool className="h-3.5 w-3.5 text-[#F97316]" />
+                  Become a Writer
+                </Link>
+              ) : (
+                <Link
+                  href="/write"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[#6D5DFB]/40 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-orange-500/15 hover:from-indigo-500/25 hover:to-orange-500/25 px-3.5 py-1.5 text-xs font-black text-white transition-all shadow-sm shadow-indigo-600/10"
+                  title="Open Creator Studio Dashboard"
+                >
+                  <PenTool className="h-3.5 w-3.5 text-[#F97316]" />
+                  Creator Studio
+                </Link>
+              )}
 
-              {/* Avatar & Name */}
+              {/* Avatar, Name & Role Badge */}
               <Link
                 href="/account"
                 className="flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/80 px-2.5 py-1 hover:border-white/30 transition-all"
@@ -119,7 +130,12 @@ export default function Navbar() {
                   alt={currentUser.name}
                   className="h-6 w-6 rounded-full object-cover"
                 />
-                <span className="text-xs font-bold text-white">{currentUser.name}</span>
+                <div className="flex flex-col text-left">
+                  <span className="text-xs font-bold text-white leading-tight">{currentUser.name}</span>
+                  <span className="text-[9px] font-black uppercase tracking-wider text-amber-400 leading-tight">
+                    {currentUser.role}
+                  </span>
+                </div>
               </Link>
 
               {/* Logout Button */}
