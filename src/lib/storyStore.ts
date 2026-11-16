@@ -12,19 +12,14 @@ let activeStoriesCache: Record<string, StoryData> = { ...mockStories };
 export function cleanupLegacyStorage(): void {
   if (typeof window === "undefined") return;
   try {
-    const keysToRemove: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (
-        key &&
-        key.startsWith("ficforge_") &&
-        key !== "ficforge_auth_session_v1" &&
-        key !== "ficforge_age_verified"
-      ) {
-        keysToRemove.push(key);
-      }
-    }
-    keysToRemove.forEach((k) => localStorage.removeItem(k));
+    const legacyKeys = [
+      "ficforge_custom_stories_v1",
+      "ficforge_stories_cache",
+      "ficforge_saved_bookmarks_v1",
+      "ficforge_offline_library_v1",
+      "ficforge_spotlights_v1",
+    ];
+    legacyKeys.forEach((k) => localStorage.removeItem(k));
   } catch {}
 }
 

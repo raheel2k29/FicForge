@@ -12,19 +12,12 @@ const userBookmarksCache: Record<string, string[]> = {};
 export function cleanupLegacyBookmarks(): void {
   if (typeof window === "undefined") return;
   try {
-    const keysToRemove: string[] = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (
-        key &&
-        key.startsWith("ficforge_") &&
-        key !== "ficforge_auth_session_v1" &&
-        key !== "ficforge_age_verified"
-      ) {
-        keysToRemove.push(key);
-      }
-    }
-    keysToRemove.forEach((k) => localStorage.removeItem(k));
+    const legacyKeys = [
+      "ficforge_saved_bookmarks_v1",
+      "ficforge_offline_library_v1",
+      "ficforge_bookmarks_cache",
+    ];
+    legacyKeys.forEach((k) => localStorage.removeItem(k));
   } catch {}
 }
 

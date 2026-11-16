@@ -20,7 +20,8 @@ export interface UserSession {
   membershipTier: "FREE" | "SUPPORTER" | "PLUS" | "ELITE";
 }
 
-const AUTH_STORAGE_KEY = "ficforge_user_session_v1";
+const AUTH_STORAGE_KEY = "ficforge_auth_session_v1";
+const LEGACY_AUTH_STORAGE_KEY = "ficforge_user_session_v1";
 const ADMIN_STORAGE_KEY = "ficforge_admin_session_v1";
 
 /**
@@ -60,7 +61,9 @@ export function getCurrentUser(): UserSession | null {
   if (typeof window === "undefined") return null;
 
   try {
-    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+    const stored =
+      localStorage.getItem(AUTH_STORAGE_KEY) ||
+      localStorage.getItem(LEGACY_AUTH_STORAGE_KEY);
     if (!stored) return null;
     return JSON.parse(stored);
   } catch {
@@ -140,6 +143,7 @@ export function loginUser(email: string, name?: string): UserSession {
 
   if (typeof window !== "undefined") {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+    localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(session));
     window.dispatchEvent(new Event("ficforge_auth_changed"));
   }
 
@@ -149,6 +153,7 @@ export function loginUser(email: string, name?: string): UserSession {
 export function loginAsDemoUser(): UserSession {
   if (typeof window !== "undefined") {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(DEMO_USER));
+    localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(DEMO_USER));
     window.dispatchEvent(new Event("ficforge_auth_changed"));
   }
   return DEMO_USER;
@@ -163,6 +168,7 @@ export const loginAsDemoReader = loginAsDemoUser;
 export function loginAsAdmin(): UserSession {
   if (typeof window !== "undefined") {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(DEMO_ADMIN));
+    localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(DEMO_ADMIN));
     localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(DEMO_ADMIN));
     window.dispatchEvent(new Event("ficforge_auth_changed"));
   }
@@ -174,6 +180,7 @@ export const loginAsDemoAdmin = loginAsAdmin;
 export function logoutUser(): void {
   if (typeof window !== "undefined") {
     localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.removeItem(LEGACY_AUTH_STORAGE_KEY);
     localStorage.removeItem(ADMIN_STORAGE_KEY);
     window.dispatchEvent(new Event("ficforge_auth_changed"));
   }

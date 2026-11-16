@@ -39,11 +39,16 @@ export default function WriterAuthGate({
 
     check();
     window.addEventListener("ficforge_auth_changed", check);
-    return () => window.removeEventListener("ficforge_auth_changed", check);
+    window.addEventListener("storage", check);
+    return () => {
+      window.removeEventListener("ficforge_auth_changed", check);
+      window.removeEventListener("storage", check);
+    };
   }, []);
 
   const handleQuickDemoLogin = () => {
-    loginAsDemoUser();
+    const user = loginAsDemoUser();
+    setCurrentUser(user);
   };
 
   // Prevent flash before reading auth session
