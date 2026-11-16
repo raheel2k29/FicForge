@@ -238,6 +238,10 @@ export default function PremiumPage() {
                   <span>Boosted discovery in trending algorithm</span>
                 </li>
                 <li className="flex items-start gap-2">
+                  <span className="text-[#F97316] font-black">★</span>
+                  <span className="font-bold text-orange-300">1 Monthly Story Spotlight Credit (Featured story slot)</span>
+                </li>
+                <li className="flex items-start gap-2">
                   <span className="text-[#F97316] font-black">✓</span>
                   <span>Beta access to all new creator plugins</span>
                 </li>
@@ -294,8 +298,8 @@ export default function PremiumPage() {
                   <span className="font-bold text-white">Fast Pass Monetization & Revenue Forecasts</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-[#F97316] font-black">✓</span>
-                  <span>Homepage Carousel & Spotlight Eligibility</span>
+                  <span className="text-[#F97316] font-black">★</span>
+                  <span className="font-bold text-amber-300">3 Monthly Story Spotlight Credits (Homepage Carousel & Spotlight)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#F97316] font-black">✓</span>
