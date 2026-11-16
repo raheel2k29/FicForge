@@ -57,6 +57,15 @@ export const DEMO_ADMIN: UserSession = {
   membershipTier: "ELITE",
 };
 
+export function syncClientAuthCookie(hasAuth: boolean): void {
+  if (typeof document === "undefined") return;
+  if (hasAuth) {
+    document.cookie = "ficforge_client_auth=1; path=/; max-age=2592000; SameSite=Lax";
+  } else {
+    document.cookie = "ficforge_client_auth=; path=/; max-age=0; SameSite=Lax";
+  }
+}
+
 export function getCurrentUser(): UserSession | null {
   if (typeof window === "undefined") return null;
 
@@ -64,8 +73,15 @@ export function getCurrentUser(): UserSession | null {
     const stored =
       localStorage.getItem(AUTH_STORAGE_KEY) ||
       localStorage.getItem(LEGACY_AUTH_STORAGE_KEY);
-    if (!stored) return null;
-    return JSON.parse(stored);
+    if (!stored) {
+      syncClientAuthCookie(false);
+      return null;
+    }
+    const parsed = JSON.parse(stored);
+    if (parsed && parsed.username) {
+      syncClientAuthCookie(true);
+    }
+    return parsed;
   } catch {
     return null;
   }
@@ -144,6 +160,7 @@ export function loginUser(email: string, name?: string): UserSession {
   if (typeof window !== "undefined") {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
     localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(session));
+    syncClientAuthCookie(true);
     window.dispatchEvent(new Event("ficforge_auth_changed"));
 
     // Server-side HTTP-only session cookie sync
@@ -184,6 +201,7 @@ export function loginAsDemoUser(): UserSession {
   if (typeof window !== "undefined") {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(DEMO_USER));
     localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(DEMO_USER));
+    syncClientAuthCookie(true);
     window.dispatchEvent(new Event("ficforge_auth_changed"));
 
     // Server-side HTTP-only session cookie sync
@@ -230,6 +248,7 @@ export function loginAsAdmin(): UserSession {
     localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(DEMO_ADMIN));
     localStorage.setItem(LEGACY_AUTH_STORAGE_KEY, JSON.stringify(DEMO_ADMIN));
     localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(DEMO_ADMIN));
+    syncClientAuthCookie(true);
     window.dispatchEvent(new Event("ficforge_auth_changed"));
 
     // Server-side HTTP-only session cookie sync
@@ -273,6 +292,7 @@ export function logoutUser(): void {
     localStorage.removeItem(AUTH_STORAGE_KEY);
     localStorage.removeItem(LEGACY_AUTH_STORAGE_KEY);
     localStorage.removeItem(ADMIN_STORAGE_KEY);
+    syncClientAuthCookie(false);
     window.dispatchEvent(new Event("ficforge_auth_changed"));
 
     // Server-side cookie clearance

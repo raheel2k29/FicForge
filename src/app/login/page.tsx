@@ -2,19 +2,33 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, Suspense } from "react";
-import { loginUserAsync, loginAsDemoUserAsync } from "@/lib/authStore";
+import { useState, useEffect, Suspense } from "react";
+import { getCurrentUser, loginUserAsync, loginAsDemoUserAsync } from "@/lib/authStore";
 import { Sparkles, ArrowRight, Lock, Mail, CheckCircle2, Shield } from "lucide-react";
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("redirect") || "/my-stories";
+  const redirectUrl = searchParams.get("redirect") || "/write";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(false);
+
+  // If user is ALREADY signed in, sync server cookie and redirect immediately.
+  // Never trap a logged-in user on the login screen!
+  useEffect(() => {
+    const existing = getCurrentUser();
+    if (existing) {
+      setAlreadyLoggedIn(true);
+      loginAsDemoUserAsync().finally(() => {
+        const dest = redirectUrl === "/my-stories" ? "/write" : redirectUrl;
+        router.replace(dest);
+      });
+    }
+  }, [redirectUrl, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +44,16 @@ function LoginContent() {
     await loginAsDemoUserAsync();
     router.push(redirectUrl);
   };
+
+  if (alreadyLoggedIn) {
+    return (
+      <div className="min-h-screen bg-[#050B16] text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-orange-500 border-t-transparent mb-4" />
+        <h2 className="text-xl font-black text-white mb-1.5">You are already signed in</h2>
+        <p className="text-xs text-slate-400">Taking you directly to Creator Studio...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#050B16] text-white py-14 px-4 sm:px-6 lg:px-8 flex items-center justify-center">

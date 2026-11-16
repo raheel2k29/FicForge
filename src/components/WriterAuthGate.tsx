@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { getCurrentUser, loginAsDemoUser, UserSession } from "@/lib/authStore";
+import { getCurrentUser, loginAsDemoUserAsync, UserSession } from "@/lib/authStore";
 import {
   Lock,
   Sparkles,
@@ -46,8 +46,8 @@ export default function WriterAuthGate({
     };
   }, []);
 
-  const handleQuickDemoLogin = () => {
-    const user = loginAsDemoUser();
+  const handleQuickDemoLogin = async () => {
+    const user = await loginAsDemoUserAsync();
     setCurrentUser(user);
   };
 

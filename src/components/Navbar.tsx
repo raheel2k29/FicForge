@@ -13,8 +13,33 @@ export default function Navbar() {
 
   useEffect(() => {
     const check = () => {
-      setCurrentUser(getCurrentUser());
+      const user = getCurrentUser();
+      setCurrentUser(user);
       setBookmarkCount(getBookmarkCount());
+
+      if (user) {
+        // Ensure client cookie indicator is active
+        document.cookie = "ficforge_client_auth=1; path=/; max-age=2592000; SameSite=Lax";
+
+        // Proactively verify server HTTP-only session cookie and re-sync if missing
+        fetch("/api/auth/session")
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.authenticated) {
+              fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email: user.email,
+                  username: user.username,
+                  role: user.role,
+                  isDemo: user.username === "valerius_f",
+                }),
+              }).catch(() => {});
+            }
+          })
+          .catch(() => {});
+      }
     };
     check();
     window.addEventListener("ficforge_auth_changed", check);

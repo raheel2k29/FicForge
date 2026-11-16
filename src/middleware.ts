@@ -61,7 +61,10 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/write") || pathname.startsWith("/my-stories");
 
   if (isCreatorRoute) {
-    if (!sessionPayload) {
+    const hasClientAuth = request.cookies.get("ficforge_client_auth")?.value === "1";
+    // Allow entry if either verified cryptographic token or client auth cookie is active.
+    // Client components (WriterAuthGate) handle granular author validation without false redirects.
+    if (!sessionPayload && !hasClientAuth) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
