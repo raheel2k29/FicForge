@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
 import { getActiveSpotlights, SpotlightCampaign, isStorySpotlighted, syncSpotlightsWithServer } from "@/lib/promotionStore";
 import { StoryData } from "@/data/mockStories";
@@ -66,249 +66,245 @@ export default function HomeFeaturedStories() {
     };
   }, []);
 
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  // Compute items to display in the 3-4 card carousel
+  const carouselItems = useMemo(() => {
+    // If active spotlights exist, prioritize them
+    if (activeSpotlights.length > 0) {
+      const matched = activeSpotlights
+        .map((c) => {
+          const s = stories.find((item) => item.slug === c.storySlug);
+          return s ? { story: s, campaign: c } : null;
+        })
+        .filter(Boolean) as { story: StoryData; campaign: SpotlightCampaign }[];
+
+      // If fewer than 4 spotlights, supplement with remaining stories
+      if (matched.length < 4) {
+        const remaining = stories
+          .filter((s) => !matched.some((m) => m.story.slug === s.slug))
+          .map((s) => ({ story: s, campaign: null }));
+        return [...matched, ...remaining].slice(0, 8);
+      }
+      return matched;
+    }
+
+    // Default to first 4-8 stories
+    return stories.slice(0, 8).map((s) => ({ story: s, campaign: null }));
+  }, [activeSpotlights, stories]);
+
+  const updateScrollButtons = () => {
+    if (!carouselRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+    setCanScrollLeft(scrollLeft > 10);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 10);
+  };
+
+  const handleScroll = (direction: "left" | "right") => {
+    if (!carouselRef.current) return;
+    const container = carouselRef.current;
+    const cardWidth = container.firstElementChild ? (container.firstElementChild as HTMLElement).offsetWidth + 20 : 320;
+    const scrollAmount = direction === "left" ? -cardWidth : cardWidth;
+    container.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
+
   // Auto-advance multi-spotlight carousel every 6 seconds when not hovered
   useEffect(() => {
-    if (activeSpotlights.length <= 1 || isPaused) return;
+    if (carouselItems.length <= 1 || isPaused) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % activeSpotlights.length);
+      if (!carouselRef.current) return;
+      const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+      if (scrollLeft + clientWidth >= scrollWidth - 15) {
+        carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        handleScroll("right");
+      }
     }, 6000);
 
     return () => clearInterval(timer);
-  }, [activeSpotlights.length, isPaused]);
-
-  // Current active spotlight story
-  const currentCampaign = activeSpotlights[currentIndex] || activeSpotlights[0];
-  const spotlightStory = currentCampaign
-    ? stories.find((s) => s.slug === currentCampaign.storySlug) || stories[0]
-    : stories[0];
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev === 0 ? activeSpotlights.length - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % activeSpotlights.length);
-  };
+  }, [carouselItems.length, isPaused]);
 
   return (
     <section className="w-full py-16 px-4 sm:px-6 lg:px-8 border-t border-b border-white/10 bg-[#050B16]">
-      <div className="max-w-[1180px] mx-auto space-y-12">
+      <div className="max-w-[1240px] mx-auto space-y-12">
         
         {/* ========================================= */}
-        {/* CREATOR SPOTLIGHT PROMOTION SHOWCASE      */}
+        {/* CREATOR SPOTLIGHT 3-4 CARD CAROUSEL       */}
         {/* ========================================= */}
-        {spotlightStory && (
+        {carouselItems.length > 0 && (
           <div
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
-            className="rounded-3xl border-2 border-amber-500/40 bg-gradient-to-br from-slate-900/95 via-[#0A1020] to-slate-950 p-6 sm:p-8 shadow-2xl relative overflow-hidden group transition-all"
+            className="space-y-6"
           >
-            {/* Ambient Spotlight Glow */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-amber-500/15 via-[#F97316]/10 to-transparent blur-3xl pointer-events-none" />
-
-            {/* Spotlight Header Badges & Navigation */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 relative z-10 border-b border-white/10 pb-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-3.5 py-1 text-[11px] font-black uppercase tracking-wider text-slate-950 shadow-md shadow-amber-500/20">
-                  <Sparkles className="h-3.5 w-3.5 fill-slate-950" />
-                  CREATOR SPOTLIGHT
-                </span>
-
-                {activeSpotlights.length > 1 && (
-                  <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-xs font-bold text-amber-300">
-                    {currentIndex + 1} of {activeSpotlights.length} Spotlighted Stories
+            {/* Carousel Header & Controls */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/10 pb-5">
+              <div>
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-3.5 py-1 text-[11px] font-black uppercase tracking-wider text-slate-950 shadow-md shadow-amber-500/20">
+                    <Sparkles className="h-3.5 w-3.5 fill-slate-950" />
+                    CREATOR SPOTLIGHT
                   </span>
-                )}
-
-                <span className="text-xs text-slate-400 font-semibold hidden sm:inline">
-                  • 7-Day Discovery Feature
-                </span>
+                  <span className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2.5 py-0.5 text-xs font-bold text-amber-300">
+                    {carouselItems.length} Featured {carouselItems.length === 1 ? "Story" : "Stories"}
+                  </span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                  Creator Spotlight Showcase
+                </h2>
+                <p className="mt-1 text-sm text-slate-400">
+                  Featured community works backed by creator spotlight promotions.
+                </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                {/* Previous / Next buttons when multiple spotlights are active */}
-                {activeSpotlights.length > 1 && (
-                  <div className="flex items-center gap-1.5 bg-slate-800/80 border border-white/10 rounded-xl p-1">
-                    <button
-                      type="button"
-                      onClick={handlePrev}
-                      className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
-                      title="Previous Spotlight"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-                    <span className="text-[11px] font-mono font-bold text-amber-400 px-1">
-                      {currentIndex + 1}/{activeSpotlights.length}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleNext}
-                      className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
-                      title="Next Spotlight"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
-                  </div>
-                )}
+              <div className="flex items-center gap-3 self-start sm:self-auto">
+                {/* Carousel Slider Controls (< and >) */}
+                <div className="flex items-center gap-1.5 bg-slate-800/80 border border-white/10 rounded-xl p-1">
+                  <button
+                    type="button"
+                    onClick={() => handleScroll("left")}
+                    disabled={!canScrollLeft}
+                    className={`p-2 rounded-lg transition-colors ${
+                      canScrollLeft
+                        ? "text-slate-200 hover:text-white hover:bg-white/10 cursor-pointer"
+                        : "text-slate-600 cursor-not-allowed"
+                    }`}
+                    title="Previous Stories"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleScroll("right")}
+                    disabled={!canScrollRight}
+                    className={`p-2 rounded-lg transition-colors ${
+                      canScrollRight
+                        ? "text-slate-200 hover:text-white hover:bg-white/10 cursor-pointer"
+                        : "text-slate-600 cursor-not-allowed"
+                    }`}
+                    title="Next Stories"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
 
                 <Link
                   href="/write/promote"
-                  className="text-xs font-bold text-amber-300 hover:text-white transition-colors inline-flex items-center gap-1"
+                  className="rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-xs font-black text-amber-300 px-4 py-2.5 transition-all inline-flex items-center gap-1.5 shrink-0"
                 >
                   Promote Your Story <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
             </div>
 
-            {/* Spotlight Story Body */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center relative z-10">
-              {/* Cover Art (3 cols) */}
-              <div className="md:col-span-3 flex justify-center">
-                <Link href={`/story/${spotlightStory.slug}`} className="block">
-                  <div className="h-64 w-44 rounded-2xl overflow-hidden shadow-2xl border-2 border-amber-500/30 bg-slate-950 relative group-hover:scale-105 transition-transform duration-300">
-                    <img
-                      src={spotlightStory.coverImageUrl}
-                      alt={spotlightStory.title}
-                      className="h-full w-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
-                  </div>
-                </Link>
-              </div>
+            {/* 3 to 4 Card Carousel Track */}
+            <div
+              ref={carouselRef}
+              onScroll={updateScrollButtons}
+              className="flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar pb-3 pt-1"
+            >
+              {carouselItems.map(({ story, campaign }) => {
+                const isSpotlightActive = !!campaign || isStorySpotlighted(story.slug);
+                const storyId = story.id || story.slug;
 
-              {/* Story Details (9 cols) */}
-              <div className="md:col-span-9 space-y-4 text-left">
-                <div className="flex items-center gap-2 flex-wrap">
-                  {spotlightStory.classification === "FANFICTION" ? (
-                    <span className="rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 text-[10px] font-black uppercase">
-                      100% Free Fanfiction • {spotlightStory.fandom || "Fandom"}
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/30 px-2.5 py-0.5 text-[10px] font-black uppercase">
-                      Original Webnovel
-                    </span>
-                  )}
-
-                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] font-bold text-slate-300 uppercase">
-                    {spotlightStory.rating || "GENERAL"}
-                  </span>
-
-                  {currentCampaign && (
-                    <span className="text-[10px] font-mono text-amber-400/90 ml-auto hidden sm:inline">
-                      ⚡ Active Campaign: {currentCampaign.impressions.toLocaleString()} views
-                    </span>
-                  )}
-                </div>
-
-                <Link href={`/story/${spotlightStory.slug}`}>
-                  <h3 className="text-2xl sm:text-3xl font-black text-white hover:text-amber-300 transition-colors">
-                    {spotlightStory.title}
-                  </h3>
-                </Link>
-
-                <div className="flex items-center gap-2">
-                  <img
-                    src={spotlightStory.author?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"}
-                    alt={spotlightStory.author?.name || "Author"}
-                    className="h-6 w-6 rounded-full object-cover"
-                  />
-                  <span className="text-xs font-bold text-slate-300">
-                    by {spotlightStory.author?.name || "Author"}
-                  </span>
-                  {spotlightStory.author?.isVerified && (
-                    <span className="text-blue-400 text-xs font-bold" title="Verified Creator">
-                      ✓
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl line-clamp-3">
-                  {spotlightStory.synopsis}
-                </p>
-
-                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
-                  <span className="font-semibold text-slate-300">
-                    📖 {(spotlightStory.chapters || []).length} Chapters
-                  </span>
-                  <span>•</span>
-                  <span className="font-semibold text-slate-300">
-                    ✍️ {(spotlightStory.stats?.words || 0).toLocaleString()} Words
-                  </span>
-                  <span>•</span>
-                  <span className="font-semibold text-amber-300">
-                    ⚡ Featured Spotlight Story
-                  </span>
-                </div>
-
-                <div className="pt-2 flex items-center gap-3">
-                  <Link
-                    href={`/story/${spotlightStory.slug}`}
-                    className="rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-[#F97316] px-6 py-2.5 text-xs font-black text-slate-950 shadow-lg shadow-orange-500/20 hover:opacity-95 transition-all inline-flex items-center gap-1.5"
+                return (
+                  <div
+                    key={storyId}
+                    className="w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] xl:w-[calc(25%-15px)] shrink-0 snap-start"
                   >
-                    Read Spotlight Story <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
+                    <div className="h-full rounded-2xl border-2 border-amber-500/30 bg-gradient-to-b from-slate-900 via-[#0A1020] to-slate-950 p-4 shadow-xl hover:border-amber-400 hover:shadow-2xl hover:shadow-amber-500/15 transition-all duration-300 flex flex-col justify-between group relative overflow-hidden">
+                      {/* Ambient Golden Glow Accent */}
+                      <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-amber-500/20 transition-all" />
 
-                  <Link
-                    href="/browse"
-                    className="rounded-xl border border-white/20 bg-slate-800/80 px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-white transition-all"
-                  >
-                    View in Library
-                  </Link>
-                </div>
-              </div>
-            </div>
+                      <div>
+                        {/* Cover Presentation (2:3 Book Ratio) */}
+                        <Link href={`/story/${story.slug}`} className="block relative">
+                          <div className="relative h-64 w-full rounded-xl overflow-hidden bg-slate-950 shadow-md border border-white/10">
+                            <img
+                              src={story.coverImageUrl || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"}
+                              alt={story.title}
+                              className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/60" />
 
-            {/* Multi-Spotlight Selector Shelf: When multiple stories are spotlighted */}
-            {activeSpotlights.length > 1 && (
-              <div className="mt-8 pt-5 border-t border-white/10 relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[11px] font-black uppercase tracking-wider text-amber-400/90 flex items-center gap-1.5">
-                    <Sparkles className="h-3 w-3" /> All Live Spotlights ({activeSpotlights.length})
-                  </span>
-                  <span className="text-[11px] text-slate-400">
-                    Click to switch featured preview
-                  </span>
-                </div>
+                            {/* Top Badges */}
+                            <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-slate-950 shadow-md">
+                                <Sparkles className="h-2.5 w-2.5 fill-slate-950" />
+                                Spotlight
+                              </span>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {activeSpotlights.map((camp, idx) => {
-                    const s = stories.find((item) => item.slug === camp.storySlug);
-                    const isSelected = idx === currentIndex;
-                    const cover = camp.coverImageUrl || s?.coverImageUrl;
-                    const title = camp.storyTitle || s?.title || "Story";
+                              <span className="rounded-full bg-black/60 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-white uppercase border border-white/10">
+                                {story.rating || "TEEN"}
+                              </span>
+                            </div>
 
-                    return (
-                      <button
-                        key={camp.id || camp.storySlug}
-                        type="button"
-                        onClick={() => setCurrentIndex(idx)}
-                        className={`text-left p-2.5 rounded-xl border transition-all flex items-center gap-2.5 ${
-                          isSelected
-                            ? "border-amber-400 bg-amber-500/20 shadow-md shadow-amber-500/10"
-                            : "border-white/10 bg-slate-800/60 hover:bg-slate-800 hover:border-white/20"
-                        }`}
-                      >
-                        <img
-                          src={cover}
-                          alt={title}
-                          className="h-10 w-8 rounded-lg object-cover shrink-0 border border-white/10"
-                        />
-                        <div className="overflow-hidden">
-                          <p className={`text-xs font-bold truncate ${isSelected ? "text-amber-300" : "text-white"}`}>
-                            {title}
-                          </p>
-                          <p className="text-[10px] text-slate-400 truncate">
-                            by {camp.authorName || s?.author?.name}
+                            {/* Bottom Classification on Cover */}
+                            <div className="absolute bottom-2.5 left-2.5 right-2.5 pointer-events-none">
+                              {story.classification === "FANFICTION" ? (
+                                <span className="inline-block rounded-md bg-emerald-500/90 backdrop-blur-md px-2 py-0.5 text-[9px] font-black uppercase text-slate-950 shadow-md">
+                                  Free Fanfiction • {story.fandom || "Fandom"}
+                                </span>
+                              ) : (
+                                <span className="inline-block rounded-md bg-gradient-to-r from-orange-500 to-amber-500 px-2 py-0.5 text-[9px] font-black uppercase text-slate-950 shadow-md">
+                                  Original Webnovel
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </Link>
+
+                        {/* Title & Author */}
+                        <div className="mt-3">
+                          <Link href={`/story/${story.slug}`}>
+                            <h3 className="text-base font-black text-white hover:text-amber-300 transition-colors line-clamp-1 leading-snug">
+                              {story.title}
+                            </h3>
+                          </Link>
+
+                          <div className="mt-1.5 flex items-center gap-2">
+                            <img
+                              src={story.author?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80"}
+                              alt={story.author?.name || "Author"}
+                              className="h-5 w-5 rounded-full object-cover border border-white/10"
+                            />
+                            <span className="text-xs font-semibold text-slate-300 truncate">
+                              {story.author?.name || "Author"}
+                            </span>
+                            {story.author?.isVerified && (
+                              <span className="text-blue-400 text-xs font-bold shrink-0">✓</span>
+                            )}
+                          </div>
+
+                          <p className="mt-2 text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                            {story.synopsis}
                           </p>
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+                      </div>
 
+                      {/* Footer & CTA */}
+                      <div className="mt-4 pt-3 border-t border-white/10 space-y-3">
+                        <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400">
+                          <span>📖 {story.chapters?.length || 0} Chapters</span>
+                          <span>✍️ {(story.stats?.words || 0).toLocaleString()} words</span>
+                        </div>
+
+                        <Link
+                          href={`/story/${story.slug}`}
+                          className="w-full rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-[#F97316] py-2 text-xs font-black text-slate-950 shadow-md shadow-orange-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-1.5"
+                        >
+                          Read Spotlight Story <ArrowRight className="h-3 w-3" />
+                        </Link>
+                      </div>
+
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 

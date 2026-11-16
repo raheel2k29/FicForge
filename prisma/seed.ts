@@ -160,29 +160,147 @@ async function main() {
     },
   });
 
-  console.log("Exactly 2 stories created and linked to Valerius Frost in PostgreSQL!");
-
-  // 3. Seed Active Spotlight Promotion for The Ember Archive
-  // Leaving Star Wars: The Obsidian Blade completely eligible for testing promotion
-  const now = new Date();
-  const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
-  const fourDaysFromNow = new Date(Date.now() + 4 * 24 * 60 * 60 * 1000);
-
-  await prisma.spotlightPromotion.create({
+  // Story 3: Original Fiction - Cyberpunk: Neon Horizon
+  const cyberpunkStory = await prisma.story.create({
     data: {
-      id: "spotlight-ember-archive",
-      storyId: emberStory.id,
-      userId: valerius.id,
-      creditsSpent: 1,
-      status: PromotionStatus.ACTIVE,
-      startDate: threeDaysAgo,
-      endDate: fourDaysFromNow,
-      impressions: 48920,
-      clicks: 6410,
+      id: "story-cyberpunk-neon-horizon",
+      authorId: valerius.id,
+      title: "Cyberpunk: Neon Horizon",
+      slug: "cyberpunk-neon-horizon",
+      synopsis: "In the chrome-drenched spires of New Aethelgard, neural-net hacker Kaelen uncovers a black-market ghost protocol that allows rogue corporate AIs to overwrite human consciousness. With corpo hit-squads closing in, he must forge an uneasy alliance with an augmented street samurai to expose the conspiracy.",
+      classification: StoryClassification.ORIGINAL,
+      status: StoryStatus.ONGOING,
+      rating: ContentRating.MATURE,
+      coverImageUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80",
+      viewCount: 31200,
+      likeCount: 4210,
+      bookmarkCount: 1890,
+      chapters: {
+        create: [
+          {
+            chapterNumber: 1,
+            orderIndex: 1,
+            title: "Glitch in the Rain",
+            slug: "chapter-1",
+            content: "The rain in Sector 4 tasted like battery acid and burnt ozone. Kaelen pulled his synth-leather collar higher against the drizzle, eyes scanning the bioluminescent billboards flashing above the alleyway.",
+            wordCount: 2950,
+            isPublished: true,
+            publishedAt: new Date(),
+          },
+          {
+            chapterNumber: 2,
+            orderIndex: 2,
+            title: "Ghost in the Deck",
+            slug: "chapter-2",
+            content: "The avatar resolved in three-dimensional cyan light across his retinas. It didn't look like code; it looked like a terrified child trapped behind pane glass.",
+            wordCount: 3100,
+            isPublished: true,
+            publishedAt: new Date(),
+          },
+        ],
+      },
     },
   });
 
-  console.log("Spotlight seeded: 1 active showcase story (The Ember Archive), leaving Star Wars eligible for test activation!");
+  // Story 4: Fanfiction - Harry Potter & The Starlight Heir
+  const hpStory = await prisma.story.create({
+    data: {
+      id: "story-hp-starlight-heir",
+      authorId: valerius.id,
+      title: "Harry Potter & The Starlight Heir",
+      slug: "harry-potter-starlight-heir",
+      synopsis: "Banished from the wizarding world following a forgotten celestial prophecy, an older Harry discovers an ancient astral observatory hidden beneath the Scottish moors. When constellations begin falling from the midnight sky, he must unearth celestial magic older than Hogwarts itself.",
+      classification: StoryClassification.FANFICTION,
+      status: StoryStatus.ONGOING,
+      rating: ContentRating.TEEN,
+      coverImageUrl: "https://images.unsplash.com/photo-1507842229452-772d1c9ab218?auto=format&fit=crop&w=600&q=80",
+      viewCount: 52400,
+      likeCount: 8940,
+      bookmarkCount: 4120,
+      chapters: {
+        create: [
+          {
+            chapterNumber: 1,
+            orderIndex: 1,
+            title: "The Observatory on the Moor",
+            slug: "chapter-1",
+            content: "The brass telescope whirred smoothly on its gimbal, tracing an elliptical arc across the November heavens. Harry adjusted the crystalline lens, breath misting in the unheated dome.",
+            wordCount: 3200,
+            isPublished: true,
+            publishedAt: new Date(),
+          },
+          {
+            chapterNumber: 2,
+            orderIndex: 2,
+            title: "Falling Stars",
+            slug: "chapter-2",
+            content: "A streak of cold silver pierced the low clouds over Loch Ness, illuminating the heather in eerie daylight for half a heartbeat.",
+            wordCount: 3400,
+            isPublished: true,
+            publishedAt: new Date(),
+          },
+        ],
+      },
+    },
+  });
+
+  console.log("4 curated stories created and linked to Valerius Frost in PostgreSQL!");
+
+  // 3. Seed Active Spotlight Promotions for all 4 stories to demonstrate the 3-4 item Carousel
+  const now = new Date();
+  const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+  const fiveDaysFromNow = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
+
+  await prisma.spotlightPromotion.createMany({
+    data: [
+      {
+        id: "spotlight-ember-archive",
+        storyId: emberStory.id,
+        userId: valerius.id,
+        creditsSpent: 6,
+        status: PromotionStatus.ACTIVE,
+        startDate: twoDaysAgo,
+        endDate: fiveDaysFromNow,
+        impressions: 48920,
+        clicks: 6410,
+      },
+      {
+        id: "spotlight-obsidian-blade",
+        storyId: starWarsStory.id,
+        userId: valerius.id,
+        creditsSpent: 4,
+        status: PromotionStatus.ACTIVE,
+        startDate: twoDaysAgo,
+        endDate: fiveDaysFromNow,
+        impressions: 34100,
+        clicks: 4210,
+      },
+      {
+        id: "spotlight-neon-horizon",
+        storyId: cyberpunkStory.id,
+        userId: valerius.id,
+        creditsSpent: 6,
+        status: PromotionStatus.ACTIVE,
+        startDate: twoDaysAgo,
+        endDate: fiveDaysFromNow,
+        impressions: 29800,
+        clicks: 3820,
+      },
+      {
+        id: "spotlight-starlight-heir",
+        storyId: hpStory.id,
+        userId: valerius.id,
+        creditsSpent: 6,
+        status: PromotionStatus.ACTIVE,
+        startDate: twoDaysAgo,
+        endDate: fiveDaysFromNow,
+        impressions: 41200,
+        clicks: 5310,
+      },
+    ],
+  });
+
+  console.log("Spotlights seeded: 4 active showcase stories in PostgreSQL for 3-4 item Carousel!");
 }
 
 main()
