@@ -106,43 +106,122 @@ function BulkImportContent() {
   };
 
   // Smart Chapter Auto-Splitter Regex Engine
-  // Supports: Chapter X, Ch. X, Act X, Part X, Episode X, Prologue, Epilogue, Markdown headings (# Chapter X), and Divider lines (***, ---)
-  const parseManuscript = (textToParse: string) => {
-    if (!textToParse.trim()) {
-      setDetectedChapters([]);
-      return;
-    }
+  // Supports:
+  // 1) Explicit chapter headers: Chapter X, Ch. X, Act X, Part X, Episode X, Prologue, Epilogue, Interlude
+  // 2) Markdown headings: # Chapter X, ## Chapter X
+  // 3) Horizontal divider lines: ***, ---, ___
+  // 4) Two-line chapter titles (Line 1: "Chapter 1", Line 2: "The Beginning")
+  const splitTextIntoChapterItems = (
+    textToParse: string,
+    fallbackTitle?: string,
+    prefix: string = "ch"
+  ): ImportedChapterItem[] => {
+    if (!textToParse.trim()) return [];
+
+    // Normalize Windows CRLF and Mac CR to standard LF
+    const normalized = textToParse.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
 
     const delimiterRegex =
       /(?:^|\n)(?=(?:#{1,3}\s*)?(?:Chapter|CHAPTER|Ch\.|Ch\s|Act|ACT|Part|PART|Episode|EPISODE|Prologue|PROLOGUE|Epilogue|EPILOGUE|Interlude|INTERLUDE)\s*[\dIVXLCDM]*[:\.\s\-]?|(?:\*\*\*|---|___)\s*(?:\n|$))/gi;
 
-    const rawBlocks = textToParse
+    const rawBlocks = normalized
       .split(delimiterRegex)
-      .map((b) => b.trim().replace(/^(\*\*\*|---|___)\s*/, "").trim())
+      .map((b) =>
+        b
+          .trim()
+          .replace(/^(\*\*\*|---|___)\s*/, "")
+          .replace(/(\*\*\*|---|___)\s*$/, "")
+          .trim()
+      )
       .filter((b) => b.length > 0);
 
-    const parsed: ImportedChapterItem[] = rawBlocks.map((block, idx) => {
+    // Single chapter / undivided manuscript block
+    if (rawBlocks.length <= 1) {
+      const fullText = (rawBlocks[0] || normalized).trim();
+      const lines = fullText
+        .split("\n")
+        .map((l) => l.trim())
+        .filter((l) => l.length > 0);
+      const words = fullText.split(/\s+/).filter(Boolean).length;
+
+      let detectedTitle = fallbackTitle || "Chapter 1";
+      let bodyLines = lines;
+
+      if (lines.length > 0) {
+        const first = lines[0].replace(/^#+\s*/, "").trim();
+        const isHeader =
+          /^(?:Chapter|CHAPTER|Ch\.|Ch\s|Act|Part|Episode|Prologue|Epilogue|Interlude)/i.test(first) ||
+          (first.length <= 70 && !/[.!?]$/.test(first));
+        if (isHeader) {
+          detectedTitle = first;
+          bodyLines = lines.slice(1);
+          // Two-line title check
+          if (
+            /^(?:Chapter|CHAPTER|Ch\.|Act|Part|Episode)\s*[\dIVXLCDM]+$/i.test(first) &&
+            lines[1] &&
+            lines[1].length <= 80 &&
+            !/[.!?]$/.test(lines[1])
+          ) {
+            detectedTitle = `${first}: ${lines[1]}`;
+            bodyLines = lines.slice(2);
+          }
+        }
+      }
+
+      const rawBody = bodyLines.length > 0 ? bodyLines.join("\n\n") : fullText;
+
+      return [
+        {
+          id: `${prefix}-1-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          title: detectedTitle.length > 80 ? detectedTitle.substring(0, 80) : detectedTitle,
+          rawText: rawBody,
+          content: bodyLines.length > 0 ? bodyLines : [fullText],
+          wordCount: Math.max(words, 15),
+        },
+      ];
+    }
+
+    // Multiple chapters detected
+    return rawBlocks.map((block, idx) => {
       const lines = block
         .split("\n")
         .map((l) => l.trim())
         .filter((l) => l.length > 0);
 
-      let firstLine = lines[0] || `Chapter ${idx + 1}`;
-      firstLine = firstLine.replace(/^#+\s*/, "").trim();
+      let firstLine = (lines[0] || `Chapter ${idx + 1}`).replace(/^#+\s*/, "").trim();
+      let chapterBodyLines = lines.slice(1);
 
-      const chapterBodyLines = lines.slice(1);
+      // Support 2-line title convention: "Chapter 1\nThe Dark Forest"
+      if (
+        /^(?:Chapter|CHAPTER|Ch\.|Act|Part|Episode)\s*[\dIVXLCDM]+$/i.test(lines[0]) &&
+        lines[1] &&
+        lines[1].length <= 80 &&
+        !/[.!?]$/.test(lines[1])
+      ) {
+        firstLine = `${lines[0]}: ${lines[1]}`;
+        chapterBodyLines = lines.slice(2);
+      }
+
       const rawText = chapterBodyLines.join("\n\n");
       const words = block.split(/\s+/).filter(Boolean).length;
 
       return {
-        id: `ch-box-${idx + 1}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        id: `${prefix}-${idx + 1}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         title: firstLine.length > 80 ? firstLine.substring(0, 80) : firstLine,
         rawText: rawText || block,
         content: chapterBodyLines.length > 0 ? chapterBodyLines : [firstLine],
         wordCount: Math.max(words, 15),
       };
     });
+  };
 
+  const parseManuscript = (textToParse: string) => {
+    if (!textToParse.trim()) {
+      setDetectedChapters([]);
+      return;
+    }
+
+    const parsed = splitTextIntoChapterItems(textToParse, "Chapter 1", "ch");
     setDetectedChapters(parsed);
     // Expand the first 2 boxes by default, collapse remainder for tidy overview
     const initExpanded: Record<string, boolean> = {};
@@ -161,45 +240,60 @@ function BulkImportContent() {
     parseManuscript(manuscriptText);
   };
 
-  // Multi-file batch upload handler
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+  // Shared file list processor (supports single multi-chapter files and multiple single-chapter files)
+  const processFileList = (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    if (fileArray.length === 0) return;
 
     setIsProcessing(true);
-    const readers: Promise<ImportedChapterItem>[] = Array.from(files).map((file, idx) => {
+    const readers: Promise<ImportedChapterItem[]>[] = fileArray.map((file, fileIdx) => {
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (event) => {
           const text = (event.target?.result as string) || "";
-          const lines = text
-            .split("\n")
-            .map((l) => l.trim())
-            .filter(Boolean);
-          const words = text.split(/\s+/).filter(Boolean).length;
           const fileNameClean = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-
-          resolve({
-            id: `file-${idx + 1}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-            title: fileNameClean.length > 80 ? fileNameClean.substring(0, 80) : fileNameClean,
-            rawText: text,
-            content: lines.length > 0 ? lines : [text],
-            wordCount: Math.max(words, 15),
-          });
+          const chapters = splitTextIntoChapterItems(text, fileNameClean, `file-${fileIdx + 1}`);
+          resolve(chapters);
         };
         reader.readAsText(file);
       });
     });
 
-    Promise.all(readers).then((results) => {
-      setDetectedChapters(results);
+    Promise.all(readers).then((nested) => {
+      const flattened = nested.flat();
+      setDetectedChapters(flattened);
       const initExp: Record<string, boolean> = {};
-      results.forEach((ch, idx) => {
+      flattened.forEach((ch, idx) => {
         initExp[ch.id] = idx < 2;
       });
       setExpandedBoxes(initExp);
       setIsProcessing(false);
+
+      // If user uploaded a single multi-chapter file, sync the manuscript textarea as well
+      if (fileArray.length === 1 && flattened.length > 1) {
+        const singleReader = new FileReader();
+        singleReader.onload = (ev) => {
+          const txt = (ev.target?.result as string) || "";
+          setManuscriptText(txt);
+        };
+        singleReader.readAsText(fileArray[0]);
+      }
     });
+  };
+
+  // Multi-file batch upload handler
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    processFileList(files);
+    e.target.value = "";
+  };
+
+  const handleDropFiles = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const droppedFiles = e.dataTransfer.files;
+    if (!droppedFiles || droppedFiles.length === 0) return;
+    processFileList(droppedFiles);
   };
 
   // Individual Chapter Box Handlers
@@ -475,16 +569,15 @@ function BulkImportContent() {
               <div className="rounded-xl border border-white/10 bg-[#020617]/70 p-4 space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-orange-400" />
-                  <strong className="text-xs font-bold text-white">3. Multi-File Batch Drop</strong>
+                  <strong className="text-xs font-bold text-white">3. Single or Multi-File Upload</strong>
                 </div>
                 <p className="text-[11px] text-slate-400 leading-normal">
-                  Save your chapters as separate <code className="text-orange-300 font-mono">.txt</code> or <code className="text-orange-300 font-mono">.md</code> files on your computer and upload them together.
+                  Upload a single file with all chapters, or multiple individual <code className="text-orange-300 font-mono">.txt</code> or <code className="text-orange-300 font-mono">.md</code> files.
                 </p>
                 <div className="rounded-lg bg-black/40 p-2.5 font-mono text-[10px] text-slate-300 leading-relaxed border border-white/5">
-                  • 01-chapter-one.txt<br />
-                  • 02-chapter-two.txt<br />
-                  • 03-chapter-three.txt<br />
-                  (Each file = 1 chapter box)
+                  • 1 file with 10 chapters → 10 boxes<br />
+                  • 10 separate files → 10 boxes<br />
+                  (Automatic chapter box conversion)
                 </div>
               </div>
 
@@ -533,7 +626,7 @@ function BulkImportContent() {
 
           {activeTab === "SPLITTER" ? (
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <label className="block text-xs font-black uppercase tracking-wider text-slate-300">
                     Paste Entire Manuscript
@@ -542,6 +635,16 @@ function BulkImportContent() {
                     Paste your manuscript or chapters below. Click <strong>"Convert into Chapter Boxes"</strong> to generate individual boxes for each chapter.
                   </p>
                 </div>
+                <label className="inline-flex items-center gap-1.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-3.5 py-2 text-xs font-bold text-indigo-300 hover:bg-indigo-500/20 transition-all cursor-pointer shrink-0">
+                  <UploadCloud className="h-4 w-4" />
+                  <span>Upload .txt / .md File</span>
+                  <input
+                    type="file"
+                    accept=".txt,.md,.text"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </label>
               </div>
 
               <textarea
@@ -569,14 +672,19 @@ function BulkImportContent() {
               </div>
             </div>
           ) : (
-            <div className="border-2 border-dashed border-white/15 rounded-2xl p-10 text-center bg-[#020617]/50">
+            <div
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDropFiles}
+              className="border-2 border-dashed border-white/15 rounded-2xl p-10 text-center bg-[#020617]/50 hover:border-[#6D5DFB]/60 transition-colors"
+            >
               <UploadCloud className="mx-auto h-12 w-12 text-[#6D5DFB] mb-3" />
-              <h3 className="text-base font-bold text-white">Upload Multiple Chapter Files</h3>
-              <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
-                Select multiple individual `.txt` or `.md` files. Each file automatically becomes an individual chapter box.
+              <h3 className="text-base font-bold text-white">Upload Single or Multiple Manuscript Files</h3>
+              <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+                Upload a single file containing multiple chapters, or multiple individual `.txt` / `.md` files. FicForge will automatically split them into individual chapter boxes.
               </p>
               <label className="mt-4 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-2.5 text-xs font-extrabold text-white cursor-pointer shadow-lg shadow-indigo-600/30 hover:opacity-95">
-                Browse Files
+                <UploadCloud className="h-4 w-4" />
+                Browse Files (.txt / .md)
                 <input
                   type="file"
                   multiple
@@ -585,6 +693,9 @@ function BulkImportContent() {
                   className="hidden"
                 />
               </label>
+              <p className="text-[11px] text-slate-500 mt-3">
+                Drag and drop your file(s) here or click Browse
+              </p>
             </div>
           )}
 
