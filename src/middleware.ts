@@ -56,22 +56,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 4. Creator Studio Protection (/write/* and /my-stories/*)
-  const isCreatorRoute =
-    pathname.startsWith("/write") || pathname.startsWith("/my-stories");
-
-  if (isCreatorRoute) {
-    const hasClientAuth = request.cookies.get("ficforge_client_auth")?.value === "1";
-    // Allow entry if either verified cryptographic token or client auth cookie is active.
-    // Client components (WriterAuthGate) handle granular author validation without false redirects.
-    if (!sessionPayload && !hasClientAuth) {
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-  }
-
-  // 5. Append verified user headers for downstream server components and API routes
+  // 4. Append verified user headers for downstream server components and API routes
+  // (Creator studio pages are protected in-place by WriterAuthGate to avoid false redirects)
   const response = NextResponse.next();
   if (sessionPayload) {
     response.headers.set("x-user-id", String(sessionPayload.id || ""));
@@ -85,7 +71,5 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/admin/:path*",
-    "/write/:path*",
-    "/my-stories/:path*",
   ],
 };

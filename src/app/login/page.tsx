@@ -9,7 +9,11 @@ import { Sparkles, ArrowRight, Lock, Mail, CheckCircle2, Shield } from "lucide-r
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("redirect") || "/write";
+  const rawRedirect = searchParams.get("redirect");
+  const redirectUrl =
+    !rawRedirect || rawRedirect === "/login" || rawRedirect.startsWith("/login") || rawRedirect === "/my-stories"
+      ? "/write"
+      : rawRedirect;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,32 +21,37 @@ function LoginContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(false);
 
-  // If user is ALREADY signed in, sync server cookie and redirect immediately.
+  // If user is ALREADY signed in, navigate immediately to Studio.
   // Never trap a logged-in user on the login screen!
   useEffect(() => {
     const existing = getCurrentUser();
     if (existing) {
       setAlreadyLoggedIn(true);
-      loginAsDemoUserAsync().finally(() => {
-        const dest = redirectUrl === "/my-stories" ? "/write" : redirectUrl;
-        router.replace(dest);
-      });
+      window.location.href = redirectUrl;
     }
-  }, [redirectUrl, router]);
+  }, [redirectUrl]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
 
     setIsLoading(true);
-    await loginUserAsync(email.trim());
-    router.push(redirectUrl);
+    try {
+      await loginUserAsync(email.trim());
+    } catch (err) {
+      console.warn("Login sync notice:", err);
+    }
+    window.location.href = redirectUrl;
   };
 
   const handleDemoUserLogin = async () => {
     setIsLoading(true);
-    await loginAsDemoUserAsync();
-    router.push(redirectUrl);
+    try {
+      await loginAsDemoUserAsync();
+    } catch (err) {
+      console.warn("Demo login sync notice:", err);
+    }
+    window.location.href = redirectUrl;
   };
 
   if (alreadyLoggedIn) {
