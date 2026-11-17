@@ -46,19 +46,29 @@ function ChapterEditorContent() {
     if (storySlugParam && all[storySlugParam]) {
       setSelectedStorySlug(storySlugParam);
     } else if (list.length > 0) {
-      setSelectedStorySlug(list[0].slug);
+      setSelectedStorySlug((prev) => prev || list[0].slug);
     }
 
     syncStoriesWithServer().then((serverStories) => {
       if (serverStories) {
         const updatedList = Object.values(serverStories);
         setStories(updatedList);
-        if (!selectedStorySlug && updatedList.length > 0) {
-          setSelectedStorySlug(updatedList[0].slug);
-        }
+        setSelectedStorySlug((prev) => {
+          if (prev && serverStories[prev]) return prev;
+          if (storySlugParam && serverStories[storySlugParam]) return storySlugParam;
+          return updatedList.length > 0 ? updatedList[0].slug : "";
+        });
       }
     });
-  }, [storySlugParam, selectedStorySlug]);
+
+    const handleStoriesUpdated = () => {
+      const freshAll = getAllStories();
+      setStories(Object.values(freshAll));
+    };
+
+    window.addEventListener("ficforge_stories_updated", handleStoriesUpdated);
+    return () => window.removeEventListener("ficforge_stories_updated", handleStoriesUpdated);
+  }, [storySlugParam]);
 
   const handleDeleteExistingChapter = (chapterSlug: string, chapterTitle: string) => {
     if (!selectedStory) return;
