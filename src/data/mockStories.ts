@@ -25,7 +25,7 @@ export interface StoryData {
   fandom?: string;
   genres: string[];
   rating: "GENERAL" | "TEEN" | "MATURE" | "EXPLICIT";
-  status: "ONGOING" | "COMPLETED" | "HIATUS";
+  status: "ONGOING" | "COMPLETED" | "HIATUS" | "DRAFT";
   author: {
     name: string;
     username: string;
