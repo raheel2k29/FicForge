@@ -1031,67 +1031,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/10 pb-6">
-                <div>
-                  <span className="text-xs font-mono font-bold tracking-widest uppercase text-red-400 bg-red-500/10 border border-red-500/30 px-3 py-1 rounded-full">
-                    PHASE 4: LIVE GOVERNANCE SYSTEM
-                  </span>
-                  <h2 className="text-2xl sm:text-3xl font-black text-white mt-2">
-                    Executive Control & Infrastructure Status
-                  </h2>
-                  <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
-                    High-level architectural oversight connecting live PostgreSQL Neon records, moderation actions, and user permissions.
-                  </p>
-                </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3 text-right">
-                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">DB Health Status</span>
-                    <strong className="text-sm font-black text-white">HEALTHY • 100% ONLINE</strong>
-                  </div>
-                </div>
-              </div>
-
-              {/* Infrastructure Details Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6">
-                <div className="rounded-2xl border border-white/10 bg-[#020617]/70 p-5 space-y-2">
-                  <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
-                    <Database className="h-4 w-4" /> Neon PostgreSQL Instance
-                  </div>
-                  <p className="text-xs text-slate-300">
-                    Host: <code className="text-amber-300 font-mono text-[11px]">ep-soft-voice-a55qfxm7-pooler.us-east-2.aws.neon.tech</code>
-                  </p>
-                  <p className="text-[11px] text-slate-400">
-                    Connection Pooling: Active via PgBouncer. Measured query ping: <strong className="text-emerald-400">{telemetry?.latencyMs || 22}ms</strong>.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-[#020617]/70 p-5 space-y-2">
-                  <div className="flex items-center gap-2 text-purple-400 font-bold text-xs uppercase tracking-wider">
-                    <ShieldCheck className="h-4 w-4" /> Cryptographic Session Guard
-                  </div>
-                  <p className="text-xs text-slate-300">
-                    Staff Identity Token: <code className="text-purple-300 font-mono text-[11px]">ficforge_session (HS256)</code>
-                  </p>
-                  <p className="text-[11px] text-slate-400">
-                    Protected by Next.js Server Proxy Middleware with zero client redirect loops.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-white/10 bg-[#020617]/70 p-5 space-y-2">
-                  <div className="flex items-center gap-2 text-orange-400 font-bold text-xs uppercase tracking-wider">
-                    <Sparkles className="h-4 w-4" /> Content Compliance Engine
-                  </div>
-                  <p className="text-xs text-slate-300">
-                    Fanfiction Safe Harbor: <span className="text-emerald-400 font-bold">100% Free Hard-Locked</span>
-                  </p>
-                  <p className="text-[11px] text-slate-400">
-                    Explicit (18+) stories automatically enforce Age Verification Gateway and PayPal compliance blocks.
-                  </p>
-                </div>
-              </div>
-            </div>
 
             {/* Quick Action Matrix */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
