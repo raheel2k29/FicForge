@@ -79,12 +79,16 @@ export default function AdminDashboardPage() {
   const [telemetry, setTelemetry] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Tab State: overview, stories, users, spotlights, compliance, finance
-  const [activeTab, setActiveTab] = useState<"overview" | "stories" | "users" | "spotlights" | "compliance" | "finance">("overview");
+  // Tab State: overview, stories, users, spotlights, compliance, finance, moderators
+  const [activeTab, setActiveTab] = useState<"overview" | "stories" | "users" | "spotlights" | "compliance" | "finance" | "moderators">("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  // Moderator Appointment State
+  const [selectedCandidateId, setSelectedCandidateId] = useState("");
+  const [moderatorDuty, setModeratorDuty] = useState("Content & Story Moderation");
 
   // Inspection Drawer State
   const [inspectedStory, setInspectedStory] = useState<any | null>(null);
@@ -273,6 +277,66 @@ export default function AdminDashboardPage() {
       setFeedback({ type: "error", message: err.message });
     }
     setTimeout(() => setFeedback(null), 4000);
+  };
+
+  // 5.1 APPOINT MODERATOR
+  const handleAppointModerator = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedCandidateId) return;
+
+    try {
+      const res = await fetch("/api/admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "UPDATE_USER_ROLE",
+          userId: selectedCandidateId,
+          role: "MODERATOR",
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUsers((prev) =>
+          prev.map((u) => (u.id === selectedCandidateId ? { ...u, role: "MODERATOR" } : u))
+        );
+        setSelectedCandidateId("");
+        setFeedback({ type: "success", message: data.message || "User successfully appointed as Platform Moderator." });
+      } else {
+        setFeedback({ type: "error", message: data.message });
+      }
+    } catch (err: any) {
+      setFeedback({ type: "error", message: err.message });
+    }
+    setTimeout(() => setFeedback(null), 4000);
+  };
+
+  // 5.2 REVOKE MODERATOR
+  const handleRevokeModerator = async (userId: string, userName: string) => {
+    if (window.confirm(`Revoke moderator privileges from "${userName}" and return them to standard User?`)) {
+      try {
+        const res = await fetch("/api/admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "UPDATE_USER_ROLE",
+            userId,
+            role: "USER",
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setUsers((prev) =>
+            prev.map((u) => (u.id === userId ? { ...u, role: "USER" } : u))
+          );
+          setFeedback({ type: "success", message: `Moderator privileges revoked for ${userName}.` });
+        } else {
+          setFeedback({ type: "error", message: data.message });
+        }
+      } catch (err: any) {
+        setFeedback({ type: "error", message: err.message });
+      }
+      setTimeout(() => setFeedback(null), 4000);
+    }
   };
 
   // 6. USER ROSTER: TOGGLE VERIFIED
@@ -599,7 +663,7 @@ export default function AdminDashboardPage() {
                 >
                   <div className="flex items-center gap-2.5">
                     <Users className="h-4 w-4 shrink-0" />
-                    <span>4.3 Users & RBAC</span>
+                    <span>4.3 User Directory</span>
                   </div>
                   <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
                     activeTab === "users" ? "bg-white/20 text-white" : "bg-white/10 text-slate-300"
@@ -677,6 +741,26 @@ export default function AdminDashboardPage() {
                     activeTab === "finance" ? "bg-red-700/60 text-white" : "text-emerald-400 font-bold"
                   }`}>
                     50% Cut
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab("moderators"); setSidebarOpen(false); }}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "moderators"
+                      ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <UserCheck className="h-4 w-4 shrink-0" />
+                    <span>4.7 Staff & Moderators</span>
+                  </div>
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
+                    activeTab === "moderators" ? "bg-white/20 text-white" : "bg-indigo-500/20 text-indigo-300"
+                  }`}>
+                    {users.filter((u) => u.role === "MODERATOR" || u.role === "SUPER_ADMIN").length} Staff
                   </span>
                 </button>
               </div>
@@ -767,19 +851,21 @@ export default function AdminDashboardPage() {
               <span className="text-white font-bold uppercase tracking-wider">
                 {activeTab === "overview" && "4.1 System Overview & Telemetry"}
                 {activeTab === "stories" && "4.2 Content Moderation"}
-                {activeTab === "users" && "4.3 Users & RBAC"}
+                {activeTab === "users" && "4.3 User Directory"}
                 {activeTab === "spotlights" && "4.4 Spotlight Command Center"}
                 {activeTab === "compliance" && "4.5 DMCA Safe Harbor"}
                 {activeTab === "finance" && "4.6 Financial Audit Desk"}
+                {activeTab === "moderators" && "4.7 Staff & Moderation Governance"}
               </span>
             </div>
             <h2 className="text-xl font-black text-white tracking-tight mt-0.5">
               {activeTab === "overview" && "Executive Telemetry & Infrastructure Control"}
               {activeTab === "stories" && "Published Manuscripts & Moderation Audit"}
-              {activeTab === "users" && "Universal User Roster & Role Permissions"}
+              {activeTab === "users" && "Universal User Roster & Directory"}
               {activeTab === "spotlights" && "Creator Spotlight Promotions Command"}
               {activeTab === "compliance" && "DMCA Safe Harbor & Dispute Clearinghouse"}
               {activeTab === "finance" && "Financial Audit Desk & Platform Splits"}
+              {activeTab === "moderators" && "Staff Team & Appointed Platform Moderators"}
             </h2>
           </div>
 
@@ -1187,15 +1273,15 @@ export default function AdminDashboardPage() {
         )}
 
         {/* ========================================================= */}
-        {/* TAB 3: 4.3 USER ROSTER & ROLE-BASED ACCESS CONTROL (RBAC) */}
+        {/* TAB 3: 4.3 USER DIRECTORY & ROSTER                        */}
         {/* ========================================================= */}
         {activeTab === "users" && (
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-black text-white">User Directory & Role Governance</h2>
+                <h2 className="text-xl font-black text-white">Universal User Directory</h2>
                 <p className="text-xs text-slate-400">
-                  Universal User accounts registered in Neon PostgreSQL. Elevate privileges or adjust verification flags.
+                  Universal User accounts registered in Neon PostgreSQL. Every account can both read and write stories.
                 </p>
               </div>
 
@@ -1211,6 +1297,25 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
+            {/* Staff Governance Quick Link */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl border border-indigo-500/30 bg-indigo-950/20 text-xs">
+              <div className="flex items-center gap-2.5 text-indigo-200">
+                <UserCheck className="h-4 w-4 text-indigo-400 shrink-0" />
+                <span>
+                  Staff & Moderator permissions are strictly isolated for security. To appoint or manage moderators, visit the dedicated{" "}
+                  <strong className="text-white">Staff & Moderators</strong> console.
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveTab("moderators")}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-xs font-bold text-indigo-200 transition-all cursor-pointer self-start sm:self-auto shrink-0"
+              >
+                <span>Staff & Moderators</span>
+                <ArrowRight className="h-3 w-3" />
+              </button>
+            </div>
+
             <div className="rounded-2xl border border-white/10 bg-slate-900/80 overflow-hidden shadow-2xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -1218,7 +1323,7 @@ export default function AdminDashboardPage() {
                     <tr className="border-b border-white/10 text-[11px] font-black uppercase tracking-wider text-slate-400 bg-slate-950/60">
                       <th className="py-3 px-4">User</th>
                       <th className="py-3 px-4">Email</th>
-                      <th className="py-3 px-4">Role (RBAC Assignment)</th>
+                      <th className="py-3 px-4">Role / Account Type</th>
                       <th className="py-3 px-4">Verified</th>
                       <th className="py-3 px-4">Stories Authored</th>
                       <th className="py-3 px-4">Sparks Balance</th>
@@ -1244,30 +1349,32 @@ export default function AdminDashboardPage() {
 
                         <td className="py-3.5 px-4 font-mono text-slate-300">{u.email}</td>
 
-                        {/* Role Elevation Selector */}
+                        {/* Read-Only Account Role Badge */}
                         <td className="py-3.5 px-4">
-                          <select
-                            value={u.role === "READER" || u.role === "CREATOR" ? "USER" : u.role}
-                            onChange={(e) => handleUpdateUserRole(u.id, e.target.value)}
-                            style={{ colorScheme: "dark" }}
-                            className={`h-8 rounded-lg border text-[11px] font-bold px-2.5 outline-none cursor-pointer transition-all ${
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${
                               u.role === "SUPER_ADMIN"
-                                ? "border-red-500/50 text-red-300 bg-red-950/40"
+                                ? "border-red-500/40 text-red-300 bg-red-950/40"
                                 : u.role === "MODERATOR"
-                                ? "border-indigo-500/50 text-indigo-300 bg-indigo-950/40"
-                                : "border-white/15 text-slate-200 bg-slate-900/90 hover:border-white/30"
+                                ? "border-indigo-500/40 text-indigo-300 bg-indigo-950/40"
+                                : "border-white/10 text-slate-300 bg-slate-800/80"
                             }`}
                           >
-                            <option value="USER" className="bg-[#0A1020] text-slate-200">
-                              USER (Universal Account)
-                            </option>
-                            <option value="MODERATOR" className="bg-[#0A1020] text-indigo-300">
-                              MODERATOR (Staff)
-                            </option>
-                            <option value="SUPER_ADMIN" className="bg-[#0A1020] text-red-300">
-                              SUPER_ADMIN (Staff)
-                            </option>
-                          </select>
+                            <span
+                              className={`h-1.5 w-1.5 rounded-full ${
+                                u.role === "SUPER_ADMIN"
+                                  ? "bg-red-400"
+                                  : u.role === "MODERATOR"
+                                  ? "bg-indigo-400"
+                                  : "bg-emerald-400"
+                              }`}
+                            />
+                            {u.role === "SUPER_ADMIN"
+                              ? "Super Admin"
+                              : u.role === "MODERATOR"
+                              ? "Moderator"
+                              : "User (Universal)"}
+                          </span>
                         </td>
 
                         {/* Verified Badge Toggle */}
@@ -1679,6 +1786,210 @@ export default function AdminDashboardPage() {
               <span className="text-xs font-mono font-bold text-indigo-300 border border-indigo-500/40 bg-indigo-500/10 px-3 py-1.5 rounded-xl">
                 Ready for Phase 5 Connection
               </span>
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================= */}
+        {/* TAB 7: 4.7 STAFF & MODERATION GOVERNANCE                  */}
+        {/* ========================================================= */}
+        {activeTab === "moderators" && (
+          <div className="space-y-6">
+            {/* Header & Role Overview */}
+            <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/10 pb-6">
+                <div>
+                  <span className="text-xs font-mono font-bold tracking-widest uppercase text-indigo-400 bg-indigo-500/10 border border-indigo-500/30 px-3 py-1 rounded-full">
+                    SECURITY & ACCESS GOVERNANCE
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-black text-white mt-2">
+                    Staff & Moderation Team Roster
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
+                    Appoint verified community moderators to review explicit stories, inspect flagged manuscripts, and handle copyright disputes. Staff permissions are strictly audited.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="rounded-2xl border border-indigo-500/30 bg-indigo-950/30 px-4 py-3 text-center">
+                    <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider block">Active Moderators</span>
+                    <strong className="text-xl font-black text-white">
+                      {users.filter((u) => u.role === "MODERATOR").length}
+                    </strong>
+                  </div>
+                  <div className="rounded-2xl border border-red-500/30 bg-red-950/30 px-4 py-3 text-center">
+                    <span className="text-[10px] font-bold text-red-400 uppercase tracking-wider block">Super Admins</span>
+                    <strong className="text-xl font-black text-white">
+                      {users.filter((u) => u.role === "SUPER_ADMIN").length}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Form: Appoint New Moderator */}
+              <div className="pt-6">
+                <h3 className="text-base font-black text-white mb-2 flex items-center gap-2">
+                  <UserCheck className="h-5 w-5 text-indigo-400" />
+                  Appoint a Community Moderator
+                </h3>
+                <p className="text-xs text-slate-400 mb-4 max-w-2xl leading-relaxed">
+                  Select an eligible registered user to elevate to Moderator. Moderators gain access to the Explicit Spotlight Queue, chapter moderation drawer, and DMCA disputes. They cannot alter platform revenue splits or elevate users to Super Admin.
+                </p>
+
+                <form onSubmit={handleAppointModerator} className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                  <div className="md:col-span-6">
+                    <label className="block text-[11px] font-black uppercase tracking-wider text-slate-300 mb-1.5">
+                      Select Registered User
+                    </label>
+                    <select
+                      value={selectedCandidateId}
+                      onChange={(e) => setSelectedCandidateId(e.target.value)}
+                      required
+                      style={{ colorScheme: "dark" }}
+                      className="w-full h-11 rounded-xl border border-white/15 bg-slate-950 px-3 text-xs font-bold text-white outline-none focus:border-indigo-500 transition-colors"
+                    >
+                      <option value="" className="bg-[#0A1020] text-slate-400">
+                        -- Choose a Registered User ({users.filter((u) => u.role !== "MODERATOR" && u.role !== "SUPER_ADMIN").length} Available) --
+                      </option>
+                      {users
+                        .filter((u) => u.role !== "MODERATOR" && u.role !== "SUPER_ADMIN")
+                        .map((u) => (
+                          <option key={u.id} value={u.id} className="bg-[#0A1020] text-slate-200">
+                            {u.name} (@{u.username}) • {u.email}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+
+                  <div className="md:col-span-4">
+                    <label className="block text-[11px] font-black uppercase tracking-wider text-slate-300 mb-1.5">
+                      Primary Duty & Designation
+                    </label>
+                    <select
+                      value={moderatorDuty}
+                      onChange={(e) => setModeratorDuty(e.target.value)}
+                      style={{ colorScheme: "dark" }}
+                      className="w-full h-11 rounded-xl border border-white/15 bg-slate-950 px-3 text-xs font-bold text-white outline-none focus:border-indigo-500 transition-colors"
+                    >
+                      <option value="Content & Story Moderation" className="bg-[#0A1020] text-slate-200">
+                        Content & Explicit Story Moderation
+                      </option>
+                      <option value="DMCA & Copyright Compliance" className="bg-[#0A1020] text-slate-200">
+                        DMCA & Copyright Compliance
+                      </option>
+                      <option value="Community Safety & Trust" className="bg-[#0A1020] text-slate-200">
+                        Community Safety & Trust
+                      </option>
+                      <option value="General Platform Moderator" className="bg-[#0A1020] text-slate-200">
+                        General Platform Moderator
+                      </option>
+                    </select>
+                  </div>
+
+                  <div className="md:col-span-2 flex items-end">
+                    <button
+                      type="submit"
+                      disabled={!selectedCandidateId}
+                      className="w-full h-11 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-black text-white shadow-lg shadow-indigo-950/50 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <UserCheck className="h-4 w-4" />
+                      Appoint
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            {/* Active Staff & Moderation Team Table */}
+            <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 shadow-2xl space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+                <div>
+                  <h3 className="text-lg font-black text-white">Active Staff & Moderation Team</h3>
+                  <p className="text-xs text-slate-400">
+                    Personnel with elevated administrative or moderation privileges on FicForge.
+                  </p>
+                </div>
+                <span className="text-xs font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-3 py-1 rounded-full self-start sm:self-auto">
+                  {users.filter((u) => u.role === "MODERATOR" || u.role === "SUPER_ADMIN").length} Staff Members
+                </span>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-white/10 text-[11px] font-black uppercase tracking-wider text-slate-400 bg-slate-950/60">
+                      <th className="py-3 px-4">Staff Member</th>
+                      <th className="py-3 px-4">Email</th>
+                      <th className="py-3 px-4">Role / Scope</th>
+                      <th className="py-3 px-4">Access Level</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-xs">
+                    {users
+                      .filter((u) => u.role === "MODERATOR" || u.role === "SUPER_ADMIN")
+                      .map((u) => (
+                        <tr key={u.id} className="hover:bg-white/5 transition-colors">
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={u.avatarUrl}
+                                alt={u.name}
+                                className="h-9 w-9 rounded-full object-cover border border-white/15"
+                              />
+                              <div>
+                                <strong className="text-sm font-bold text-white block">{u.name}</strong>
+                                <span className="text-[11px] text-slate-400 font-mono">@{u.username}</span>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td className="py-3.5 px-4 font-mono text-slate-300">{u.email}</td>
+
+                          <td className="py-3.5 px-4">
+                            <span
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${
+                                u.role === "SUPER_ADMIN"
+                                  ? "border-red-500/40 text-red-300 bg-red-950/40"
+                                  : "border-indigo-500/40 text-indigo-300 bg-indigo-950/40"
+                              }`}
+                            >
+                              <span
+                                className={`h-1.5 w-1.5 rounded-full ${
+                                  u.role === "SUPER_ADMIN" ? "bg-red-400" : "bg-indigo-400"
+                                }`}
+                              />
+                              {u.role === "SUPER_ADMIN" ? "SUPER_ADMIN (Staff)" : "MODERATOR"}
+                            </span>
+                          </td>
+
+                          <td className="py-3.5 px-4 text-[11px] text-slate-400">
+                            {u.role === "SUPER_ADMIN"
+                              ? "Full Platform Operations, RBAC & Financial Control"
+                              : "Content Moderation, Spotlight Queue & DMCA Desk"}
+                          </td>
+
+                          <td className="py-3.5 px-4 text-right">
+                            {u.role === "MODERATOR" ? (
+                              <button
+                                type="button"
+                                onClick={() => handleRevokeModerator(u.id, u.name)}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-xs font-bold text-rose-300 transition-all cursor-pointer"
+                              >
+                                <UserX className="h-3.5 w-3.5" />
+                                <span>Revoke Moderator</span>
+                              </button>
+                            ) : (
+                              <span className="text-[10px] font-mono text-slate-500 border border-white/5 bg-white/5 px-2.5 py-1 rounded-lg">
+                                Protected Staff
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
