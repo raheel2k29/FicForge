@@ -1,19 +1,21 @@
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Creator Earnings — FicForge",
-  description: "Creator Earnings on FicForge — Where Stories Are Forged",
-};
+import WriterAuthGate from "@/components/WriterAuthGate";
 
 const rawHtml = "<section class=\"ff-tool-page\">\n  <div class=\"ff-tool-topbar\">\n    <div>\n      <span>CREATOR TOOLS</span>\n      <h1>Creator Earnings</h1>\n      <p>\n        Track Sparks, creator balance, payout progress, support activity, and monetization status from one earnings hub.\n      </p>\n    </div>\n\n    <a href=\"/my-stories/\">← Return to My Stories</a>\n  </div>\n\n  <div class=\"ff-tool-grid\">\n    <div class=\"ff-tool-card\">\n      <strong>Sparks Balance</strong>\n      <p>View Sparks received from reader support, future Fast Pass activity, and creator monetization tools.</p>\n    </div>\n\n    <div class=\"ff-tool-card\">\n      <strong>Payout Progress</strong>\n      <p>Track progress toward the creator payout threshold once FicForge payouts are connected.</p>\n    </div>\n\n    <div class=\"ff-tool-card\">\n      <strong>Support Activity</strong>\n      <p>Review creator support, premium reader activity, and earnings-related updates in one place.</p>\n    </div>\n  </div>\n\n  <div class=\"ff-tool-panel\">\n    <span>EARNINGS STATUS</span>\n    <h2>Creator earnings are being prepared.</h2>\n    <p>\n      FicForge’s earnings system will eventually track Sparks, creator balances, payout eligibility, payout dates, and payment methods. For now, this page is prepared as the future creator earnings hub.\n    </p>\n\n    <div class=\"ff-earnings-progress\">\n      <div class=\"ff-earnings-row\">\n        <strong>Current Balance</strong>\n        <span>0 Sparks</span>\n      </div>\n\n      <div class=\"ff-earnings-row\">\n        <strong>Payout Threshold</strong>\n        <span>5,000 Sparks / $50</span>\n      </div>\n\n      <div class=\"ff-earnings-row\">\n        <strong>Payout Schedule</strong>\n        <span>1st and 15th</span>\n      </div>\n\n      <div class=\"ff-earnings-row\">\n        <strong>Status</strong>\n        <span>Not connected yet</span>\n      </div>\n    </div>\n  </div>\n</section>\n<div class=\"ff-withdraw-action\">\n  <a href=\"/withdraw-funds/\">Request Withdrawal</a>\n  <p>\n    Withdrawals will become available once creator payouts are connected. Creators must meet the payout threshold before requesting payment.\n  </p>\n</div>\n\n<style>\n.ff-tool-page {\n  width: 100%;\n  max-width: 1180px;\n  margin: 0 auto;\n  color: #FFFFFF;\n}\n\n.ff-tool-topbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 28px;\n  margin-bottom: 28px;\n}\n\n.ff-tool-topbar span,\n.ff-tool-panel span {\n  display: inline-flex;\n  color: #F97316;\n  background: rgba(249, 115, 22, 0.12);\n  border: 1px solid rgba(249, 115, 22, 0.28);\n  border-radius: 999px;\n  padding: 8px 14px;\n  margin-bottom: 16px;\n  font-size: 13px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n}\n\n.ff-tool-topbar h1 {\n  color: #FFFFFF;\n  font-size: 54px;\n  line-height: 1.05;\n  margin: 0 0 14px 0;\n  font-weight: 900;\n  letter-spacing: -0.04em;\n}\n\n.ff-tool-topbar p {\n  color: #CBD5E1;\n  font-size: 17px;\n  line-height: 1.65;\n  max-width: 760px;\n  margin: 0;\n}\n\n.ff-tool-topbar a {\n  color: #FFFFFF !important;\n  text-decoration: none !important;\n  background: rgba(15, 23, 42, 0.86);\n  border: 1px solid rgba(255, 255, 255, 0.14);\n  border-radius: 10px;\n  padding: 13px 18px;\n  font-size: 14px;\n  font-weight: 900;\n  white-space: nowrap;\n}\n\n.ff-tool-grid {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 14px;\n  margin-bottom: 24px;\n}\n\n.ff-tool-card,\n.ff-tool-panel {\n  background: rgba(15, 23, 42, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.11);\n  border-radius: 18px;\n  padding: 22px;\n}\n\n.ff-tool-card strong {\n  display: block;\n  color: #FFFFFF;\n  font-size: 18px;\n  margin-bottom: 8px;\n}\n\n.ff-tool-card p,\n.ff-tool-panel p {\n  color: #94A3B8;\n  font-size: 14px;\n  line-height: 1.65;\n  margin: 0;\n}\n\n.ff-tool-panel h2 {\n  color: #FFFFFF;\n  font-size: 30px;\n  margin: 0 0 10px 0;\n  font-weight: 900;\n}\n\n.ff-earnings-progress {\n  margin-top: 22px;\n  display: grid;\n  gap: 12px;\n}\n\n.ff-earnings-row {\n  display: flex;\n  justify-content: space-between;\n  gap: 18px;\n  padding: 15px 16px;\n  border-radius: 12px;\n  background: rgba(2, 6, 23, 0.58);\n  border: 1px solid rgba(255, 255, 255, 0.10);\n}\n\n.ff-earnings-row strong {\n  color: #FFFFFF;\n  font-size: 14px;\n}\n\n.ff-earnings-row span {\n  color: #CBD5E1;\n  font-size: 14px;\n  font-weight: 800;\n  background: transparent;\n  border: 0;\n  padding: 0;\n  margin: 0;\n  letter-spacing: normal;\n}\n\n@media (max-width: 900px) {\n  .ff-tool-topbar {\n    flex-direction: column;\n  }\n\n  .ff-tool-grid {\n    grid-template-columns: 1fr;\n  }\n}\n\n@media (max-width: 767px) {\n  .ff-tool-topbar h1 {\n    font-size: 38px;\n  }\n\n  .ff-tool-topbar a {\n    width: 100%;\n    text-align: center;\n  }\n\n  .ff-earnings-row {\n    flex-direction: column;\n    gap: 6px;\n  }\n}\n</style>\n";
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
-      <div
-        className="max-w-[1180px] mx-auto"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
-    </div>
+    <WriterAuthGate
+      title="Sign In to View Creator Earnings"
+      description="Sign in to your FicForge author account to track your Sparks earnings, payout thresholds, and reader support activity."
+    >
+      <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
+        <div
+          className="max-w-[1180px] mx-auto"
+          dangerouslySetInnerHTML={{ __html: rawHtml }}
+        />
+      </div>
+    </WriterAuthGate>
   );
 }

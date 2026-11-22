@@ -1,19 +1,21 @@
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Withdraw Funds — FicForge",
-  description: "Withdraw Funds on FicForge — Where Stories Are Forged",
-};
+import WriterAuthGate from "@/components/WriterAuthGate";
 
 const rawHtml = "<section class=\"ff-withdraw-page\">\n  <div class=\"ff-withdraw-topbar\">\n    <div>\n      <span>CREATOR PAYOUTS</span>\n      <h1>Withdraw Funds</h1>\n      <p>\n        Request creator payouts once your FicForge earnings meet the minimum payout threshold.\n      </p>\n    </div>\n\n    <a href=\"/creator-earnings/\">← Return to Creator Earnings</a>\n  </div>\n\n  <div class=\"ff-withdraw-grid\">\n    <div class=\"ff-withdraw-card\">\n      <strong>Available Balance</strong>\n      <span>0 Sparks</span>\n      <p>Your available creator balance will appear here once earnings are connected.</p>\n    </div>\n\n    <div class=\"ff-withdraw-card\">\n      <strong>Payout Threshold</strong>\n      <span>5,000 Sparks / $50</span>\n      <p>Creators must reach the payout threshold before requesting a withdrawal.</p>\n    </div>\n\n    <div class=\"ff-withdraw-card\">\n      <strong>Payout Schedule</strong>\n      <span>1st and 15th</span>\n      <p>Approved creator payouts are planned for semi-monthly processing.</p>\n    </div>\n  </div>\n\n  <div class=\"ff-withdraw-panel\">\n    <span>WITHDRAWAL STATUS</span>\n    <h2>Withdrawals are being prepared.</h2>\n    <p>\n      FicForge’s creator payout system is not connected yet. This page is prepared for future payout requests through PayPal, Stripe Connect, or direct/bank transfer once creator monetization is fully active.\n    </p>\n\n    <div class=\"ff-withdraw-form-preview\">\n      <div class=\"ff-withdraw-field\">\n        <label>Payout Method</label>\n        <div class=\"ff-disabled-input\">PayPal, Stripe Connect, or Bank Transfer</div>\n      </div>\n\n      <div class=\"ff-withdraw-field\">\n        <label>Payout Account</label>\n        <div class=\"ff-disabled-input\">Payment email or payout account details</div>\n      </div>\n\n      <div class=\"ff-withdraw-field\">\n        <label>Requested Amount</label>\n        <div class=\"ff-disabled-input\">Available after threshold is reached</div>\n      </div>\n\n      <button class=\"ff-disabled-button\" type=\"button\">Request Withdrawal — Not Available Yet</button>\n    </div>\n\n    <p class=\"ff-withdraw-note\">\n      Creators should only request withdrawals after reaching the payout threshold. Final payout methods, tax requirements, and processing rules will be added before creator earnings go live.\n    </p>\n  </div>\n</section>\n\n<style>\n.ff-withdraw-page {\n  width: 100%;\n  max-width: 1180px;\n  margin: 0 auto;\n  color: #FFFFFF;\n}\n\n.ff-withdraw-topbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  gap: 28px;\n  margin-bottom: 28px;\n}\n\n.ff-withdraw-topbar span,\n.ff-withdraw-panel > span {\n  display: inline-flex;\n  color: #F97316;\n  background: rgba(249, 115, 22, 0.12);\n  border: 1px solid rgba(249, 115, 22, 0.28);\n  border-radius: 999px;\n  padding: 8px 14px;\n  margin-bottom: 16px;\n  font-size: 13px;\n  font-weight: 900;\n  letter-spacing: 0.08em;\n}\n\n.ff-withdraw-topbar h1 {\n  color: #FFFFFF;\n  font-size: 54px;\n  line-height: 1.05;\n  margin: 0 0 14px 0;\n  font-weight: 900;\n  letter-spacing: -0.04em;\n}\n\n.ff-withdraw-topbar p {\n  color: #CBD5E1;\n  font-size: 17px;\n  line-height: 1.65;\n  max-width: 760px;\n  margin: 0;\n}\n\n.ff-withdraw-topbar a {\n  color: #FFFFFF !important;\n  text-decoration: none !important;\n  background: rgba(15, 23, 42, 0.86);\n  border: 1px solid rgba(255, 255, 255, 0.14);\n  border-radius: 10px;\n  padding: 13px 18px;\n  font-size: 14px;\n  font-weight: 900;\n  white-space: nowrap;\n}\n\n.ff-withdraw-grid {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 14px;\n  margin-bottom: 24px;\n}\n\n.ff-withdraw-card,\n.ff-withdraw-panel {\n  background: rgba(15, 23, 42, 0.78);\n  border: 1px solid rgba(255, 255, 255, 0.11);\n  border-radius: 18px;\n  padding: 22px;\n}\n\n.ff-withdraw-card strong {\n  display: block;\n  color: #FFFFFF;\n  font-size: 18px;\n  margin-bottom: 8px;\n}\n\n.ff-withdraw-card span {\n  display: block;\n  color: #A78BFA;\n  font-size: 24px;\n  font-weight: 900;\n  margin-bottom: 8px;\n}\n\n.ff-withdraw-card p,\n.ff-withdraw-panel p {\n  color: #94A3B8;\n  font-size: 14px;\n  line-height: 1.65;\n  margin: 0;\n}\n\n.ff-withdraw-panel h2 {\n  color: #FFFFFF;\n  font-size: 30px;\n  margin: 0 0 10px 0;\n  font-weight: 900;\n}\n\n.ff-withdraw-form-preview {\n  margin-top: 22px;\n  display: grid;\n  gap: 14px;\n}\n\n.ff-withdraw-field label {\n  display: block;\n  color: #FFFFFF;\n  font-size: 14px;\n  font-weight: 900;\n  margin-bottom: 8px;\n}\n\n.ff-disabled-input {\n  color: #94A3B8;\n  background: rgba(2, 6, 23, 0.70);\n  border: 1px solid rgba(255, 255, 255, 0.12);\n  border-radius: 10px;\n  padding: 14px;\n  font-size: 14px;\n  font-weight: 700;\n}\n\n.ff-disabled-button {\n  color: #FFFFFF;\n  background: rgba(109, 93, 251, 0.38);\n  border: 1px solid rgba(109, 93, 251, 0.50);\n  border-radius: 10px;\n  padding: 14px 18px;\n  font-size: 14px;\n  font-weight: 900;\n  cursor: not-allowed;\n  opacity: 0.82;\n}\n\n.ff-withdraw-note {\n  margin-top: 18px !important;\n  padding-top: 18px;\n  border-top: 1px solid rgba(255, 255, 255, 0.10);\n}\n\n@media (max-width: 900px) {\n  .ff-withdraw-topbar {\n    flex-direction: column;\n  }\n\n  .ff-withdraw-grid {\n    grid-template-columns: 1fr;\n  }\n}\n\n@media (max-width: 767px) {\n  .ff-withdraw-topbar h1 {\n    font-size: 38px;\n  }\n\n  .ff-withdraw-topbar a {\n    width: 100%;\n    text-align: center;\n  }\n}\n</style>\n";
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
-      <div
-        className="max-w-[1180px] mx-auto"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
-    </div>
+    <WriterAuthGate
+      title="Sign In to Request Creator Withdrawals"
+      description="Sign in to your FicForge creator account to review payout balances and withdrawal eligibility."
+    >
+      <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
+        <div
+          className="max-w-[1180px] mx-auto"
+          dangerouslySetInnerHTML={{ __html: rawHtml }}
+        />
+      </div>
+    </WriterAuthGate>
   );
 }
