@@ -275,8 +275,9 @@ export async function POST(request: Request) {
 
     // Determine the actual author: Link to authenticated session user or story author
     let targetAuthorId = creator.id;
-    if (session?.userId) {
-      const u = await prisma.user.findUnique({ where: { id: session.userId } });
+    const sessionUserId = session?.id || session?.userId;
+    if (sessionUserId) {
+      const u = await prisma.user.findUnique({ where: { id: sessionUserId } });
       if (u) targetAuthorId = u.id;
     } else if (session?.username) {
       const u = await prisma.user.findFirst({ where: { username: session.username } });

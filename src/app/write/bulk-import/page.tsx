@@ -59,16 +59,40 @@ function BulkImportContent() {
   useEffect(() => {
     if (storySlugParam) {
       setSelectedStorySlug(storySlugParam);
+      // Fetch targeted story directly from PostgreSQL to guarantee zero desync
+      fetch(`/api/stories?slug=${encodeURIComponent(storySlugParam)}`, {
+        cache: "no-store",
+        credentials: "include",
+      })
+        .then((r) => r.json())
+        .then((d) => {
+          if (d?.story) {
+            setStories((prev) => {
+              if (prev.some((s) => s.slug === d.story.slug)) {
+                return prev.map((s) => (s.slug === d.story.slug ? d.story : s));
+              }
+              return [d.story, ...prev];
+            });
+            setSelectedStorySlug(d.story.slug);
+          }
+        })
+        .catch(console.warn);
     }
 
     const init = (all: Record<string, StoryData>) => {
       const u = getCurrentUser();
       const list = filterStoriesForAuthor(all, u);
+
+      // If storySlugParam is specified and exists in cache/store, always preserve it in the list
+      if (storySlugParam && all[storySlugParam] && !list.some((s) => s.slug === storySlugParam)) {
+        list.unshift(all[storySlugParam]);
+      }
+
       setStories(list);
 
-      if (storySlugParam && list.some((s) => s.slug === storySlugParam)) {
+      if (storySlugParam) {
         setSelectedStorySlug(storySlugParam);
-      } else if (!storySlugParam && list.length > 0 && (!selectedStorySlug || !list.some((s) => s.slug === selectedStorySlug))) {
+      } else if (list.length > 0 && (!selectedStorySlug || !list.some((s) => s.slug === selectedStorySlug))) {
         setSelectedStorySlug(list[0].slug);
       }
     };
@@ -490,6 +514,11 @@ function BulkImportContent() {
                 onChange={(e) => setSelectedStorySlug(e.target.value)}
                 className="h-11 rounded-xl border border-white/15 bg-[#020617] px-4 text-sm font-bold text-white outline-none focus:border-[#6D5DFB]"
               >
+                {selectedStorySlug && !stories.some((s) => s.slug === selectedStorySlug) && (
+                  <option value={selectedStorySlug}>
+                    {selectedStory?.title || selectedStorySlug} (Selected Story)
+                  </option>
+                )}
                 {stories.map((s) => (
                   <option key={s.slug} value={s.slug}>
                     {s.title} ({s.classification === "FANFICTION" ? "Fanfiction" : "Original"})

@@ -42,6 +42,7 @@ export default function NewStoryWizardPage() {
   const [uploadedFileName, setUploadedFileName] = useState<string>("");
   const [isDragging, setIsDragging] = useState(false);
   const [uploadError, setUploadError] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const processImageFile = (file: File) => {
@@ -168,14 +169,17 @@ export default function NewStoryWizardPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    if (!title.trim() || isSubmitting) return;
 
+    setIsSubmitting(true);
     const slug = title
       .toLowerCase()
       .trim()
       .replace(/[^\w\s-]/g, "")
       .replace(/[\s_-]+/g, "-")
       .replace(/^-+|-+$/g, "");
+
+    const currentUser = getCurrentUser();
 
     const newStory: StoryData = {
       id: `story-${Date.now()}`,
@@ -189,9 +193,10 @@ export default function NewStoryWizardPage() {
       rating,
       status,
       author: {
-        name: getCurrentUser()?.name || "Valerius Frost",
-        username: getCurrentUser()?.username || "valerius_f",
-        avatarUrl: getCurrentUser()?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+        id: currentUser?.id,
+        name: currentUser?.name || currentUser?.username || "Story Author",
+        username: currentUser?.username || "author",
+        avatarUrl: currentUser?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
         isVerified: true,
         bio: "Writing and building worlds on FicForge.",
       },
@@ -212,8 +217,13 @@ export default function NewStoryWizardPage() {
       chapters: [],
     };
 
-    await saveStory(newStory);
-    router.push(`/write/bulk-import?storySlug=${newStory.slug}`);
+    try {
+      await saveStory(newStory);
+    } catch (err) {
+      console.warn("Story save notice:", err);
+    }
+
+    router.push(`/write/bulk-import?storySlug=${encodeURIComponent(newStory.slug)}`);
   };
 
   return (
@@ -309,6 +319,11 @@ export default function NewStoryWizardPage() {
                     value={fandom}
                     onChange={(e) => setFandom(e.target.value)}
                     placeholder="e.g. Star Wars, Harry Potter, Percy Jackson..."
+                    autoComplete="off"
+                    data-lpignore="true"
+                    data-1p-ignore="true"
+                    data-form-type="other"
+                    spellCheck={false}
                     className="w-full h-11 rounded-xl border border-white/10 bg-[#020617] px-4 text-sm text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB]"
                   />
                   <div className="flex flex-wrap gap-1.5 pt-1">
@@ -339,6 +354,11 @@ export default function NewStoryWizardPage() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. The Obsidian Blade, Chronicles of the Frost..."
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-1p-ignore="true"
+                  data-form-type="other"
+                  spellCheck={false}
                   className="w-full h-12 rounded-xl border border-white/10 bg-[#020617] px-4 text-base font-bold text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB]"
                 />
               </div>
@@ -353,6 +373,11 @@ export default function NewStoryWizardPage() {
                   value={synopsis}
                   onChange={(e) => setSynopsis(e.target.value)}
                   placeholder="Give readers an exciting hook into your story, world, and characters..."
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-1p-ignore="true"
+                  data-form-type="other"
+                  spellCheck={false}
                   className="w-full rounded-xl border border-white/10 bg-[#020617] p-4 text-sm text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB] leading-relaxed"
                 />
               </div>
@@ -442,9 +467,17 @@ export default function NewStoryWizardPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full h-14 rounded-2xl bg-gradient-to-r from-[#6D5DFB] via-[#7C3AED] to-[#F97316] text-base font-black text-white shadow-xl shadow-indigo-600/30 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                disabled={isSubmitting || !title.trim()}
+                className="w-full h-14 rounded-2xl bg-gradient-to-r from-[#6D5DFB] via-[#7C3AED] to-[#F97316] text-base font-black text-white shadow-xl shadow-indigo-600/30 hover:opacity-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                Create Story & Proceed to Chapter Importer →
+                {isSubmitting ? (
+                  <>
+                    <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Forging Story & Syncing Database...
+                  </>
+                ) : (
+                  <>Create Story & Proceed to Chapter Importer →</>
+                )}
               </button>
             </div>
 

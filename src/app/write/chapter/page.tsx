@@ -58,8 +58,8 @@ function ChapterEditorContent() {
         const updatedList = filterStoriesForAuthor(serverStories, uNow);
         setStories(updatedList);
         setSelectedStorySlug((prev) => {
-          if (prev && updatedList.some((s) => s.slug === prev)) return prev;
           if (storySlugParam && updatedList.some((s) => s.slug === storySlugParam)) return storySlugParam;
+          if (prev && updatedList.some((s) => s.slug === prev)) return prev;
           return updatedList.length > 0 ? updatedList[0].slug : "";
         });
       }

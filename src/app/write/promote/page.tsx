@@ -67,7 +67,7 @@ function PromotionDashboardContent() {
       setCredits(getPromoCredits());
       setCampaigns(getAllSpotlightCampaigns());
 
-      if (storySlugParam && myStories.some((s) => s.slug === storySlugParam)) {
+      if (storySlugParam) {
         setSelectedStorySlug(storySlugParam);
       } else if (myStories.length > 0 && (!selectedStorySlug || !myStories.some((s) => s.slug === selectedStorySlug))) {
         setSelectedStorySlug(myStories[0].slug);
@@ -88,7 +88,7 @@ function PromotionDashboardContent() {
         const u = getCurrentUser();
         const storiesList = filterStoriesForAuthor(serverStories, u);
         setStories(storiesList);
-        if (storySlugParam && storiesList.some((s) => s.slug === storySlugParam)) {
+        if (storySlugParam) {
           setSelectedStorySlug(storySlugParam);
         } else if (storiesList.length > 0 && (!selectedStorySlug || !storiesList.some((s) => s.slug === selectedStorySlug))) {
           setSelectedStorySlug(storiesList[0].slug);
@@ -102,7 +102,7 @@ function PromotionDashboardContent() {
       window.removeEventListener("ficforge_spotlight_updated", load);
       window.removeEventListener("storage", load);
     };
-  }, [storySlugParam, selectedStorySlug]);
+  }, [storySlugParam]);
 
   const selectedStory = useMemo(() => {
     return stories.find((s) => s.slug === selectedStorySlug) || (stories.length > 0 ? stories[0] : null);

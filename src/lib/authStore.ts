@@ -144,11 +144,13 @@ export function canManageChapter(
 /**
  * Standard user login (Universal Account - Readers are Creators, Creators are Readers)
  */
-export function loginUser(email: string, name?: string): UserSession {
-  const username = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
+export function loginUser(email: string, usernameOrName?: string): UserSession {
+  const fallbackUsername = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "_");
+  const username = usernameOrName?.trim().replace(/\s+/g, "_") || fallbackUsername;
+  const name = usernameOrName?.trim() || username;
   const session: UserSession = {
     id: `user-${Date.now()}`,
-    name: name || username,
+    name,
     username,
     email,
     role: "USER",
