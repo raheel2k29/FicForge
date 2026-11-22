@@ -417,6 +417,20 @@ function PromotionDashboardContent() {
               </div>
 
               {/* Dynamic Eligibility & Cooldown Status Banner */}
+              {eligibility.status === "PENDING_APPROVAL" && (
+                <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs space-y-1.5">
+                  <div className="flex items-center gap-2 text-amber-400 font-extrabold text-sm">
+                    <Clock className="h-4 w-4" /> Awaiting Staff Moderator Approval
+                  </div>
+                  <p className="text-slate-300 leading-relaxed">
+                    This story is rated <strong className="text-rose-400">EXPLICIT (18+)</strong>. Per platform compliance guidelines, it is currently in the Admin Review Queue. It will be promoted to the homepage immediately once approved by a staff administrator.
+                  </p>
+                  <div className="pt-1 text-[11px] text-amber-300 font-mono">
+                    ⏳ Status: Pending Governance Verification
+                  </div>
+                </div>
+              )}
+
               {eligibility.status === "CURRENTLY_ACTIVE" && (
                 <div className="rounded-xl border border-amber-500/40 bg-amber-950/20 p-4 text-xs space-y-1.5">
                   <div className="flex items-center gap-2 text-amber-400 font-extrabold text-sm">
@@ -455,6 +469,18 @@ function PromotionDashboardContent() {
                 </div>
               )}
 
+              {/* Explicit Story Notice Banner */}
+              {selectedStory?.rating === "EXPLICIT" && eligibility.status !== "PENDING_APPROVAL" && (
+                <div className="rounded-xl border border-rose-500/40 bg-rose-950/25 p-4 text-xs space-y-1">
+                  <div className="flex items-center gap-2 text-rose-300 font-extrabold text-sm">
+                    <AlertTriangle className="h-4 w-4 text-rose-400" /> Explicit Content (18+) Moderation Requirement
+                  </div>
+                  <p className="text-slate-300 leading-relaxed">
+                    Because this story is marked as <strong className="text-rose-400">EXPLICIT</strong>, safety standards require administrative approval before homepage activation. Upon submitting, your credits will be held in escrow and the campaign will go live immediately once approved by platform staff.
+                  </p>
+                </div>
+              )}
+
               {/* Placement Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-xl border border-white/10 bg-slate-800/60 p-4">
@@ -475,7 +501,21 @@ function PromotionDashboardContent() {
               </div>
 
               {/* Submit Button Governed by Strict Eligibility */}
-              {eligibility.status === "CURRENTLY_ACTIVE" ? (
+              {eligibility.status === "PENDING_APPROVAL" ? (
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full h-12 rounded-xl border border-amber-500/40 bg-amber-500/10 text-sm font-bold text-amber-300 cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <Clock className="h-4 w-4" />
+                    Awaiting Moderator Approval (Explicit 18+)
+                  </button>
+                  <p className="text-center text-[11px] text-slate-400">
+                    This explicit story is currently queued in the Admin Moderation console.
+                  </p>
+                </div>
+              ) : eligibility.status === "CURRENTLY_ACTIVE" ? (
                 <div className="space-y-2">
                   <button
                     type="button"
@@ -514,10 +554,16 @@ function PromotionDashboardContent() {
               ) : credits >= creditsCost ? (
                 <button
                   type="submit"
-                  className="w-full h-12 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-[#F97316] text-sm font-black text-slate-950 shadow-xl shadow-orange-500/20 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className={`w-full h-12 rounded-xl text-sm font-black text-slate-950 shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    selectedStory?.rating === "EXPLICIT"
+                      ? "bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 shadow-orange-500/20 hover:opacity-95"
+                      : "bg-gradient-to-r from-amber-500 via-orange-500 to-[#F97316] shadow-orange-500/20 hover:opacity-95"
+                  }`}
                 >
                   <Sparkles className="h-4 w-4" />
-                  Redeem {creditsCost} Credits & Activate Spotlight ({selectedDays} {selectedDays === 1 ? "Day" : "Days"})
+                  {selectedStory?.rating === "EXPLICIT"
+                    ? `Submit for Admin Approval (${creditsCost} Credits · ${selectedDays}d)`
+                    : `Redeem ${creditsCost} Credits & Activate Spotlight (${selectedDays} ${selectedDays === 1 ? "Day" : "Days"})`}
                 </button>
               ) : (
                 <div className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-4 text-center space-y-2">
@@ -658,14 +704,26 @@ function PromotionDashboardContent() {
                       <td className="py-3 px-3">
                         <span
                           className={`rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase ${
-                            isActive
+                            c.status === "PENDING_APPROVAL"
+                              ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                              : c.status === "REJECTED"
+                              ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                              : isActive
                               ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
                               : isInCooldown
                               ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
                               : "bg-white/5 text-slate-400"
                           }`}
                         >
-                          {isActive ? "ACTIVE" : isInCooldown ? "IN COOLDOWN" : "EXPIRED"}
+                          {c.status === "PENDING_APPROVAL"
+                            ? "PENDING ADMIN APPROVAL"
+                            : c.status === "REJECTED"
+                            ? "REJECTED"
+                            : isActive
+                            ? "ACTIVE"
+                            : isInCooldown
+                            ? "IN COOLDOWN"
+                            : "EXPIRED"}
                         </span>
                       </td>
                       <td className="py-3 px-3 text-right">

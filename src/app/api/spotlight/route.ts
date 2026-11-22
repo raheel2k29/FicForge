@@ -21,9 +21,18 @@ export async function GET() {
     if (dbPromotions && dbPromotions.length > 0) {
       const now = Date.now();
       const campaigns = dbPromotions.map((p) => {
-        const startTs = p.startDate ? new Date(p.startDate).getTime() : now;
-        const endTs = p.endDate ? new Date(p.endDate).getTime() : now + 7 * 24 * 60 * 60 * 1000;
-        const isActuallyActive = p.status === "ACTIVE" && now < endTs;
+        const startTs = p.startDate ? new Date(p.startDate).getTime() : 0;
+        const endTs = p.endDate ? new Date(p.endDate).getTime() : 0;
+        const isActuallyActive = p.status === "ACTIVE" && startTs > 0 && now < endTs;
+
+        let status: "ACTIVE" | "EXPIRED" | "SCHEDULED" | "PENDING_APPROVAL" | "REJECTED" = "EXPIRED";
+        if (p.status === "PENDING_REVIEW") {
+          status = "PENDING_APPROVAL";
+        } else if (p.status === "REJECTED") {
+          status = "REJECTED";
+        } else if (p.status === "ACTIVE") {
+          status = isActuallyActive ? "ACTIVE" : "EXPIRED";
+        }
 
         return {
           id: p.id,
@@ -32,12 +41,14 @@ export async function GET() {
           coverImageUrl: p.story.coverImageUrl || "",
           authorName: p.story.author.profile?.displayName || p.story.author.username || "Valerius Frost",
           classification: p.story.classification,
-          startDate: p.startDate ? new Date(p.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "",
-          endDate: p.endDate ? new Date(p.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "",
+          rating: p.story.rating,
+          isExplicit: p.story.rating === "EXPLICIT",
+          startDate: p.status === "PENDING_REVIEW" ? "Pending Review" : (p.startDate ? new Date(p.startDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "TBD"),
+          endDate: p.status === "PENDING_REVIEW" ? "Pending Review" : (p.endDate ? new Date(p.endDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "TBD"),
           startTimestamp: startTs,
           endTimestamp: endTs,
-          cooldownTimestamp: endTs + 7 * 24 * 60 * 60 * 1000,
-          status: isActuallyActive ? "ACTIVE" : ("EXPIRED" as const),
+          cooldownTimestamp: endTs > 0 ? endTs + 7 * 24 * 60 * 60 * 1000 : 0,
+          status,
           impressions: p.impressions,
           clicks: p.clicks,
         };
@@ -146,6 +157,9 @@ export async function POST(request: Request) {
         });
       }
 
+      const isExplicit = story.rating === "EXPLICIT" || (mockStories[storySlug]?.rating === "EXPLICIT");
+      const promoStatus = isExplicit ? "PENDING_REVIEW" : "ACTIVE";
+
       const now = new Date();
       const end = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 
@@ -159,10 +173,10 @@ export async function POST(request: Request) {
         promotion = await prisma.spotlightPromotion.update({
           where: { id: existing.id },
           data: {
-            status: "ACTIVE",
+            status: promoStatus,
             creditsSpent: finalCredits,
-            startDate: now,
-            endDate: end,
+            startDate: isExplicit ? null : now,
+            endDate: isExplicit ? null : end,
             impressions: existing.impressions + 1,
           },
         });
@@ -173,9 +187,9 @@ export async function POST(request: Request) {
             storyId: story.id,
             userId: creator.id,
             creditsSpent: finalCredits,
-            status: "ACTIVE",
-            startDate: now,
-            endDate: end,
+            status: promoStatus,
+            startDate: isExplicit ? null : now,
+            endDate: isExplicit ? null : end,
             impressions: 1,
             clicks: 0,
           },
@@ -196,11 +210,89 @@ export async function POST(request: Request) {
         updatedCredits = nextCredits;
       }
 
+      const returnMsg = isExplicit
+        ? `This story is rated Explicit (18+). Per platform safety guidelines, it has been placed in the Admin Review Queue and will go live once verified by a moderator.`
+        : `Spotlight successfully activated for "${story.title}" in PostgreSQL for ${days} days (${finalCredits} credits redeemed)!`;
+
       return NextResponse.json({
         success: true,
-        message: `Spotlight successfully activated for "${story.title}" in PostgreSQL!`,
+        requiresApproval: isExplicit,
+        message: returnMsg,
         promotion,
         promoCredits: updatedCredits,
+      });
+    }
+
+    // 2. APPROVE SPOTLIGHT (ADMIN)
+    if (action === "approve") {
+      let target = await prisma.spotlightPromotion.findFirst({
+        where: {
+          OR: [
+            { id: campaignId || "" },
+            { story: { slug: campaignId || storySlug || "" } },
+            { storyId: campaignId || "" },
+          ],
+        },
+        include: { story: true },
+      });
+
+      const now = new Date();
+      const end = new Date(Date.now() + (Number(days) || 7) * 24 * 60 * 60 * 1000);
+
+      if (target) {
+        await prisma.spotlightPromotion.update({
+          where: { id: target.id },
+          data: {
+            status: "ACTIVE",
+            startDate: now,
+            endDate: end,
+          },
+        });
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: `Spotlight approved for "${target?.story.title || "story"}"! Campaign is now live on the homepage.`,
+      });
+    }
+
+    // 3. REJECT SPOTLIGHT (ADMIN)
+    if (action === "reject") {
+      let target = await prisma.spotlightPromotion.findFirst({
+        where: {
+          OR: [
+            { id: campaignId || "" },
+            { story: { slug: campaignId || storySlug || "" } },
+            { storyId: campaignId || "" },
+          ],
+        },
+        include: { story: true },
+      });
+
+      if (target) {
+        await prisma.spotlightPromotion.update({
+          where: { id: target.id },
+          data: {
+            status: "REJECTED",
+            endDate: new Date(),
+          },
+        });
+
+        // Refund promo credits to author
+        const membership = await prisma.platformMembership.findFirst({
+          where: { userId: target.userId },
+        });
+        if (membership) {
+          await prisma.platformMembership.update({
+            where: { id: membership.id },
+            data: { promoCreditsBalance: membership.promoCreditsBalance + target.creditsSpent },
+          });
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: "Explicit spotlight promotion request rejected. Promo credits refunded to author.",
       });
     }
 

@@ -12,7 +12,9 @@ export interface SpotlightCampaign {
   startTimestamp: number;
   endTimestamp: number;
   cooldownTimestamp: number;
-  status: "ACTIVE" | "EXPIRED" | "SCHEDULED";
+  status: "ACTIVE" | "EXPIRED" | "SCHEDULED" | "PENDING_APPROVAL" | "REJECTED";
+  rating?: string;
+  isExplicit?: boolean;
   impressions: number;
   clicks: number;
 }
@@ -123,6 +125,9 @@ export function activateServerSpotlight(storySlug: string, days: number = 1): { 
     };
   }
 
+  const isExplicit = story.rating === "EXPLICIT" || story.tags?.warnings?.some((w) => /explicit|18\+|nsfw/i.test(w));
+  const campaignStatus = isExplicit ? ("PENDING_APPROVAL" as const) : ("ACTIVE" as const);
+
   const startObj = new Date(now);
   const endObj = new Date(now + durationMs);
 
@@ -133,12 +138,14 @@ export function activateServerSpotlight(storySlug: string, days: number = 1): { 
     coverImageUrl: story.coverImageUrl,
     authorName: story.author?.name || "Author",
     classification: story.classification,
-    startDate: startObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-    endDate: endObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-    startTimestamp: now,
-    endTimestamp: now + durationMs,
-    cooldownTimestamp: now + durationMs + cooldownMs,
-    status: "ACTIVE",
+    startDate: isExplicit ? "Pending Review" : startObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+    endDate: isExplicit ? "Pending Review" : endObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+    startTimestamp: isExplicit ? 0 : now,
+    endTimestamp: isExplicit ? 0 : now + durationMs,
+    cooldownTimestamp: isExplicit ? 0 : now + durationMs + cooldownMs,
+    status: campaignStatus,
+    rating: story.rating,
+    isExplicit: Boolean(isExplicit),
     impressions: 1,
     clicks: 0,
   };
@@ -146,7 +153,52 @@ export function activateServerSpotlight(storySlug: string, days: number = 1): { 
   const otherCampaigns = store.spotlights.filter((c) => c.storySlug !== story.slug);
   store.spotlights = [newCampaign, ...otherCampaigns];
 
-  return { success: true, message: `Spotlight successfully launched for "${story.title}"!`, campaigns: store.spotlights };
+  const returnMessage = isExplicit
+    ? `Story "${story.title}" is rated Explicit (18+). It has been submitted for Admin Review and will appear on the homepage once approved.`
+    : `Spotlight successfully launched for "${story.title}"!`;
+
+  return { success: true, message: returnMessage, campaigns: store.spotlights };
+}
+
+export function approveServerSpotlight(campaignId: string, days: number = 7): SpotlightCampaign[] {
+  const store = getServerStore();
+  const now = Date.now();
+  const durationMs = days * 24 * 60 * 60 * 1000;
+  const startObj = new Date(now);
+  const endObj = new Date(now + durationMs);
+
+  store.spotlights = store.spotlights.map((c) => {
+    if (c.id === campaignId || c.storySlug === campaignId) {
+      return {
+        ...c,
+        status: "ACTIVE" as const,
+        startDate: startObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+        endDate: endObj.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+        startTimestamp: now,
+        endTimestamp: now + durationMs,
+        cooldownTimestamp: now + durationMs + SEVEN_DAYS_MS,
+      };
+    }
+    return c;
+  });
+
+  return store.spotlights;
+}
+
+export function rejectServerSpotlight(campaignId: string): SpotlightCampaign[] {
+  const store = getServerStore();
+  store.spotlights = store.spotlights.map((c) => {
+    if (c.id === campaignId || c.storySlug === campaignId) {
+      return {
+        ...c,
+        status: "REJECTED" as const,
+        endDate: "Rejected by Moderator",
+      };
+    }
+    return c;
+  });
+
+  return store.spotlights;
 }
 
 export function endServerSpotlight(campaignId: string): SpotlightCampaign[] {

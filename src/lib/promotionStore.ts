@@ -15,14 +15,16 @@ export interface SpotlightCampaign {
   startTimestamp: number;
   endTimestamp: number;
   cooldownTimestamp: number;
-  status: "ACTIVE" | "EXPIRED" | "SCHEDULED";
+  status: "ACTIVE" | "EXPIRED" | "SCHEDULED" | "PENDING_APPROVAL" | "REJECTED";
+  rating?: string;
+  isExplicit?: boolean;
   impressions: number;
   clicks: number;
 }
 
 export interface StorySpotlightStatus {
   isEligible: boolean;
-  status: "ELIGIBLE" | "CURRENTLY_ACTIVE" | "IN_COOLDOWN";
+  status: "ELIGIBLE" | "CURRENTLY_ACTIVE" | "IN_COOLDOWN" | "PENDING_APPROVAL";
   activeCampaign?: SpotlightCampaign;
   daysRemaining?: number;
   eligibleDate?: string;
@@ -181,6 +183,16 @@ export function getStorySpotlightEligibility(storySlug: string): StorySpotlightS
     };
   }
 
+  const pending = storyCampaigns.find((c) => c.status === "PENDING_APPROVAL");
+  if (pending) {
+    return {
+      isEligible: false,
+      status: "PENDING_APPROVAL",
+      activeCampaign: pending,
+      message: "This story is currently pending Admin Approval for Spotlight promotion.",
+    };
+  }
+
   const active = storyCampaigns.find((c) => c.status === "ACTIVE" && now < c.endTimestamp);
   if (active) {
     const daysLeft = Math.max(1, Math.ceil((active.endTimestamp - now) / (24 * 60 * 60 * 1000)));
@@ -254,10 +266,11 @@ export async function activateSpotlight(
     });
 
     if (res.ok) {
+      const data = await res.json();
       await syncSpotlightsWithServer();
       return {
         success: true,
-        message: `Spotlight successfully launched in PostgreSQL for "${story.title}" for ${days} days (${creditsCost} credits redeemed)!`,
+        message: data.message || `Spotlight successfully launched in PostgreSQL for "${story.title}" for ${days} days (${creditsCost} credits redeemed)!`,
       };
     }
   } catch (err) {
@@ -268,6 +281,53 @@ export async function activateSpotlight(
     success: false,
     message: "Failed to activate spotlight on server. Please try again.",
   };
+}
+
+/**
+ * Staff Admin: Approves a pending explicit spotlight campaign.
+ */
+export async function approveSpotlightCampaign(
+  campaignId: string,
+  days: number = 7
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await fetch("/api/spotlight", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "approve", campaignId, days }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      await syncSpotlightsWithServer();
+      return { success: true, message: data.message || "Spotlight campaign approved and now active on homepage!" };
+    }
+  } catch (err) {
+    console.error("Failed to approve spotlight:", err);
+  }
+  return { success: false, message: "Failed to approve campaign." };
+}
+
+/**
+ * Staff Admin: Rejects a pending explicit spotlight campaign.
+ */
+export async function rejectSpotlightCampaign(
+  campaignId: string
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const res = await fetch("/api/spotlight", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "reject", campaignId }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      await syncSpotlightsWithServer();
+      return { success: true, message: data.message || "Spotlight campaign rejected. Promo credits refunded." };
+    }
+  } catch (err) {
+    console.error("Failed to reject spotlight:", err);
+  }
+  return { success: false, message: "Failed to reject campaign." };
 }
 
 /**

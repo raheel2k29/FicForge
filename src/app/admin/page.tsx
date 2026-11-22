@@ -341,6 +341,44 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // 8.1 SPOTLIGHT: APPROVE EXPLICIT CAMPAIGN
+  const handleApproveCampaign = async (campaignId: string) => {
+    try {
+      const res = await fetch("/api/spotlight", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "approve", campaignId }),
+      });
+      const data = await res.json();
+      const updated = await syncSpotlightsWithServer();
+      setCampaigns(updated || getAllSpotlightCampaigns());
+      setFeedback({ type: "success", message: data.message || "Explicit spotlight approved and now live on homepage!" });
+      setTimeout(() => setFeedback(null), 3500);
+    } catch {
+      setFeedback({ type: "error", message: "Failed to approve campaign." });
+    }
+  };
+
+  // 8.2 SPOTLIGHT: REJECT EXPLICIT CAMPAIGN
+  const handleRejectCampaign = async (campaignId: string) => {
+    if (window.confirm("Reject this spotlight request and refund author promo credits?")) {
+      try {
+        const res = await fetch("/api/spotlight", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "reject", campaignId }),
+        });
+        const data = await res.json();
+        const updated = await syncSpotlightsWithServer();
+        setCampaigns(updated || getAllSpotlightCampaigns());
+        setFeedback({ type: "success", message: data.message || "Spotlight request rejected. Promo credits refunded." });
+        setTimeout(() => setFeedback(null), 3500);
+      } catch {
+        setFeedback({ type: "error", message: "Failed to reject campaign." });
+      }
+    }
+  };
+
   // 9. SPOTLIGHT: RESET COOLDOWNS
   const handleResetCooldowns = () => {
     resetTestCooldowns();
@@ -413,6 +451,7 @@ export default function AdminDashboardPage() {
   const totalWords = stories.reduce((acc, s) => acc + (s.stats?.words || 0), 0);
   const totalChapters = stories.reduce((acc, s) => acc + (s.chapters?.length || 0), 0);
   const activeSpotlightsCount = campaigns.filter((c) => c.status === "ACTIVE" && Date.now() < c.endTimestamp).length;
+  const pendingApprovalsCount = campaigns.filter((c) => c.status === "PENDING_APPROVAL").length;
 
   return (
     <div className="min-h-screen bg-[#030712] text-white flex flex-col lg:flex-row relative">
@@ -591,9 +630,13 @@ export default function AdminDashboardPage() {
                     <span>4.4 Spotlight Command</span>
                   </div>
                   <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
-                    activeTab === "spotlights" ? "bg-white/20 text-white" : "bg-amber-500/20 text-amber-300"
+                    activeTab === "spotlights"
+                      ? "bg-white/20 text-white"
+                      : pendingApprovalsCount > 0
+                      ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
+                      : "bg-amber-500/20 text-amber-300"
                   }`}>
-                    {activeSpotlightsCount} Live
+                    {pendingApprovalsCount > 0 ? `${pendingApprovalsCount} Queued` : `${activeSpotlightsCount} Live`}
                   </span>
                 </button>
 
@@ -1224,7 +1267,7 @@ export default function AdminDashboardPage() {
         {/* TAB 4: 4.4 CREATOR SPOTLIGHT COMMAND CENTER               */}
         {/* ========================================================= */}
         {activeTab === "spotlights" && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-black text-white">Creator Spotlight Promotions Center</h2>
@@ -1252,6 +1295,91 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
+            {/* Explicit Story Approval Moderation Queue */}
+            <div className="rounded-2xl border border-rose-500/30 bg-gradient-to-r from-rose-950/30 via-slate-900 to-slate-950 p-6 space-y-4 shadow-xl">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-rose-500/20 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-8 w-8 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shrink-0">
+                    <AlertTriangle className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-white flex items-center gap-2">
+                      Explicit (18+) Spotlight Moderation Queue
+                      <span className="text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded-full">
+                        {campaigns.filter((c) => c.status === "PENDING_APPROVAL").length} Pending
+                      </span>
+                    </h3>
+                    <p className="text-[11px] text-slate-400">
+                      Stories rated Explicit (18+) are held in escrow and require staff verification before entering public homepage rotation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {campaigns.filter((c) => c.status === "PENDING_APPROVAL").length === 0 ? (
+                <div className="text-center py-4 text-xs text-slate-400 flex items-center justify-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                  <span>No pending explicit spotlight requests. All promotions are verified.</span>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                  {campaigns
+                    .filter((c) => c.status === "PENDING_APPROVAL")
+                    .map((c) => (
+                      <div
+                        key={c.id}
+                        className="rounded-xl border border-rose-500/30 bg-slate-950/80 p-4 space-y-3"
+                      >
+                        <div className="flex items-start gap-3">
+                          <img
+                            src={c.coverImageUrl}
+                            alt={c.storyTitle}
+                            className="h-16 w-12 rounded-lg object-cover border border-white/10 shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <strong className="text-sm font-bold text-white truncate block">
+                                {c.storyTitle}
+                              </strong>
+                              <span className="text-[9px] font-mono font-black text-rose-400 bg-rose-500/20 border border-rose-500/40 px-1.5 py-0.5 rounded uppercase">
+                                EXPLICIT 18+
+                              </span>
+                            </div>
+                            <span className="text-xs text-slate-400 font-mono block mt-0.5">
+                              Author: {c.authorName} · {c.creditsSpent || 2} Credits Held
+                            </span>
+                            <Link
+                              href={`/story/${c.storySlug}`}
+                              target="_blank"
+                              className="inline-flex items-center gap-1 text-[11px] font-bold text-indigo-400 hover:text-indigo-300 mt-1"
+                            >
+                              Inspect Story <ExternalLink className="h-3 w-3" />
+                            </Link>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-2 border-t border-white/5">
+                          <button
+                            type="button"
+                            onClick={() => handleApproveCampaign(c.id)}
+                            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-black text-white shadow-md shadow-emerald-950/40 transition-all cursor-pointer"
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5" /> Approve & Launch
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRejectCampaign(c.id)}
+                            className="inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-rose-500/40 bg-rose-500/10 hover:bg-rose-500/20 text-xs font-black text-rose-300 transition-all cursor-pointer"
+                          >
+                            <X className="h-3.5 w-3.5" /> Reject & Refund
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+
             <div className="rounded-2xl border border-white/10 bg-slate-900/80 overflow-hidden shadow-2xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
@@ -1271,12 +1399,29 @@ export default function AdminDashboardPage() {
                       const now = Date.now();
                       const isActive = c.status === "ACTIVE" && now < c.endTimestamp;
                       const daysLeft = isActive ? Math.max(1, Math.ceil((c.endTimestamp - now) / (24 * 60 * 60 * 1000))) : 0;
+                      const isPending = c.status === "PENDING_APPROVAL";
+                      const isRejected = c.status === "REJECTED";
 
                       return (
                         <tr key={c.id} className="hover:bg-white/5 transition-colors">
-                          <td className="py-3.5 px-4 font-bold text-white">{c.storyTitle || c.storySlug}</td>
+                          <td className="py-3.5 px-4 font-bold text-white flex items-center gap-2">
+                            <span>{c.storyTitle || c.storySlug}</span>
+                            {c.isExplicit && (
+                              <span className="text-[9px] font-mono font-black text-rose-400 bg-rose-500/15 border border-rose-500/30 px-1 py-0.2 rounded">
+                                18+
+                              </span>
+                            )}
+                          </td>
                           <td className="py-3.5 px-4">
-                            {isActive ? (
+                            {isPending ? (
+                              <span className="rounded-full bg-amber-500/15 border border-amber-500/40 px-2.5 py-0.5 text-[10px] font-bold text-amber-300">
+                                AWAITING MODERATION
+                              </span>
+                            ) : isRejected ? (
+                              <span className="rounded-full bg-rose-500/15 border border-rose-500/40 px-2.5 py-0.5 text-[10px] font-bold text-rose-300">
+                                REJECTED
+                              </span>
+                            ) : isActive ? (
                               <span className="rounded-full bg-emerald-500/15 border border-emerald-500/40 px-2.5 py-0.5 text-[10px] font-bold text-emerald-300">
                                 ACTIVE SPOTLIGHT ({daysLeft}d left)
                               </span>
@@ -1287,7 +1432,9 @@ export default function AdminDashboardPage() {
                             )}
                           </td>
                           <td className="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
-                            {c.startDate && c.endDate ? (
+                            {isPending ? (
+                              <span className="text-amber-400/90 font-mono">Pending Staff Review</span>
+                            ) : c.startDate && c.endDate ? (
                               <span>
                                 {c.startDate} → <strong className={isActive ? "text-amber-300" : "text-slate-400"}>{c.endDate}</strong>
                               </span>
@@ -1299,7 +1446,24 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4 font-mono">{c.impressions || 0}</td>
                           <td className="py-3.5 px-4 font-mono">{c.clicks || 0}</td>
                           <td className="py-3.5 px-4 text-right">
-                            {isActive && (
+                            {isPending ? (
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => handleApproveCampaign(c.id)}
+                                  className="px-2 py-1 rounded-lg text-xs font-bold text-emerald-300 bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 transition-colors cursor-pointer"
+                                >
+                                  Approve
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRejectCampaign(c.id)}
+                                  className="px-2 py-1 rounded-lg text-xs font-bold text-rose-300 bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 transition-colors cursor-pointer"
+                                >
+                                  Reject
+                                </button>
+                              </div>
+                            ) : isActive ? (
                               <button
                                 type="button"
                                 onClick={() => handleEndCampaignEarly(c.id)}
@@ -1307,7 +1471,7 @@ export default function AdminDashboardPage() {
                               >
                                 End Early
                               </button>
-                            )}
+                            ) : null}
                           </td>
                         </tr>
                       );
