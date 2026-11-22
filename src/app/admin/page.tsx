@@ -897,6 +897,35 @@ export default function AdminDashboardPage() {
         {/* ========================================================= */}
         {activeTab === "overview" && (
           <div className="space-y-6">
+            {pendingApprovalsCount > 0 && (
+              <div className="rounded-2xl border border-rose-500/50 bg-gradient-to-r from-rose-950/70 via-slate-900 to-rose-950/40 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
+                <div className="flex items-center gap-3.5">
+                  <div className="h-10 w-10 rounded-xl bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shrink-0 animate-pulse">
+                    <AlertTriangle className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-black text-white flex items-center gap-2">
+                      Explicit (18+) Spotlight Moderation Required
+                      <span className="text-[10px] font-mono font-bold bg-rose-500 text-white px-2 py-0.5 rounded-full">
+                        {pendingApprovalsCount} {pendingApprovalsCount === 1 ? "Story" : "Stories"} Waiting
+                      </span>
+                    </h4>
+                    <p className="text-xs text-slate-300 mt-0.5">
+                      Explicit stories are blocked from the homepage discovery rotation until verified and approved by staff.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("spotlights")}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-black text-white shadow-lg shadow-rose-950/50 transition-all cursor-pointer shrink-0"
+                >
+                  <span>Open Moderation Queue</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
+
             <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/10 pb-6">
                 <div>

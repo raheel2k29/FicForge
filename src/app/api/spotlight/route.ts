@@ -51,6 +51,7 @@ export async function GET() {
           status,
           impressions: p.impressions,
           clicks: p.clicks,
+          creditsSpent: p.creditsSpent || 2,
         };
       });
 
@@ -130,6 +131,31 @@ export async function POST(request: Request) {
       });
     }
 
+    // 0. SET CREDITS
+    if (action === "set_credits") {
+      const amount = Number(body.credits) || 0;
+      let membership = await prisma.platformMembership.findFirst({
+        where: { userId: creator.id },
+      });
+      if (!membership) {
+        membership = await prisma.platformMembership.create({
+          data: {
+            userId: creator.id,
+            tier: "FORGE_PLUS",
+            status: "ACTIVE",
+            promoCreditsBalance: amount,
+            currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          },
+        });
+      } else {
+        await prisma.platformMembership.update({
+          where: { id: membership.id },
+          data: { promoCreditsBalance: amount },
+        });
+      }
+      return NextResponse.json({ success: true, promoCredits: amount, message: "Credits updated." });
+    }
+
     // 1. ACTIVATE SPOTLIGHT
     if (action === "activate" && storySlug) {
       let story = await prisma.story.findUnique({
@@ -157,7 +183,10 @@ export async function POST(request: Request) {
         });
       }
 
-      const isExplicit = story.rating === "EXPLICIT" || (mockStories[storySlug]?.rating === "EXPLICIT");
+      const isExplicit =
+        story.rating === "EXPLICIT" ||
+        Boolean(story.isExplicit18Plus) ||
+        (mockStories[storySlug]?.rating === "EXPLICIT");
       const promoStatus = isExplicit ? "PENDING_REVIEW" : "ACTIVE";
 
       const now = new Date();

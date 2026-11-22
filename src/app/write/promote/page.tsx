@@ -61,7 +61,7 @@ function PromotionDashboardContent() {
       setCredits(getPromoCredits());
       setCampaigns(getAllSpotlightCampaigns());
 
-      if (storySlugParam && all.some((s) => s.slug === storySlugParam)) {
+      if (storySlugParam) {
         setSelectedStorySlug(storySlugParam);
       } else if (all.length > 0 && !selectedStorySlug) {
         setSelectedStorySlug(all[0].slug);
@@ -81,7 +81,9 @@ function PromotionDashboardContent() {
       if (serverStories) {
         const storiesList = Object.values(serverStories);
         setStories(storiesList);
-        if (!selectedStorySlug && storiesList.length > 0) {
+        if (storySlugParam && storiesList.some((s) => s.slug === storySlugParam)) {
+          setSelectedStorySlug(storySlugParam);
+        } else if (!selectedStorySlug && storiesList.length > 0) {
           setSelectedStorySlug(storiesList[0].slug);
         }
       }
@@ -333,13 +335,15 @@ function PromotionDashboardContent() {
                     const tag =
                       status.status === "CURRENTLY_ACTIVE"
                         ? " • [✦ ACTIVE IN SPOTLIGHT]"
+                        : status.status === "PENDING_APPROVAL"
+                        ? " • [⏳ AWAITING APPROVAL]"
                         : status.status === "IN_COOLDOWN"
                         ? ` • [⏳ IN COOLDOWN (${status.daysRemaining}d)]`
                         : " • [✓ ELIGIBLE]";
 
                     return (
                       <option key={story.slug} value={story.slug}>
-                        {story.title} ({story.classification === "FANFICTION" ? "Fanfiction" : "Original"}){tag}
+                        {story.title} ({story.classification === "FANFICTION" ? "Fanfiction" : "Original"}){story.rating === "EXPLICIT" ? " • [18+ EXPLICIT]" : ""}{tag}
                       </option>
                     );
                   })}

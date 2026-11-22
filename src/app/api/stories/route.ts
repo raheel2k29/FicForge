@@ -96,7 +96,7 @@ export async function GET(request: Request) {
             chapterCount: s.chapters.length,
           },
           tags: {
-            warnings: s.isExplicit18Plus ? ["Explicit Content"] : [],
+            warnings: (s.isExplicit18Plus || s.rating === "EXPLICIT") ? ["Explicit Content"] : [],
             pairings: [],
             characters: [],
             general: ["Serialized", "Popular"],
@@ -173,7 +173,7 @@ export async function GET(request: Request) {
             chapterCount: s.chapters.length,
           },
           tags: {
-            warnings: s.isExplicit18Plus ? ["Explicit Content"] : [],
+            warnings: (s.isExplicit18Plus || s.rating === "EXPLICIT") ? ["Explicit Content"] : [],
             pairings: [],
             characters: [],
             general: ["Serialized", "Popular"],
@@ -278,6 +278,7 @@ export async function POST(request: Request) {
         coverImageUrl: story.coverImageUrl || "",
         classification: story.classification === "FANFICTION" ? "FANFICTION" : "ORIGINAL",
         rating: story.rating === "EXPLICIT" ? "EXPLICIT" : story.rating === "MATURE" ? "MATURE" : story.rating === "GENERAL" ? "GENERAL" : "TEEN",
+        isExplicit18Plus: story.rating === "EXPLICIT",
         status: story.status === "COMPLETED" ? "COMPLETED" : "ONGOING",
         viewCount: story.stats?.views || 100,
         likeCount: story.stats?.likes || 10,
@@ -292,6 +293,7 @@ export async function POST(request: Request) {
         coverImageUrl: story.coverImageUrl || "",
         classification: story.classification === "FANFICTION" ? "FANFICTION" : "ORIGINAL",
         rating: story.rating === "EXPLICIT" ? "EXPLICIT" : story.rating === "MATURE" ? "MATURE" : story.rating === "GENERAL" ? "GENERAL" : "TEEN",
+        isExplicit18Plus: story.rating === "EXPLICIT",
         status: story.status === "COMPLETED" ? "COMPLETED" : "ONGOING",
         viewCount: story.stats?.views || 100,
         likeCount: story.stats?.likes || 10,

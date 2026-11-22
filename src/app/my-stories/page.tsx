@@ -349,6 +349,17 @@ export default function MyStoriesPage() {
                           </Link>
                         );
                       }
+                      if (eligibility.status === "PENDING_APPROVAL") {
+                        return (
+                          <Link
+                            href={`/write/promote?storySlug=${story.slug}`}
+                            className="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3.5 py-2 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all shadow-sm"
+                            title="Awaiting Admin Approval for Homepage Spotlight"
+                          >
+                            <Clock className="h-3.5 w-3.5 text-amber-400" /> Pending Approval
+                          </Link>
+                        );
+                      }
                       if (eligibility.status === "IN_COOLDOWN") {
                         return (
                           <span

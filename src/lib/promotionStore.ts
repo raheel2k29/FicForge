@@ -245,9 +245,6 @@ export async function activateSpotlight(
 
   const allStories = getAllStories();
   const story = allStories[storySlug];
-  if (!story) {
-    return { success: false, message: "Story not found." };
-  }
 
   const creditsCost = days * 2;
   const credits = getPromoCredits();
@@ -270,10 +267,16 @@ export async function activateSpotlight(
       await syncSpotlightsWithServer();
       return {
         success: true,
-        message: data.message || `Spotlight successfully launched in PostgreSQL for "${story.title}" for ${days} days (${creditsCost} credits redeemed)!`,
+        message: data.message || `Spotlight successfully launched in PostgreSQL for "${story?.title || storySlug}" for ${days} days (${creditsCost} credits redeemed)!`,
+      };
+    } else {
+      const errData = await res.json().catch(() => null);
+      return {
+        success: false,
+        message: errData?.message || "Failed to process spotlight on server.",
       };
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error("Failed to activate spotlight in PostgreSQL:", err);
   }
 
