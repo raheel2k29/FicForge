@@ -88,7 +88,6 @@ export default function AdminDashboardPage() {
 
   // Moderator Appointment State
   const [selectedCandidateId, setSelectedCandidateId] = useState("");
-  const [moderatorDuty, setModeratorDuty] = useState("Content & Story Moderation");
 
   // Inspection Drawer State
   const [inspectedStory, setInspectedStory] = useState<any | null>(null);
@@ -1857,7 +1856,7 @@ export default function AdminDashboardPage() {
                 </p>
 
                 <form onSubmit={handleAppointModerator} className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                  <div className="md:col-span-6">
+                  <div className="md:col-span-9">
                     <label className="block text-[11px] font-black uppercase tracking-wider text-slate-300 mb-1.5">
                       Select Registered User
                     </label>
@@ -1881,39 +1880,14 @@ export default function AdminDashboardPage() {
                     </select>
                   </div>
 
-                  <div className="md:col-span-4">
-                    <label className="block text-[11px] font-black uppercase tracking-wider text-slate-300 mb-1.5">
-                      Primary Duty & Designation
-                    </label>
-                    <select
-                      value={moderatorDuty}
-                      onChange={(e) => setModeratorDuty(e.target.value)}
-                      style={{ colorScheme: "dark" }}
-                      className="w-full h-11 rounded-xl border border-white/15 bg-slate-950 px-3 text-xs font-bold text-white outline-none focus:border-indigo-500 transition-colors"
-                    >
-                      <option value="Content & Story Moderation" className="bg-[#0A1020] text-slate-200">
-                        Content & Explicit Story Moderation
-                      </option>
-                      <option value="DMCA & Copyright Compliance" className="bg-[#0A1020] text-slate-200">
-                        DMCA & Copyright Compliance
-                      </option>
-                      <option value="Community Safety & Trust" className="bg-[#0A1020] text-slate-200">
-                        Community Safety & Trust
-                      </option>
-                      <option value="General Platform Moderator" className="bg-[#0A1020] text-slate-200">
-                        General Platform Moderator
-                      </option>
-                    </select>
-                  </div>
-
-                  <div className="md:col-span-2 flex items-end">
+                  <div className="md:col-span-3 flex items-end">
                     <button
                       type="submit"
                       disabled={!selectedCandidateId}
                       className="w-full h-11 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-black text-white shadow-lg shadow-indigo-950/50 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                     >
                       <UserCheck className="h-4 w-4" />
-                      Appoint
+                      Appoint Moderator
                     </button>
                   </div>
                 </form>
