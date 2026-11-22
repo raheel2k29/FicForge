@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
         name: u.profile?.displayName || u.username,
         username: u.username,
         email: u.email,
-        role: u.role,
+        role: (u.role === "READER" || u.role === "CREATOR") ? "USER" : u.role,
         isVerified: u.isVerified,
         avatarUrl: u.profile?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
         storyCount: u._count?.stories || 0,
@@ -201,7 +201,7 @@ export async function POST(request: NextRequest) {
 
     // 3. USER ROLE ELEVATION / DEMOTION (RBAC)
     if (action === "UPDATE_USER_ROLE" && userId && role) {
-      const targetRole = role === "USER" ? "READER" : role;
+      const targetRole = (role === "USER" || role === "READER") ? "CREATOR" : role;
       const updatedUser = await prisma.user.update({
         where: { id: userId },
         data: { role: targetRole as any },

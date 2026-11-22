@@ -1246,19 +1246,18 @@ export default function AdminDashboardPage() {
                         {/* Role Elevation Selector */}
                         <td className="py-3.5 px-4">
                           <select
-                            value={u.role}
+                            value={u.role === "READER" || u.role === "CREATOR" ? "USER" : u.role}
                             onChange={(e) => handleUpdateUserRole(u.id, e.target.value)}
                             className={`h-8 rounded-lg border text-[11px] font-black px-2.5 outline-none bg-[#020617] cursor-pointer ${
                               u.role === "SUPER_ADMIN"
                                 ? "border-red-500/50 text-red-300 bg-red-950/20"
                                 : u.role === "MODERATOR"
                                 ? "border-blue-500/50 text-blue-300 bg-blue-950/20"
-                                : "border-white/15 text-slate-200"
+                                : "border-emerald-500/40 text-emerald-300 bg-emerald-950/20"
                             }`}
                           >
-                            <option value="READER">USER (Reader + Author)</option>
-                            <option value="CREATOR">CREATOR</option>
-                            <option value="MODERATOR">MODERATOR</option>
+                            <option value="USER">USER (Universal Account)</option>
+                            <option value="MODERATOR">MODERATOR (Staff)</option>
                             <option value="SUPER_ADMIN">SUPER_ADMIN (Staff)</option>
                           </select>
                         </td>
