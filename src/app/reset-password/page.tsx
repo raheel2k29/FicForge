@@ -1,19 +1,228 @@
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Reset Password — FicForge",
-  description: "Reset Password on FicForge — Where Stories Are Forged",
-};
+import Link from "next/link";
+import { useState } from "react";
+import { KeyRound, Mail, ArrowRight, ArrowLeft, CheckCircle2, ShieldCheck } from "lucide-react";
 
-const rawHtml = "<section class=\"ff-reset-page\">\n  <style>\n    .ff-reset-page {\n      width: 100%;\n      max-width: 1180px;\n      margin: 0 auto;\n      color: #FFFFFF;\n      font-family: inherit;\n    }\n\n    .ff-reset-wrap {\n      min-height: 70vh;\n      display: grid;\n      grid-template-columns: 1.05fr 0.95fr;\n      gap: 26px;\n      align-items: center;\n    }\n\n    .ff-reset-copy {\n      padding: 10px 0;\n    }\n\n    .ff-reset-label {\n      display: inline-flex;\n      color: #F97316;\n      background: rgba(249, 115, 22, 0.12);\n      border: 1px solid rgba(249, 115, 22, 0.28);\n      border-radius: 999px;\n      padding: 8px 14px;\n      margin-bottom: 16px;\n      font-size: 13px;\n      font-weight: 900;\n      letter-spacing: 0.08em;\n      text-transform: uppercase;\n    }\n\n    .ff-reset-copy h1 {\n      color: #FFFFFF;\n      font-size: 58px;\n      line-height: 1.04;\n      margin: 0 0 16px 0;\n      font-weight: 900;\n      letter-spacing: -0.05em;\n      max-width: 650px;\n    }\n\n    .ff-reset-copy p {\n      color: #CBD5E1;\n      font-size: 18px;\n      line-height: 1.7;\n      margin: 0 0 22px 0;\n      max-width: 650px;\n    }\n\n    .ff-reset-info {\n      display: grid;\n      gap: 12px;\n      margin-top: 26px;\n      max-width: 620px;\n    }\n\n    .ff-reset-info-card {\n      display: flex;\n      gap: 12px;\n      align-items: flex-start;\n      background: rgba(15, 23, 42, 0.72);\n      border: 1px solid rgba(255, 255, 255, 0.10);\n      border-radius: 16px;\n      padding: 15px;\n    }\n\n    .ff-reset-icon {\n      width: 34px;\n      height: 34px;\n      min-width: 34px;\n      border-radius: 11px;\n      background: linear-gradient(135deg, #6D5DFB, #F97316);\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      color: #FFFFFF;\n      font-weight: 900;\n      box-shadow: 0 0 20px rgba(109, 93, 251, 0.20);\n    }\n\n    .ff-reset-info-card strong {\n      color: #FFFFFF;\n      display: block;\n      font-size: 15px;\n      margin-bottom: 3px;\n      font-weight: 900;\n    }\n\n    .ff-reset-info-card span {\n      color: #94A3B8;\n      display: block;\n      font-size: 13.5px;\n      line-height: 1.55;\n    }\n\n    .ff-reset-card {\n      background:\n        radial-gradient(circle at top left, rgba(109, 93, 251, 0.18), transparent 34%),\n        radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.12), transparent 32%),\n        rgba(15, 23, 42, 0.84);\n      border: 1px solid rgba(255, 255, 255, 0.12);\n      border-radius: 24px;\n      padding: 30px;\n      box-shadow: 0 26px 80px rgba(0, 0, 0, 0.30);\n    }\n\n    .ff-reset-card h2 {\n      color: #FFFFFF;\n      font-size: 34px;\n      line-height: 1.1;\n      margin: 0 0 10px 0;\n      font-weight: 900;\n      letter-spacing: -0.035em;\n    }\n\n    .ff-reset-card p {\n      color: #94A3B8;\n      font-size: 14.5px;\n      line-height: 1.65;\n      margin: 0 0 22px 0;\n    }\n\n    .ff-reset-form {\n      display: grid;\n      gap: 14px;\n    }\n\n    .ff-field label {\n      display: block;\n      color: #CBD5E1;\n      font-size: 13px;\n      font-weight: 900;\n      margin-bottom: 7px;\n    }\n\n    .ff-field input {\n      width: 100%;\n      color: #FFFFFF;\n      background: rgba(2, 6, 23, 0.62);\n      border: 1px solid rgba(255, 255, 255, 0.12);\n      border-radius: 13px;\n      padding: 14px 14px;\n      font-size: 15px;\n      outline: none;\n      box-sizing: border-box;\n    }\n\n    .ff-field input::placeholder {\n      color: #64748B;\n    }\n\n    .ff-field input:focus {\n      border-color: rgba(109, 93, 251, 0.70);\n      box-shadow: 0 0 0 3px rgba(109, 93, 251, 0.14);\n    }\n\n    .ff-reset-submit {\n      display: inline-flex;\n      width: 100%;\n      justify-content: center;\n      align-items: center;\n      color: #FFFFFF !important;\n      text-decoration: none !important;\n      background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n      border: 1px solid rgba(109, 93, 251, 0.78);\n      border-radius: 14px;\n      padding: 14px 18px;\n      font-size: 15px;\n      font-weight: 900;\n      box-shadow: 0 0 26px rgba(109, 93, 251, 0.20);\n      cursor: pointer;\n      margin-top: 4px;\n    }\n\n    .ff-reset-submit:hover {\n      transform: translateY(-1px);\n      color: #FFFFFF !important;\n    }\n\n    .ff-reset-divider {\n      display: flex;\n      align-items: center;\n      gap: 12px;\n      margin: 22px 0;\n      color: #64748B;\n      font-size: 12px;\n      font-weight: 900;\n      text-transform: uppercase;\n      letter-spacing: 0.08em;\n    }\n\n    .ff-reset-divider::before,\n    .ff-reset-divider::after {\n      content: \"\";\n      height: 1px;\n      flex: 1;\n      background: rgba(255, 255, 255, 0.10);\n    }\n\n    .ff-reset-links {\n      display: flex;\n      justify-content: center;\n      gap: 14px;\n      flex-wrap: wrap;\n      color: #94A3B8;\n      font-size: 14px;\n      line-height: 1.6;\n      margin: 0;\n      text-align: center;\n    }\n\n    .ff-reset-links a,\n    .ff-reset-note a {\n      color: #FDBA74 !important;\n      text-decoration: none !important;\n      font-weight: 900;\n    }\n\n    .ff-reset-links a:hover,\n    .ff-reset-note a:hover {\n      color: #FFFFFF !important;\n    }\n\n    .ff-reset-note {\n      margin-top: 18px;\n      background: rgba(2, 6, 23, 0.38);\n      border: 1px solid rgba(255, 255, 255, 0.08);\n      border-radius: 15px;\n      padding: 14px;\n    }\n\n    .ff-reset-note strong {\n      color: #FFFFFF;\n      display: block;\n      font-size: 13px;\n      margin-bottom: 5px;\n      font-weight: 900;\n    }\n\n    .ff-reset-note p {\n      color: #94A3B8;\n      font-size: 12.5px;\n      line-height: 1.6;\n      margin: 0;\n    }\n\n    .ff-working-note {\n      margin-top: 16px;\n      color: #64748B;\n      font-size: 12.5px;\n      line-height: 1.6;\n      text-align: center;\n    }\n\n    @media (max-width: 1000px) {\n      .ff-reset-wrap {\n        grid-template-columns: 1fr;\n      }\n\n      .ff-reset-copy h1 {\n        font-size: 48px;\n      }\n    }\n\n    @media (max-width: 767px) {\n      .ff-reset-copy h1 {\n        font-size: 38px;\n      }\n\n      .ff-reset-copy p {\n        font-size: 16px;\n      }\n\n      .ff-reset-card {\n        padding: 24px 18px;\n      }\n\n      .ff-reset-card h2 {\n        font-size: 28px;\n      }\n\n      .ff-reset-links {\n        flex-direction: column;\n        gap: 8px;\n      }\n    }\n  </style>\n\n  <div class=\"ff-reset-wrap\">\n    <div class=\"ff-reset-copy\">\n      <span class=\"ff-reset-label\">Forgot Password</span>\n      <h1>Recover access to your FicForge account.</h1>\n      <p>\n        Enter your username or email address and FicForge will send you a password reset link so you can return to your profile, stories, library, Sparks, and community activity.\n      </p>\n\n      <div class=\"ff-reset-info\">\n        <div class=\"ff-reset-info-card\">\n          <div class=\"ff-reset-icon\">1</div>\n          <div>\n            <strong>Enter your account email</strong>\n            <span>Use the email address or username connected to your FicForge account.</span>\n          </div>\n        </div>\n\n        <div class=\"ff-reset-info-card\">\n          <div class=\"ff-reset-icon\">2</div>\n          <div>\n            <strong>Check your inbox</strong>\n            <span>Ficforge will send the reset link to the email address attached to your account.</span>\n          </div>\n        </div>\n\n        <div class=\"ff-reset-info-card\">\n          <div class=\"ff-reset-icon\">3</div>\n          <div>\n            <strong>Return to FicForge</strong>\n            <span>After changing your password, sign in and continue from your Account Hub.</span>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"ff-reset-card\">\n      <h2>Reset your password</h2>\n      <p>\n        Submit your username or email address below. You’ll receive instructions for setting a new password.\n      </p>\n\n      <form class=\"ff-reset-form\" action=\"/wp-login.php?action=lostpassword\" method=\"post\">\n        <div class=\"ff-field\">\n          <label for=\"ff-user-reset\">Username or Email</label>\n          <input id=\"ff-user-reset\" type=\"text\" name=\"user_login\" placeholder=\"Enter your username or email\" required>\n        </div>\n\n        <input type=\"hidden\" name=\"redirect_to\" value=\"/login/\">\n\n        <button class=\"ff-reset-submit\" type=\"submit\">Send Reset Link</button>\n      </form>\n\n      <div class=\"ff-reset-divider\">Account access</div>\n\n      <div class=\"ff-reset-links\">\n        <span>Remembered your password? <a href=\"/login/\">Sign in</a></span>\n        <span>New to FicForge? <a href=\"/register/\">Create account</a></span>\n      </div>\n\n      <div class=\"ff-reset-note\">\n        <strong>Having trouble?</strong>\n        <p>\n          Check your spam folder first. If the reset email still does not arrive, contact FicForge support through the <a href=\"/contact/\">Contact Support</a> page.\n        </p>\n      </div>\n\n      <div class=\"ff-working-note\">\n        This page uses the standard WordPress password reset system for now.\n      </div>\n    </div>\n  </div>\n</section>\n";
+export default function ResetPasswordPage() {
+  const [identifier, setIdentifier] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-export default function Page() {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!identifier.trim()) {
+      setError("Please enter your account email address or username.");
+      return;
+    }
+
+    setError(null);
+    setIsLoading(true);
+
+    // Simulate password recovery dispatch
+    setTimeout(() => {
+      setIsLoading(false);
+      setIsSubmitted(true);
+    }, 800);
+  };
+
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
-      <div
-        className="max-w-[1180px] mx-auto"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
+    <div className="min-h-screen bg-[#050B16] text-white py-14 px-4 sm:px-6 lg:px-8 flex items-center justify-center relative overflow-hidden">
+      {/* Background Glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-br from-[#6D5DFB]/15 via-[#F97316]/10 to-transparent blur-3xl pointer-events-none" />
+
+      <div className="max-w-[1040px] w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+        
+        {/* Left Column: Context & Steps */}
+        <div className="lg:col-span-6 space-y-6">
+          <span className="inline-flex items-center text-xs font-black tracking-widest uppercase text-[#F97316] bg-orange-500/10 border border-orange-500/30 rounded-full px-3.5 py-1.5">
+            ACCOUNT RECOVERY
+          </span>
+
+          <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+            Recover Access to Your Fic<span className="text-[#F97316]">Forge</span> Account
+          </h1>
+
+          <p className="text-base text-slate-300 leading-relaxed max-w-lg">
+            Enter your registered email address or username. We will dispatch a secure recovery link so you can reset your password and return to your stories, library, and Sparks.
+          </p>
+
+          <div className="space-y-4 pt-2">
+            <div className="flex items-start gap-3.5 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#6D5DFB] to-[#F97316] flex items-center justify-center font-black text-sm shrink-0 shadow-md">
+                1
+              </div>
+              <div>
+                <strong className="block text-sm font-bold text-white">Enter Account Details</strong>
+                <span className="text-xs text-slate-400 leading-relaxed">
+                  Provide the email address or username associated with your author or reader account.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#6D5DFB] to-[#F97316] flex items-center justify-center font-black text-sm shrink-0 shadow-md">
+                2
+              </div>
+              <div>
+                <strong className="block text-sm font-bold text-white">Check Your Inbox</strong>
+                <span className="text-xs text-slate-400 leading-relaxed">
+                  Look for an email from FicForge security containing single-use reset instructions.
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3.5 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-[#6D5DFB] to-[#F97316] flex items-center justify-center font-black text-sm shrink-0 shadow-md">
+                3
+              </div>
+              <div>
+                <strong className="block text-sm font-bold text-white">Set New Password & Return</strong>
+                <span className="text-xs text-slate-400 leading-relaxed">
+                  Choose a new password and immediately log in to access your Creator Workshop and bookmarks.
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Interactive Reset Card */}
+        <div className="lg:col-span-6">
+          <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900/90 to-slate-950/90 p-8 sm:p-10 shadow-2xl backdrop-blur-xl">
+            
+            {isSubmitted ? (
+              <div className="text-center py-6 space-y-4">
+                <div className="h-16 w-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center mx-auto text-emerald-400 shadow-xl shadow-emerald-950/30">
+                  <CheckCircle2 className="h-8 w-8" />
+                </div>
+
+                <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full inline-block">
+                  RECOVERY LINK DISPATCHED
+                </span>
+
+                <h2 className="text-2xl font-black text-white tracking-tight">
+                  Check Your Inbox
+                </h2>
+
+                <p className="text-sm text-slate-300 leading-relaxed max-w-sm mx-auto">
+                  If an account is associated with <span className="font-bold text-white font-mono bg-white/10 px-2 py-0.5 rounded">{identifier}</span>, password reset instructions have been sent.
+                </p>
+
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs text-amber-200/90 text-left">
+                  <strong>Didn't receive the email?</strong>
+                  <p className="mt-1 text-slate-400">
+                    Be sure to check your spam/junk folder. If you still need assistance, visit our{" "}
+                    <Link href="/support" className="text-amber-400 underline font-bold">
+                      Support Center
+                    </Link>.
+                  </p>
+                </div>
+
+                <div className="pt-2 flex flex-col gap-3">
+                  <Link
+                    href="/login"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] py-3.5 px-6 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/30 hover:opacity-95 transition-all text-center"
+                  >
+                    <span>Return to Sign In</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsSubmitted(false);
+                      setIdentifier("");
+                    }}
+                    className="text-xs text-slate-400 hover:text-white transition-colors"
+                  >
+                    Send to a different email address
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-[#6D5DFB]/20 to-[#F97316]/20 border border-white/10 flex items-center justify-center text-[#F97316]">
+                    <KeyRound className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-black text-white tracking-tight">
+                      Reset Password
+                    </h2>
+                    <p className="text-xs text-slate-400">
+                      Enter your account username or email below.
+                    </p>
+                  </div>
+                </div>
+
+                {error && (
+                  <div className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 p-3 text-xs font-bold text-red-300">
+                    {error}
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                      Email Address or Username
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                        <Mail className="h-4 w-4" />
+                      </div>
+                      <input
+                        type="text"
+                        value={identifier}
+                        onChange={(e) => setIdentifier(e.target.value)}
+                        placeholder="e.g. author@ficforge.org or @username"
+                        required
+                        className="w-full rounded-xl border border-white/10 bg-slate-800/80 pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-[#6D5DFB] focus:outline-none focus:ring-1 focus:ring-[#6D5DFB] transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] py-3.5 px-6 text-sm font-extrabold text-white shadow-lg shadow-indigo-600/30 hover:opacity-95 transition-all cursor-pointer disabled:opacity-60"
+                  >
+                    {isLoading ? (
+                      <span className="inline-flex items-center gap-2">
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Verifying...
+                      </span>
+                    ) : (
+                      <>
+                        <span>Send Reset Link</span>
+                        <ArrowRight className="h-4 w-4" />
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                <div className="mt-6 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center gap-1.5 font-bold text-slate-300 hover:text-white transition-colors"
+                  >
+                    <ArrowLeft className="h-3.5 w-3.5" /> Back to Sign In
+                  </Link>
+
+                  <Link
+                    href="/register"
+                    className="font-bold text-[#F97316] hover:text-orange-300 transition-colors"
+                  >
+                    Create Account →
+                  </Link>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 }

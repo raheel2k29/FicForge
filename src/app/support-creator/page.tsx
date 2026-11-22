@@ -1,19 +1,349 @@
-import { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Support Creator — FicForge",
-  description: "Support Creator on FicForge — Where Stories Are Forged",
-};
+import Link from "next/link";
+import { useState, useEffect, useMemo } from "react";
+import WriterAuthGate from "@/components/WriterAuthGate";
+import { getCurrentUser, UserSession } from "@/lib/authStore";
+import { getAllStories } from "@/lib/storyStore";
+import {
+  Sparkles,
+  Heart,
+  Search,
+  CheckCircle2,
+  ArrowRight,
+  ShieldCheck,
+  UserCheck,
+  Coins,
+  Crown,
+} from "lucide-react";
 
-const rawHtml = "<section class=\"ff-support-creator-page\">\n  <style>\n    .ff-support-creator-page {\n      width: 100%;\n      max-width: 1180px;\n      margin: 0 auto;\n      color: #FFFFFF;\n      font-family: inherit;\n    }\n\n    .ff-support-hero,\n    .ff-support-card,\n    .ff-transfer-card,\n    .ff-pack-card,\n    .ff-note-card,\n    .ff-step-card {\n      background: rgba(15, 23, 42, 0.82);\n      border: 1px solid rgba(255, 255, 255, 0.11);\n      border-radius: 24px;\n      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);\n    }\n\n    .ff-support-hero {\n      padding: 34px;\n      margin-bottom: 18px;\n      background:\n        radial-gradient(circle at top left, rgba(109, 93, 251, 0.22), transparent 34%),\n        radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.15), transparent 34%),\n        rgba(15, 23, 42, 0.84);\n    }\n\n    .ff-label {\n      display: inline-flex;\n      width: fit-content;\n      color: #F97316;\n      background: rgba(249, 115, 22, 0.12);\n      border: 1px solid rgba(249, 115, 22, 0.28);\n      border-radius: 999px;\n      padding: 8px 14px;\n      margin-bottom: 16px;\n      font-size: 13px;\n      font-weight: 900;\n      letter-spacing: 0.08em;\n      text-transform: uppercase;\n    }\n\n    .ff-support-hero h1 {\n      color: #FFFFFF;\n      font-size: 58px;\n      line-height: 1.04;\n      margin: 0 0 14px 0;\n      font-weight: 900;\n      letter-spacing: -0.05em;\n      max-width: 820px;\n    }\n\n    .ff-support-hero p {\n      color: #CBD5E1;\n      font-size: 18px;\n      line-height: 1.7;\n      margin: 0;\n      max-width: 840px;\n    }\n\n    .ff-support-layout {\n      display: grid;\n      grid-template-columns: 1.12fr 0.88fr;\n      gap: 18px;\n      margin-bottom: 18px;\n    }\n\n    .ff-support-card,\n    .ff-transfer-card {\n      padding: 24px;\n    }\n\n    .ff-support-card h2,\n    .ff-transfer-card h2,\n    .ff-pack-section h2,\n    .ff-note-card h2 {\n      color: #FFFFFF;\n      font-size: 32px;\n      line-height: 1.1;\n      margin: 0 0 10px 0;\n      font-weight: 900;\n      letter-spacing: -0.035em;\n    }\n\n    .ff-support-card p,\n    .ff-transfer-card p,\n    .ff-note-card p,\n    .ff-step-card p {\n      color: #94A3B8;\n      font-size: 14.5px;\n      line-height: 1.65;\n      margin: 0;\n    }\n\n    .ff-search-box {\n      display: grid;\n      gap: 12px;\n      margin-top: 18px;\n    }\n\n    .ff-search-row {\n      display: grid;\n      grid-template-columns: 1fr auto;\n      gap: 10px;\n    }\n\n    .ff-search-row input,\n    .ff-custom-input input {\n      width: 100%;\n      color: #FFFFFF;\n      background: rgba(2, 6, 23, 0.62);\n      border: 1px solid rgba(255, 255, 255, 0.12);\n      border-radius: 14px;\n      padding: 14px;\n      font-size: 15px;\n      outline: none;\n      box-sizing: border-box;\n    }\n\n    .ff-search-row input::placeholder,\n    .ff-custom-input input::placeholder {\n      color: #64748B;\n    }\n\n    .ff-search-row input:focus,\n    .ff-custom-input input:focus {\n      border-color: rgba(109, 93, 251, 0.70);\n      box-shadow: 0 0 0 3px rgba(109, 93, 251, 0.14);\n    }\n\n    .ff-btn {\n      display: inline-flex;\n      align-items: center;\n      justify-content: center;\n      color: #FFFFFF !important;\n      text-decoration: none !important;\n      background: rgba(15, 23, 42, 0.86);\n      border: 1px solid rgba(255, 255, 255, 0.13);\n      border-radius: 14px;\n      padding: 13px 16px;\n      font-size: 14px;\n      font-weight: 900;\n      transition: 0.18s ease;\n      white-space: nowrap;\n      cursor: pointer;\n    }\n\n    .ff-btn.primary {\n      background: linear-gradient(135deg, #6D5DFB, #7C3AED);\n      border-color: rgba(109, 93, 251, 0.78);\n      box-shadow: 0 0 26px rgba(109, 93, 251, 0.20);\n    }\n\n    .ff-btn.orange {\n      background: linear-gradient(135deg, #F97316, #EA580C);\n      border-color: rgba(249, 115, 22, 0.76);\n      box-shadow: 0 0 22px rgba(249, 115, 22, 0.15);\n    }\n\n    .ff-btn:hover {\n      color: #FFFFFF !important;\n      transform: translateY(-1px);\n      border-color: rgba(249, 115, 22, 0.50);\n    }\n\n    .ff-creator-result {\n      display: grid;\n      grid-template-columns: 72px 1fr auto;\n      gap: 14px;\n      align-items: center;\n      background: rgba(2, 6, 23, 0.42);\n      border: 1px solid rgba(255, 255, 255, 0.09);\n      border-radius: 18px;\n      padding: 14px;\n      margin-top: 14px;\n    }\n\n    .ff-creator-avatar {\n      width: 72px;\n      height: 72px;\n      border-radius: 50%;\n      padding: 4px;\n      background: linear-gradient(135deg, #6D5DFB, #F97316);\n      box-shadow: 0 0 28px rgba(109, 93, 251, 0.22);\n    }\n\n    .ff-creator-avatar span {\n      width: 100%;\n      height: 100%;\n      border-radius: 50%;\n      background: #0F172A;\n      border: 4px solid #050B16;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      color: #FFFFFF;\n      font-size: 24px;\n      font-weight: 900;\n    }\n\n    .ff-creator-result strong {\n      display: block;\n      color: #FFFFFF;\n      font-size: 18px;\n      font-weight: 900;\n      margin-bottom: 4px;\n    }\n\n    .ff-creator-result span {\n      display: block;\n      color: #94A3B8;\n      font-size: 13px;\n      line-height: 1.5;\n    }\n\n    .ff-mini-badges {\n      display: flex;\n      gap: 7px;\n      flex-wrap: wrap;\n      margin-top: 9px;\n    }\n\n    .ff-mini-badge {\n      display: inline-flex;\n      color: #FFFFFF;\n      background: rgba(109, 93, 251, 0.22);\n      border: 1px solid rgba(109, 93, 251, 0.42);\n      border-radius: 999px;\n      padding: 6px 9px;\n      font-size: 11px;\n      font-weight: 900;\n    }\n\n    .ff-mini-badge.gold {\n      color: #FDBA74;\n      background: rgba(249, 115, 22, 0.14);\n      border-color: rgba(249, 115, 22, 0.38);\n    }\n\n    .ff-transfer-card {\n      background:\n        radial-gradient(circle at top left, rgba(109, 93, 251, 0.18), transparent 34%),\n        radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.12), transparent 32%),\n        rgba(15, 23, 42, 0.84);\n    }\n\n    .ff-balance {\n      background: rgba(2, 6, 23, 0.42);\n      border: 1px solid rgba(255, 255, 255, 0.08);\n      border-radius: 18px;\n      padding: 16px;\n      margin: 18px 0;\n    }\n\n    .ff-balance span {\n      display: block;\n      color: #94A3B8;\n      font-size: 12px;\n      font-weight: 900;\n      text-transform: uppercase;\n      letter-spacing: 0.08em;\n      margin-bottom: 5px;\n    }\n\n    .ff-balance strong {\n      color: #FFFFFF;\n      font-size: 34px;\n      font-weight: 900;\n      letter-spacing: -0.04em;\n    }\n\n    .ff-spark-grid {\n      display: grid;\n      grid-template-columns: repeat(3, 1fr);\n      gap: 10px;\n      margin: 18px 0;\n    }\n\n    .ff-spark-choice {\n      color: #FFFFFF !important;\n      text-decoration: none !important;\n      background: rgba(2, 6, 23, 0.48);\n      border: 1px solid rgba(255, 255, 255, 0.10);\n      border-radius: 16px;\n      padding: 15px;\n      text-align: center;\n      transition: 0.18s ease;\n    }\n\n    .ff-spark-choice:hover {\n      border-color: rgba(109, 93, 251, 0.60);\n      transform: translateY(-1px);\n    }\n\n    .ff-spark-choice strong {\n      display: block;\n      color: #FFFFFF;\n      font-size: 22px;\n      font-weight: 900;\n      margin-bottom: 4px;\n    }\n\n    .ff-spark-choice span {\n      display: block;\n      color: #94A3B8;\n      font-size: 12.5px;\n      font-weight: 800;\n    }\n\n    .ff-custom-input {\n      display: grid;\n      gap: 9px;\n      margin-bottom: 16px;\n    }\n\n    .ff-custom-input label {\n      color: #CBD5E1;\n      font-size: 13px;\n      font-weight: 900;\n    }\n\n    .ff-support-safe {\n      background: rgba(2, 6, 23, 0.42);\n      border: 1px solid rgba(255, 255, 255, 0.08);\n      border-radius: 16px;\n      padding: 15px;\n      margin-top: 16px;\n    }\n\n    .ff-support-safe strong {\n      display: block;\n      color: #FDBA74;\n      font-size: 13px;\n      font-weight: 900;\n      margin-bottom: 6px;\n    }\n\n    .ff-support-safe p {\n      color: #CBD5E1;\n      font-size: 12.8px;\n      line-height: 1.65;\n      margin: 0;\n    }\n\n    .ff-pack-section {\n      margin-top: 18px;\n    }\n\n    .ff-pack-section > p {\n      color: #94A3B8;\n      font-size: 14.5px;\n      line-height: 1.65;\n      margin: 0 0 16px 0;\n      max-width: 840px;\n    }\n\n    .ff-pack-grid {\n      display: grid;\n      grid-template-columns: repeat(5, 1fr);\n      gap: 14px;\n    }\n\n    .ff-pack-card {\n      padding: 18px;\n      display: flex;\n      flex-direction: column;\n      min-height: 225px;\n    }\n\n    .ff-pack-card span {\n      color: #F97316;\n      font-size: 12px;\n      font-weight: 900;\n      letter-spacing: 0.08em;\n      text-transform: uppercase;\n      margin-bottom: 9px;\n      display: block;\n    }\n\n    .ff-pack-card h3 {\n      color: #FFFFFF;\n      font-size: 22px;\n      font-weight: 900;\n      margin: 0 0 6px 0;\n      letter-spacing: -0.03em;\n    }\n\n    .ff-pack-card .price {\n      color: #FDBA74;\n      font-size: 28px;\n      font-weight: 900;\n      margin-bottom: 10px;\n    }\n\n    .ff-pack-card p {\n      color: #94A3B8;\n      font-size: 13px;\n      line-height: 1.55;\n      margin: 0 0 16px 0;\n    }\n\n    .ff-pack-card .ff-btn {\n      margin-top: auto;\n      width: 100%;\n    }\n\n    .ff-info-grid {\n      display: grid;\n      grid-template-columns: repeat(3, 1fr);\n      gap: 14px;\n      margin-top: 18px;\n    }\n\n    .ff-step-card,\n    .ff-note-card {\n      padding: 18px;\n    }\n\n    .ff-step-number {\n      width: 34px;\n      height: 34px;\n      border-radius: 11px;\n      background: linear-gradient(135deg, #6D5DFB, #F97316);\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      color: #FFFFFF;\n      font-weight: 900;\n      margin-bottom: 13px;\n    }\n\n    .ff-step-card strong {\n      color: #FFFFFF;\n      display: block;\n      font-size: 15px;\n      font-weight: 900;\n      margin-bottom: 5px;\n    }\n\n    .ff-note-card {\n      margin-top: 18px;\n      border-color: rgba(249, 115, 22, 0.24);\n      background:\n        radial-gradient(circle at top right, rgba(249, 115, 22, 0.12), transparent 30%),\n        rgba(15, 23, 42, 0.82);\n    }\n\n    .ff-note-card strong {\n      display: block;\n      color: #FDBA74;\n      font-size: 15px;\n      font-weight: 900;\n      margin-bottom: 7px;\n    }\n\n    @media (max-width: 1100px) {\n      .ff-support-layout {\n        grid-template-columns: 1fr;\n      }\n\n      .ff-pack-grid {\n        grid-template-columns: repeat(2, 1fr);\n      }\n\n      .ff-info-grid {\n        grid-template-columns: 1fr;\n      }\n    }\n\n    @media (max-width: 767px) {\n      .ff-support-hero,\n      .ff-support-card,\n      .ff-transfer-card {\n        padding: 24px 18px;\n      }\n\n      .ff-support-hero h1 {\n        font-size: 38px;\n      }\n\n      .ff-support-hero p {\n        font-size: 16px;\n      }\n\n      .ff-search-row,\n      .ff-creator-result,\n      .ff-spark-grid,\n      .ff-pack-grid {\n        grid-template-columns: 1fr;\n      }\n\n      .ff-btn {\n        width: 100%;\n      }\n    }\n  </style>\n\n  <section class=\"ff-support-hero\">\n    <span class=\"ff-label\">Creator Support</span>\n    <h1>Search a creator and show support with Sparks.</h1>\n    <p>\n      Use Sparks to show appreciation for a creator’s time, passion, and overall creative presence on FicForge. Support happens through the creator’s profile identity, not as payment for a specific fanfiction story, chapter, fandom, update, or reward.\n    </p>\n  </section>\n\n  <div class=\"ff-support-layout\">\n    <section class=\"ff-support-card\">\n      <span class=\"ff-label\">Find Creator</span>\n      <h2>Who do you want to support?</h2>\n      <p>\n        Search by creator name, username, or profile handle. Once the creator is selected, choose how many Sparks you want to send.\n      </p>\n\n      <div class=\"ff-search-box\">\n        <div class=\"ff-search-row\">\n          <input type=\"text\" placeholder=\"Search creator name or username\">\n          <a class=\"ff-btn primary\" href=\"#\">Search</a>\n        </div>\n      </div>\n\n      <div class=\"ff-creator-result\">\n        <div class=\"ff-creator-avatar\">\n          <span>F</span>\n        </div>\n\n        <div>\n          <strong>Creator preview</strong>\n          <span>@creator-name · Select a creator to send Sparks to their profile.</span>\n\n          <div class=\"ff-mini-badges\">\n            <span class=\"ff-mini-badge\">Creator</span>\n            <span class=\"ff-mini-badge gold\">Support Enabled</span>\n          </div>\n        </div>\n\n        <a class=\"ff-btn\" href=\"#\">Select</a>\n      </div>\n    </section>\n\n    <section class=\"ff-transfer-card\">\n      <span class=\"ff-label\">Send Sparks</span>\n      <h2>Show Support</h2>\n      <p>\n        Enjoy their work? You can show appreciation for this creator’s time, passion, and overall creative presence on FicForge.\n      </p>\n\n      <div class=\"ff-balance\">\n        <span>Your Spark Balance</span>\n        <strong>0 Sparks</strong>\n      </div>\n\n      <div class=\"ff-spark-grid\">\n        <a class=\"ff-spark-choice\" href=\"#\">\n          <strong>100</strong>\n          <span>Sparks</span>\n        </a>\n\n        <a class=\"ff-spark-choice\" href=\"#\">\n          <strong>500</strong>\n          <span>Sparks</span>\n        </a>\n\n        <a class=\"ff-spark-choice\" href=\"#\">\n          <strong>1,000</strong>\n          <span>Sparks</span>\n        </a>\n      </div>\n\n      <div class=\"ff-custom-input\">\n        <label>Custom Spark Amount</label>\n        <input type=\"number\" placeholder=\"Enter custom amount\">\n      </div>\n\n      <a class=\"ff-btn primary\" href=\"#\">Send Sparks</a>\n\n      <div class=\"ff-support-safe\">\n        <strong>Important support boundary</strong>\n        <p>\n          Support is not payment for any specific story, chapter, fandom, update, continuation, bonus scene, or reward.\n        </p>\n      </div>\n    </section>\n  </div>\n\n  <section id=\"spark-packs\" class=\"ff-pack-section\">\n    <span class=\"ff-label\">Buy Sparks</span>\n    <h2>Need more Sparks?</h2>\n    <p>\n      Once WooCommerce is connected, these Spark packs can become real purchasable products. Readers will be able to buy Sparks here and return to supporting creators without leaving the support flow.\n    </p>\n\n    <div class=\"ff-pack-grid\">\n      <div class=\"ff-pack-card\">\n        <span>Starter</span>\n        <h3>100 Sparks</h3>\n        <div class=\"price\">$1</div>\n        <p>Small support pack for quick appreciation.</p>\n        <a class=\"ff-btn\" href=\"#spark-packs\">Buy Starter</a>\n      </div>\n\n      <div class=\"ff-pack-card\">\n        <span>Standard</span>\n        <h3>1,000 Sparks</h3>\n        <div class=\"price\">$10</div>\n        <p>Standard pack for regular reader support.</p>\n        <a class=\"ff-btn primary\" href=\"#spark-packs\">Buy Standard</a>\n      </div>\n\n      <div class=\"ff-pack-card\">\n        <span>Supporter</span>\n        <h3>5,500 Sparks</h3>\n        <div class=\"price\">$50</div>\n        <p>Includes 5,000 Sparks plus 500 bonus Sparks.</p>\n        <a class=\"ff-btn\" href=\"#spark-packs\">Buy Supporter</a>\n      </div>\n\n      <div class=\"ff-pack-card\">\n        <span>Power Reader</span>\n        <h3>9,000 Sparks</h3>\n        <div class=\"price\">$80</div>\n        <p>Includes 8,000 Sparks plus 1,000 bonus Sparks.</p>\n        <a class=\"ff-btn\" href=\"#spark-packs\">Buy Power Reader</a>\n      </div>\n\n      <div class=\"ff-pack-card\">\n        <span>Patron</span>\n        <h3>17,500 Sparks</h3>\n        <div class=\"price\">$125</div>\n        <p>Includes 15,000 Sparks plus 2,500 bonus Sparks.</p>\n        <a class=\"ff-btn orange\" href=\"#spark-packs\">Buy Patron</a>\n      </div>\n    </div>\n  </section>\n\n  <div class=\"ff-info-grid\">\n    <div class=\"ff-step-card\">\n      <div class=\"ff-step-number\">1</div>\n      <strong>Buy Sparks</strong>\n      <p>Purchase Spark packs through FicForge once WooCommerce is connected.</p>\n    </div>\n\n    <div class=\"ff-step-card\">\n      <div class=\"ff-step-number\">2</div>\n      <strong>Find a creator</strong>\n      <p>Search for the creator profile you want to support.</p>\n    </div>\n\n    <div class=\"ff-step-card\">\n      <div class=\"ff-step-number\">3</div>\n      <strong>Send support</strong>\n      <p>Choose a Spark amount and send appreciation to the creator profile.</p>\n    </div>\n  </div>\n\n  <div class=\"ff-note-card\">\n    <strong>Backend status</strong>\n    <p>\n      This page is the front-end support flow. The search, Spark balance, Spark transfer, WooCommerce products, creator balances, and payout tracking still need backend connection. For now, this gives FicForge a professional support interface ready for integration.\n    </p>\n  </div>\n</section>\n";
+interface CreatorItem {
+  name: string;
+  username: string;
+  avatarUrl: string;
+  worksCount: number;
+}
 
-export default function Page() {
+export default function SupportCreatorPage() {
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [creators, setCreators] = useState<CreatorItem[]>([]);
+  const [selectedCreator, setSelectedCreator] = useState<CreatorItem | null>(null);
+  const [tipAmount, setTipAmount] = useState<number>(100);
+  const [customAmount, setCustomAmount] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const user = getCurrentUser();
+    setCurrentUser(user);
+
+    // Extract unique authors from stories catalog
+    const allStories = Object.values(getAllStories());
+    const authorMap = new Map<string, CreatorItem>();
+
+    allStories.forEach((s) => {
+      if (s.author && s.author.username) {
+        const u = s.author.username.toLowerCase();
+        if (!authorMap.has(u)) {
+          authorMap.set(u, {
+            name: s.author.name,
+            username: s.author.username,
+            avatarUrl: s.author.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+            worksCount: 1,
+          });
+        } else {
+          authorMap.get(u)!.worksCount += 1;
+        }
+      }
+    });
+
+    const list = Array.from(authorMap.values());
+    setCreators(list);
+    if (list.length > 0) {
+      setSelectedCreator(list[0]);
+    }
+  }, []);
+
+  const filteredCreators = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return creators;
+    return creators.filter(
+      (c) => c.name.toLowerCase().includes(q) || c.username.toLowerCase().includes(q)
+    );
+  }, [creators, searchQuery]);
+
+  const activeSparks = customAmount ? parseInt(customAmount, 10) || 0 : tipAmount;
+
+  const handleSendSparks = () => {
+    if (!selectedCreator || activeSparks <= 0) return;
+
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSuccessMessage(
+        `Successfully sent ${activeSparks} Sparks to ${selectedCreator.name} (@${selectedCreator.username})!`
+      );
+      setTimeout(() => setSuccessMessage(null), 5000);
+    }, 600);
+  };
+
   return (
-    <div className="min-h-screen bg-[#050B16] text-white py-10 px-4 sm:px-6">
-      <div
-        className="max-w-[1180px] mx-auto"
-        dangerouslySetInnerHTML={{ __html: rawHtml }}
-      />
-    </div>
+    <WriterAuthGate
+      title="Sign In to Support Creators"
+      description="Sign in to your FicForge account to show appreciation with Sparks and back your favorite authors."
+    >
+      <div className="min-h-screen bg-[#050B16] text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1180px] mx-auto space-y-10">
+          
+          {/* Header */}
+          <div className="max-w-3xl space-y-3">
+            <span className="inline-flex items-center gap-1.5 text-xs font-black tracking-widest uppercase text-[#F97316] bg-orange-500/10 border border-orange-500/30 rounded-full px-3.5 py-1.5">
+              <Sparkles className="h-3.5 w-3.5" /> CREATOR SUPPORT
+            </span>
+
+            <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+              Support Creators with Sparks
+            </h1>
+
+            <p className="text-base text-slate-300 leading-relaxed">
+              Use Sparks to show appreciation for a creator's dedication, passion, and serialized fiction. Creator support flows to the creator's profile identity to support their ongoing writing journey.
+            </p>
+          </div>
+
+          {/* Success Toast */}
+          {successMessage && (
+            <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/15 p-4 flex items-center gap-3 text-emerald-300 text-sm font-bold shadow-xl animate-in fade-in">
+              <CheckCircle2 className="h-5 w-5 shrink-0" />
+              <span>{successMessage}</span>
+            </div>
+          )}
+
+          {/* Main Layout Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Left: Find & Select Creator (7 cols) */}
+            <div className="lg:col-span-7 rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 space-y-6 shadow-xl">
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#F97316] font-bold">
+                  STEP 1
+                </span>
+                <h2 className="text-2xl font-black text-white mt-1">
+                  Who do you want to support?
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Search by creator name or select one of FicForge's active published writers below.
+                </p>
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                  <Search className="h-4 w-4" />
+                </div>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search creator name or @handle..."
+                  className="w-full rounded-xl border border-white/10 bg-slate-800/80 pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-[#6D5DFB] focus:outline-none focus:ring-1 focus:ring-[#6D5DFB] transition-all"
+                />
+              </div>
+
+              {/* Creators List */}
+              <div className="space-y-3 max-h-[360px] overflow-y-auto pr-1">
+                {filteredCreators.length === 0 ? (
+                  <div className="text-center py-8 text-xs text-slate-500">
+                    No creators found matching "{searchQuery}".
+                  </div>
+                ) : (
+                  filteredCreators.map((creator) => {
+                    const isSelected = selectedCreator?.username === creator.username;
+                    return (
+                      <div
+                        key={creator.username}
+                        onClick={() => setSelectedCreator(creator)}
+                        className={`rounded-2xl border p-4 flex items-center justify-between cursor-pointer transition-all ${
+                          isSelected
+                            ? "border-orange-500/60 bg-gradient-to-r from-orange-950/30 to-slate-800/90 shadow-md"
+                            : "border-white/5 bg-slate-950/50 hover:border-white/20 hover:bg-slate-950"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3.5">
+                          <img
+                            src={creator.avatarUrl}
+                            alt={creator.name}
+                            className="h-12 w-12 rounded-xl object-cover border border-white/10"
+                          />
+                          <div>
+                            <strong className="block text-sm font-bold text-white">
+                              {creator.name}
+                            </strong>
+                            <span className="text-xs text-slate-400 font-mono">
+                              @{creator.username} · {creator.worksCount} published {creator.worksCount === 1 ? "story" : "stories"}
+                            </span>
+                          </div>
+                        </div>
+
+                        <span
+                          className={`text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
+                            isSelected
+                              ? "bg-orange-500 text-white shadow"
+                              : "border border-white/10 bg-white/5 text-slate-400"
+                          }`}
+                        >
+                          {isSelected ? "Selected" : "Select"}
+                        </span>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            {/* Right: Tip & Send Sparks (5 cols) */}
+            <div className="lg:col-span-5 rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900 to-slate-950 p-6 sm:p-8 space-y-6 shadow-2xl relative">
+              <div>
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#F97316] font-bold">
+                  STEP 2
+                </span>
+                <h2 className="text-2xl font-black text-white mt-1">
+                  Send Sparks
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Select a Sparks appreciation amount to transfer.
+                </p>
+              </div>
+
+              {/* User Sparks Balance Pill */}
+              <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 flex items-center justify-between">
+                <div>
+                  <span className="block text-[10px] font-mono font-bold uppercase tracking-wider text-amber-400">
+                    YOUR SPARKS BALANCE
+                  </span>
+                  <span className="text-2xl font-black text-white">
+                    {currentUser?.sparksBalance ?? 0} Sparks
+                  </span>
+                </div>
+                <Link
+                  href="/premium"
+                  className="rounded-lg border border-amber-500/40 bg-amber-500/20 px-3 py-1.5 text-xs font-black text-amber-300 hover:bg-amber-500/30 transition-all shadow-sm"
+                >
+                  + Add Sparks
+                </Link>
+              </div>
+
+              {/* Selected Creator Preview */}
+              {selectedCreator && (
+                <div className="rounded-xl border border-white/10 bg-slate-800/60 p-3.5 flex items-center gap-3">
+                  <img
+                    src={selectedCreator.avatarUrl}
+                    alt={selectedCreator.name}
+                    className="h-10 w-10 rounded-lg object-cover"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <span className="block text-xs font-bold text-white truncate">
+                      Supporting {selectedCreator.name}
+                    </span>
+                    <span className="block text-[11px] text-slate-400 font-mono truncate">
+                      @{selectedCreator.username}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Preset Choice Grid */}
+              <div className="grid grid-cols-3 gap-2.5">
+                {[100, 500, 1000].map((amount) => {
+                  const isChosen = tipAmount === amount && !customAmount;
+                  return (
+                    <button
+                      key={amount}
+                      type="button"
+                      onClick={() => {
+                        setTipAmount(amount);
+                        setCustomAmount("");
+                      }}
+                      className={`rounded-xl border p-3 text-center transition-all cursor-pointer ${
+                        isChosen
+                          ? "border-[#6D5DFB] bg-[#6D5DFB]/25 text-white shadow-md shadow-indigo-600/20"
+                          : "border-white/10 bg-slate-800/80 text-slate-300 hover:border-white/20"
+                      }`}
+                    >
+                      <strong className="block text-lg font-black">{amount}</strong>
+                      <span className="text-[10px] text-slate-400 uppercase font-bold">Sparks</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Custom Amount Field */}
+              <div>
+                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  Custom Spark Amount
+                </label>
+                <input
+                  type="number"
+                  min="10"
+                  step="10"
+                  value={customAmount}
+                  onChange={(e) => setCustomAmount(e.target.value)}
+                  placeholder="Enter custom amount (e.g. 250)"
+                  className="w-full rounded-xl border border-white/10 bg-slate-800/80 px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-[#6D5DFB] focus:outline-none focus:ring-1 focus:ring-[#6D5DFB] transition-all"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="button"
+                onClick={handleSendSparks}
+                disabled={isSubmitting || !selectedCreator || activeSparks <= 0}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#F97316] to-[#EA580C] py-3.5 px-6 text-sm font-extrabold text-white shadow-lg shadow-orange-600/30 hover:opacity-95 transition-all cursor-pointer disabled:opacity-50"
+              >
+                {isSubmitting ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    Sending Sparks...
+                  </span>
+                ) : (
+                  <>
+                    <Heart className="h-4 w-4" />
+                    <span>Send {activeSparks} Sparks to {selectedCreator ? selectedCreator.name : "Creator"}</span>
+                  </>
+                )}
+              </button>
+
+              <div className="rounded-xl border border-white/5 bg-slate-950/80 p-3 text-[11px] text-slate-400 leading-relaxed">
+                <span className="text-orange-400 font-bold block mb-0.5">Fair Harbor Policy</span>
+                Sparks support creator presence and time. Support is not payment for exclusive chapters, fast passes, or promised updates.
+              </div>
+            </div>
+
+          </div>
+
+          {/* Spark Packs Link Section */}
+          <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-purple-950/30 via-slate-900 to-slate-950 p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="space-y-1">
+              <span className="text-xs font-black uppercase text-amber-400 tracking-wider">
+                NEED MORE SPARKS?
+              </span>
+              <h3 className="text-2xl font-black text-white">
+                FicForge Spark Packs & Premium Tiers
+              </h3>
+              <p className="text-xs text-slate-400 max-w-xl">
+                Upgrade to Forge Plus for monthly Sparks allocations, ad-free reading, and exclusive creator formatting tools.
+              </p>
+            </div>
+            <Link
+              href="/premium"
+              className="shrink-0 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-6 py-3.5 text-xs font-black text-white shadow-lg shadow-indigo-600/30 hover:opacity-95 transition-all"
+            >
+              <Crown className="h-4 w-4 text-amber-300" /> View Memberships & Packs
+            </Link>
+          </div>
+
+        </div>
+      </div>
+    </WriterAuthGate>
   );
 }

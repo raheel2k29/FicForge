@@ -1,25 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { loginUser } from "@/lib/authStore";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { loginUserAsync } from "@/lib/authStore";
 import { Sparkles, ArrowRight, Lock, Mail, User, ShieldCheck, Check } from "lucide-react";
 
-export default function RegisterPage() {
+function RegisterContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const rawRedirect = searchParams.get("redirect");
+  const redirectUrl =
+    !rawRedirect || rawRedirect === "/register" || rawRedirect.startsWith("/register")
+      ? "/my-stories"
+      : rawRedirect;
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !username.trim()) return;
 
-    loginUser(email.trim(), username.trim());
-    router.push("/my-stories");
+    setIsLoading(true);
+    try {
+      await loginUserAsync(email.trim(), username.trim());
+    } catch (err) {
+      console.warn("Register sync notice:", err);
+    }
+    window.location.href = redirectUrl;
   };
 
   return (
@@ -150,15 +162,29 @@ export default function RegisterPage() {
 
             <button
               type="submit"
-              className="w-full h-12 rounded-xl bg-gradient-to-r from-[#6D5DFB] via-[#7C3AED] to-[#F97316] text-sm font-black text-white shadow-lg shadow-indigo-600/30 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer mt-2"
+              disabled={isLoading}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-[#6D5DFB] via-[#7C3AED] to-[#F97316] text-sm font-black text-white shadow-lg shadow-indigo-600/30 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer mt-2 disabled:opacity-60"
             >
-              Create My Account <ArrowRight className="h-4 w-4" />
+              {isLoading ? (
+                <span className="inline-flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Creating Account...
+                </span>
+              ) : (
+                <>
+                  <span>Create My Account</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
             </button>
           </form>
 
           <div className="mt-6 text-center text-xs text-slate-400">
             Already have an account?{" "}
-            <Link href="/login" className="font-extrabold text-[#F97316] hover:underline">
+            <Link
+              href={rawRedirect ? `/login?redirect=${encodeURIComponent(rawRedirect)}` : "/login"}
+              className="font-extrabold text-[#F97316] hover:underline"
+            >
               Sign in here
             </Link>
           </div>
@@ -167,5 +193,19 @@ export default function RegisterPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#050B16] text-white flex items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-orange-500 border-t-transparent" />
+        </div>
+      }
+    >
+      <RegisterContent />
+    </Suspense>
   );
 }
