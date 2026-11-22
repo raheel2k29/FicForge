@@ -260,10 +260,57 @@ export default function NewStoryWizardPage() {
           {/* Main Form (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
             
-            {/* Step 1: Story Classification */}
+            {/* Step 1: Story Identity */}
+            <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-6 shadow-xl space-y-4">
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1">
+                  1. Story Title <span className="text-[#F97316]">*</span>
+                </label>
+                <p className="text-xs text-slate-400 mb-2.5">
+                  The primary title of your novel or fanwork as it will appear across FicForge.
+                </p>
+                <input
+                  type="text"
+                  required
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="e.g. The Obsidian Blade, Chronicles of the Frost..."
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-1p-ignore="true"
+                  data-form-type="other"
+                  spellCheck={false}
+                  className="w-full h-12 rounded-xl border border-white/10 bg-[#020617] px-4 text-base font-bold text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1">
+                  Synopsis / Blurb <span className="text-[#F97316]">*</span>
+                </label>
+                <p className="text-xs text-slate-400 mb-2">
+                  Hook readers with a brief summary of your plot, world, and characters.
+                </p>
+                <textarea
+                  rows={4}
+                  required
+                  value={synopsis}
+                  onChange={(e) => setSynopsis(e.target.value)}
+                  placeholder="Give readers an exciting hook into your story, world, and characters..."
+                  autoComplete="off"
+                  data-lpignore="true"
+                  data-1p-ignore="true"
+                  data-form-type="other"
+                  spellCheck={false}
+                  className="w-full rounded-xl border border-white/10 bg-[#020617] p-4 text-sm text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB] leading-relaxed"
+                />
+              </div>
+            </div>
+
+            {/* Step 2: Story Classification & Universe */}
             <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-6 shadow-xl">
               <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-3">
-                1. Story Classification <span className="text-[#F97316]">*</span>
+                2. Story Classification & Universe <span className="text-[#F97316]">*</span>
               </label>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -312,13 +359,16 @@ export default function NewStoryWizardPage() {
               {classification === "FANFICTION" && (
                 <div className="mt-4 pt-4 border-t border-white/5 space-y-2">
                   <label className="block text-xs font-bold text-slate-300">
-                    Fandom Name <span className="text-[#F97316]">*</span>
+                    Source Fandom / Franchise <span className="text-[#F97316]">*</span>
                   </label>
+                  <p className="text-[11px] text-slate-400">
+                    Which existing movie, anime, comic, book, or show universe is this fanfic set in? (NOT the story title)
+                  </p>
                   <input
                     type="text"
                     value={fandom}
                     onChange={(e) => setFandom(e.target.value)}
-                    placeholder="e.g. Star Wars, Harry Potter, Percy Jackson..."
+                    placeholder="e.g. Harry Potter, Star Wars, Marvel, Percy Jackson, Genshin Impact..."
                     autoComplete="off"
                     data-lpignore="true"
                     data-1p-ignore="true"
@@ -340,47 +390,6 @@ export default function NewStoryWizardPage() {
                   </div>
                 </div>
               )}
-            </div>
-
-            {/* Step 2: Story Identity */}
-            <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-6 shadow-xl space-y-4">
-              <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-2">
-                  Story Title <span className="text-[#F97316]">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. The Obsidian Blade, Chronicles of the Frost..."
-                  autoComplete="off"
-                  data-lpignore="true"
-                  data-1p-ignore="true"
-                  data-form-type="other"
-                  spellCheck={false}
-                  className="w-full h-12 rounded-xl border border-white/10 bg-[#020617] px-4 text-base font-bold text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-2">
-                  Synopsis / Blurb <span className="text-[#F97316]">*</span>
-                </label>
-                <textarea
-                  rows={4}
-                  required
-                  value={synopsis}
-                  onChange={(e) => setSynopsis(e.target.value)}
-                  placeholder="Give readers an exciting hook into your story, world, and characters..."
-                  autoComplete="off"
-                  data-lpignore="true"
-                  data-1p-ignore="true"
-                  data-form-type="other"
-                  spellCheck={false}
-                  className="w-full rounded-xl border border-white/10 bg-[#020617] p-4 text-sm text-white placeholder-slate-500 outline-none focus:border-[#6D5DFB] leading-relaxed"
-                />
-              </div>
             </div>
 
             {/* Step 3: Audience Rating & Genre */}
