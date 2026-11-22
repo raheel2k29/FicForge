@@ -114,7 +114,14 @@ export default function AdminOverviewCharts({
     { label: "Week 4", reads: Math.round(totalReads * 0.30), words: Math.round(totalWords * 0.31) },
   ];
 
-  const activeSeries = timeframe === "30d" ? series30d : series7d;
+  const seriesAll = [
+    { label: "Aug", reads: Math.round(totalReads * 0.12), words: Math.round(totalWords * 0.10) },
+    { label: "Sep", reads: Math.round(totalReads * 0.19), words: Math.round(totalWords * 0.18) },
+    { label: "Oct", reads: Math.round(totalReads * 0.29), words: Math.round(totalWords * 0.30) },
+    { label: "Nov", reads: Math.round(totalReads * 0.40), words: Math.round(totalWords * 0.42) },
+  ];
+
+  const activeSeries = timeframe === "30d" ? series30d : timeframe === "all" ? seriesAll : series7d;
 
   // Chart coordinate calculations
   const chartW = 540;
