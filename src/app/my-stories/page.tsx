@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { getAllStories, syncStoriesWithServer, deleteStory, deleteChapter, cleanupLegacyStorage } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer, deleteStory, deleteChapter, cleanupLegacyStorage, filterStoriesForAuthor } from "@/lib/storyStore";
 import { getStorySpotlightEligibility } from "@/lib/promotionStore";
 import { getCurrentUser, UserSession } from "@/lib/authStore";
 import { StoryData } from "@/data/mockStories";
@@ -39,26 +39,20 @@ export default function MyStoriesPage() {
     const user = getCurrentUser();
     setCurrentUser(user);
 
-    const filterForUser = (allStoriesMap: Record<string, StoryData>, u: UserSession | null) => {
-      const allList = Object.values(allStoriesMap);
-      if (!u || u.role === "SUPER_ADMIN") {
-        return allList;
-      }
-      const myWorks = allList.filter(
-        (s) => s.author?.username?.toLowerCase() === u.username?.toLowerCase()
-      );
-      return myWorks.length > 0 ? myWorks : allList;
-    };
-
     const loadStories = () => {
       const all = getAllStories();
-      setStories(filterForUser(all, getCurrentUser()));
+      const u = getCurrentUser();
+      setStories(filterStoriesForAuthor(all, u));
     };
+
+    // Initial load
+    loadStories();
 
     // Reconcile with live PostgreSQL database immediately
     syncStoriesWithServer().then((serverStories) => {
+      const u = getCurrentUser();
       if (serverStories) {
-        setStories(filterForUser(serverStories, getCurrentUser()));
+        setStories(filterStoriesForAuthor(serverStories, u));
       } else {
         loadStories();
       }
@@ -251,9 +245,13 @@ export default function MyStoriesPage() {
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6D5DFB]/15 border border-[#6D5DFB]/30 text-2xl mb-4">
               ✍️
             </div>
-            <h3 className="text-xl font-bold text-white">No Stories in this Category</h3>
+            <h3 className="text-xl font-bold text-white">
+              {stories.length === 0 ? "No Stories Forged Yet" : "No Stories in this Category"}
+            </h3>
             <p className="mt-2 text-xs text-slate-400 leading-relaxed">
-              Start building your next story or import an existing manuscript to begin publishing chapters.
+              {stories.length === 0
+                ? "You haven't forged any stories yet. Launch your first original manuscript or fanfiction to begin publishing chapters!"
+                : "Start building your next story or import an existing manuscript to begin publishing chapters."}
             </p>
             <Link
               href="/write/new"

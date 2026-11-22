@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense, useMemo } from "react";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import CreatorStudioHeader from "@/components/CreatorStudioHeader";
-import { getAllStories, syncStoriesWithServer } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer, filterStoriesForAuthor } from "@/lib/storyStore";
+import { getCurrentUser, UserSession } from "@/lib/authStore";
 import {
   getPromoCredits,
   setPromoCredits,
@@ -35,12 +36,14 @@ import {
   AlertTriangle,
   Clock,
   RotateCcw,
+  Plus,
 } from "lucide-react";
 
 function PromotionDashboardContent() {
   const searchParams = useSearchParams();
   const storySlugParam = searchParams.get("storySlug");
 
+  const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
   const [stories, setStories] = useState<StoryData[]>([]);
   const [credits, setCredits] = useState<number>(10);
   const [selectedDays, setSelectedDays] = useState<number>(1);
@@ -56,15 +59,18 @@ function PromotionDashboardContent() {
     } catch {}
 
     const load = () => {
-      const all = Object.values(getAllStories());
-      setStories(all);
+      const u = getCurrentUser();
+      setCurrentUser(u);
+      const all = getAllStories();
+      const myStories = filterStoriesForAuthor(all, u);
+      setStories(myStories);
       setCredits(getPromoCredits());
       setCampaigns(getAllSpotlightCampaigns());
 
-      if (storySlugParam) {
+      if (storySlugParam && myStories.some((s) => s.slug === storySlugParam)) {
         setSelectedStorySlug(storySlugParam);
-      } else if (all.length > 0 && !selectedStorySlug) {
-        setSelectedStorySlug(all[0].slug);
+      } else if (myStories.length > 0 && (!selectedStorySlug || !myStories.some((s) => s.slug === selectedStorySlug))) {
+        setSelectedStorySlug(myStories[0].slug);
       }
     };
 
@@ -79,11 +85,12 @@ function PromotionDashboardContent() {
 
     syncStoriesWithServer().then((serverStories) => {
       if (serverStories) {
-        const storiesList = Object.values(serverStories);
+        const u = getCurrentUser();
+        const storiesList = filterStoriesForAuthor(serverStories, u);
         setStories(storiesList);
         if (storySlugParam && storiesList.some((s) => s.slug === storySlugParam)) {
           setSelectedStorySlug(storySlugParam);
-        } else if (!selectedStorySlug && storiesList.length > 0) {
+        } else if (storiesList.length > 0 && (!selectedStorySlug || !storiesList.some((s) => s.slug === selectedStorySlug))) {
           setSelectedStorySlug(storiesList[0].slug);
         }
       }
@@ -98,8 +105,19 @@ function PromotionDashboardContent() {
   }, [storySlugParam, selectedStorySlug]);
 
   const selectedStory = useMemo(() => {
-    return stories.find((s) => s.slug === selectedStorySlug) || stories[0];
+    return stories.find((s) => s.slug === selectedStorySlug) || (stories.length > 0 ? stories[0] : null);
   }, [stories, selectedStorySlug]);
+
+  // Filter campaigns strictly for this author's works (or Super Admin)
+  const myCampaigns = useMemo(() => {
+    if (!currentUser) return [];
+    if (currentUser.role === "SUPER_ADMIN") return campaigns;
+    return campaigns.filter((c) => {
+      const matchesStory = stories.some((s) => s.slug === c.storySlug);
+      const matchesAuthor = currentUser.name && c.authorName?.toLowerCase() === currentUser.name.toLowerCase();
+      return matchesStory || matchesAuthor;
+    });
+  }, [campaigns, stories, currentUser]);
 
   // Real-time eligibility evaluation for selected story
   const eligibility: StorySpotlightStatus = useMemo(() => {
@@ -111,12 +129,12 @@ function PromotionDashboardContent() {
 
   const activeSpotlights = useMemo(() => {
     const now = Date.now();
-    return campaigns.filter((c) => c.status === "ACTIVE" && now < c.endTimestamp);
-  }, [campaigns]);
+    return myCampaigns.filter((c) => c.status === "ACTIVE" && now < c.endTimestamp);
+  }, [myCampaigns]);
 
   const totalImpressions = useMemo(() => {
-    return campaigns.reduce((acc, c) => acc + (c.impressions || 0), 0);
-  }, [campaigns]);
+    return myCampaigns.reduce((acc, c) => acc + (c.impressions || 0), 0);
+  }, [myCampaigns]);
 
   const handleLaunchPromotion = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -321,37 +339,51 @@ function PromotionDashboardContent() {
             <form onSubmit={handleLaunchPromotion} className="space-y-6">
               
               {/* Story Selector with Real-Time Status Tags */}
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
-                  Select Story to Feature
-                </label>
-                <select
-                  value={selectedStorySlug}
-                  onChange={(e) => setSelectedStorySlug(e.target.value)}
-                  className="w-full h-12 rounded-xl border border-white/10 bg-slate-800 px-4 text-sm font-semibold text-white outline-none focus:border-amber-400 transition-colors"
-                >
-                  {stories.map((story) => {
-                    const status = getStorySpotlightEligibility(story.slug);
-                    const tag =
-                      status.status === "CURRENTLY_ACTIVE"
-                        ? " • [✦ ACTIVE IN SPOTLIGHT]"
-                        : status.status === "PENDING_APPROVAL"
-                        ? " • [⏳ AWAITING APPROVAL]"
-                        : status.status === "IN_COOLDOWN"
-                        ? ` • [⏳ IN COOLDOWN (${status.daysRemaining}d)]`
-                        : " • [✓ ELIGIBLE]";
+              {stories.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-white/10 bg-slate-800/40 p-6 text-center space-y-3">
+                  <p className="text-xs text-slate-300">
+                    You don't have any published stories yet to promote.
+                  </p>
+                  <Link
+                    href="/write/new"
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-4 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-600/30"
+                  >
+                    <Plus className="h-3.5 w-3.5" /> Forge Your First Story
+                  </Link>
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+                    Select Story to Feature
+                  </label>
+                  <select
+                    value={selectedStorySlug}
+                    onChange={(e) => setSelectedStorySlug(e.target.value)}
+                    className="w-full h-12 rounded-xl border border-white/10 bg-slate-800 px-4 text-sm font-semibold text-white outline-none focus:border-amber-400 transition-colors"
+                  >
+                    {stories.map((story) => {
+                      const status = getStorySpotlightEligibility(story.slug);
+                      const tag =
+                        status.status === "CURRENTLY_ACTIVE"
+                          ? " • [✦ ACTIVE IN SPOTLIGHT]"
+                          : status.status === "PENDING_APPROVAL"
+                          ? " • [⏳ AWAITING APPROVAL]"
+                          : status.status === "IN_COOLDOWN"
+                          ? ` • [⏳ IN COOLDOWN (${status.daysRemaining}d)]`
+                          : " • [✓ ELIGIBLE]";
 
-                    return (
-                      <option key={story.slug} value={story.slug}>
-                        {story.title} ({story.classification === "FANFICTION" ? "Fanfiction" : "Original"}){story.rating === "EXPLICIT" ? " • [18+ EXPLICIT]" : ""}{tag}
-                      </option>
-                    );
-                  })}
-                </select>
-                <p className="text-[11px] text-slate-400 mt-1.5">
-                  Select any story from your catalog to check real-time eligibility.
-                </p>
-              </div>
+                      return (
+                        <option key={story.slug} value={story.slug}>
+                          {story.title} ({story.classification === "FANFICTION" ? "Fanfiction" : "Original"}){story.rating === "EXPLICIT" ? " • [18+ EXPLICIT]" : ""}{tag}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <p className="text-[11px] text-slate-400 mt-1.5">
+                    Select any story from your catalog to check real-time eligibility.
+                  </p>
+                </div>
+              )}
 
               {/* Step 2: Duration Selector (2 Credits Per Day) */}
               <div className="space-y-3 pt-2 border-t border-white/5">
@@ -505,7 +537,17 @@ function PromotionDashboardContent() {
               </div>
 
               {/* Submit Button Governed by Strict Eligibility */}
-              {eligibility.status === "PENDING_APPROVAL" ? (
+              {stories.length === 0 ? (
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    disabled
+                    className="w-full h-12 rounded-xl border border-white/10 bg-slate-800/40 text-sm font-bold text-slate-500 cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    Forge a story first to launch spotlight promotions
+                  </button>
+                </div>
+              ) : eligibility.status === "PENDING_APPROVAL" ? (
                 <div className="space-y-2">
                   <button
                     type="button"
@@ -601,7 +643,7 @@ function PromotionDashboardContent() {
               Live Showcase Preview
             </span>
 
-            {selectedStory && (
+            {selectedStory ? (
               <div className="rounded-3xl border-2 border-amber-500/40 bg-gradient-to-b from-slate-900 to-[#070E1E] p-5 shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-2xl pointer-events-none" />
 
@@ -646,6 +688,10 @@ function PromotionDashboardContent() {
                   </span>
                 </div>
               </div>
+            ) : (
+              <div className="rounded-3xl border border-dashed border-white/10 bg-slate-900/40 p-8 text-center text-xs text-slate-500">
+                Create or publish a story to preview how it will appear in the Homepage Spotlight.
+              </div>
             )}
           </div>
 
@@ -682,7 +728,14 @@ function PromotionDashboardContent() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 text-sm">
-                {campaigns.map((c) => {
+                {myCampaigns.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-8 text-center text-xs text-slate-400">
+                      No spotlight campaigns launched yet. Feature your story above to start tracking reach and impressions.
+                    </td>
+                  </tr>
+                ) : (
+                  myCampaigns.map((c) => {
                   const now = Date.now();
                   const isActive = c.status === "ACTIVE" && now < c.endTimestamp;
                   const isInCooldown = !isActive && c.cooldownTimestamp && now < c.cooldownTimestamp;
@@ -744,7 +797,8 @@ function PromotionDashboardContent() {
                       </td>
                     </tr>
                   );
-                })}
+                })
+                )}
               </tbody>
             </table>
           </div>

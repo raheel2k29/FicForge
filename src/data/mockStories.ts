@@ -27,6 +27,7 @@ export interface StoryData {
   rating: "GENERAL" | "TEEN" | "MATURE" | "EXPLICIT";
   status: "ONGOING" | "COMPLETED" | "HIATUS" | "DRAFT";
   author: {
+    id?: string;
     name: string;
     username: string;
     avatarUrl: string;

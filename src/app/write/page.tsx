@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import CreatorStudioHeader from "@/components/CreatorStudioHeader";
-import { getAllStories, syncStoriesWithServer, deleteStory } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer, deleteStory, filterStoriesForAuthor } from "@/lib/storyStore";
 import { getActiveSpotlights, getPromoCredits, syncSpotlightsWithServer } from "@/lib/promotionStore";
 import { getCurrentUser, UserSession } from "@/lib/authStore";
 import { StoryData } from "@/data/mockStories";
@@ -38,17 +38,33 @@ export default function WriterPortalPage() {
     } catch {}
 
     const load = () => {
-      const all = Object.values(getAllStories());
-      setStories(all);
-      setUser(getCurrentUser());
-      setActiveSpotlights(getActiveSpotlights());
+      const u = getCurrentUser();
+      setUser(u);
+      const all = getAllStories();
+      const myStories = filterStoriesForAuthor(all, u);
+      setStories(myStories);
+
+      // Filter active spotlights strictly for this author's works
+      const allActive = getActiveSpotlights();
+      const myActive = allActive.filter((c) => {
+        if (u?.role === "SUPER_ADMIN") return true;
+        return (
+          myStories.some((s) => s.slug === c.storySlug) ||
+          (u?.name && c.authorName?.toLowerCase() === u.name.toLowerCase())
+        );
+      });
+      setActiveSpotlights(myActive);
       setCredits(getPromoCredits());
     };
 
+    load();
+
     // Reconcile with live PostgreSQL database immediately
     syncStoriesWithServer().then((serverStories) => {
+      const u = getCurrentUser();
       if (serverStories) {
-        setStories(Object.values(serverStories));
+        const myStories = filterStoriesForAuthor(serverStories, u);
+        setStories(myStories);
       } else {
         load();
       }
@@ -56,9 +72,17 @@ export default function WriterPortalPage() {
 
     syncSpotlightsWithServer().then((serverCampaigns) => {
       if (serverCampaigns && serverCampaigns.length > 0) {
+        const u = getCurrentUser();
         const now = Date.now();
         const active = serverCampaigns.filter((c) => c.status === "ACTIVE" && now < c.endTimestamp);
-        setActiveSpotlights(active);
+        const myActive = active.filter((c) => {
+          if (u?.role === "SUPER_ADMIN") return true;
+          return (
+            stories.some((s) => s.slug === c.storySlug) ||
+            (u?.name && c.authorName?.toLowerCase() === u.name.toLowerCase())
+          );
+        });
+        setActiveSpotlights(myActive);
       }
     });
 
@@ -281,7 +305,24 @@ export default function WriterPortalPage() {
               </div>
 
               <div className="space-y-3">
-                {stories.map((story) => {
+                {stories.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-white/10 bg-slate-900/40 p-8 text-center space-y-3">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6D5DFB]/15 border border-[#6D5DFB]/30 text-xl">
+                      ✍️
+                    </div>
+                    <h4 className="text-base font-bold text-white">No Stories Forged Yet</h4>
+                    <p className="mt-1 text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
+                      You haven't forged any stories yet. Launch your first original manuscript or fanfiction to start building your readership!
+                    </p>
+                    <Link
+                      href="/write/new"
+                      className="mt-2 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-4 py-2 text-xs font-bold text-white shadow-lg shadow-indigo-600/30 hover:opacity-95 transition-all"
+                    >
+                      <Plus className="h-3.5 w-3.5" /> Start Your First Story
+                    </Link>
+                  </div>
+                ) : (
+                  stories.map((story) => {
                   return (
                     <div
                       key={story.slug}
@@ -346,7 +387,8 @@ export default function WriterPortalPage() {
                       </div>
                     </div>
                   );
-                })}
+                })
+                )}
               </div>
             </div>
 

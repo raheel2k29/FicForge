@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense, useMemo } from "react";
-import { getAllStories, bulkSaveChapters, syncStoriesWithServer } from "@/lib/storyStore";
+import { getAllStories, bulkSaveChapters, syncStoriesWithServer, filterStoriesForAuthor } from "@/lib/storyStore";
+import { getCurrentUser } from "@/lib/authStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import CreatorStudioHeader from "@/components/CreatorStudioHeader";
@@ -61,12 +62,13 @@ function BulkImportContent() {
     }
 
     const init = (all: Record<string, StoryData>) => {
-      const list = Object.values(all);
+      const u = getCurrentUser();
+      const list = filterStoriesForAuthor(all, u);
       setStories(list);
 
-      if (storySlugParam && all[storySlugParam]) {
+      if (storySlugParam && list.some((s) => s.slug === storySlugParam)) {
         setSelectedStorySlug(storySlugParam);
-      } else if (!storySlugParam && list.length > 0 && !selectedStorySlug) {
+      } else if (!storySlugParam && list.length > 0 && (!selectedStorySlug || !list.some((s) => s.slug === selectedStorySlug))) {
         setSelectedStorySlug(list[0].slug);
       }
     };
@@ -480,17 +482,21 @@ function BulkImportContent() {
           </div>
 
           <div className="flex items-center gap-3">
-            <select
-              value={selectedStorySlug}
-              onChange={(e) => setSelectedStorySlug(e.target.value)}
-              className="h-11 rounded-xl border border-white/15 bg-[#020617] px-4 text-sm font-bold text-white outline-none focus:border-[#6D5DFB]"
-            >
-              {stories.map((s) => (
-                <option key={s.slug} value={s.slug}>
-                  {s.title} ({s.classification === "FANFICTION" ? "Fanfiction" : "Original"})
-                </option>
-              ))}
-            </select>
+            {stories.length === 0 ? (
+              <span className="text-xs text-amber-400 font-medium">No stories found. Create one first →</span>
+            ) : (
+              <select
+                value={selectedStorySlug}
+                onChange={(e) => setSelectedStorySlug(e.target.value)}
+                className="h-11 rounded-xl border border-white/15 bg-[#020617] px-4 text-sm font-bold text-white outline-none focus:border-[#6D5DFB]"
+              >
+                {stories.map((s) => (
+                  <option key={s.slug} value={s.slug}>
+                    {s.title} ({s.classification === "FANFICTION" ? "Fanfiction" : "Original"})
+                  </option>
+                ))}
+              </select>
+            )}
 
             <Link
               href="/write/new"

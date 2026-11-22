@@ -32,6 +32,35 @@ export function getAllStories(): Record<string, StoryData> {
 }
 
 /**
+ * Filter a list or map of stories strictly for an authenticated user.
+ * Staff (SUPER_ADMIN) can inspect all, but standard authors only see their own stories.
+ * Newly registered users with 0 stories ALWAYS return [] (NEVER leaks demo stories).
+ */
+export function filterStoriesForAuthor(
+  storiesInput: Record<string, StoryData> | StoryData[],
+  user: { id?: string; username?: string; name?: string; role?: string } | null
+): StoryData[] {
+  if (!user) return [];
+  const list = Array.isArray(storiesInput) ? storiesInput : Object.values(storiesInput);
+  if (user.role === "SUPER_ADMIN") return list;
+
+  const targetUsername = user.username?.trim().toLowerCase();
+  const targetName = user.name?.trim().toLowerCase();
+  const targetId = user.id;
+
+  return list.filter((s) => {
+    const sUsername = s.author?.username?.trim().toLowerCase();
+    const sName = s.author?.name?.trim().toLowerCase();
+    const sId = (s.author as any)?.id;
+
+    if (targetUsername && sUsername && targetUsername === sUsername) return true;
+    if (targetId && sId && targetId === sId) return true;
+    if (targetName && sName && targetName === sName) return true;
+    return false;
+  });
+}
+
+/**
  * Get a single story by slug
  */
 export function getStoryBySlug(slug: string): StoryData | undefined {

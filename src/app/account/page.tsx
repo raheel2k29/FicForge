@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getCurrentUser, logoutUser, UserSession, isUserAdmin } from "@/lib/authStore";
 import { getBookmarkCount } from "@/lib/bookmarkStore";
-import { getAllStories } from "@/lib/storyStore";
+import { getAllStories, syncStoriesWithServer, filterStoriesForAuthor } from "@/lib/storyStore";
 import {
   User,
   ShieldCheck,
@@ -39,10 +39,12 @@ export default function AccountPage() {
       }
       setBookmarkCount(getBookmarkCount());
       const allStories = Object.values(getAllStories());
-      const myWorks = allStories.filter(
-        (s) => s.author?.username?.toLowerCase() === user.username?.toLowerCase()
-      );
-      setUserStoryCount(myWorks.length);
+      setUserStoryCount(filterStoriesForAuthor(allStories, user).length);
+      syncStoriesWithServer().then((serverStories) => {
+        if (serverStories) {
+          setUserStoryCount(filterStoriesForAuthor(serverStories, user).length);
+        }
+      });
     }
   }, []);
 

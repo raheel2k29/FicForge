@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, Suspense, useMemo } from "react";
-import { getAllStories, saveChapter, deleteChapter, syncStoriesWithServer } from "@/lib/storyStore";
+import { getAllStories, saveChapter, deleteChapter, syncStoriesWithServer, filterStoriesForAuthor } from "@/lib/storyStore";
+import { getCurrentUser } from "@/lib/authStore";
 import { StoryData, ChapterData } from "@/data/mockStories";
 import WriterAuthGate from "@/components/WriterAuthGate";
 import {
@@ -18,6 +19,7 @@ import {
   Send,
   HelpCircle,
   Trash2,
+  Plus,
 } from "lucide-react";
 
 function ChapterEditorContent() {
@@ -39,31 +41,34 @@ function ChapterEditorContent() {
   const [isPublishing, setIsPublishing] = useState(false);
 
   useEffect(() => {
+    const u = getCurrentUser();
     const all = getAllStories();
-    const list = Object.values(all);
+    const list = filterStoriesForAuthor(all, u);
     setStories(list);
 
-    if (storySlugParam && all[storySlugParam]) {
+    if (storySlugParam && list.some((s) => s.slug === storySlugParam)) {
       setSelectedStorySlug(storySlugParam);
     } else if (list.length > 0) {
-      setSelectedStorySlug((prev) => prev || list[0].slug);
+      setSelectedStorySlug((prev) => (list.some((s) => s.slug === prev) ? prev : list[0].slug));
     }
 
     syncStoriesWithServer().then((serverStories) => {
       if (serverStories) {
-        const updatedList = Object.values(serverStories);
+        const uNow = getCurrentUser();
+        const updatedList = filterStoriesForAuthor(serverStories, uNow);
         setStories(updatedList);
         setSelectedStorySlug((prev) => {
-          if (prev && serverStories[prev]) return prev;
-          if (storySlugParam && serverStories[storySlugParam]) return storySlugParam;
+          if (prev && updatedList.some((s) => s.slug === prev)) return prev;
+          if (storySlugParam && updatedList.some((s) => s.slug === storySlugParam)) return storySlugParam;
           return updatedList.length > 0 ? updatedList[0].slug : "";
         });
       }
     });
 
     const handleStoriesUpdated = () => {
+      const uNow = getCurrentUser();
       const freshAll = getAllStories();
-      setStories(Object.values(freshAll));
+      setStories(filterStoriesForAuthor(freshAll, uNow));
     };
 
     window.addEventListener("ficforge_stories_updated", handleStoriesUpdated);
@@ -74,8 +79,9 @@ function ChapterEditorContent() {
     if (!selectedStory) return;
     if (window.confirm(`Delete chapter "${chapterTitle}"? This cannot be undone.`)) {
       deleteChapter(selectedStory.slug, chapterSlug);
+      const uNow = getCurrentUser();
       const all = getAllStories();
-      setStories(Object.values(all));
+      setStories(filterStoriesForAuthor(all, uNow));
     }
   };
 
@@ -168,7 +174,24 @@ function ChapterEditorContent() {
         </div>
 
         {/* Editor Form */}
-        <form onSubmit={handlePublish} className="space-y-6">
+        {stories.length === 0 ? (
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-12 text-center space-y-4 shadow-xl">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#6D5DFB]/15 border border-[#6D5DFB]/30 text-2xl">
+              📖
+            </div>
+            <h3 className="text-xl font-bold text-white">No Stories Found</h3>
+            <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
+              You need to create a story before you can write a chapter. Launch your first manuscript to begin writing!
+            </p>
+            <Link
+              href="/write/new"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6D5DFB] to-[#7C3AED] px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-indigo-600/30"
+            >
+              <Plus className="h-4 w-4" /> Start New Story
+            </Link>
+          </div>
+        ) : (
+          <form onSubmit={handlePublish} className="space-y-6">
           
           {/* Target Story & Chapter Header */}
           <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
@@ -351,6 +374,7 @@ function ChapterEditorContent() {
           </div>
 
         </form>
+        )}
 
         {/* Existing Chapters Management */}
         {selectedStory && selectedStory.chapters && selectedStory.chapters.length > 0 && (

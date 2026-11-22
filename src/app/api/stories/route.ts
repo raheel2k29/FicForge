@@ -134,64 +134,68 @@ export async function GET(request: Request) {
       orderBy: { createdAt: "desc" },
     });
 
-    if (dbStories && dbStories.length > 0) {
-      const storiesMap: Record<string, StoryData> = {};
+    if (dbStories) {
+      // If authorUsername was provided, even if dbStories is empty, return { stories: storiesMap }
+      // Mock stories should ONLY be returned if NO author filter was provided AND database is completely empty
+      if (authorUsername || dbStories.length > 0) {
+        const storiesMap: Record<string, StoryData> = {};
 
-      for (const s of dbStories) {
-        const isAuthorOrStaff = Boolean(
-          session &&
-          (
-            session.username?.toLowerCase() === s.author.username?.toLowerCase() ||
-            session.role === "SUPER_ADMIN" ||
-            session.role === "ADMIN" ||
-            session.role === "MODERATOR"
-          )
-        );
+        for (const s of dbStories) {
+          const isAuthorOrStaff = Boolean(
+            session &&
+            (
+              session.username?.toLowerCase() === s.author.username?.toLowerCase() ||
+              session.role === "SUPER_ADMIN" ||
+              session.role === "ADMIN" ||
+              session.role === "MODERATOR"
+            )
+          );
 
-        storiesMap[s.slug] = {
-          id: s.id,
-          title: s.title,
-          slug: s.slug,
-          synopsis: s.synopsis,
-          coverImageUrl: s.coverImageUrl || "",
-          classification: s.classification as any,
-          genres: s.classification === "FANFICTION" ? ["Sci-Fi", "Adventure"] : ["Fantasy", "Adventure"],
-          rating: s.rating as any,
-          status: s.status as any,
-          author: {
-            name: s.author.profile?.displayName || s.author.username || "Valerius Frost",
-            username: s.author.username,
-            avatarUrl: s.author.profile?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
-            isVerified: s.author.isVerified,
-            bio: s.author.profile?.bio || "Author on FicForge.",
-          },
-          stats: {
-            words: s.chapters.reduce((acc, c) => acc + (c.wordCount || 0), 0),
-            views: s.viewCount,
-            likes: s.likeCount,
-            bookmarks: s.bookmarkCount,
-            chapterCount: s.chapters.length,
-          },
-          tags: {
-            warnings: (s.isExplicit18Plus || s.rating === "EXPLICIT") ? ["Explicit Content"] : [],
-            pairings: [],
-            characters: [],
-            general: ["Serialized", "Popular"],
-          },
-          updatedAt: s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : "Recently",
-          chapters: s.chapters.map((ch) => mapDbChapter(ch, isAuthorOrStaff)),
-        };
-      }
-
-      // Database is authoritative: Return PostgreSQL stories directly
-      return NextResponse.json(
-        { stories: storiesMap, source: "postgresql-neon-database" },
-        {
-          headers: {
-            "Cache-Control": "no-store, no-cache, must-revalidate",
-          },
+          storiesMap[s.slug] = {
+            id: s.id,
+            title: s.title,
+            slug: s.slug,
+            synopsis: s.synopsis,
+            coverImageUrl: s.coverImageUrl || "",
+            classification: s.classification as any,
+            genres: s.classification === "FANFICTION" ? ["Sci-Fi", "Adventure"] : ["Fantasy", "Adventure"],
+            rating: s.rating as any,
+            status: s.status as any,
+            author: {
+              name: s.author.profile?.displayName || s.author.username || "Valerius Frost",
+              username: s.author.username,
+              avatarUrl: s.author.profile?.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
+              isVerified: s.author.isVerified,
+              bio: s.author.profile?.bio || "Author on FicForge.",
+            },
+            stats: {
+              words: s.chapters.reduce((acc, c) => acc + (c.wordCount || 0), 0),
+              views: s.viewCount,
+              likes: s.likeCount,
+              bookmarks: s.bookmarkCount,
+              chapterCount: s.chapters.length,
+            },
+            tags: {
+              warnings: (s.isExplicit18Plus || s.rating === "EXPLICIT") ? ["Explicit Content"] : [],
+              pairings: [],
+              characters: [],
+              general: ["Serialized", "Popular"],
+            },
+            updatedAt: s.updatedAt ? new Date(s.updatedAt).toLocaleDateString() : "Recently",
+            chapters: s.chapters.map((ch) => mapDbChapter(ch, isAuthorOrStaff)),
+          };
         }
-      );
+
+        // Database is authoritative: Return PostgreSQL stories directly
+        return NextResponse.json(
+          { stories: storiesMap, source: "postgresql-neon-database" },
+          {
+            headers: {
+              "Cache-Control": "no-store, no-cache, must-revalidate",
+            },
+          }
+        );
+      }
     }
   } catch (error: any) {
     console.warn("Prisma query in /api/stories fell back to mock:", error?.message);
@@ -243,7 +247,7 @@ export async function POST(request: Request) {
       }
     }
 
-    // Ensure default creator user exists
+    // Ensure default creator user exists as baseline fallback
     let creator = await prisma.user.findFirst({
       where: {
         OR: [{ username: "valerius_f" }, { email: "creator@ficforge.org" }],
@@ -269,6 +273,19 @@ export async function POST(request: Request) {
       });
     }
 
+    // Determine the actual author: Link to authenticated session user or story author
+    let targetAuthorId = creator.id;
+    if (session?.userId) {
+      const u = await prisma.user.findUnique({ where: { id: session.userId } });
+      if (u) targetAuthorId = u.id;
+    } else if (session?.username) {
+      const u = await prisma.user.findFirst({ where: { username: session.username } });
+      if (u) targetAuthorId = u.id;
+    } else if (story.author?.username) {
+      const u = await prisma.user.findFirst({ where: { username: story.author.username } });
+      if (u) targetAuthorId = u.id;
+    }
+
     // Upsert story in PostgreSQL
     const dbStory = await prisma.story.upsert({
       where: { slug: story.slug },
@@ -286,7 +303,7 @@ export async function POST(request: Request) {
       },
       create: {
         id: story.id || `story-${story.slug}`,
-        authorId: creator.id,
+        authorId: targetAuthorId,
         title: story.title,
         slug: story.slug,
         synopsis: story.synopsis || "",
