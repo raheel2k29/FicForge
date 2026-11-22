@@ -1108,18 +1108,19 @@ export default function AdminDashboardPage() {
                           <select
                             value={story.rating}
                             onChange={(e) => handleUpdateRating(story.slug, e.target.value)}
-                            className={`h-7 rounded-lg border text-[11px] font-bold px-2 outline-none bg-[#020617] cursor-pointer ${
+                            style={{ colorScheme: "dark" }}
+                            className={`h-7 rounded-lg border text-[11px] font-bold px-2 outline-none cursor-pointer transition-all ${
                               story.rating === "EXPLICIT"
-                                ? "border-red-500/40 text-red-400 bg-red-950/20"
+                                ? "border-red-500/40 text-red-400 bg-red-950/30"
                                 : story.rating === "MATURE"
-                                ? "border-amber-500/40 text-amber-300"
-                                : "border-white/15 text-slate-300"
+                                ? "border-amber-500/40 text-amber-300 bg-amber-950/30"
+                                : "border-white/15 text-slate-300 bg-slate-900/90 hover:border-white/30"
                             }`}
                           >
-                            <option value="GENERAL">General</option>
-                            <option value="TEEN">Teen</option>
-                            <option value="MATURE">Mature</option>
-                            <option value="EXPLICIT">Explicit 18+</option>
+                            <option value="GENERAL" className="bg-[#0A1020] text-slate-200">General</option>
+                            <option value="TEEN" className="bg-[#0A1020] text-slate-200">Teen</option>
+                            <option value="MATURE" className="bg-[#0A1020] text-amber-300">Mature</option>
+                            <option value="EXPLICIT" className="bg-[#0A1020] text-red-300">Explicit 18+</option>
                           </select>
                         </td>
 
@@ -1248,17 +1249,24 @@ export default function AdminDashboardPage() {
                           <select
                             value={u.role === "READER" || u.role === "CREATOR" ? "USER" : u.role}
                             onChange={(e) => handleUpdateUserRole(u.id, e.target.value)}
-                            className={`h-8 rounded-lg border text-[11px] font-black px-2.5 outline-none bg-[#020617] cursor-pointer ${
+                            style={{ colorScheme: "dark" }}
+                            className={`h-8 rounded-lg border text-[11px] font-bold px-2.5 outline-none cursor-pointer transition-all ${
                               u.role === "SUPER_ADMIN"
-                                ? "border-red-500/50 text-red-300 bg-red-950/20"
+                                ? "border-red-500/50 text-red-300 bg-red-950/40"
                                 : u.role === "MODERATOR"
-                                ? "border-blue-500/50 text-blue-300 bg-blue-950/20"
-                                : "border-emerald-500/40 text-emerald-300 bg-emerald-950/20"
+                                ? "border-indigo-500/50 text-indigo-300 bg-indigo-950/40"
+                                : "border-white/15 text-slate-200 bg-slate-900/90 hover:border-white/30"
                             }`}
                           >
-                            <option value="USER">USER (Universal Account)</option>
-                            <option value="MODERATOR">MODERATOR (Staff)</option>
-                            <option value="SUPER_ADMIN">SUPER_ADMIN (Staff)</option>
+                            <option value="USER" className="bg-[#0A1020] text-slate-200">
+                              USER (Universal Account)
+                            </option>
+                            <option value="MODERATOR" className="bg-[#0A1020] text-indigo-300">
+                              MODERATOR (Staff)
+                            </option>
+                            <option value="SUPER_ADMIN" className="bg-[#0A1020] text-red-300">
+                              SUPER_ADMIN (Staff)
+                            </option>
                           </select>
                         </td>
 
@@ -1791,11 +1799,12 @@ export default function AdminDashboardPage() {
                   value={pinStorySlug}
                   onChange={(e) => setPinStorySlug(e.target.value)}
                   required
-                  className="w-full h-11 rounded-xl border border-white/15 bg-[#020617] px-3 text-xs font-bold text-white outline-none focus:border-orange-500"
+                  style={{ colorScheme: "dark" }}
+                  className="w-full h-11 rounded-xl border border-white/15 bg-slate-900 px-3 text-xs font-bold text-white outline-none focus:border-orange-500"
                 >
-                  <option value="">-- Choose a Story --</option>
+                  <option value="" className="bg-[#0A1020] text-slate-400">-- Choose a Story --</option>
                   {stories.map((s) => (
-                    <option key={s.slug} value={s.slug}>
+                    <option key={s.slug} value={s.slug} className="bg-[#0A1020] text-slate-200">
                       {s.title} ({s.classification}) by {s.author.name}
                     </option>
                   ))}
@@ -1809,11 +1818,12 @@ export default function AdminDashboardPage() {
                 <select
                   value={pinDurationDays}
                   onChange={(e) => setPinDurationDays(Number(e.target.value))}
-                  className="w-full h-11 rounded-xl border border-white/15 bg-[#020617] px-3 text-xs font-bold text-white outline-none focus:border-orange-500"
+                  style={{ colorScheme: "dark" }}
+                  className="w-full h-11 rounded-xl border border-white/15 bg-slate-900 px-3 text-xs font-bold text-white outline-none focus:border-orange-500"
                 >
-                  <option value={1}>1 Day (24 Hours)</option>
-                  <option value={3}>3 Days (Standard Staff Pin)</option>
-                  <option value={7}>7 Days (Full Week Feature)</option>
+                  <option value={1} className="bg-[#0A1020] text-slate-200">1 Day (24 Hours)</option>
+                  <option value={3} className="bg-[#0A1020] text-slate-200">3 Days (Standard Staff Pin)</option>
+                  <option value={7} className="bg-[#0A1020] text-slate-200">7 Days (Full Week Feature)</option>
                 </select>
               </div>
 
