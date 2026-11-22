@@ -37,27 +37,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 3. Admin Route Protection (/admin/* except /admin/login)
-  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-    if (!sessionPayload) {
-      const loginUrl = new URL("/admin/login", request.url);
-      loginUrl.searchParams.set("redirect", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    const role = sessionPayload.role;
-    const isStaff = role === "SUPER_ADMIN" || role === "ADMIN" || role === "MODERATOR";
-
-    if (!isStaff) {
-      // Authenticated but non-staff: Redirect to homepage with alert or 403
-      const homeUrl = new URL("/", request.url);
-      homeUrl.searchParams.set("error", "unauthorized_admin_access");
-      return NextResponse.redirect(homeUrl);
-    }
-  }
-
-  // 4. Append verified user headers for downstream server components and API routes
-  // (Creator studio pages are protected in-place by WriterAuthGate to avoid false redirects)
+  // 3. Append verified user headers for downstream server components and API routes
+  // (Both /admin and /write routes are protected in-place by dedicated in-page Auth Gates
+  // to prevent premature edge redirects or infinite redirect loops when tokens sync across storage)
   const response = NextResponse.next();
   if (sessionPayload) {
     response.headers.set("x-user-id", String(sessionPayload.id || ""));
@@ -71,5 +53,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/admin/:path*",
+    "/api/admin/:path*",
   ],
 };

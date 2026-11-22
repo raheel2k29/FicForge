@@ -102,7 +102,7 @@ export default function AdminDashboardPage() {
 
     // If not authenticated as administrator, redirect to dedicated admin login
     if (!isUserAdmin(user)) {
-      router.push("/admin/login");
+      window.location.href = "/admin/login";
       return;
     }
 
@@ -152,7 +152,7 @@ export default function AdminDashboardPage() {
 
   const handleAdminLogout = () => {
     logoutUser();
-    router.push("/admin/login");
+    window.location.href = "/admin/login";
   };
 
   // 1. STORY MODERATION: PERMANENT PURGE

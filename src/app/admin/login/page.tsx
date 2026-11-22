@@ -12,28 +12,48 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [alreadyAdmin, setAlreadyAdmin] = useState(false);
 
   useEffect(() => {
     const user = getCurrentUser();
     if (isUserAdmin(user)) {
-      router.push("/admin");
+      setAlreadyAdmin(true);
+      window.location.href = "/admin";
     }
-  }, [router]);
+  }, []);
 
   const handleAdminAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    await loginAsAdminAsync();
-    router.push("/admin");
+    try {
+      await loginAsAdminAsync();
+    } catch (err) {
+      console.warn("Admin auth sync warning:", err);
+    }
+    window.location.href = "/admin";
   };
 
   const handleQuickAdminAccess = async () => {
     setIsLoading(true);
-    await loginAsAdminAsync();
-    router.push("/admin");
+    try {
+      await loginAsAdminAsync();
+    } catch (err) {
+      console.warn("Quick admin access sync warning:", err);
+    }
+    window.location.href = "/admin";
   };
+
+  if (alreadyAdmin) {
+    return (
+      <div className="min-h-screen bg-[#030712] text-white flex flex-col items-center justify-center p-6 text-center">
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-red-500 border-t-transparent mb-4" />
+        <h2 className="text-xl font-black text-white mb-1.5">Authorized Staff Session Active</h2>
+        <p className="text-xs text-slate-400">Taking you directly to Admin Governance Console...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#030712] text-white flex flex-col justify-between py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">

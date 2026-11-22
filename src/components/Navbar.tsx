@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { getCurrentUser, logoutUser, UserSession, isUserAdmin } from "@/lib/authStore";
 import { getBookmarkCount } from "@/lib/bookmarkStore";
 import { Menu, X, Sparkles, User, LogOut, PenTool, Bookmark, ShieldCheck } from "lucide-react";
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
   const [bookmarkCount, setBookmarkCount] = useState(0);
@@ -55,6 +57,11 @@ export default function Navbar() {
   const handleLogout = () => {
     logoutUser();
   };
+
+  // Suppress public reader navbar on administrative console routes
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#050B16]/90 backdrop-blur-md">
@@ -113,32 +120,35 @@ export default function Navbar() {
                 <span>{currentUser.sparksBalance} Sparks</span>
               </div>
 
-              {/* Creator Studio Shortcut for all users (Readers are Creators & Creators are Readers) */}
-              <Link
-                href="/write"
-                className="inline-flex items-center gap-1.5 rounded-xl border border-[#6D5DFB]/40 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-orange-500/15 hover:from-indigo-500/25 hover:to-orange-500/25 px-3.5 py-1.5 text-xs font-black text-white transition-all shadow-sm shadow-indigo-600/10"
-                title="Open Creator Studio & Manuscripts"
-              >
-                <PenTool className="h-3.5 w-3.5 text-[#F97316]" />
-                Creator Studio
-              </Link>
-
-              {/* Admin Portal Shortcut (Only visible if user has admin privileges) */}
-              {isUserAdmin(currentUser) && (
+              {/* Creator Studio Shortcut (Only for regular users - hidden for staff admin) */}
+              {!isUserAdmin(currentUser) && (
                 <Link
-                  href="/admin"
-                  className="inline-flex items-center gap-1 rounded-xl border border-red-500/40 bg-red-500/10 hover:bg-red-500/20 px-2.5 py-1 text-[11px] font-black text-red-400 transition-all"
-                  title="Access Administrative Control Console"
+                  href="/write"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[#6D5DFB]/40 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-orange-500/15 hover:from-indigo-500/25 hover:to-orange-500/25 px-3.5 py-1.5 text-xs font-black text-white transition-all shadow-sm shadow-indigo-600/10"
+                  title="Open Creator Studio & Manuscripts"
                 >
-                  <ShieldCheck className="h-3.5 w-3.5 text-red-400" />
-                  Admin
+                  <PenTool className="h-3.5 w-3.5 text-[#F97316]" />
+                  Creator Studio
                 </Link>
               )}
 
-              {/* Avatar, Name & Membership Badge */}
+              {/* Admin Portal Shortcut (Prominently displayed for authorized staff) */}
+              {isUserAdmin(currentUser) && (
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-red-500/40 bg-red-500/15 hover:bg-red-500/25 px-3.5 py-1.5 text-xs font-black text-red-300 transition-all shadow-md shadow-red-950/40"
+                  title="Access Administrative Control Console"
+                >
+                  <ShieldCheck className="h-3.5 w-3.5 text-red-400" />
+                  Admin Console
+                </Link>
+              )}
+
+              {/* Avatar & Profile: Staff Admin links to /admin, Users link to /account */}
               <Link
-                href="/account"
+                href={isUserAdmin(currentUser) ? "/admin" : "/account"}
                 className="flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/80 px-2.5 py-1 hover:border-white/30 transition-all"
+                title={isUserAdmin(currentUser) ? "Admin Console (/admin)" : "My Account (/account)"}
               >
                 <img
                   src={currentUser.avatarUrl}
