@@ -36,6 +36,8 @@ import {
   HelpCircle,
   Activity,
   Layers,
+  Menu,
+  ChevronRight,
 } from "lucide-react";
 
 interface AdminUserItem {
@@ -79,6 +81,7 @@ export default function AdminDashboardPage() {
 
   // Tab State: overview, stories, users, spotlights, compliance, finance
   const [activeTab, setActiveTab] = useState<"overview" | "stories" | "users" | "spotlights" | "compliance" | "finance">("overview");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -412,44 +415,288 @@ export default function AdminDashboardPage() {
   const activeSpotlightsCount = campaigns.filter((c) => c.status === "ACTIVE" && Date.now() < c.endTimestamp).length;
 
   return (
-    <div className="min-h-screen bg-[#030712] text-white">
+    <div className="min-h-screen bg-[#030712] text-white flex flex-col lg:flex-row relative">
       
-      {/* Top Administrative Header */}
-      <header className="border-b border-red-500/20 bg-slate-950/95 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-red-600 to-orange-600 flex items-center justify-center text-white shadow-lg shadow-red-950/50">
-              <ShieldCheck className="h-5 w-5" />
+      {/* 1. Mobile Top Header (Screens < lg) */}
+      <div className="lg:hidden border-b border-white/10 bg-slate-950/95 px-4 py-3 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
+        <div className="flex items-center gap-2.5">
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-red-600 to-orange-600 flex items-center justify-center text-white shadow-md shadow-red-950/50">
+            <ShieldCheck className="h-4.5 w-4.5" />
+          </div>
+          <div>
+            <div className="text-sm font-black text-white flex items-center gap-1.5">
+              FicForge Admin
+              <span className="text-[9px] font-mono bg-red-500/20 text-red-300 border border-red-500/40 px-1.5 py-0.2 rounded font-bold">
+                {currentUser.role}
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-base font-black tracking-tight text-white">FicForge Governance Center</span>
-                <span className="text-[10px] font-mono uppercase bg-red-500/20 text-red-300 border border-red-500/40 px-2 py-0.5 rounded-full font-bold">
-                  {currentUser.role}
-                </span>
+            <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Neon DB Online
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-2 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white cursor-pointer"
+          aria-label="Toggle Navigation"
+        >
+          {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Mobile Backdrop Overlay */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-black/70 backdrop-blur-xs z-40 lg:hidden animate-in fade-in duration-200"
+        />
+      )}
+
+      {/* 2. Left Sidebar Navigation Panel */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-[#060B15] border-r border-white/10 flex flex-col justify-between transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 shrink-0 h-screen lg:sticky lg:top-0 overflow-y-auto no-scrollbar ${
+          sidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col">
+          {/* Sidebar Brand Header */}
+          <div className="p-5 border-b border-white/10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-red-600 via-orange-600 to-amber-600 flex items-center justify-center text-white shadow-lg shadow-red-950/60 ring-1 ring-white/20">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <h1 className="text-base font-black tracking-tight text-white leading-tight">
+                    FicForge Admin
+                  </h1>
+                  <span className="text-[10px] font-mono text-slate-400 font-bold block uppercase tracking-wider">
+                    Governance Suite v4.6
+                  </span>
+                </div>
               </div>
-              <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                Neon PostgreSQL: <strong className="text-emerald-400">ONLINE</strong> {telemetry?.latencyMs ? `(${telemetry.latencyMs}ms)` : ""}
+
+              {/* Close Button on Mobile */}
+              <button
+                type="button"
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Neon PostgreSQL Live Indicator */}
+            <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 px-3 py-2 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                <span className="font-mono text-[11px] font-bold text-emerald-300">Neon PostgreSQL</span>
+              </div>
+              <span className="font-mono text-[10px] text-emerald-400 font-bold">
+                {telemetry?.latencyMs ? `${telemetry.latencyMs}ms` : "100% ONLINE"}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={fetchAdminData}
-              disabled={isLoading}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
-              title="Refresh All Database Records"
-            >
-              <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-orange-400" : ""}`} />
-              Sync
-            </button>
+          {/* Navigation Links Grouped by Category */}
+          <nav className="p-3.5 space-y-6">
+            
+            {/* GROUP 1: CORE GOVERNANCE */}
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 px-3 block mb-1.5">
+                Core Governance
+              </span>
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab("overview"); setSidebarOpen(false); }}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "overview"
+                      ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Activity className="h-4 w-4 shrink-0" />
+                    <span>4.1 System Overview</span>
+                  </div>
+                  <ChevronRight className={`h-3 w-3 ${activeTab === "overview" ? "text-white" : "text-slate-600"}`} />
+                </button>
 
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab("stories"); setSidebarOpen(false); }}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "stories"
+                      ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <BookOpen className="h-4 w-4 shrink-0" />
+                    <span>4.2 Story Moderation</span>
+                  </div>
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
+                    activeTab === "stories" ? "bg-white/20 text-white" : "bg-white/10 text-slate-300"
+                  }`}>
+                    {stories.length}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab("users"); setSidebarOpen(false); }}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "users"
+                      ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Users className="h-4 w-4 shrink-0" />
+                    <span>4.3 Users & RBAC</span>
+                  </div>
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
+                    activeTab === "users" ? "bg-white/20 text-white" : "bg-white/10 text-slate-300"
+                  }`}>
+                    {users.length || 3}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* GROUP 2: COMMUNITY & OPERATIONS */}
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 px-3 block mb-1.5">
+                Community & Operations
+              </span>
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab("spotlights"); setSidebarOpen(false); }}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "spotlights"
+                      ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Sparkles className="h-4 w-4 shrink-0" />
+                    <span>4.4 Spotlight Command</span>
+                  </div>
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
+                    activeTab === "spotlights" ? "bg-white/20 text-white" : "bg-amber-500/20 text-amber-300"
+                  }`}>
+                    {activeSpotlightsCount} Live
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab("compliance"); setSidebarOpen(false); }}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "compliance"
+                      ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck className="h-4 w-4 shrink-0" />
+                    <span>4.5 DMCA Safe Harbor</span>
+                  </div>
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
+                    activeTab === "compliance" ? "bg-white/20 text-white" : "bg-purple-500/20 text-purple-300"
+                  }`}>
+                    {tickets.length || 2}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setActiveTab("finance"); setSidebarOpen(false); }}
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    activeTab === "finance"
+                      ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <DollarSign className="h-4 w-4 shrink-0" />
+                    <span>4.6 Financial Audit Desk</span>
+                  </div>
+                  <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md ${
+                    activeTab === "finance" ? "bg-red-700/60 text-white" : "text-emerald-400 font-bold"
+                  }`}>
+                    50% Cut
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* GROUP 3: SHORTCUTS & ACTIONS */}
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 px-3 block mb-1.5">
+                Staff Quick Actions
+              </span>
+              <div className="space-y-1">
+                <button
+                  type="button"
+                  onClick={() => { setPinModalOpen(true); setSidebarOpen(false); }}
+                  className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold text-orange-300 hover:bg-orange-500/10 border border-orange-500/20 transition-all cursor-pointer"
+                >
+                  <Pin className="h-3.5 w-3.5 text-orange-400 shrink-0" />
+                  <span>Staff Manual Pin</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleResetCooldowns}
+                  className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 border border-white/5 transition-all cursor-pointer"
+                >
+                  <RotateCcw className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+                  <span>Reset Cooldowns</span>
+                </button>
+              </div>
+            </div>
+
+          </nav>
+        </div>
+
+        {/* Sidebar Footer: Admin Profile & Logout */}
+        <div className="p-4 border-t border-white/10 space-y-3 bg-[#040810]">
+          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-white/10">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-red-500 to-amber-500 flex items-center justify-center font-black text-sm text-white shrink-0 overflow-hidden">
+              {currentUser.avatarUrl ? (
+                <img src={currentUser.avatarUrl} alt={currentUser.name} className="h-full w-full object-cover" />
+              ) : (
+                <span>A</span>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-black text-white truncate block">
+                  {currentUser.name || "Valerius Frost"}
+                </span>
+                <span className="text-[9px] font-mono font-bold bg-red-500/30 text-red-300 px-1.5 py-0.2 rounded shrink-0">
+                  ADMIN
+                </span>
+              </div>
+              <span className="text-[10px] text-slate-400 truncate block font-mono">
+                {currentUser.email || "admin@ficforge.org"}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-slate-900/80 px-3 py-1.5 text-xs font-bold text-slate-300 hover:text-white hover:border-white/20 transition-all"
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 py-2 text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all text-center"
             >
               <ExternalLink className="h-3.5 w-3.5" /> Public Site
             </Link>
@@ -457,168 +704,150 @@ export default function AdminDashboardPage() {
             <button
               type="button"
               onClick={handleAdminLogout}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-300 hover:bg-red-500/20 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 py-2 text-xs font-bold text-red-300 hover:bg-red-500/20 transition-all cursor-pointer"
             >
               <LogOut className="h-3.5 w-3.5" /> Exit
             </button>
           </div>
         </div>
-      </header>
+      </aside>
 
-      {/* Main Container */}
-      <main className="max-w-[1360px] mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+      {/* 3. Main Workspace Area */}
+      <div className="flex-1 min-w-0 flex flex-col min-h-screen">
         
-        {/* Toast Feedback Notification */}
-        {feedback && (
-          <div
-            className={`p-4 rounded-2xl border text-sm font-bold flex items-center justify-between shadow-xl animate-in fade-in duration-150 ${
-              feedback.type === "success"
-                ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300"
-                : "bg-red-500/15 border-red-500/40 text-red-300"
-            }`}
-          >
-            <span>{feedback.message}</span>
+        {/* Workspace Sticky Topbar (Desktop) */}
+        <header className="border-b border-white/10 bg-slate-950/80 backdrop-blur-md sticky top-0 z-30 px-6 py-4 hidden lg:flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
+              <span>FicForge Governance</span>
+              <ChevronRight className="h-3 w-3 text-slate-600" />
+              <span className="text-white font-bold uppercase tracking-wider">
+                {activeTab === "overview" && "4.1 System Overview & Telemetry"}
+                {activeTab === "stories" && "4.2 Content Moderation"}
+                {activeTab === "users" && "4.3 Users & RBAC"}
+                {activeTab === "spotlights" && "4.4 Spotlight Command Center"}
+                {activeTab === "compliance" && "4.5 DMCA Safe Harbor"}
+                {activeTab === "finance" && "4.6 Financial Audit Desk"}
+              </span>
+            </div>
+            <h2 className="text-xl font-black text-white tracking-tight mt-0.5">
+              {activeTab === "overview" && "Executive Telemetry & Infrastructure Control"}
+              {activeTab === "stories" && "Published Manuscripts & Moderation Audit"}
+              {activeTab === "users" && "Universal User Roster & Role Permissions"}
+              {activeTab === "spotlights" && "Creator Spotlight Promotions Command"}
+              {activeTab === "compliance" && "DMCA Safe Harbor & Dispute Clearinghouse"}
+              {activeTab === "finance" && "Financial Audit Desk & Platform Splits"}
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-3">
             <button
-              onClick={() => setFeedback(null)}
-              className="text-xs uppercase tracking-wider underline hover:opacity-80 cursor-pointer"
+              type="button"
+              onClick={fetchAdminData}
+              disabled={isLoading}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+              title="Refresh All Database Records"
             >
-              Dismiss
+              <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? "animate-spin text-orange-400" : ""}`} />
+              Sync DB
+            </button>
+
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-slate-900/80 px-3.5 py-2 text-xs font-bold text-slate-300 hover:text-white hover:border-white/20 transition-all"
+            >
+              <ExternalLink className="h-3.5 w-3.5" /> Public Site
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleAdminLogout}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-red-500/30 bg-red-500/10 px-3.5 py-2 text-xs font-bold text-red-300 hover:bg-red-500/20 transition-all cursor-pointer"
+            >
+              <LogOut className="h-3.5 w-3.5" /> Exit
             </button>
           </div>
-        )}
+        </header>
 
-        {/* Global Operational Metrics Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
-          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Stories</span>
-              <BookOpen className="h-4 w-4 text-indigo-400" />
+        {/* Scrollable Main Content Body */}
+        <main className="p-4 sm:p-6 lg:p-8 space-y-8 flex-1">
+          
+          {/* Toast Feedback Notification */}
+          {feedback && (
+            <div
+              className={`p-4 rounded-2xl border text-sm font-bold flex items-center justify-between shadow-xl animate-in fade-in duration-150 ${
+                feedback.type === "success"
+                  ? "bg-emerald-500/15 border-emerald-500/40 text-emerald-300"
+                  : "bg-red-500/15 border-red-500/40 text-red-300"
+              }`}
+            >
+              <span>{feedback.message}</span>
+              <button
+                onClick={() => setFeedback(null)}
+                className="text-xs uppercase tracking-wider underline hover:opacity-80 cursor-pointer"
+              >
+                Dismiss
+              </button>
             </div>
-            <p className="text-2xl font-black text-white mt-1.5">{stories.length}</p>
-            <span className="text-[10px] text-emerald-400 font-mono mt-0.5 inline-block">
-              ● Neon Database Synced
-            </span>
-          </div>
+          )}
 
-          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Chapters</span>
-              <FileText className="h-4 w-4 text-purple-400" />
+          {/* Global Operational Metrics Bar */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
+            <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Stories</span>
+                <BookOpen className="h-4 w-4 text-indigo-400" />
+              </div>
+              <p className="text-2xl font-black text-white mt-1.5">{stories.length}</p>
+              <span className="text-[10px] text-emerald-400 font-mono mt-0.5 inline-block">
+                ● Neon Database Synced
+              </span>
             </div>
-            <p className="text-2xl font-black text-white mt-1.5">{totalChapters}</p>
-            <span className="text-[10px] text-slate-400 font-mono mt-0.5 inline-block">
-              Manuscripts published
-            </span>
-          </div>
 
-          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Registered Users</span>
-              <Users className="h-4 w-4 text-emerald-400" />
+            <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Chapters</span>
+                <FileText className="h-4 w-4 text-purple-400" />
+              </div>
+              <p className="text-2xl font-black text-white mt-1.5">{totalChapters}</p>
+              <span className="text-[10px] text-slate-400 font-mono mt-0.5 inline-block">
+                Manuscripts published
+              </span>
             </div>
-            <p className="text-2xl font-black text-white mt-1.5">{users.length || 3}</p>
-            <span className="text-[10px] text-emerald-400 font-mono mt-0.5 inline-block">
-              Universal Consumer Roster
-            </span>
-          </div>
 
-          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Word Volume</span>
-              <Database className="h-4 w-4 text-amber-400" />
+            <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Registered Users</span>
+                <Users className="h-4 w-4 text-emerald-400" />
+              </div>
+              <p className="text-2xl font-black text-white mt-1.5">{users.length || 3}</p>
+              <span className="text-[10px] text-emerald-400 font-mono mt-0.5 inline-block">
+                Universal Consumer Roster
+              </span>
             </div>
-            <p className="text-2xl font-black text-white mt-1.5">{totalWords.toLocaleString()}</p>
-            <span className="text-[10px] text-amber-400 font-mono mt-0.5 inline-block">
-              Active story text
-            </span>
-          </div>
 
-          <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4 col-span-2 sm:col-span-1">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Live Spotlights</span>
-              <Sparkles className="h-4 w-4 text-orange-400" />
+            <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Word Volume</span>
+                <Database className="h-4 w-4 text-amber-400" />
+              </div>
+              <p className="text-2xl font-black text-white mt-1.5">{totalWords.toLocaleString()}</p>
+              <span className="text-[10px] text-amber-400 font-mono mt-0.5 inline-block">
+                Active story text
+              </span>
             </div>
-            <p className="text-2xl font-black text-white mt-1.5">{activeSpotlightsCount}</p>
-            <span className="text-[10px] text-orange-400 font-mono mt-0.5 inline-block">
-              2 credits / day rule active
-            </span>
+
+            <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-4 col-span-2 sm:col-span-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Live Spotlights</span>
+                <Sparkles className="h-4 w-4 text-orange-400" />
+              </div>
+              <p className="text-2xl font-black text-white mt-1.5">{activeSpotlightsCount}</p>
+              <span className="text-[10px] text-orange-400 font-mono mt-0.5 inline-block">
+                2 credits / day rule active
+              </span>
+            </div>
           </div>
-        </div>
-
-        {/* 6-Module Tab Navigation */}
-        <div className="flex items-center gap-2 border-b border-white/10 pb-4 overflow-x-auto scrollbar-none">
-          <button
-            type="button"
-            onClick={() => setActiveTab("overview")}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "overview"
-                ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
-                : "bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            <Activity className="h-3.5 w-3.5" /> 4.1 System Overview
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("stories")}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "stories"
-                ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
-                : "bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            <BookOpen className="h-3.5 w-3.5" /> 4.2 Content Moderation ({stories.length})
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("users")}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "users"
-                ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
-                : "bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            <Users className="h-3.5 w-3.5" /> 4.3 Users & RBAC ({users.length || 3})
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("spotlights")}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "spotlights"
-                ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
-                : "bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            <Sparkles className="h-3.5 w-3.5" /> 4.4 Spotlight Command ({campaigns.length})
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("compliance")}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "compliance"
-                ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
-                : "bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            <ShieldCheck className="h-3.5 w-3.5" /> 4.5 DMCA Safe Harbor ({tickets.length || 2})
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab("finance")}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
-              activeTab === "finance"
-                ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
-                : "bg-slate-900/80 text-slate-400 hover:text-white hover:bg-slate-800"
-            }`}
-          >
-            <DollarSign className="h-3.5 w-3.5" /> 4.6 Financial Audit Desk
-          </button>
-        </div>
 
         {/* ========================================================= */}
         {/* TAB 1: 4.1 SYSTEM OVERVIEW & TELEMETRY                    */}
@@ -1254,7 +1483,8 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-      </main>
+        </main>
+      </div>
 
       {/* ========================================================= */}
       {/* MODAL 1: DEEP CHAPTER INSPECTION DRAWER                    */}
