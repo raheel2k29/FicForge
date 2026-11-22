@@ -19,29 +19,40 @@ export default function Navbar() {
       setCurrentUser(user);
       setBookmarkCount(getBookmarkCount());
 
-      if (user) {
-        // Ensure client cookie indicator is active
-        document.cookie = "ficforge_client_auth=1; path=/; max-age=2592000; SameSite=Lax";
-
-        // Proactively verify server HTTP-only session cookie and re-sync if missing
-        fetch("/api/auth/session")
-          .then((res) => res.json())
-          .then((data) => {
-            if (!data.authenticated) {
-              fetch("/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  email: user.email,
-                  username: user.username,
-                  role: user.role,
-                  isDemo: user.username === "valerius_f",
-                }),
-              }).catch(() => {});
+      // Always proactively verify server HTTP-only session cookie and re-sync live role from DB
+      fetch("/api/auth/session")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.authenticated && data.user) {
+            // If server role changed (e.g. appointed as MODERATOR), update client localStorage & state
+            if (!user || data.user.role !== user.role || data.user.id !== user.id) {
+              localStorage.setItem("ficforge_auth_session", JSON.stringify(data.user));
+              localStorage.setItem("ficforge_user_session", JSON.stringify(data.user));
+              setCurrentUser(data.user);
             }
-          })
-          .catch(() => {});
-      }
+          } else if (!data.authenticated && user) {
+            fetch("/api/auth/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: user.email,
+                username: user.username,
+                role: user.role,
+                isDemo: user.username === "valerius_f",
+              }),
+            })
+              .then((r) => r.json())
+              .then((d) => {
+                if (d.user && (!user || d.user.role !== user.role)) {
+                  localStorage.setItem("ficforge_auth_session", JSON.stringify(d.user));
+                  localStorage.setItem("ficforge_user_session", JSON.stringify(d.user));
+                  setCurrentUser(d.user);
+                }
+              })
+              .catch(() => {});
+          }
+        })
+        .catch(() => {});
     };
     check();
     window.addEventListener("ficforge_auth_changed", check);
@@ -120,8 +131,8 @@ export default function Navbar() {
                 <span>{currentUser.sparksBalance} Sparks</span>
               </div>
 
-              {/* Creator Studio Shortcut (Only for regular users - hidden for staff admin) */}
-              {!isUserAdmin(currentUser) && (
+              {/* Creator Studio Shortcut (Visible for all regular creators and moderators) */}
+              {currentUser.role !== "SUPER_ADMIN" && (
                 <Link
                   href="/write"
                   className="inline-flex items-center gap-1.5 rounded-xl border border-[#6D5DFB]/40 bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-orange-500/15 hover:from-indigo-500/25 hover:to-orange-500/25 px-3.5 py-1.5 text-xs font-black text-white transition-all shadow-sm shadow-indigo-600/10"
@@ -132,23 +143,27 @@ export default function Navbar() {
                 </Link>
               )}
 
-              {/* Admin Portal Shortcut (Prominently displayed for authorized staff) */}
+              {/* Staff / Moderator Desk Shortcut */}
               {isUserAdmin(currentUser) && (
                 <Link
                   href="/admin"
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-red-500/40 bg-red-500/15 hover:bg-red-500/25 px-3.5 py-1.5 text-xs font-black text-red-300 transition-all shadow-md shadow-red-950/40"
-                  title="Access Administrative Control Console"
+                  className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-1.5 text-xs font-black transition-all shadow-md ${
+                    currentUser.role === "MODERATOR"
+                      ? "border-indigo-500/40 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 shadow-indigo-950/40"
+                      : "border-red-500/40 bg-red-500/15 hover:bg-red-500/25 text-red-300 shadow-red-950/40"
+                  }`}
+                  title={currentUser.role === "MODERATOR" ? "Open Moderator Desk (/admin)" : "Access Administrative Control Console"}
                 >
-                  <ShieldCheck className="h-3.5 w-3.5 text-red-400" />
-                  Admin Console
+                  <ShieldCheck className={`h-3.5 w-3.5 ${currentUser.role === "MODERATOR" ? "text-indigo-400" : "text-red-400"}`} />
+                  {currentUser.role === "MODERATOR" ? "Moderator Desk" : "Admin Console"}
                 </Link>
               )}
 
-              {/* Avatar & Profile: Staff Admin links to /admin, Users link to /account */}
+              {/* Avatar & Profile */}
               <Link
-                href={isUserAdmin(currentUser) ? "/admin" : "/account"}
+                href={currentUser.role === "SUPER_ADMIN" ? "/admin" : "/account"}
                 className="flex items-center gap-2 rounded-xl border border-white/10 bg-slate-900/80 px-2.5 py-1 hover:border-white/30 transition-all"
-                title={isUserAdmin(currentUser) ? "Admin Console (/admin)" : "My Account (/account)"}
+                title={currentUser.role === "SUPER_ADMIN" ? "Admin Console (/admin)" : "My Account (/account)"}
               >
                 <img
                   src={currentUser.avatarUrl}
@@ -157,8 +172,18 @@ export default function Navbar() {
                 />
                 <div className="flex flex-col text-left">
                   <span className="text-xs font-bold text-white leading-tight">{currentUser.name}</span>
-                  <span className="text-[9px] font-black uppercase tracking-wider text-amber-400 leading-tight">
-                    {currentUser.membershipTier || "Member"}
+                  <span className={`text-[9px] font-black uppercase tracking-wider leading-tight ${
+                    currentUser.role === "MODERATOR"
+                      ? "text-indigo-400 font-bold"
+                      : currentUser.role === "SUPER_ADMIN"
+                      ? "text-red-400 font-bold"
+                      : "text-amber-400"
+                  }`}>
+                    {currentUser.role === "MODERATOR"
+                      ? "MODERATOR"
+                      : currentUser.role === "SUPER_ADMIN"
+                      ? "STAFF ADMIN"
+                      : (currentUser.membershipTier || "Member")}
                   </span>
                 </div>
               </Link>

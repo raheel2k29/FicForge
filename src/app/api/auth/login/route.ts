@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
         (isAdmin ? "FicForge Staff Admin" : targetUsername === "valerius_f" ? "Valerius Frost" : targetUsername),
       username: dbUser?.username || targetUsername,
       email: dbUser?.email || targetEmail,
-      role: targetRole,
+      role: dbUser?.role ? (dbUser.role as any) : targetRole,
       avatarUrl:
         dbUser?.profile?.avatarUrl ||
         (isAdmin

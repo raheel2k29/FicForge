@@ -104,9 +104,23 @@ export default function AdminDashboardPage() {
     setCurrentUser(user);
     setHasCheckedAuth(true);
 
-    // If not authenticated as administrator, redirect to dedicated admin login
+    // If not authenticated as administrator in localStorage, verify with server session before redirecting
     if (!isUserAdmin(user)) {
-      window.location.href = "/admin/login";
+      fetch("/api/auth/session")
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.authenticated && data.user && isUserAdmin(data.user)) {
+            localStorage.setItem("ficforge_auth_session", JSON.stringify(data.user));
+            localStorage.setItem("ficforge_user_session", JSON.stringify(data.user));
+            setCurrentUser(data.user);
+            fetchAdminData();
+          } else {
+            window.location.href = "/admin/login";
+          }
+        })
+        .catch(() => {
+          window.location.href = "/admin/login";
+        });
       return;
     }
 
@@ -724,45 +738,51 @@ export default function AdminDashboardPage() {
                   </span>
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => { setActiveTab("finance"); setSidebarOpen(false); }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    activeTab === "finance"
-                      ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
-                      : "text-slate-400 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <DollarSign className="h-4 w-4 shrink-0" />
-                    <span>4.6 Financial Audit Desk</span>
-                  </div>
-                  <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md ${
-                    activeTab === "finance" ? "bg-red-700/60 text-white" : "text-emerald-400 font-bold"
-                  }`}>
-                    50% Cut
-                  </span>
-                </button>
+                {/* 4.6 Financial Audit Desk (SUPER_ADMIN Only) */}
+                {currentUser?.role === "SUPER_ADMIN" && (
+                  <button
+                    type="button"
+                    onClick={() => { setActiveTab("finance"); setSidebarOpen(false); }}
+                    className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      activeTab === "finance"
+                        ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
+                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <DollarSign className="h-4 w-4 shrink-0" />
+                      <span>4.6 Financial Audit Desk</span>
+                    </div>
+                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-md ${
+                      activeTab === "finance" ? "bg-red-700/60 text-white" : "text-emerald-400 font-bold"
+                    }`}>
+                      50% Cut
+                    </span>
+                  </button>
+                )}
 
-                <button
-                  type="button"
-                  onClick={() => { setActiveTab("moderators"); setSidebarOpen(false); }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    activeTab === "moderators"
-                      ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
-                      : "text-slate-400 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <UserCheck className="h-4 w-4 shrink-0" />
-                    <span>4.7 Staff & Moderators</span>
-                  </div>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
-                    activeTab === "moderators" ? "bg-white/20 text-white" : "bg-indigo-500/20 text-indigo-300"
-                  }`}>
-                    {users.filter((u) => u.role === "MODERATOR" || u.role === "SUPER_ADMIN").length} Staff
-                  </span>
-                </button>
+                {/* 4.7 Staff & Moderators (SUPER_ADMIN Only) */}
+                {currentUser?.role === "SUPER_ADMIN" && (
+                  <button
+                    type="button"
+                    onClick={() => { setActiveTab("moderators"); setSidebarOpen(false); }}
+                    className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      activeTab === "moderators"
+                        ? "bg-red-600 text-white shadow-lg shadow-red-950/50"
+                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <UserCheck className="h-4 w-4 shrink-0" />
+                      <span>4.7 Staff & Moderators</span>
+                    </div>
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold ${
+                      activeTab === "moderators" ? "bg-white/20 text-white" : "bg-indigo-500/20 text-indigo-300"
+                    }`}>
+                      {users.filter((u) => u.role === "MODERATOR" || u.role === "SUPER_ADMIN").length} Staff
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
 
