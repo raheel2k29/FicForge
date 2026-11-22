@@ -20,6 +20,12 @@ export interface SpotlightCampaign {
 const NOW = Date.now();
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
+const formatShortDate = (ts: number): string =>
+  new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+const EMBER_START = NOW - 3 * 24 * 60 * 60 * 1000;
+const EMBER_END = NOW + 4 * 24 * 60 * 60 * 1000;
+
 export const INITIAL_CANONICAL_SPOTLIGHTS: SpotlightCampaign[] = [
   {
     id: "spotlight-ember-archive",
@@ -28,11 +34,11 @@ export const INITIAL_CANONICAL_SPOTLIGHTS: SpotlightCampaign[] = [
     coverImageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
     authorName: "Valerius Frost",
     classification: "ORIGINAL",
-    startDate: "Nov 10, 2026",
-    endDate: "Nov 17, 2026",
-    startTimestamp: NOW - 3 * 24 * 60 * 60 * 1000,
-    endTimestamp: NOW + 4 * 24 * 60 * 60 * 1000,
-    cooldownTimestamp: NOW + 11 * 24 * 60 * 60 * 1000,
+    startDate: formatShortDate(EMBER_START),
+    endDate: formatShortDate(EMBER_END),
+    startTimestamp: EMBER_START,
+    endTimestamp: EMBER_END,
+    cooldownTimestamp: EMBER_END + 7 * 24 * 60 * 60 * 1000,
     status: "ACTIVE",
     impressions: 48920,
     clicks: 6410,

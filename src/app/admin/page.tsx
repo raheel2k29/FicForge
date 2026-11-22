@@ -1030,6 +1030,7 @@ export default function AdminDashboardPage() {
                     <tr className="border-b border-white/10 text-[11px] font-black uppercase tracking-wider text-slate-400 bg-slate-950/60">
                       <th className="py-3 px-4">Story Title</th>
                       <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4">Campaign Window / Expiry</th>
                       <th className="py-3 px-4">Credits Consumed</th>
                       <th className="py-3 px-4">Impressions</th>
                       <th className="py-3 px-4">Clicks</th>
@@ -1040,6 +1041,7 @@ export default function AdminDashboardPage() {
                     {campaigns.map((c) => {
                       const now = Date.now();
                       const isActive = c.status === "ACTIVE" && now < c.endTimestamp;
+                      const daysLeft = isActive ? Math.max(1, Math.ceil((c.endTimestamp - now) / (24 * 60 * 60 * 1000))) : 0;
 
                       return (
                         <tr key={c.id} className="hover:bg-white/5 transition-colors">
@@ -1047,12 +1049,21 @@ export default function AdminDashboardPage() {
                           <td className="py-3.5 px-4">
                             {isActive ? (
                               <span className="rounded-full bg-emerald-500/15 border border-emerald-500/40 px-2.5 py-0.5 text-[10px] font-bold text-emerald-300">
-                                ACTIVE SPOTLIGHT
+                                ACTIVE SPOTLIGHT ({daysLeft}d left)
                               </span>
                             ) : (
                               <span className="rounded-full bg-slate-800 border border-white/10 px-2.5 py-0.5 text-[10px] font-bold text-slate-400">
                                 EXPIRED / COMPLETED
                               </span>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-4 text-slate-300 font-mono text-[11px]">
+                            {c.startDate && c.endDate ? (
+                              <span>
+                                {c.startDate} → <strong className={isActive ? "text-amber-300" : "text-slate-400"}>{c.endDate}</strong>
+                              </span>
+                            ) : (
+                              <span className="text-slate-500">7-Day Window</span>
                             )}
                           </td>
                           <td className="py-3.5 px-4 font-mono">{c.creditsSpent || 2} Credits</td>
