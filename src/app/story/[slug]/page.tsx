@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter, notFound } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
-import { getStoryBySlug, deleteStory, deleteChapter, syncStoriesWithServer } from "@/lib/storyStore";
+import { getStoryBySlug, deleteStory, deleteChapter, syncStoriesWithServer, saveStory } from "@/lib/storyStore";
 import { isStoryBookmarked, toggleStoryBookmark } from "@/lib/bookmarkStore";
 import { getCurrentUser, UserSession, canManageStory } from "@/lib/authStore";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
@@ -23,6 +23,8 @@ import {
   ShieldCheck,
   AlertTriangle,
   Trash2,
+  Pencil,
+  X,
 } from "lucide-react";
 
 function StoryDetailsContent() {
@@ -43,6 +45,15 @@ function StoryDetailsContent() {
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalType, setAuthModalType] = useState<"bookmark" | "like" | "tip">("bookmark");
+
+  // Story Edit Modal State
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editSynopsis, setEditSynopsis] = useState("");
+  const [editCoverImageUrl, setEditCoverImageUrl] = useState("");
+  const [editRating, setEditRating] = useState<"GENERAL" | "TEEN" | "MATURE" | "EXPLICIT">("TEEN");
+  const [editClassification, setEditClassification] = useState<"ORIGINAL" | "FANFICTION">("FANFICTION");
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
 
   useEffect(() => {
     const updateAuth = () => {
@@ -72,6 +83,32 @@ function StoryDetailsContent() {
     if (window.confirm(`Permanently delete "${story.title}" and all its chapters? This cannot be undone.`)) {
       deleteStory(story.slug);
       router.push("/my-stories");
+    }
+  };
+
+  const handleSaveStoryDetails = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!story || !editTitle.trim() || isSavingEdit) return;
+
+    setIsSavingEdit(true);
+    const updatedStory: StoryData = {
+      ...story,
+      title: editTitle.trim(),
+      synopsis: editSynopsis.trim(),
+      coverImageUrl: editCoverImageUrl.trim() || story.coverImageUrl,
+      rating: editRating,
+      classification: editClassification,
+      updatedAt: "Just now",
+    };
+
+    try {
+      await saveStory(updatedStory);
+      setStory(updatedStory);
+      setEditModalOpen(false);
+    } catch (err) {
+      console.error("Failed to update story:", err);
+    } finally {
+      setIsSavingEdit(false);
     }
   };
 
@@ -121,6 +158,19 @@ function StoryDetailsContent() {
           applyFound(serverStories[slug]);
         }
       });
+
+      // Direct authoritative fetch to guarantee zero cache lag
+      fetch(`/api/stories?slug=${encodeURIComponent(slug)}`, {
+        cache: "no-store",
+        credentials: "include",
+      })
+        .then((r) => r.json())
+        .then((d) => {
+          if (d?.story) {
+            applyFound(d.story);
+          }
+        })
+        .catch(console.warn);
     }
 
     const handleBookmarksChange = () => {
@@ -404,20 +454,40 @@ function StoryDetailsContent() {
                       @{currentUser?.username}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditTitle(story.title);
+                        setEditSynopsis(story.synopsis || "");
+                        setEditCoverImageUrl(story.coverImageUrl || "");
+                        setEditRating(story.rating || "TEEN");
+                        setEditClassification(story.classification || "FANFICTION");
+                        setEditModalOpen(true);
+                      }}
+                      className="flex-1 min-w-[90px] text-center py-2 px-2.5 text-xs font-bold text-amber-300 hover:text-amber-200 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl transition-all border border-amber-500/30 flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      <Pencil className="h-3 w-3" /> Edit Details
+                    </button>
                     <Link
                       href={`/write/chapter?storySlug=${story.slug}`}
-                      className="flex-1 text-center py-2 px-3 text-xs font-bold text-slate-200 hover:text-white bg-slate-800/90 hover:bg-slate-700/90 rounded-xl transition-all border border-white/10"
+                      className="flex-1 min-w-[90px] text-center py-2 px-2.5 text-xs font-bold text-slate-200 hover:text-white bg-slate-800/90 hover:bg-slate-700/90 rounded-xl transition-all border border-white/10 flex items-center justify-center gap-1"
                     >
-                      + Add Chapter
+                      + Chapter
+                    </Link>
+                    <Link
+                      href={`/write/bulk-import?storySlug=${story.slug}`}
+                      className="flex-1 min-w-[90px] text-center py-2 px-2.5 text-xs font-bold text-slate-200 hover:text-white bg-slate-800/90 hover:bg-slate-700/90 rounded-xl transition-all border border-white/10 flex items-center justify-center gap-1"
+                    >
+                      Importer
                     </Link>
                     <button
                       type="button"
                       onClick={handleDeleteStory}
-                      className="py-2 px-3 text-xs font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                      className="py-2 px-2.5 text-xs font-bold text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
                       title="Delete this story"
                     >
-                      <Trash2 className="h-3.5 w-3.5" /> Delete
+                      <Trash2 className="h-3 w-3" /> Delete
                     </button>
                   </div>
                 </div>
@@ -758,6 +828,118 @@ function StoryDetailsContent() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Edit Story Details Modal */}
+      {editModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-2xl relative space-y-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <div>
+                <span className="text-[10px] font-black tracking-widest uppercase text-amber-400">Author Tools</span>
+                <h3 className="text-lg font-black text-white">Edit Story Details</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditModalOpen(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveStoryDetails} className="space-y-4">
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1">
+                  Story Title
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="w-full h-11 rounded-xl border border-white/15 bg-slate-950 px-3 text-sm font-bold text-white outline-none focus:border-amber-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1">
+                  Synopsis / Blurb
+                </label>
+                <textarea
+                  rows={3}
+                  value={editSynopsis}
+                  onChange={(e) => setEditSynopsis(e.target.value)}
+                  className="w-full rounded-xl border border-white/15 bg-slate-950 p-3 text-xs text-white outline-none focus:border-amber-400 leading-relaxed"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1">
+                    Audience Rating
+                  </label>
+                  <select
+                    value={editRating}
+                    onChange={(e) => setEditRating(e.target.value as any)}
+                    style={{ colorScheme: "dark" }}
+                    className="w-full h-10 rounded-xl border border-white/15 bg-slate-950 px-3 text-xs font-bold text-white outline-none focus:border-amber-400"
+                  >
+                    <option value="GENERAL">General (All Ages)</option>
+                    <option value="TEEN">Teen (13+)</option>
+                    <option value="MATURE">Mature (16+)</option>
+                    <option value="EXPLICIT">Explicit (18+)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1">
+                    Classification
+                  </label>
+                  <select
+                    value={editClassification}
+                    onChange={(e) => setEditClassification(e.target.value as any)}
+                    style={{ colorScheme: "dark" }}
+                    className="w-full h-10 rounded-xl border border-white/15 bg-slate-950 px-3 text-xs font-bold text-white outline-none focus:border-amber-400"
+                  >
+                    <option value="FANFICTION">100% Free Fanfiction</option>
+                    <option value="ORIGINAL">Original Webnovel</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1">
+                  Cover Image URL
+                </label>
+                <input
+                  type="url"
+                  value={editCoverImageUrl}
+                  onChange={(e) => setEditCoverImageUrl(e.target.value)}
+                  placeholder="https://..."
+                  className="w-full h-10 rounded-xl border border-white/15 bg-slate-950 px-3 text-xs text-white outline-none focus:border-amber-400"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setEditModalOpen(false)}
+                  className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingEdit || !editTitle.trim()}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-xs font-black text-slate-950 hover:opacity-90 disabled:opacity-50 transition-all cursor-pointer flex items-center gap-1.5"
+                >
+                  {isSavingEdit ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

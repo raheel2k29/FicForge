@@ -223,7 +223,7 @@ export default function NewStoryWizardPage() {
       console.warn("Story save notice:", err);
     }
 
-    router.push(`/write/bulk-import?storySlug=${encodeURIComponent(newStory.slug)}`);
+    router.push(`/story/${encodeURIComponent(newStory.slug)}`);
   };
 
   return (
