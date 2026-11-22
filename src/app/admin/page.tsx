@@ -39,6 +39,7 @@ import {
   Menu,
   ChevronRight,
 } from "lucide-react";
+import AdminOverviewCharts from "@/components/AdminOverviewCharts";
 
 interface AdminUserItem {
   id: string;
@@ -1075,6 +1076,14 @@ export default function AdminDashboardPage() {
                 <span className="text-xs text-slate-400">Review copyright takedown claims and author appeal hearings.</span>
               </button>
             </div>
+
+            {/* Visual Analytics & Governance Trajectory Charts */}
+            <AdminOverviewCharts
+              stories={stories}
+              users={users as any}
+              campaigns={campaigns}
+              telemetry={telemetry}
+            />
           </div>
         )}
 
