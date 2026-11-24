@@ -25,7 +25,9 @@ import {
   Trash2,
   Pencil,
   X,
+  Flag,
 } from "lucide-react";
+import ReportStoryModal from "@/components/ReportStoryModal";
 
 function StoryDetailsContent() {
   const params = useParams();
@@ -54,6 +56,7 @@ function StoryDetailsContent() {
   const [editRating, setEditRating] = useState<"GENERAL" | "TEEN" | "MATURE" | "EXPLICIT">("TEEN");
   const [editClassification, setEditClassification] = useState<"ORIGINAL" | "FANFICTION">("FANFICTION");
   const [isSavingEdit, setIsSavingEdit] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
 
   useEffect(() => {
     const updateAuth = () => {
@@ -442,6 +445,17 @@ function StoryDetailsContent() {
                   {copiedLink ? "Link Copied!" : "Share Story"}
                 </button>
               </div>
+
+              {/* Report Story / DMCA Copyright Claim Button */}
+              <button
+                type="button"
+                onClick={() => setReportModalOpen(true)}
+                className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-bold text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl border border-transparent hover:border-rose-500/20 transition-all cursor-pointer"
+                title="Report content violation or claim copyright infringement"
+              >
+                <Flag className="h-3.5 w-3.5 text-rose-400" />
+                <span>Report Story / Copyright Claim</span>
+              </button>
 
               {/* Author Actions: Add Chapter & Delete Story (STRICT RBAC: ONLY visible to story author or administrator) */}
               {isAuthor && (
@@ -965,6 +979,16 @@ function StoryDetailsContent() {
         }
         redirectUrl={`/story/${story.slug}`}
       />
+
+      {/* Content Integrity & DMCA Copyright Report Modal */}
+      {story && (
+        <ReportStoryModal
+          isOpen={reportModalOpen}
+          onClose={() => setReportModalOpen(false)}
+          storySlug={story.slug}
+          storyTitle={story.title}
+        />
+      )}
 
     </div>
   );

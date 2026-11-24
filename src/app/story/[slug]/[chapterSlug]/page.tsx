@@ -23,7 +23,9 @@ import {
   Check,
   Eye,
   Trash2,
+  Flag,
 } from "lucide-react";
+import ReportStoryModal from "@/components/ReportStoryModal";
 
 function ChapterReaderContent() {
   const router = useRouter();
@@ -36,6 +38,7 @@ function ChapterReaderContent() {
   const [currentUser, setCurrentUser] = useState<UserSession | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalType, setAuthModalType] = useState<"bookmark" | "like" | "tip" | "fastpass" | "comment">("bookmark");
+  const [reportModalOpen, setReportModalOpen] = useState(false);
 
   useEffect(() => {
     const updateAuth = () => {
@@ -675,6 +678,18 @@ function ChapterReaderContent() {
           )}
         </div>
 
+        {/* Subtle Chapter Report Link */}
+        <div className="flex justify-center -mt-6 mb-12">
+          <button
+            type="button"
+            onClick={() => setReportModalOpen(true)}
+            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
+          >
+            <Flag className="h-3.5 w-3.5 text-rose-400" />
+            <span>Report this chapter / Copyright notice</span>
+          </button>
+        </div>
+
         {/* Chapter Comments Section */}
         <section className="mt-14">
           <div className="flex items-center gap-2 mb-6">
@@ -759,6 +774,18 @@ function ChapterReaderContent() {
             : "Sign in to FicForge to unlock full reader and creator features."
         }
       />
+
+      {/* Content Integrity & DMCA Copyright Report Modal */}
+      {story && (
+        <ReportStoryModal
+          isOpen={reportModalOpen}
+          onClose={() => setReportModalOpen(false)}
+          storySlug={story.slug}
+          storyTitle={story.title}
+          chapterSlug={chapter?.slug}
+          chapterTitle={chapter?.title}
+        />
+      )}
     </div>
   );
 }

@@ -1628,11 +1628,20 @@ export default function AdminDashboardPage() {
                           <strong className="text-white block">{t.claimantName}</strong>
                           <span className="text-[11px] text-slate-400 font-mono">{t.claimantEmail}</span>
                         </td>
-                        <td className="py-3.5 px-4">
-                          <span className="text-[11px] font-mono text-indigo-300 max-w-xs truncate block" title={t.allegedInfringingUrls}>
-                            {t.allegedInfringingUrls}
+                        <td className="py-3.5 px-4 max-w-sm">
+                          <a
+                            href={t.allegedInfringingUrls}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] font-mono text-indigo-300 hover:text-indigo-200 hover:underline inline-flex items-center gap-1 truncate max-w-xs"
+                            title={t.allegedInfringingUrls}
+                          >
+                            <span className="truncate">{t.allegedInfringingUrls}</span>
+                            <ExternalLink className="h-3 w-3 shrink-0 text-slate-400" />
+                          </a>
+                          <span className="text-[10px] text-slate-400 block mt-1 whitespace-pre-line line-clamp-3">
+                            {t.copyrightedWorkDescription}
                           </span>
-                          <span className="text-[10px] text-slate-400 block mt-0.5">{t.copyrightedWorkDescription}</span>
                         </td>
                         <td className="py-3.5 px-4">
                           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${
