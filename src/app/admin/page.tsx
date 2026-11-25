@@ -25,6 +25,8 @@ import {
   RefreshCw,
   Lock,
   Eye,
+  EyeOff,
+  Pencil,
   Sliders,
   DollarSign,
   Pin,
@@ -1183,14 +1185,15 @@ export default function AdminDashboardPage() {
                           <button
                             type="button"
                             onClick={() => handleToggleStoryStatus(story.slug, story.status)}
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border cursor-pointer transition-all ${
+                            className={`px-2.5 py-1 rounded-xl text-[10px] font-black uppercase tracking-wider border cursor-pointer transition-all inline-flex items-center gap-1.5 ${
                               story.status === "DRAFT"
-                                ? "bg-amber-500/10 border-amber-500/30 text-amber-300 hover:bg-amber-500/20"
-                                : "bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20"
+                                ? "bg-amber-500/15 border-amber-500/40 text-amber-300 hover:bg-amber-500/25"
+                                : "bg-emerald-500/15 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25"
                             }`}
-                            title="Click to toggle Published vs Hidden/Draft"
+                            title={story.status === "DRAFT" ? "Click to Publish / Restore to Public" : "Click to Temporarily Hide / Unpublish Story"}
                           >
-                            {story.status === "DRAFT" ? "Hidden / Draft" : "Published"}
+                            <span className={`h-1.5 w-1.5 rounded-full ${story.status === "DRAFT" ? "bg-amber-400" : "bg-emerald-400"}`} />
+                            <span>{story.status === "DRAFT" ? "Hidden / Draft" : "Live Published"}</span>
                           </button>
                         </td>
 
@@ -1200,6 +1203,30 @@ export default function AdminDashboardPage() {
                         {/* Admin Action Buttons */}
                         <td className="py-3.5 px-4 text-right">
                           <div className="flex items-center justify-end gap-1.5">
+                            {/* Explicit Unpublish / Publish Action Button */}
+                            <button
+                              type="button"
+                              onClick={() => handleToggleStoryStatus(story.slug, story.status)}
+                              className={`px-2 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer inline-flex items-center gap-1 ${
+                                story.status === "DRAFT"
+                                  ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
+                                  : "border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20"
+                              }`}
+                              title={story.status === "DRAFT" ? "Publish Story (Restore to Public)" : "Temporarily Hide / Unpublish Story from Public View"}
+                            >
+                              {story.status === "DRAFT" ? (
+                                <>
+                                  <Eye className="h-3 w-3" />
+                                  <span>Publish</span>
+                                </>
+                              ) : (
+                                <>
+                                  <EyeOff className="h-3 w-3" />
+                                  <span>Unpublish</span>
+                                </>
+                              )}
+                            </button>
+
                             {/* Inspect Chapters Drawer Button */}
                             <button
                               type="button"
@@ -1220,15 +1247,17 @@ export default function AdminDashboardPage() {
                               <ExternalLink className="h-3.5 w-3.5" />
                             </Link>
 
-                            {/* Permanent Purge */}
-                            <button
-                              type="button"
-                              onClick={() => handleAdminDeleteStory(story)}
-                              className="p-1.5 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors cursor-pointer"
-                              title="Admin Delete: Permanently remove story from PostgreSQL"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
+                            {/* Permanent Purge (SUPER_ADMIN ONLY) */}
+                            {currentUser?.role === "SUPER_ADMIN" && (
+                              <button
+                                type="button"
+                                onClick={() => handleAdminDeleteStory(story)}
+                                className="p-1.5 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors cursor-pointer"
+                                title="Super Admin Only: Permanently delete story from PostgreSQL"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -1656,15 +1685,33 @@ export default function AdminDashboardPage() {
                             {t.status}
                           </span>
                         </td>
-                        <td className="py-3.5 px-4 text-slate-300 italic text-[11px]">
-                          {t.moderatorNotes || "No notes logged yet."}
+                        <td className="py-3.5 px-4 text-[11px] text-slate-300">
+                          <div className="flex items-start justify-between gap-1.5">
+                            <span className="italic">{t.moderatorNotes || "No notes logged yet."}</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newNote = window.prompt("Update internal moderator notes (visible to staff only):", t.moderatorNotes || "");
+                                if (newNote !== null) {
+                                  handleUpdateTicketStatus(t.id, t.status, newNote);
+                                }
+                              }}
+                              className="p-1 rounded hover:bg-white/10 text-slate-400 hover:text-white cursor-pointer shrink-0"
+                              title="Edit internal staff note"
+                            >
+                              <Pencil className="h-3 w-3" />
+                            </button>
+                          </div>
                         </td>
                         <td className="py-3.5 px-4 text-right">
                           <div className="flex items-center justify-end gap-1.5">
                             {t.status === "OPEN" && (
                               <button
                                 type="button"
-                                onClick={() => handleUpdateTicketStatus(t.id, "UNDER_REVIEW", "Staff reviewing alleged text.")}
+                                onClick={() => {
+                                  const note = window.prompt("Enter review note (or press OK to keep default):", "Staff reviewing alleged text.");
+                                  if (note !== null) handleUpdateTicketStatus(t.id, "UNDER_REVIEW", note);
+                                }}
                                 className="px-2 py-1 rounded-lg text-[10px] font-bold bg-amber-500/10 border border-amber-500/30 text-amber-300 hover:bg-amber-500/20 cursor-pointer"
                               >
                                 Review
@@ -1672,14 +1719,20 @@ export default function AdminDashboardPage() {
                             )}
                             <button
                               type="button"
-                              onClick={() => handleUpdateTicketStatus(t.id, "ACCEPTED_REMOVED", "Content removed under statutory DMCA rule.")}
+                              onClick={() => {
+                                const note = window.prompt("Enter takedown reason note:", "Content removed under statutory DMCA rule.");
+                                if (note !== null) handleUpdateTicketStatus(t.id, "ACCEPTED_REMOVED", note);
+                              }}
                               className="px-2 py-1 rounded-lg text-[10px] font-bold bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 cursor-pointer"
                             >
                               Takedown
                             </button>
                             <button
                               type="button"
-                              onClick={() => handleUpdateTicketStatus(t.id, "REJECTED", "Claim rejected: Valid original work or parody fair use.")}
+                              onClick={() => {
+                                const note = window.prompt("Enter rejection reason note:", "Claim rejected: Valid original work or parody fair use.");
+                                if (note !== null) handleUpdateTicketStatus(t.id, "REJECTED", note);
+                              }}
                               className="px-2 py-1 rounded-lg text-[10px] font-bold bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/20 cursor-pointer"
                             >
                               Reject
@@ -1771,6 +1824,15 @@ export default function AdminDashboardPage() {
         {/* TAB 7: 4.7 STAFF & MODERATION GOVERNANCE                  */}
         {/* ========================================================= */}
         {activeTab === "moderators" && (
+          currentUser?.role !== "SUPER_ADMIN" ? (
+            <div className="rounded-3xl border border-red-500/20 bg-slate-900/80 p-12 text-center space-y-3 shadow-2xl">
+              <Lock className="h-10 w-10 text-red-400 mx-auto" />
+              <h3 className="text-xl font-black text-white">Super Administrator Privileges Required</h3>
+              <p className="text-xs text-slate-400 max-w-md mx-auto">
+                Staff appointment and moderator governance are strictly restricted to Super Administrators. Platform moderators cannot elevate user accounts or assign staff privileges.
+              </p>
+            </div>
+          ) : (
           <div className="space-y-6">
             {/* Header & Role Overview */}
             <div className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
@@ -1944,6 +2006,7 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           </div>
+          )
         )}
 
         </main>

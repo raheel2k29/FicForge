@@ -199,8 +199,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 3. USER ROLE ELEVATION / DEMOTION (RBAC)
+    // 3. USER ROLE ELEVATION / DEMOTION (RBAC: SUPER_ADMIN ONLY)
     if (action === "UPDATE_USER_ROLE" && userId && role) {
+      if (session?.role !== "SUPER_ADMIN") {
+        return NextResponse.json(
+          { success: false, message: "Unauthorized: Only Super Administrators have authority to modify user roles or appoint staff." },
+          { status: 403 }
+        );
+      }
       const targetRole = (role === "USER" || role === "READER") ? "CREATOR" : role;
       const updatedUser = await prisma.user.update({
         where: { id: userId },
