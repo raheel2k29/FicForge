@@ -104,16 +104,79 @@ FicForge uses a **Unified Consumer Model** (Readers are Creators & Creators are 
 - [ ] **3.4 TOTP Two-Factor Authentication (2FA)**
   - [ ] Mandatory TOTP for staff accessing `/admin`.
 
-### Phase 4: PayPal Global Payments & Creator Vault
-- [ ] **4.1 Sparks Storefront & PayPal Integration**
+### Phase 4: Full-Scale Administration, Moderation & Governance Control Center (Admin Panel)
+*Dedicated administrative console at `/admin` powered by dedicated staff gateway `/admin/login`, backend API route `/api/admin`, and cryptographic JWT role-guards.*
+
+- [x] **4.1 Executive Dashboard & System Health Telemetry**
+  - [x] High-level KPI indicators: Total Stories, Chapters, Registered Authors/Readers, and Active Promotions.
+  - [x] Live interactive SVG Analytics Charts (Reading Velocity Area Curve, Content Rating Donut, Catalog Breakdown).
+  - [x] Database health telemetry (Neon PostgreSQL live connection, query latency indicators, and connection pool status).
+- [x] **4.2 Master Content Catalog & Editorial Governance**
+  - [x] Complete searchable story library with live filter by Title, Classification (Fanfiction vs Original), and Author.
+  - [x] Force unpublish / hide story toggle (`Published` vs `Hidden / Draft`).
+  - [x] Content Rating escalation (instant toggle to `EXPLICIT 18+`, `MATURE`, `TEEN`, `GENERAL`).
+  - [x] Deep chapter inspection drawer (inspect raw chapter body, author notes, word counts).
+  - [x] Permanent PostgreSQL purge/delete override for copyright violations or abusive content.
+- [x] **4.3 User Directory, Account Governance & RBAC Management**
+  - [x] User roster interface with avatar, username, email, active role, and verification badges.
+  - [x] Live role assignment: `USER`, `MODERATOR`, `SUPER_ADMIN` with instant PostgreSQL sync.
+  - [x] Account verification toggle (`Verified` vs `Unverified`).
+- [x] **4.4 Creator Spotlight & Promotion Command Center**
+  - [x] Active and historical spotlight campaign monitor with impressions & clicks.
+  - [x] **Staff Manual Pinning Modal**: Staff can pin any story directly to the homepage Hero Spotlight for 1, 3, or 7 days with 0 credit cost.
+  - [x] Emergency termination of abusive or low-quality promoted works.
+  - [x] Test Cooldown Reset tool for development and staff testing.
+- [x] **4.5 Legal, DMCA Safe Harbor & Appeals Clearinghouse**
+  - [x] Compliance tab with DMCA Notice status indicators (`OPEN`, `UNDER_REVIEW`, `ACCEPTED_REMOVED`, `REJECTED`).
+  - [x] Public story and chapter report modal (`ReportStoryModal`) with `/api/reports` live ticket creation.
+  - [x] Interactive action buttons: Mark Under Review, Accept & Remove Content, Reject Claim, Add Moderator Review Notes.
+  - [x] Statutory compliance guidelines overview (Fanfiction Safe Harbor, 10–14 business day Counter-Notice timer).
+- [x] **4.6 Financial Audit & Payout Approval Desk (Bridge to Phase 5)**
+  - [x] Sparks circulation audit (total Sparks in user wallets across FicForge).
+  - [x] Creator revenue split tracking (82% Creator Vault / 18% Platform).
+  - [x] Scheduled batch cashout calendar (1st & 15th with $50 threshold).
+  - [x] Direct bridge to Phase 5 PayPal Orders API & mass payouts engine.
+- [ ] **4.7 Community Moderation, Enforcement & Safety Architecture**
+  - **4.7.1 Content Moderation & Editorial Integrity**
+    - [x] Public Story & Chapter Report intake modal with direct DMCA Clearinghouse integration.
+    - [x] Inaccurate age rating correction (General, Teen, Mature, Explicit) via instant dropdown.
+    - [x] Temporary hide / unpublish toggle for stories under review (without altering author text).
+    - [x] Deep chapter inspection drawer (read-only inspection of chapter text & author notes).
+    - [ ] Misleading / prohibited story tag moderation drawer (correct tags without altering story prose).
+    - [ ] Official notification dispatch to author explaining policy violations upon unpublishing or rating change.
+  - **4.7.2 Comment & Community Interaction Governance**
+    - [ ] Chapter comment moderation queue with inappropriate comment removal action.
+    - [ ] Tiered user comment restrictions: 24 Hours, 3 Days, 7 Days, and 30 Days mutes.
+    - [ ] Indefinite comment restriction workflow requiring Super Admin sign-off.
+    - [ ] Community guideline warning system attached to user moderation history.
+  - **4.7.3 User Account Enforcement & Tiered Suspensions**
+    - [x] Public account directory view (username, avatar, email, verification, stories authored).
+    - [ ] Tiered account suspensions: 24 Hours, 3 Days, 7 Days, and 30 Days login locks.
+    - [x] Permanent bans, account deletions, and staff appointments hard-locked to Super Admin only.
+    - [x] Zero-knowledge privacy: Moderators restricted from passwords, payments, or private billing details.
+  - **4.7.4 Copyright, DMCA & Monetization Compliance**
+    - [x] 100% Free Fanfiction Safe Harbor enforcement (hard-lock against Fast Pass paywalls).
+    - [x] Live intake and review of copyright complaints with evidence links and digital signatures.
+    - [x] Commercialization policy guard: Moderators can flag/disable monetized fanfiction.
+    - [x] Financial isolation: Moderators restricted from altering balances, earnings splits, or payouts.
+  - **4.7.5 Audit Trail, Appeals & Two-Factor Authentication (2FA)**
+    - [x] Internal moderator notes attached to takedown tickets and review decisions.
+    - [ ] Immutable staff audit log tracking moderator ID, action type, target ID, and timestamp.
+    - [ ] In-app appeals submission portal within user dashboard (`/account`).
+    - [ ] Mandatory TOTP Two-Factor Authentication (2FA) for all moderator and admin logins.
+
+---
+
+### Phase 5: PayPal Global Payments & Creator Vault 💳 (UPCOMING NEXT)
+- [ ] **5.1 Sparks Storefront & PayPal Integration**
   - [ ] Sparks packages ($0.99 for 100 Sparks up to $124.99).
   - [ ] PayPal Standard & Card checkout via PayPal Orders API.
   - [ ] Sparks Ledger (purchased vs bonus vs earned).
-- [ ] **4.2 Recurring Platform Memberships**
+- [ ] **5.2 Recurring Platform Memberships**
   - [ ] PayPal Subscriptions integration: Supporter ($2.99/mo), Forge Plus ($7.99/mo), Forge Elite ($14.99/mo).
   - [ ] Automated monthly bonus Sparks distribution and ad-free flag.
-- [ ] **4.3 Fast Pass 7-Day Auto-Unlock Cron Job**
+- [ ] **5.3 Fast Pass 7-Day Auto-Unlock Cron Job**
   - [ ] Scheduled job unlocking pending Original Fiction chapters when countdown expires.
-- [ ] **4.4 Creator Cashouts (82/18 Split & Batched Payouts)**
+- [ ] **5.4 Creator Cashouts (82/18 Split & Batched Payouts)**
   - [ ] 82% Creator Vault ledger with 7–14 day anti-fraud buffer.
   - [ ] PayPal Payouts batch processing on 1st & 15th (min $50 threshold).
